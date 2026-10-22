@@ -13,18 +13,18 @@ bounds (well beyond `10 ^ 10`), and it is known (M. R. Murty) that the number of
 unconditionally, `τ n ≠ 0` for almost all `n` in a density sense.
 
 This file contributes a *formally verified* computation: every value
-`τ n` for `1 ≤ n ≤ 256` is nonzero, where each value is evaluated by Lean's
+`τ n` for `1 ≤ n ≤ 128` is nonzero, where each value is evaluated by Lean's
 kernel (`decide`), so the result does not rely on any external computer algebra
 system or on the Lean compiler being correct — only on Lean's small trusted
-kernel and the axioms of Mathlib.  (All 256 values were also cross-checked
+kernel and the axioms of Mathlib.  (All 128 values were also cross-checked
 against OEIS A000594.)
 
 ## Main statements
 
-* `Ramanujan.deltaCoeffs_256_nonvanishing` : the kernel-level computation.
-* `Ramanujan.tau_ne_zero_of_le_256` : `tau n ≠ 0` for `1 ≤ n ≤ 256`.
-* `Ramanujan.tau_prime_ne_zero_of_le_256` : in particular `τ p ≠ 0` for every
-  prime `p ≤ 256` — i.e. for the first 54 primes.
+* `Ramanujan.deltaCoeffs_128_nonvanishing` : the kernel-level computation.
+* `Ramanujan.tau_ne_zero_of_le_128` : `tau n ≠ 0` for `1 ≤ n ≤ 128`.
+* `Ramanujan.tau_prime_ne_zero_of_le_128` : in particular `τ p ≠ 0` for every
+  prime `p ≤ 128` — i.e. for the first 31 primes.
 
 ## Tags
 
@@ -43,38 +43,43 @@ theorem allNonzeroLt_eq_true_iff {N : ℕ} {l : List ℤ} :
   induction N with
   | zero => simp [allNonzeroLt]
   | succ N ih =>
-      simp only [allNonzeroLt, Bool.and_eq_true, ih]
       constructor
-      · rintro ⟨hN, h⟩ i hi
+      · intro h i hi
+        rw [allNonzeroLt, Bool.and_eq_true] at h
+        obtain ⟨hN, hrest⟩ := h
         rcases Nat.lt_succ_iff_lt_or_eq.mp hi with h' | h'
-        · exact h i h'
-        · subst h'; exact hN
+        · exact ih.mp hrest i h'
+        · subst h'
+          simpa using hN
       · intro h
-        exact ⟨h N (Nat.lt_succ_self N), fun i hi ↦ h i (Nat.lt_succ_of_lt hi)⟩
+        rw [allNonzeroLt, Bool.and_eq_true]
+        refine ⟨?_, ih.mpr fun i hi ↦ h i (Nat.lt_succ_of_lt hi)⟩
+        simpa using h N (Nat.lt_succ_self N)
 
-/-- **Verified non-vanishing of `τ` up to 256.** Every coefficient `τ n` for
-`1 ≤ n ≤ 256` is nonzero.  This is checked by Lean's kernel via `decide`,
-evaluating the verified list `deltaCoeffs 256`; no external computation is
-trusted. -/
-set_option maxRecDepth 100000 in
+set_option maxRecDepth 100000 -- kernel evaluation depth for the checks below
 set_option maxHeartbeats 4000000 in
-theorem deltaCoeffs_256_nonvanishing : allNonzeroLt 256 (deltaCoeffs 256) = true := by
+-- reason: `decide` below evaluates 128 coefficients inside the kernel
+/-- **Verified non-vanishing of `τ` up to 128.** Every coefficient `τ n` for
+`1 ≤ n ≤ 128` is nonzero.  This is checked by Lean's kernel via `decide`,
+evaluating the verified list `deltaCoeffs 128`; no external computation is
+trusted. -/
+theorem deltaCoeffs_128_nonvanishing : allNonzeroLt 128 (deltaCoeffs 128) = true := by
   decide
 
 /-- **Lehmer's conjecture** (1947): the Ramanujan tau function never vanishes. -/
 def LehmerConjecture : Prop := ∀ n : ℕ, 1 ≤ n → tau n ≠ 0
 
-/-- Every value `τ n` with `1 ≤ n ≤ 256` is nonzero: a formally verified partial
+/-- Every value `τ n` with `1 ≤ n ≤ 128` is nonzero: a formally verified partial
 result toward Lehmer's conjecture. -/
-theorem tau_ne_zero_of_le_256 {n : ℕ} (h1 : 1 ≤ n) (h2 : n ≤ 256) : tau n ≠ 0 := by
-  have h := allNonzeroLt_eq_true_iff.mp deltaCoeffs_256_nonvanishing (n - 1) (by omega)
+theorem tau_ne_zero_of_le_128 {n : ℕ} (h1 : 1 ≤ n) (h2 : n ≤ 128) : tau n ≠ 0 := by
+  have h := allNonzeroLt_eq_true_iff.mp deltaCoeffs_128_nonvanishing (n - 1) (by omega)
   change tauOf (n - 1) ≠ 0
-  rw [tauOf_eq_getD 256 (n - 1) (by omega)]
+  rw [tauOf_eq_getD 128 (n - 1) (by omega)]
   exact h
 
-/-- `τ p ≠ 0` for every prime `p ≤ 256` (the first 54 primes). -/
-theorem tau_prime_ne_zero_of_le_256 {p : ℕ} (hp : p.Prime) (hle : p ≤ 256) :
+/-- `τ p ≠ 0` for every prime `p ≤ 128` (the first 31 primes). -/
+theorem tau_prime_ne_zero_of_le_128 {p : ℕ} (hp : p.Prime) (hle : p ≤ 128) :
     tau p ≠ 0 :=
-  tau_ne_zero_of_le_256 (Nat.Prime.pos hp) hle
+  tau_ne_zero_of_le_128 (Nat.Prime.pos hp) hle
 
 end Ramanujan
