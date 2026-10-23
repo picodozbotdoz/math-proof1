@@ -11,13 +11,76 @@ Lean's kernel alone (`decide`).
 Toolchain and Mathlib are pinned (`lean-toolchain`, `lakefile.toml`: Lean
 `v4.36.0-rc1`, Mathlib `v4.36.0-rc1`).
 
+### Primary: build on Modal
+
+All builds and verification runs happen on Modal (modal.com) via the existing
+scripts `lean_build.py` / `lean_check.py` — don't invent new plumbing. Run them
+with `/home/doz/dozenv/bin/modal` (the `modal` CLI only exists in the `dozenv`
+venv; bare `python3` cannot import `modal`).
+
+- **Iterate with `lean_check.py`** (app `mathproof-check`): fresh-clones the
+  GitHub repo, overlays every locally modified *or untracked* `.lean` file
+  (or just `--file <path>`), symlinks the baked warm dependency tree into
+  `.lake/packages`, and builds one target on the container's local disk.
+  No push needed (~1 min round trip):
+
+  ```bash
+  /home/doz/dozenv/bin/modal run lean_check.py --target MathProof.Tau.CongruenceSmall
+  /home/doz/dozenv/bin/modal run lean_check.py --file MathProof/Tau/SomeFile.lean
+  ```
+
+- **Full / final build with `lean_build.py`** (app `math-proof1-build`):
+  builds the pushed GitHub state (`picodozbotdoz/math-proof1`);
+  `--target ''` means the whole project:
+
+  ```bash
+  /home/doz/dozenv/bin/modal run lean_build.py --target MathProof.Tau.Lehmer
+  /home/doz/dozenv/bin/modal run lean_build.py --target ''   # full `lake build`
+  ```
+
+  Caveat: it clones only when `/tmp/repo` is absent, so a reused container can
+  build a stale clone. To verify freshly pushed code use `lean_check.py`
+  (always fresh-clones) or expect a fresh container.
+
+- **Debug interactively**: `modal shell lean_build.py::build` (same image +
+  volumes as the build function) or `modal shell --volume lean-cache`
+  (mounted at `/mnt/lean-cache`).
+
+Existing shared Modal resources (see `lean_build.py`) — **reuse them, never
+recreate them**:
+
+- **Volume `lean-cache`** — mounted at `/cache` but nothing in the build hot
+  path writes to it (thousands of tiny `.olean` writes to a network volume
+  stall at ~40 MB / 11 min — measured). It remains available for `modal shell`
+  experiments.
+- **Image** — Debian slim + elan v4.2.4 + the pinned Lean toolchain + the
+  warm dependency tree (mathlib + deps at the manifest's exact revisions, with
+  the full Mathlib olean cache fetched at image-build time into `/opt/warmrepo`;
+  keep each package's `.git` or lake re-fetches everything). Defined
+  *identically* in both scripts so the layer cache is shared. If one must
+  change, change both — and expect the image rebuild to pay for `lake update`
+  + `lake exe cache get` once (~15 min).
+- Per run: 4 CPUs, 32 GiB RAM, 4-hour timeout. Logs stream from `modal run`.
+
+### Least preferred: building on this machine
+
+Local `lake build` requires the ~7 GB Mathlib cache and `MathProof.Tau.Lehmer`
+alone costs ~2 CPU-minutes of kernel time. Build locally **only** when Modal is
+unavailable and a check is still needed — and then build single modules:
+
 ```bash
-lake build                          # everything (Mathlib cache: ~7 GB disk)
 lake build MathProof.Tau.Lehmer     # build a single module
 ```
 
-Heavy kernel computations are slow: `MathProof.Tau.Lehmer` takes ~2 CPU-minutes
-of kernel time. Prefer building individual modules while iterating.
+### Modal resource policy — hard rule
+
+AI agents are **forbidden from proactively adding or registering additional
+Modal resources**: no new apps, volumes, secrets, environments, or image
+definitions, and no `modal deploy` — anything persistent requires an explicit
+decision by the human user. Agents may only *run* the existing scripts
+(`modal run lean_build.py` / `lean_check.py`, which are ephemeral runs) against
+the resources listed above. If those seem insufficient for a task, stop and
+surface the limitation to the user instead of creating workarounds on Modal.
 
 ## Layout
 
@@ -25,10 +88,13 @@ of kernel time. Prefer building individual modules while iterating.
   (coefficients of `Δ = q ∏ (1 − q^m)^24`), truncation stability, hand-rolled
   kernel-friendly `List ℤ` arithmetic (`pmul`, `psub`, `pow24`, …), verified
   values `tau_one` … `tau_twenty_one`.
-- `MathProof/Tau/Lehmer.lean` — Lehmer's conjecture: `tau_ne_zero_of_le_256`
-  (kernel-verified nonvanishing for `n ≤ 256`).
-- `MathProof/Tau/LehmerMod.lean` — work in progress (untracked): same list
-  arithmetic mod `P = 999999937`, raising the verified bound to 512.
+- `MathProof/Tau/Lehmer.lean` — Lehmer's conjecture: `tau_ne_zero_of_le_128`
+  (kernel-verified nonvanishing over `ℤ` for `n ≤ 128`).
+- `MathProof/Tau/LehmerMod.lean` — same list arithmetic mod `P = 999999937`
+  (`decide +kernel`), raising the verified bound to `n ≤ 256`
+  (`tau_ne_zero_of_le_256`).
+- `MathProof/Tau/CongruenceSmall.lean` — gap congruences mod 2 and 3:
+  `τ n` even unless `n ≡ 1 [MOD 8]`, `3 ∣ τ n` unless `n ≡ 1 [MOD 3]`.
 - `MathProof/Tau/Bridge.lean` — the analytic bridge: `(qExpansion 1 Δ).coeff n = τ n`
   for Mathlib's analytic discriminant `Δ`.
 - `MathProof/ModularForms/Weight12.lean` — Ramanujan's weight-12 identity

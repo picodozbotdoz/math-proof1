@@ -16,8 +16,14 @@ See `docs/research-log.md` for the full log. Highlights:
 * `Ramanujan.tau_one` … `Ramanujan.tau_twenty_one` — the first 21 values of
   OEIS A000594, each verified by `decide`.
 * **Toward Lehmer's conjecture** (`Ramanujan.LehmerConjecture`):
-  `Ramanujan.tau_ne_zero_of_le_256` — `τ n ≠ 0` for all `1 ≤ n ≤ 256`,
-  verified entirely inside Lean's kernel (no external CAS, no `native_decide`).
+  `Ramanujan.tau_ne_zero_of_le_128` (over `ℤ`) and
+  `Ramanujan.tau_ne_zero_of_le_256` (mod `P = 999999937`, so intermediates
+  stay machine-word sized) — `τ n ≠ 0` for all `1 ≤ n ≤ 256`, verified
+  entirely inside Lean's kernel (no external CAS, no `native_decide`).
+* **Small-prime congruences** (`Ramanujan.tau_even_of_ne_one_mod_eight`,
+  `Ramanujan.tau_zero_mod_three_of_ne_one_mod_three`): `τ n` is even unless
+  `n ≡ 1 [MOD 8]`, and divisible by 3 unless `n ≡ 1 [MOD 3]` — by the
+  freshman's dream collapse of the Euler product mod 2 and mod 3.
 
 ## Eisenstein series and the 691 congruence (`MathProof/ModularForms/`)
 
@@ -39,11 +45,18 @@ lake build                      # requires ~7 GB disk for Mathlib
 lake build MathProof.Tau.Lehmer # the nonvanishing computation (~2 CPU-min kernel time)
 ```
 
+On a small machine, build remotely instead (see `AGENTS.md`):
+```bash
+/home/doz/dozenv/bin/modal run lean_build.py --target ''   # full project on Modal
+```
+
 ## Layout
 
 ```
 MathProof/Tau/Basic.lean        # τ: definition, stability, verified values
-MathProof/Tau/Lehmer.lean       # Lehmer's conjecture + verified bound 256
+MathProof/Tau/Lehmer.lean       # Lehmer's conjecture + verified bound 128
+MathProof/Tau/LehmerMod.lean    # mod-P arithmetic: verified bound 256
+MathProof/Tau/CongruenceSmall.lean  # τ mod 2 and mod 3 gap congruences
 MathProof/Tau/Bridge.lean       # (qExpansion Δ).coeff n = τ(n)
 MathProof/ModularForms/Weight12.lean       # 691 • E₁₂ = 441 • E₄³ + 250 • E₆²
 MathProof/ModularForms/Congruence691.lean  # τ(n) ≡ σ₁₁(n) mod 691

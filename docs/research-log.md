@@ -157,3 +157,87 @@ the Ramanujan τ numbers with the Fourier coefficients of Δ.
 * **Lehmer's conjecture** (Iteration 1): the bridge now connects the
   kernel-verified nonvanishing bound `τ(n) ≠ 0, n ≤ 256` to the analytic
   Δ; raising the bound via reflected certificates remains open.
+
+---
+
+## Iteration 3 — Lehmer's conjecture: the verified bound doubled by mod-p arithmetic
+
+**Status: complete.  2026-10-24.**
+
+### The problem
+
+Iteration 1 verified `τ n ≠ 0` for `n ≤ 128` by kernel evaluation of the
+integer coefficient list of `Δ = q ∏ (1 − q^m)^24`.  Over `ℤ`, the
+intermediates grow to the true values of `τ` (≈ n^6), and the kernel's
+per-operation overhead makes the cost of `decide` grow quadratically with
+the bound; pushing much past 128 exhausted a 7 GB machine.
+
+### What this iteration contributes
+
+`MathProof/Tau/LehmerMod.lean`: the same kernel-friendly list arithmetic
+performed **modulo the word-sized prime** `P = 999999937` (`paddM`, `psubM`,
+`pmulM`, `pow24M`, `deltaCoeffsMod`), every operation reduced below `2^62`
+so intermediates never grow.  Soundness (`deltaCoeffsMod_eq`) is proved by
+transporting the computation into `(ZMod P)[X]` (the mirror `L2PMod` of
+Iteration 1's `L2P`), and `tauOf_ne_zero_of_mod` formalizes the certificate
+principle: *a nonzero residue mod a prime certifies the integer coefficient
+is nonzero* — no magnitude bound on `τ` is needed.
+
+* `deltaCoeffsMod_256_nonvanishing`, checked by `decide +kernel` (the
+  kernel-only variant: the default elaborator-side re-evaluation of `decide`
+  degrades pathologically under GC pressure at this size).  Axioms:
+  `[propext]` only.
+* `tau_ne_zero_of_le_256` / `tau_prime_ne_zero_of_le_256` (the first 54
+  primes): the formally verified nonvanishing bound for `τ` doubles from
+  128 to **256**.
+
+### What remains / next steps
+
+* The bound is limited by kernel-evaluation memory (~6 GB heap at 256 on
+  this machine), not by the mathematics.  A reflected certificate scheme
+  (verify convolution identities inside the kernel instead of recomputing)
+  is the route to 10^4+; see Iteration 5 ideas in Iteration 1's log.
+* Computation on a bigger machine (e.g. the Modal builder image, 32 GiB)
+  can push the same `decide +kernel` further with zero code changes.
+
+---
+
+## Iteration 4 — Congruence restrictions on τ modulo 2 and 3
+
+**Status: complete.  2026-10-24.**
+
+### The problem
+
+Ramanujan's congruence describes `τ` mod 691 (Iteration 2).  Modulo the
+*small* primes the structure is different and elementary in one direction:
+mod 2, `(1 − T)^24 = ((1 − T)^8)^3 = (1 − T^8)^3` (freshman's dream), so
+`Δ` reduces to a power series in `q^8`; mod 3 likewise to `q^3`.  These
+"gap" congruences were not in Mathlib.
+
+### What this iteration contributes
+
+`MathProof/Tau/CongruenceSmall.lean`, all proofs synthetic (no computation):
+
+* `one_sub_pow_eight` / `one_sub_pow_three`: the freshman's dream via the
+  iterated Frobenius homomorphism (`iterateFrobenius_def` is `rfl`),
+  characteristic 2 resp. 3.
+* A support lemma (`coeff_prod_one_sub_pow_eq_zero`): products of powers
+  `(1 − X^(c·m))^r` have no coefficients at indices not divisible by `c`.
+* The reductions of the truncated Euler product mod 2 and mod 3
+  (`map_etaPow24_mod_two/three`) and the shared transport
+  (`tau_dvd_of_coeff_map_eq_zero`) giving:
+  * **`tau_even_of_ne_one_mod_eight`**: `τ n` is even unless `n ≡ 1 [MOD 8]`;
+  * **`tau_zero_mod_three_of_ne_one_mod_three`**: `3 ∣ τ n` unless `n ≡ 1 [MOD 3]`;
+  * `tau_div_two_and_three_of`: both at once (hence `6 ∣ τ n` off the two
+    exceptional classes, since 2 and 3 are coprime).
+
+### What remains / next steps
+
+* The full parity characterization "`τ n` odd ⟺ `n` is an odd square" needs
+  Jacobi's two-square/triple-product identity
+  `∏ (1 − q^m)^3 = Σ (2k+1) q^{k(k+1)/2}` — the natural next formalization
+  target (Mathlib's 2025 pentagonal-number-theorem machinery is the model).
+* These congruences give the density-zero obstruction inputs for Lehmer's
+  conjecture searches (most residue classes mod 24 are forced divisible by 2
+  or 3, but divisibility does not force vanishing — they are search filters,
+  not nonvanishing evidence).
