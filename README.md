@@ -19,11 +19,18 @@ See `docs/research-log.md` for the full log. Highlights:
   `Ramanujan.tau_ne_zero_of_le_256` — `τ n ≠ 0` for all `1 ≤ n ≤ 256`,
   verified entirely inside Lean's kernel (no external CAS, no `native_decide`).
 
-## Eisenstein series (`MathProof/ModularForms/`)
+## Eisenstein series and the 691 congruence (`MathProof/ModularForms/`)
 
 * `RamanujanWeight12.E12_rel` — **Ramanujan's weight-12 identity**
-  `691 • E₁₂ = 441 • E₄³ + 250 • E₆²`, proved via the Sturm bound; the
-  coefficientwise source of Ramanujan's congruence `τ(n) ≡ σ₁₁(n) (mod 691)`.
+  `691 • E₁₂ = 441 • E₄³ + 250 • E₆²`, proved via the Sturm bound.
+* `Ramanujan.qExpansion_discriminant_coeff` (in `MathProof/Tau/Bridge.lean`) —
+  **the Fourier coefficients of the modular discriminant are the Ramanujan τ
+  numbers**: `(qExpansion 1 Δ).coeff n = τ(n)`, connecting the algebraic
+  definition to Mathlib's analytic Δ.
+* `RamanujanCongruence.tau_modEq_sigma` — **Ramanujan's congruence**
+  `τ(n) ≡ σ₁₁(n) [ZMOD 691]` for all `n ≥ 1`, combining the weight-12
+  identity, Jacobi's identity `E₄³ − E₆² = 1728 Δ`, integrality of the
+  Eisenstein coefficients, and the bridge.
 
 ## Building
 
@@ -37,7 +44,9 @@ lake build MathProof.Tau.Lehmer # the nonvanishing computation (~2 CPU-min kerne
 ```
 MathProof/Tau/Basic.lean        # τ: definition, stability, verified values
 MathProof/Tau/Lehmer.lean       # Lehmer's conjecture + verified bound 256
-MathProof/ModularForms/Weight12.lean  # 691 • E₁₂ = 441 • E₄³ + 250 • E₆²
+MathProof/Tau/Bridge.lean       # (qExpansion Δ).coeff n = τ(n)
+MathProof/ModularForms/Weight12.lean       # 691 • E₁₂ = 441 • E₄³ + 250 • E₆²
+MathProof/ModularForms/Congruence691.lean  # τ(n) ≡ σ₁₁(n) mod 691
 docs/research-log.md            # the research loop log
 langlands-site/                 # standalone educational web page (GL₂ Langlands by example)
 ```

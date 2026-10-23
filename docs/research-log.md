@@ -90,10 +90,70 @@ A formally verified treatment of `τ` in Lean 4 / Mathlib
 
 ---
 
-## Iteration 2 — (in progress)
+## Iteration 2 — Ramanujan's congruence `τ(n) ≡ σ₁₁(n) (mod 691)`
 
-Candidate: the **Ramanujan congruence `τ(n) ≡ σ₁₁(n) (mod 691)`** — a *theorem*,
-not an open problem, but unformalized in Mathlib; proving it rigorously
-requires exactly the Eisenstein-series / dimension-formula / Sturm-bound
-machinery that Mathlib now has, and is the natural next building block toward
-open congruence questions for `τ` (e.g. distribution of `τ(n) mod m`).
+**Status: complete (theorem formalized end-to-end).  2026-10-23.**
+
+### The problem
+
+Ramanujan's congruence (1916): `τ(n) ≡ σ₁₁(n) (mod 691)` for all `n ≥ 1`,
+where `σ₁₁(n) = Σ_{d|n} d¹¹`.  It is the prototypical congruence between
+Fourier coefficients of a cusp form and a divisor sum, the starting point of
+the theory of congruences for modular forms (Serre's `Λ`-adic families,
+Hida theory).  It was **not formalized in Mathlib**; neither was any
+identification of the algebraically-defined `τ` with the Fourier coefficients
+of the analytic discriminant `Δ`.
+
+### What this iteration contributes
+
+1. **Ramanujan's weight-12 identity** (`MathProof/ModularForms/Weight12.lean`,
+   `E12_rel`): `691 • E₁₂ = 441 • E₄³ + 250 • E₆²` in `M₁₂(SL(2, ℤ))`,
+   proved via the Sturm bound (`sturm_bound_levelOne_nat`).  The coefficient
+   formula `E12_qExpansion_coeff` (`(E₁₂)_n = (65520/691) σ₁₁(n)`) and the
+   Bernoulli evaluations `B₄ = −1/30`, `B₆ = 1/42`, `B₁₂ = −691/2730`
+   (computed by chaining the defining recurrence, since `decide` and
+   `norm_num [bernoulli]` on the well-founded definition time out) are
+   exported for reuse.
+
+2. **The analytic-to-algebraic bridge** (`MathProof/Tau/Bridge.lean`):
+   `(qExpansion 1 Δ).coeff n = τ(n)` for `n ≥ 1` (and `= 0` for `n = 0`),
+   where `Δ` is *Mathlib's* modular discriminant (defined analytically
+   through the Dedekind η product).  This makes Iteration 1's algebraic τ
+   literally the sequence of Fourier coefficients of the analytic Δ.  Proof
+   skeleton: a coefficient 1-norm on `ℤ[X]` with submultiplicativity (via a
+   triangle-antidiagonal ≤ section-products inequality); the exponential
+   bound `|τ(n)| ≤ 2^{24n}`; a quantitative estimate
+   (`dist_poly_sum_le`) placing the `M`-th partial τ-sum within
+   `2^{24M}‖z‖^{M+1}/(1−‖z‖)` of the `M`-th partial product of Δ's Euler
+   product on `|z| < 1`; convergence of both to identify the series value
+   on `2^{24}|z| < 1`; and uniqueness of power-series representations
+   (`HasFPowerSeriesAt.eq_formalMultilinearSeries_of_eventually`) to match
+   Taylor coefficients at `0`.
+
+3. **The congruence** (`MathProof/ModularForms/Congruence691.lean`,
+   `tau_modEq_sigma`): `τ n ≡ σ₁₁(n) [ZMOD 691]` for all `n ≥ 1`.
+   Ingredients: the coefficient forms of Ramanujan's identity and of
+   **Jacobi's identity** `E₄³ − E₆² = 1728 Δ` (the latter derived from
+   Mathlib's `discriminant_eq_E₄_cube_sub_E₆_sq`, transported to
+   q-expansions and combined with the bridge), integrality of `(E₄³)ₙ`,
+   `(E₆²)ₙ` (convolution of the integer sequences `240σ₃`, `−504σ₅`),
+   elimination of the two integer unknowns, and cancellation of the
+   prime-to-691 factor 125 (691's primality by kernel `decide`).
+
+To our knowledge this is the first formalization of Ramanujan's 691
+congruence in any proof assistant, and the first formal identification of
+the Ramanujan τ numbers with the Fourier coefficients of Δ.
+
+### What remains / next steps
+
+* **Other classical congruences**: `τ(n) ≡ σ₁₁(n)` holds mod 691; the
+  companion congruences mod 2 (`τ(n) ≡ σ₁₁(n) mod 2`) and mod 3 follow
+  from the same weight-12 identities and would be easy additions.
+* **Mordell multiplicativity** `τ(mn) = τ(m)τ(n)` for coprime `m, n` —
+  the natural next theorem toward Lehmer's conjecture (Iteration 1).
+* **Higher level**: congruences for coefficients of `Δ` mod other primes
+  involve level-1 Hecke theory; the q-expansion infrastructure built here
+  (form-level `qExpansion_smul/sub/add`, integrality lemmas) generalizes.
+* **Lehmer's conjecture** (Iteration 1): the bridge now connects the
+  kernel-verified nonvanishing bound `τ(n) ≠ 0, n ≤ 256` to the analytic
+  Δ; raising the bound via reflected certificates remains open.
