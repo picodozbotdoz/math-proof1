@@ -1,0 +1,7 @@
+# ✅ This works: the function's own volume is used automatically
+modal shell lean_build.py::build
+
+# ✅ This works: no function reference, so --volume is allowed
+modal shell --volume lean-cache
+# The volume will be mounted at /mnt/lean-cache
+
