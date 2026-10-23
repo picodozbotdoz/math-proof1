@@ -121,6 +121,10 @@ theorem bernoulli_four : bernoulli 4 = -(1 / 30 : ℚ) := by
   rw [bernoulli_eq_bernoulli'_of_ne_one (by decide), bernoulli'_four]
   ring
 
+/-- The Bernoulli number `B₆ = 1 / 42`. -/
+theorem bernoulli_six : bernoulli 6 = 1 / 42 := by
+  rw [bernoulli_eq_bernoulli'_of_ne_one (by decide), bernoulli'_six]
+
 /-- The proof term `3 ≤ 12`, named so that rewrite patterns match syntactically. -/
 theorem hk12 : 3 ≤ 12 := by norm_num
 
