@@ -329,3 +329,68 @@ and specified the next iteration's design.
   All elementary; no analysis.
 * Housekeeping: lift `maxHeartbeats` in any file with multi-minute kernel
   decides; keep `LehmerMod.lean` (512) as the CI smoke check.
+
+## Iteration 6 — Lehmer's conjecture: the verified bound raised 512 → 16384 by packed-bignum kernel arithmetic
+
+**Status: complete. 2026-10-24.**  Implements the route specified by the
+Iteration 5 study (§6); development notes in `docs/lehmerpacked-plan.md`.
+
+### What this iteration contributes
+
+* `MathProof/Tau/LehmerPacked.lean` — **`Ramanujan.tau_ne_zero_of_le_16384`**:
+  `τ n ≠ 0` for all `1 ≤ n ≤ 16384`, verified entirely inside Lean's kernel
+  (`decide +kernel`; no `native_decide`, no external CAS).  A 32× improvement
+  over Iteration 3's bound of 512, and the first bound past the naive mod-P
+  list-arithmetic wall (>71 GiB at 1024).
+* The packed-bignum pipeline, fully proved:
+  * `etaList d` — the coefficients of `∏ (1 - X ^ m)` mod `P`, computed
+    coefficient-wise from Euler's pentagonal number theorem: each entry is
+    decided by the square test `24 i + 1 = (6 k ∓ 1)²` using `isqrtNew`, a
+    *structurally recursive* Newton integer square root (the core `Nat.sqrt`
+    is well-founded and not kernel-reducible).  Soundness `pentRes_eq`: each
+    entry is the reduction of `(pentagonalSeries ℤ).coeff i` (Mathlib's
+    pentagonal number theorem), via `pentRes_of_pent` (pentagonal indices give
+    ±1 with the parity of `k`) and `pentRes_zero_of_not` (non-square gives 0).
+  * packing (`packAsc`/`packBal`, `digitsLin`/`digitsBal` — balanced trees,
+    fuel-structural so the kernel can reduce them): every dense
+    multiplication is one GMP-backed `Nat.mul` plus O(d) digit extractions.
+    `packedMul_getD`: the digits of the packed product are the convolution
+    slots, given the slot bound `d · (P - 1)² < 2^76 < 2^80` (`convSum_lt`);
+    supporting lemmas `digit_extract`, `mod_mul_div`, `packBal_eq`,
+    `packAsc_convL`, `digitsLin_split`.
+  * the bridge: `etaPoly_coeff_pent` — the low coefficients of the truncated
+    Euler product `etaPoly N` are the pentagonal-series coefficients
+    (extracted from `PowerSeries.coeff_prod_one_sub_X_pow_eventually_eq` via
+    `Filter.eventually_atTop` on `Finset ℕ`); `deltaPacked_eq` transports the
+    24th-power chain into `ZMod P` against `(etaPoly d) ^ 24`; and
+    `tauOf_ne_zero_of_packed`: a nonzero residue mod the prime `P` certifies
+    `tauOf i ≠ 0`.
+* Engineering notes for future kernel-decide work (all confirmed the hard
+  way): `beq_iff_eq` turns the `==`-tests of kernel-decidable branch trees
+  into `=`-conditions; `omega` treats only *plain* atom products as linear —
+  nested-nonlinear (`g * (2*s - g)`) and variable-divisor (`n / g`)
+  hypotheses are opaque, so restructure via explicit div/mod lemmas;
+  `Nat.pow_succ` in this toolchain orients as `a^(n+1) = a^n * a` (watch
+  multiplication-order atoms); equation lemmas are only usable when match
+  patterns don't overlap (`takeF`, `convL` pattern orders matter).
+
+### Results
+
+* Modal (4 CPU / 32 GiB-request): module build including both kernel decides
+  (512 + 16384): **149 s wall, 17.46 GiB peak tree RSS** — the packed
+  pipeline holds the peak flat where the naive list arithmetic was already
+  at 24 GiB for 512 alone.
+* Local (7 GiB machine): the whole file minus the 16384 decide elaborates and
+  kernel-checks (the 512 decide included) in a few minutes.
+* The module joins `LehmerMod` outside the CI target list (kernel decides
+  need more RAM than a GitHub runner offers); it is verified on Modal via
+  `lean_check.py --file MathProof/Tau/LehmerPacked.lean`.
+
+### What remains / next steps
+
+* 65536: the residues are already known nonzero (Iteration 5 audit +
+  `BBenchPackedBal`), but the decide needs > 64 GiB — land it when a bigger
+  Modal container is authorized (the certificate-free design is otherwise
+  unchanged: `etaList 65536` slot bound still holds, `sqrtGuess` covers it).
+* If 65536 must fit in 32 GiB: widen slots (the digit-bound lemma is
+  parametric) or split the decide across declarations.

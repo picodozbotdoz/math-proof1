@@ -104,8 +104,17 @@ surface the limitation to the user instead of creating workarounds on Modal.
   (`decide +kernel`), raising the verified bound to `n ≤ 512`
   (`tau_ne_zero_of_le_512`, `tau_prime_ne_zero_of_le_512`); the 512 kernel
   decide needs ~5 min and >6 GB heap, so build this module on Modal (a 1024
-  attempt was measured at >71 GB heap — beyond the 32 GiB budget; raising the
-  bound further needs a reflected-certificate scheme, not more memory).
+  attempt was measured at >71 GB heap — beyond the 32 GiB budget; the way
+  past that wall is the packed route below, not more memory).
+- `MathProof/Tau/LehmerPacked.lean` — **packed-bignum** mod-`P` arithmetic:
+  each coefficient list packed into a single `Nat` in base `2^80` (balanced
+  fuel-structural pack/unpack), one GMP `Nat.mul` per dense product, entries
+  from Euler's pentagonal number theorem via a structural Newton isqrt.
+  Kernel-verified bound `n ≤ 16384` (`tau_ne_zero_of_le_16384`,
+  `tau_prime_ne_zero_of_le_16384`); soundness `deltaPacked_eq` +
+  `pentRes_eq` rides Mathlib's `Pentagonal.PowerSeries`.  The 16384
+  `decide +kernel` needs ~18 GiB heap: build on Modal only (like
+  `LehmerMod`, not in the CI target list).
 - `MathProof/Tau/CongruenceSmall.lean` — gap congruences mod 2 and 3:
   `τ n` even unless `n ≡ 1 [MOD 8]`, `3 ∣ τ n` unless `n ≡ 1 [MOD 3]`.
 - `docs/lehmer-mod-scaling-study.md` — measured analysis of why

@@ -16,11 +16,14 @@ See `docs/research-log.md` for the full log. Highlights:
 * `Ramanujan.tau_one` … `Ramanujan.tau_twenty_one` — the first 21 values of
   OEIS A000594, each verified by `decide`.
 * **Toward Lehmer's conjecture** (`Ramanujan.LehmerConjecture`):
-  `Ramanujan.tau_ne_zero_of_le_128` (over `ℤ`) and
-  `Ramanujan.tau_ne_zero_of_le_512` (mod `P = 999999937`, so intermediates
-  stay machine-word sized; kernel `decide`, ~5 min on the Modal builder) —
-  `τ n ≠ 0` for all `1 ≤ n ≤ 512`, verified entirely inside Lean's kernel
-  (no external CAS, no `native_decide`).
+  `Ramanujan.tau_ne_zero_of_le_128` (over `ℤ`), `Ramanujan.tau_ne_zero_of_le_512`
+  (mod `P = 999999937`, kernel `decide`), and
+  `Ramanujan.tau_ne_zero_of_le_16384` (packed-bignum arithmetic: each
+  coefficient list packed into one `Nat` in base `2^80`, one GMP `Nat.mul`
+  per dense product, entries from Euler's pentagonal number theorem;
+  `decide +kernel`) — `τ n ≠ 0` for all `1 ≤ n ≤ 16384`, verified entirely
+  inside Lean's kernel (no external CAS, no `native_decide`); the 16384
+  check needs ~16 GiB of kernel heap, so it is built on Modal, not in CI.
 * **Small-prime congruences** (`Ramanujan.tau_even_of_ne_one_mod_eight`,
   `Ramanujan.tau_zero_mod_three_of_ne_one_mod_three`): `τ n` is even unless
   `n ≡ 1 [MOD 8]`, and divisible by 3 unless `n ≡ 1 [MOD 3]` — by the
@@ -57,6 +60,7 @@ On a small machine, build remotely instead (see `AGENTS.md`):
 MathProof/Tau/Basic.lean        # τ: definition, stability, verified values
 MathProof/Tau/Lehmer.lean       # Lehmer's conjecture + verified bound 128
 MathProof/Tau/LehmerMod.lean    # mod-P arithmetic: verified bound 512
+MathProof/Tau/LehmerPacked.lean # packed-bignum mod-P arithmetic: verified bound 16384
 MathProof/Tau/CongruenceSmall.lean  # τ mod 2 and mod 3 gap congruences
 MathProof/Tau/Bridge.lean       # (qExpansion Δ).coeff n = τ(n)
 MathProof/ModularForms/Weight12.lean       # 691 • E₁₂ = 441 • E₄³ + 250 • E₆²
