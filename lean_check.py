@@ -16,11 +16,106 @@ Architecture (v2 — fixes the slow-volume failure mode):
 Usage:
     /home/doz/dozenv/bin/modal run lean_check.py \\
         [--target MathProof.Tau.CongruenceSmall] [--file MathProof/Tau/CongruenceSmall.lean]
+
+`--file` overlays that one file and (unless `--target` is also given) builds
+the module it defines.  Every run prints `[telemetry]` resource milestones and
+a final peak-RSS/CPU summary for the `lake` process tree.
 """
 
 import modal
 
 app = modal.App("mathproof-check")
+
+# ── Build telemetry ─────────────────────────────────────────────────────────
+# Watches the `lake` process tree while it runs: milestone lines on every >=10%
+# peak-RSS growth (streamed live, so they survive a container OOM kill), plus a
+# final summary with peak tree RSS, CPU seconds, and a decimated RSS curve.
+# Std-lib only — no image change, no new Modal resources.
+
+import os as _os
+import resource as _resource
+import subprocess as _subprocess
+import threading as _threading
+import time as _time
+
+_PAGE = _os.sysconf("SC_PAGE_SIZE")
+_CLK_TCK = _os.sysconf("SC_CLK_TCK")
+
+
+def _stat(pid):
+    """(ppid, cpu_ticks) for pid, or None if it vanished."""
+    try:
+        with open(f"/proc/{pid}/stat", "rb") as f:
+            data = f.read().decode()
+        fields = data[data.rfind(")") + 2:].split()  # from state (3rd field) on
+        return int(fields[1]), int(fields[11]) + int(fields[12])  # ppid, utime+stime
+    except Exception:
+        return None
+
+
+def _tree_snapshot(root_pid):
+    """(total_rss_bytes, total_cpu_seconds, n_procs) over the tree rooted at root_pid."""
+    infos = {}
+    for name in _os.listdir("/proc"):
+        if name.isdigit():
+            s = _stat(name)
+            if s is not None:
+                infos[int(name)] = s
+    kids = {}
+    for pid, (ppid, _) in infos.items():
+        kids.setdefault(ppid, []).append(pid)
+    rss = cpu = n = 0
+    stack, seen = [root_pid], set()
+    while stack:
+        pid = stack.pop()
+        if pid in seen:
+            continue
+        seen.add(pid)
+        stack.extend(kids.get(pid, ()))
+        try:
+            with open(f"/proc/{pid}/statm") as f:
+                rss += int(f.read().split()[1]) * _PAGE
+        except Exception:
+            pass
+        cpu += infos[pid][1]
+        n += 1
+    return rss, cpu / _CLK_TCK, n
+
+
+def run_monitored(cmd):
+    """`subprocess.run(cmd)` (stdout inherited) plus resource telemetry."""
+    t0 = _time.monotonic()
+    proc = _subprocess.Popen(cmd)
+    samples = []
+    last_milestone = 0
+    while proc.poll() is None:
+        rss, cpu, n = _tree_snapshot(proc.pid)
+        samples.append((_time.monotonic() - t0, rss, cpu, n))
+        if rss >= last_milestone * 1.10:  # milestone on >=10% growth
+            last_milestone = max(last_milestone, rss)
+            print(f"[telemetry] t={samples[-1][0]:7.1f}s  rss={rss / 2**30:6.2f} GiB  "
+                  f"cpu={cpu:6.0f}s  procs={n}", flush=True)
+        _time.sleep(1.0)
+    rc = proc.returncode
+    wall = _time.monotonic() - t0
+    peak = max((s[1] for s in samples), default=0)
+    last = samples[-1] if samples else (0, 0, 0, 0)
+    try:
+        child_peak = _resource.getrusage(_resource.RUSAGE_CHILDREN).ru_maxrss / 2**20
+    except Exception:
+        child_peak = float("nan")
+    print("─" * 66, flush=True)
+    print(f"[telemetry] wall={wall:.0f}s  peak_tree_rss={peak / 2**30:.2f} GiB  "
+          f"final_cpu={last[2]:.0f}s  samples={len(samples)}  rc={rc}", flush=True)
+    print(f"[telemetry] children ru_maxrss={child_peak:.2f} GiB", flush=True)
+    if len(samples) > 2:
+        step = max(1, len(samples) // 24)
+        print("[telemetry] rss curve (decimated, t:GiB): "
+              + "  ".join(f"{s[0]:.0f}:{s[1] / 2**30:.2f}" for s in samples[::step]), flush=True)
+    print("─" * 66, flush=True)
+    return rc
+
+# ────────────────────────────────────────────────────────────────────────────
 
 # Same image definition as lean_build.py (layer cache is shared across apps).
 image = (
@@ -106,34 +201,44 @@ def check(files: dict, target: str, repo_url: str = "https://github.com/picodozb
     if target:
         cmd.append(target)
     print(f"$ {' '.join(cmd)}")
-    r = subprocess.run(cmd)
+    rc = run_monitored(cmd)
 
     print(f"elapsed: {time.time() - t0:.0f}s")
-    if r.returncode != 0:
+    if rc != 0:
         raise SystemExit(f"BUILD FAILED for target: {target or 'full project'}")
     print(f"OK: target {target or 'full project'}")
 
 
 @app.local_entrypoint()
 def main(
-    target: str = "MathProof.Tau.CongruenceSmall",
+    target: str = "",
     file: str = "",
 ):
     from pathlib import Path
+    import subprocess as sp
+
+    # Overlay every locally-modified / untracked file that affects the build:
+    # any .lean file in the repo, plus lakefile.toml (so config changes are
+    # testable without pushing).  lean_build.py covers the pushed state.
     files = {}
+    out = sp.run(
+        ["git", "status", "--porcelain", "--untracked-files=all"],
+        capture_output=True, text=True, check=True,
+    ).stdout
+    for line in out.splitlines():
+        path = line[3:].strip()
+        if path.endswith(".lean") or path == "lakefile.toml":
+            files[path] = Path(path).read_text()
+
     if file:
         files[file] = Path(file).read_text()
-    else:
-        # default: overlay every locally-modified MathProof file
-        import subprocess as sp
-        out = sp.run(
-            ["git", "status", "--porcelain"],
-            capture_output=True, text=True, check=True,
-        ).stdout
-        for line in out.splitlines():
-            path = line[3:].strip()
-            if path.endswith(".lean"):
-                files[path] = Path(path).read_text()
+        if not target:
+            # --file implies building that module (MathProof/Tau/Foo.lean ->
+            # MathProof.Tau.Foo; Bench/Packed/Bar.lean -> Bench.Packed.Bar).
+            target = file.removesuffix(".lean").replace("/", ".")
+
+    if not target:
         if not files:
-            raise SystemExit("no local MathProof changes found; pass --file")
+            raise SystemExit("no local changes found; pass --file or --target")
+        target = "MathProof.Tau.CongruenceSmall"
     check.remote(files=files, target=target)
