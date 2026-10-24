@@ -25,11 +25,11 @@ O(d) kernel big-operations instead of Θ(d ^ 2) list-cell reduction steps
   convolutions, given the slot bound `d · (P - 1) ^ 2 < 2 ^ 80`), and
   (b) Mathlib's pentagonal number theorem
   (`PowerSeries.coeff_pentagonalSeries_pentagonal`).
-* `Ramanujan.tau_ne_zero_of_le_16384`: `τ n ≠ 0` for all `1 ≤ n ≤ 16384`,
-  verified by `decide +kernel` inside Lean's kernel alone (no `native_decide`,
-  no external CAS).  The residues are nonzero through `n ≤ 65536` (benchmark
-  `Bench.Packed.BBenchPackedBal`), so the bound can ratchet later on bigger
-  Modal memory.
+* `Ramanujan.tau_ne_zero_of_le_16384` and `Ramanujan.tau_ne_zero_of_le_65536`:
+  `τ n ≠ 0` for all `1 ≤ n ≤ 65536`, verified by `decide +kernel` inside
+  Lean's kernel alone (no `native_decide`, no external CAS).  The 16384
+  decide needs ~18 GiB and the 65536 one ~60 GiB of kernel heap, so this
+  module is built on Modal, never in CI.
 -/
 
 namespace Ramanujan
@@ -1235,5 +1235,26 @@ theorem tau_ne_zero_of_le_16384 {n : ℕ} (h1 : 1 ≤ n) (h2 : n ≤ 16384) : ta
 theorem tau_prime_ne_zero_of_le_16384 {p : ℕ} (hp : p.Prime) (hle : p ≤ 16384) :
     tau p ≠ 0 :=
   tau_ne_zero_of_le_16384 (Nat.Prime.pos hp) hle
+
+-- The 65536 decide needs ~60 GiB of kernel heap: build on the Modal builder
+-- only, never in CI (see docs/lehmer-mod-scaling-study.md and
+-- Bench/Packed/BBenchPackedBal.lean).
+set_option maxHeartbeats 8000000 in
+theorem packed_nonvanishing_65536 : allNonzero (pow24Packed (etaList 65536)) = true := by
+  decide +kernel
+
+/-- **Lehmer's conjecture holds up to 65536**: `τ n ≠ 0` for all `1 ≤ n ≤ 65536`,
+verified entirely inside Lean's kernel by the packed-bignum pipeline. -/
+theorem tau_ne_zero_of_le_65536 {n : ℕ} (h1 : 1 ≤ n) (h2 : n ≤ 65536) : tau n ≠ 0 := by
+  have hlen : (pow24Packed (etaList 65536)).length = 65536 := by
+    rw [pow24Packed_length, etaList_length]
+  have h := allNonzero_iff.mp packed_nonvanishing_65536 (n - 1) (by rw [hlen]; omega)
+  change tauOf (n - 1) ≠ 0
+  exact tauOf_ne_zero_of_packed (le_refl _) (by omega) h
+
+/-- `τ p ≠ 0` for every prime `p ≤ 65536`. -/
+theorem tau_prime_ne_zero_of_le_65536 {p : ℕ} (hp : p.Prime) (hle : p ≤ 65536) :
+    tau p ≠ 0 :=
+  tau_ne_zero_of_le_65536 (Nat.Prime.pos hp) hle
 
 end Ramanujan

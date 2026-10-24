@@ -23,6 +23,7 @@ a final peak-RSS/CPU summary for the `lake` process tree.
 """
 
 import modal
+import os
 
 app = modal.App("mathproof-check")
 
@@ -153,10 +154,17 @@ image = (
 )
 
 
+# Memory request (MiB) is overridable per run via env var, e.g. big kernel
+# decides need more than the 32 GiB default:
+#   LEAN_CHECK_MEMORY_MIB=98304 modal run lean_check.py --file ...
+# (Modal's memory= is a soft request; see docs/lehmer-mod-scaling-study.md.)
+_CHECK_MEMORY_MIB = int(os.environ.get("LEAN_CHECK_MEMORY_MIB", "32768"))
+
+
 @app.function(
     image=image,
     cpu=2.0,
-    memory=32768,
+    memory=_CHECK_MEMORY_MIB,
     timeout=2 * 60 * 60,
 )
 def check(files: dict, target: str, repo_url: str = "https://github.com/picodozbotdoz/math-proof1.git"):
