@@ -60,7 +60,7 @@ image = (
 
 @app.function(
     image=image,
-    cpu=4.0,
+    cpu=2.0,
     memory=32768,
     timeout=2 * 60 * 60,
 )

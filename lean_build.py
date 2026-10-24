@@ -45,7 +45,7 @@ image = (
 
 @app.function(
     image=image,
-    cpu=4.0,                 # 4 physical cores = 8 vCPU
+    cpu=2.0,                 # 4 physical cores = 8 vCPU --> reduce to 2 due to idle cpu
     memory=32768,            # 32 GiB RAM: kernel-heavy `decide`s need headroom
     timeout=4 * 60 * 60,     # 4-hour ceiling for the build
     startup_timeout=600,
