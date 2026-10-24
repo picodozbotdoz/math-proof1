@@ -260,3 +260,72 @@ mod 2, `(1 − T)^24 = ((1 − T)^8)^3 = (1 − T^8)^3` (freshman's dream), so
   conjecture searches (most residue classes mod 24 are forced divisible by 2
   or 3, but divisibility does not force vanishing — they are search filters,
   not nonvanishing evidence).
+
+---
+
+## Iteration 5 (study) — Why LehmerMod dies at 1024, and the packed-bignum route to 65536
+
+**Status: study + kernel benchmarks complete; no new theorems landed yet.
+2026-10-24.**  Full write-up: `docs/lehmer-mod-scaling-study.md`.
+
+### The problem
+
+Iteration 3's kernel-verified nonvanishing bound (`τ n ≠ 0` for `n ≤ 512`,
+`decide +kernel` on mod-`P` list arithmetic) could not be pushed to 1024: the
+kernel heap exceeded 71 GB on a 32 GiB container.  This iteration measured
+*why*, evaluated the externally suggested fixes, benchmarked two alternatives,
+and specified the next iteration's design.
+
+### What this iteration contributes
+
+* **Build telemetry** for the Modal scripts (`lean_check.py`, `lean_build.py`):
+  live `[telemetry]` peak-RSS/CPU milestones and a final summary for the `lake`
+  process tree (std-lib-only; no Modal resources added; image untouched).
+  Also: `--file X.lean` now builds module `X` (previously it silently built the
+  default target).
+* **Root cause, measured** (2 CPU / 32 GiB-request containers):
+  * 512 (current code): **24.1 GiB peak**, 186 s module build — already at 75 %
+    of budget.
+  * 768 (unforced): dead at **> 39.5 GiB / > 363 s** with `(kernel)
+    deterministic timeout`.
+  * 1024 with strict-forcing gates: dead at **> 34.6 GiB / > 305 s** — forcing
+    helps ~2–3× relatively but cannot rescue the list representation: the
+    kernel's lazy evaluator retains every unevaluated suspension (a
+    constant-live-set probe, `BBenchBurn.lean`, confirmed RSS ∝ total
+    reduction steps — ~0.6–4 KB/step — released only at declaration
+    boundaries), and multi-minute `decide +kernel`s additionally hit the
+    default `maxHeartbeats` kernel cap (200000 ≈ 200 s; `Lean/CoreM.lean`,
+    `addDeclCore`).
+* **Verdicts on the external commentary**: `native_decide` rejected (project
+  rule, and unnecessary); truncation/tail-recursion ineffective (lazy kernel —
+  it's retention, not stack); `UInt64` misdiagnosed (kernel fast path is
+  GMP-`Nat`, values already single-limb); external poly libs moot.  One more
+  negative result: **point-evaluation certificates are unsound** for truncated
+  series identities (evaluation aliases coefficients mod d; would certify
+  `Σ_k f_{i+kd}`, not `f_i`).
+* **The fix, benchmarked**: *packed-bignum arithmetic* — one `Nat` per
+  coefficient list in base `2^80`, one GMP `Nat.mul` per dense convolution,
+  η's entry list from Euler's pentagonal number theorem (in Mathlib,
+  coefficient-wise).  v1 (linear pack/unpack) verified **1024 + 4096 + 16384
+  in 174 s** of kernel time, peak 41.3 GiB (soft-cap overage; linear
+  recursions still retain Θ(d²) bits).  v2 (balanced-tree pack/unpack,
+  `BBenchPackedBal.lean`; isolated packing is 3.4× lighter at 16384 — 1.0 GiB
+  vs 3.4 GiB, `BBenchPack.lean`) verified **16384 + 65536 in 662 s**, peak
+  60.1 GiB: 65536 is kernel-verifiable but needs > 64 GiB; the landable bound
+  on the current 32 GiB budget is **16384** (a 32× improvement over 512).
+* **Certificate data**: `tools/gen_packed_bench.py` (dependency-free numpy,
+  exact 15-bit-split convolutions) generates the η residues and cross-checks
+  τ against the 21 kernel-verified values of `Basic.lean`; it audits that all
+  τ residues mod `P` are nonzero through **n = 65536** — the bound the next
+  iteration can certify.
+
+### What remains / next steps
+
+* Formalize `MathProof/Tau/LehmerPacked.lean` per study §6: packing lemmas
+  (digits of a product = convolutions, slot bound 2^76 < 2^80), balanced
+  pack/unpack correctness (fuel induction), pentagonal entry list via
+  `Mathlib.Combinatorics.Enumerative.Pentagonal.PowerSeries`, transport into
+  `ZMod P` mirroring `L2PMod`, and `tau_ne_zero_of_le_65536` (or 16384 first).
+  All elementary; no analysis.
+* Housekeeping: lift `maxHeartbeats` in any file with multi-minute kernel
+  decides; keep `LehmerMod.lean` (512) as the CI smoke check.
