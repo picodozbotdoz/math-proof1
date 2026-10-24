@@ -18,3 +18,11 @@ rev = "v4.36.0-rc1"
 [[lean_lib]]
 name = "MathProof"
 allowNonModules = true # classic-style files; suppresses the "consider module" warning
+
+# Scaling-study benchmarks (see Bench/README.md) — deliberately OUTSIDE the
+# proof library: never imported by MathProof.lean, never built by the default
+# target or CI.  Build explicitly, e.g.
+#   lake build Bench.Packed.BBenchPackedBal
+[[lean_lib]]
+name = "Bench"
+allowNonModules = true

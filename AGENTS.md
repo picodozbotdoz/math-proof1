@@ -20,7 +20,8 @@ venv; bare `python3` cannot import `modal`).
 
 - **Iterate with `lean_check.py`** (app `mathproof-check`): fresh-clones the
   GitHub repo, overlays every locally modified *or untracked* `.lean` file
-  (or just `--file <path>`), symlinks the baked warm dependency tree into
+  (or just `--file <path>` — which also *builds* that file's module unless
+  `--target` says otherwise), symlinks the baked warm dependency tree into
   `.lake/packages`, and builds one target on the container's local disk.
   No push needed (~1 min round trip):
 
@@ -28,6 +29,15 @@ venv; bare `python3` cannot import `modal`).
   /home/doz/dozenv/bin/modal run lean_check.py --target MathProof.Tau.CongruenceSmall
   /home/doz/dozenv/bin/modal run lean_check.py --file MathProof/Tau/SomeFile.lean
   ```
+
+  **Telemetry**: both scripts print `[telemetry]` resource lines for the
+  `lake` process tree — live peak-RSS milestones (≥10 % growth) and a final
+  `wall / peak_tree_rss / CPU / children ru_maxrss` summary plus a decimated
+  RSS curve. Std-lib only; no Modal resources involved. Two measured caveats:
+  Modal `memory=` is a *soft* request (a "32 GiB" container was observed at
+  60 GiB RSS), and multi-minute `decide +kernel`s need
+  `set_option maxHeartbeats <large>` or the kernel dies with
+  `(kernel) deterministic timeout` (default 200000 ≈ 200 s of kernel work).
 
 - **Full / final build with `lean_build.py`** (app `math-proof1-build`):
   builds the pushed GitHub state (`picodozbotdoz/math-proof1`);
@@ -98,6 +108,15 @@ surface the limitation to the user instead of creating workarounds on Modal.
   bound further needs a reflected-certificate scheme, not more memory).
 - `MathProof/Tau/CongruenceSmall.lean` — gap congruences mod 2 and 3:
   `τ n` even unless `n ≡ 1 [MOD 8]`, `3 ∣ τ n` unless `n ≡ 1 [MOD 3]`.
+- `docs/lehmer-mod-scaling-study.md` — measured analysis of why
+  `LehmerMod.lean` cannot pass 512 (kernel retention + heartbeat cap) and the
+  benchmarked packed-bignum route to 16384–65536 (Iteration 5 study).
+- `Bench/` — the study's benchmark modules in a dedicated library
+  (`Bench` in `lakefile.toml`), **not part of the proof library**: never
+  imported by `MathProof.lean`, never built by default or CI.  See
+  `Bench/README.md` (which modules pass, which fail *by design*, and costs).
+  `tools/gen_packed_bench.py` generates the packed-benchmark data (verified
+  against the kernel-checked τ values).
 - `MathProof/Tau/Bridge.lean` — the analytic bridge: `(qExpansion 1 Δ).coeff n = τ n`
   for Mathlib's analytic discriminant `Δ`.
 - `MathProof/ModularForms/Weight12.lean` — Ramanujan's weight-12 identity
