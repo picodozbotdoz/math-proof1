@@ -146,23 +146,27 @@ the Ramanujan τ numbers with the Fourier coefficients of Δ.
 
 ### What remains / next steps
 
-* **Other classical congruences**: `τ(n) ≡ σ₁₁(n)` holds mod 691; the
-  companion congruences mod 2 (`τ(n) ≡ σ₁₁(n) mod 2`) and mod 3 follow
-  from the same weight-12 identities and would be easy additions.
+* **Other classical congruences**: 691 is the only prime for which
+  `τ(n) ≡ σ₁₁(n)` holds identically — the naive mod-2 and mod-3 companions
+  are *false* (`τ(4) = −1472` is even while `σ₁₁(4) = 1 + 4¹¹` is odd;
+  `τ(3) = 252 ≡ 0 [MOD 3]` while `σ₁₁(3) = 1 + 3¹¹ ≡ 1 [MOD 3]`).  The
+  correct small-prime statements are the gap congruences of Iteration 4,
+  which supersede this item.
 * **Mordell multiplicativity** `τ(mn) = τ(m)τ(n)` for coprime `m, n` —
   the natural next theorem toward Lehmer's conjecture (Iteration 1).
 * **Higher level**: congruences for coefficients of `Δ` mod other primes
   involve level-1 Hecke theory; the q-expansion infrastructure built here
   (form-level `qExpansion_smul/sub/add`, integrality lemmas) generalizes.
-* **Lehmer's conjecture** (Iteration 1): the bridge now connects the
-  kernel-verified nonvanishing bound `τ(n) ≠ 0, n ≤ 256` to the analytic
-  Δ; raising the bound via reflected certificates remains open.
+* **Lehmer's conjecture** (Iteration 1): the bridge connects the
+  kernel-verified nonvanishing bound (see Iteration 3, now `n ≤ 512`) to
+  the analytic Δ.
 
 ---
 
-## Iteration 3 — Lehmer's conjecture: the verified bound doubled by mod-p arithmetic
+## Iteration 3 — Lehmer's conjecture: the verified bound raised 128 → 512 by mod-p arithmetic
 
-**Status: complete.  2026-10-24.**
+**Status: complete; bound extended 256 → 512 after moving builds to Modal.
+2026-10-24.**
 
 ### The problem
 
@@ -183,22 +187,37 @@ Iteration 1's `L2P`), and `tauOf_ne_zero_of_mod` formalizes the certificate
 principle: *a nonzero residue mod a prime certifies the integer coefficient
 is nonzero* — no magnitude bound on `τ` is needed.
 
-* `deltaCoeffsMod_256_nonvanishing`, checked by `decide +kernel` (the
+* `deltaCoeffsMod_512_nonvanishing`, checked by `decide +kernel` (the
   kernel-only variant: the default elaborator-side re-evaluation of `decide`
-  degrades pathologically under GC pressure at this size).  Axioms:
-  `[propext]` only.
-* `tau_ne_zero_of_le_256` / `tau_prime_ne_zero_of_le_256` (the first 54
-  primes): the formally verified nonvanishing bound for `τ` doubles from
-  128 to **256**.
+  degrades pathologically under GC pressure at this size).  Smaller bounds
+  (16 / 256) are kept as fast smoke checks and derived consequences.
+* `tau_ne_zero_of_le_512` / `tau_prime_ne_zero_of_le_512` (the first 97
+  primes): the formally verified nonvanishing bound for `τ` is now **512**,
+  a 4× improvement over Iteration 1's integer-arithmetic bound of 128.
+
+### Resource history (why the bound moved)
+
+* 128 over `ℤ` (Iteration 1): local machine, ~2 CPU-min kernel time.
+* 256 mod `P` (this iteration, local): a 512 attempt died there — the
+  kernel evaluation holds a heap of shared subterms growing superquadratically
+  in the bound, and a 7 GB machine collapses into GC thrash around 6 GB.
+* 512 (~5 min) on a 4-core / 32 GiB Modal container: same code, no changes —
+  only the execution environment moved.
+* 1024 was attempted and **abandoned with a measurement**: the kernel heap
+  exceeded 71 GB (>2× the container budget), and the run was preempted.
+  The naive kernel evaluation therefore tops out at 512 on a 32 GiB budget.
+* `tau_ne_zero_of_le_256` (local run) was confirmed by `#print axioms` to
+  depend on `[propext]` alone.
 
 ### What remains / next steps
 
-* The bound is limited by kernel-evaluation memory (~6 GB heap at 256 on
-  this machine), not by the mathematics.  A reflected certificate scheme
-  (verify convolution identities inside the kernel instead of recomputing)
-  is the route to 10^4+; see Iteration 5 ideas in Iteration 1's log.
-* Computation on a bigger machine (e.g. the Modal builder image, 32 GiB)
-  can push the same `decide +kernel` further with zero code changes.
+* The next hard wall is time/memory of the naive kernel evaluation
+  (~quadratic in the bound).  A reflected certificate scheme (check
+  convolution identities inside the kernel instead of recomputing them)
+  is the route to 10^4+; the Modal image removes the memory constraint but
+  not the asymptotics.
+* Literature computational bounds are far beyond 10^10 (unverified);
+  formal verification at that scale needs the certificate approach.
 
 ---
 

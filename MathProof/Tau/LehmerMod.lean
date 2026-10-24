@@ -414,15 +414,36 @@ evaluates the verified list arithmetic directly. -/
 theorem deltaCoeffsMod_256_nonvanishing : allNonzeroModLt 256 (deltaCoeffsMod 256) = true := by
   decide +kernel
 
-/-- **Lehmer's conjecture holds up to 256**: `τ n ≠ 0` for all `1 ≤ n ≤ 256`. -/
-theorem tau_ne_zero_of_le_256 {n : ℕ} (h1 : 1 ≤ n) (h2 : n ≤ 256) : tau n ≠ 0 := by
-  have h := allNonzeroModLt_eq_true_iff.mp deltaCoeffsMod_256_nonvanishing (n - 1) (by omega)
+/-- **Verified non-vanishing of `τ` up to 512.**  (1024 is out of reach of
+the naive kernel evaluation: its heap exceeds 71 GB; see the note at
+`tau_ne_zero_of_le_512`.) -/
+theorem deltaCoeffsMod_512_nonvanishing : allNonzeroModLt 512 (deltaCoeffsMod 512) = true := by
+  decide +kernel
+
+/-- **Lehmer's conjecture holds up to 512**: `τ n ≠ 0` for all `1 ≤ n ≤ 512`.
+
+This is the practical ceiling of the naive kernel evaluation on a 32 GiB
+machine: the kernel's heap of shared subterms grows superquadratically in
+the bound (256 fits in ~6 GB, 512 comfortably under 32 GB, but a 1024
+attempt was observed to exceed 71 GB).  Pushing further needs a
+reflected-certificate scheme, not more memory. -/
+theorem tau_ne_zero_of_le_512 {n : ℕ} (h1 : 1 ≤ n) (h2 : n ≤ 512) : tau n ≠ 0 := by
+  have h := allNonzeroModLt_eq_true_iff.mp deltaCoeffsMod_512_nonvanishing (n - 1) (by omega)
   change tauOf (n - 1) ≠ 0
   exact tauOf_ne_zero_of_mod (by omega) h
+
+/-- `τ p ≠ 0` for every prime `p ≤ 512` (the first 97 primes). -/
+theorem tau_prime_ne_zero_of_le_512 {p : ℕ} (hp : p.Prime) (hle : p ≤ 512) :
+    tau p ≠ 0 :=
+  tau_ne_zero_of_le_512 (Nat.Prime.pos hp) hle
 
 /-- `τ p ≠ 0` for every prime `p ≤ 256` (the first 54 primes). -/
 theorem tau_prime_ne_zero_of_le_256 {p : ℕ} (hp : p.Prime) (hle : p ≤ 256) :
     tau p ≠ 0 :=
-  tau_ne_zero_of_le_256 (Nat.Prime.pos hp) hle
+  tau_prime_ne_zero_of_le_512 hp (by omega)
+
+/-- **Lehmer's conjecture holds up to 256**: `τ n ≠ 0` for all `1 ≤ n ≤ 256`. -/
+theorem tau_ne_zero_of_le_256 {n : ℕ} (h1 : 1 ≤ n) (h2 : n ≤ 256) : tau n ≠ 0 :=
+  tau_ne_zero_of_le_512 h1 (by omega)
 
 end Ramanujan

@@ -91,8 +91,11 @@ surface the limitation to the user instead of creating workarounds on Modal.
 - `MathProof/Tau/Lehmer.lean` — Lehmer's conjecture: `tau_ne_zero_of_le_128`
   (kernel-verified nonvanishing over `ℤ` for `n ≤ 128`).
 - `MathProof/Tau/LehmerMod.lean` — same list arithmetic mod `P = 999999937`
-  (`decide +kernel`), raising the verified bound to `n ≤ 256`
-  (`tau_ne_zero_of_le_256`).
+  (`decide +kernel`), raising the verified bound to `n ≤ 512`
+  (`tau_ne_zero_of_le_512`, `tau_prime_ne_zero_of_le_512`); the 512 kernel
+  decide needs ~5 min and >6 GB heap, so build this module on Modal (a 1024
+  attempt was measured at >71 GB heap — beyond the 32 GiB budget; raising the
+  bound further needs a reflected-certificate scheme, not more memory).
 - `MathProof/Tau/CongruenceSmall.lean` — gap congruences mod 2 and 3:
   `τ n` even unless `n ≡ 1 [MOD 8]`, `3 ∣ τ n` unless `n ≡ 1 [MOD 3]`.
 - `MathProof/Tau/Bridge.lean` — the analytic bridge: `(qExpansion 1 Δ).coeff n = τ n`

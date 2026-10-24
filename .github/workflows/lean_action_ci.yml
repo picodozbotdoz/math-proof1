@@ -17,5 +17,20 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
+      # Build every module EXCEPT MathProof.Tau.LehmerMod: its kernel
+      # `decide +kernel` nonvanishing checks need ~20 GB of heap (1024 bound),
+      # far beyond the 7 GB a GitHub runner offers.  LehmerMod is verified on
+      # the Modal builder instead (see AGENTS.md): `modal run lean_build.py`.
       - uses: leanprover/lean-action@v1
+        with:
+          build-args: >-
+            MathProof.Tau.Basic
+            MathProof.Tau.Lehmer
+            MathProof.Tau.CongruenceSmall
+            MathProof.Tau.Bridge
+            MathProof.ModularForms.Congruence691
+      # GitHub Pages is not enabled on this repository, so the docgen deploy
+      # step always fails today; keep it non-fatal until Pages is switched on
+      # (Settings -> Pages -> Source: GitHub Actions), then drop this flag.
       - uses: leanprover-community/docgen-action@v1
+        continue-on-error: true
