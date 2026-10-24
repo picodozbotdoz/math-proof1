@@ -110,11 +110,14 @@ surface the limitation to the user instead of creating workarounds on Modal.
   each coefficient list packed into a single `Nat` in base `2^80` (balanced
   fuel-structural pack/unpack), one GMP `Nat.mul` per dense product, entries
   from Euler's pentagonal number theorem via a structural Newton isqrt.
-  Kernel-verified bound `n ≤ 16384` (`tau_ne_zero_of_le_16384`,
-  `tau_prime_ne_zero_of_le_16384`); soundness `deltaPacked_eq` +
-  `pentRes_eq` rides Mathlib's `Pentagonal.PowerSeries`.  The 16384
-  `decide +kernel` needs ~18 GiB heap: build on Modal only (like
-  `LehmerMod`, not in the CI target list).
+  Kernel-verified bound `n ≤ 65536` (`tau_ne_zero_of_le_65536`,
+  `tau_prime_ne_zero_of_le_65536`; also the 16384 versions); soundness
+  `deltaPacked_eq` + `pentRes_eq` rides Mathlib's `Pentagonal.PowerSeries`.
+  The kernel decides need ~18 GiB (16384) / ~63 GiB (65536) of heap: build on
+  Modal only (like `LehmerMod`, not in the CI target list); for the 65536
+  decide override the check container's memory, e.g.
+  `LEAN_CHECK_MEMORY_MIB=98304 modal run lean_check.py --file
+  MathProof/Tau/LehmerPacked.lean`.
 - `MathProof/Tau/CongruenceSmall.lean` — gap congruences mod 2 and 3:
   `τ n` even unless `n ≡ 1 [MOD 8]`, `3 ∣ τ n` unless `n ≡ 1 [MOD 3]`.
 - `docs/lehmer-mod-scaling-study.md` — measured analysis of why

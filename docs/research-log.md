@@ -330,18 +330,19 @@ and specified the next iteration's design.
 * Housekeeping: lift `maxHeartbeats` in any file with multi-minute kernel
   decides; keep `LehmerMod.lean` (512) as the CI smoke check.
 
-## Iteration 6 — Lehmer's conjecture: the verified bound raised 512 → 16384 by packed-bignum kernel arithmetic
+## Iteration 6 — Lehmer's conjecture: the verified bound raised 512 → 65536 by packed-bignum kernel arithmetic
 
 **Status: complete. 2026-10-24.**  Implements the route specified by the
 Iteration 5 study (§6); development notes in `docs/lehmerpacked-plan.md`.
 
 ### What this iteration contributes
 
-* `MathProof/Tau/LehmerPacked.lean` — **`Ramanujan.tau_ne_zero_of_le_16384`**:
-  `τ n ≠ 0` for all `1 ≤ n ≤ 16384`, verified entirely inside Lean's kernel
-  (`decide +kernel`; no `native_decide`, no external CAS).  A 32× improvement
+* `MathProof/Tau/LehmerPacked.lean` — **`Ramanujan.tau_ne_zero_of_le_65536`**:
+  `τ n ≠ 0` for all `1 ≤ n ≤ 65536`, verified entirely inside Lean's kernel
+  (`decide +kernel`; no `native_decide`, no external CAS).  A 128× improvement
   over Iteration 3's bound of 512, and the first bound past the naive mod-P
-  list-arithmetic wall (>71 GiB at 1024).
+  list-arithmetic wall (>71 GiB at 1024).  (The 16384 intermediate
+  `tau_ne_zero_of_le_16384` is landed alongside.)
 * The packed-bignum pipeline, fully proved:
   * `etaList d` — the coefficients of `∏ (1 - X ^ m)` mod `P`, computed
     coefficient-wise from Euler's pentagonal number theorem: each entry is
@@ -376,10 +377,12 @@ Iteration 5 study (§6); development notes in `docs/lehmerpacked-plan.md`.
 
 ### Results
 
-* Modal (4 CPU / 32 GiB-request): module build including both kernel decides
-  (512 + 16384): **149 s wall, 17.46 GiB peak tree RSS** — the packed
-  pipeline holds the peak flat where the naive list arithmetic was already
-  at 24 GiB for 512 alone.
+* Modal kernel decides, measured: 512+16384 module build = **149 s wall,
+  17.46 GiB peak tree RSS** (4 CPU / 32 GiB-request); adding the 65536
+  decide = **570 s wall, 62.85 GiB peak** (2 CPU / 96 GiB-request via the
+  new `LEAN_CHECK_MEMORY_MIB` override in `lean_check.py`) — the packed
+  pipeline scales where the naive list arithmetic was already at 24 GiB for
+  512 alone.
 * Local (7 GiB machine): the whole file minus the 16384 decide elaborates and
   kernel-checks (the 512 decide included) in a few minutes.
 * The module joins `LehmerMod` outside the CI target list (kernel decides
@@ -388,9 +391,10 @@ Iteration 5 study (§6); development notes in `docs/lehmerpacked-plan.md`.
 
 ### What remains / next steps
 
-* 65536: the residues are already known nonzero (Iteration 5 audit +
-  `BBenchPackedBal`), but the decide needs > 64 GiB — land it when a bigger
-  Modal container is authorized (the certificate-free design is otherwise
-  unchanged: `etaList 65536` slot bound still holds, `sqrtGuess` covers it).
-* If 65536 must fit in 32 GiB: widen slots (the digit-bound lemma is
-  parametric) or split the decide across declarations.
+* Past 65536: the slot base `2^80` saturates (`convSum_lt` is stated exactly
+  for `length ≤ 65536`); the next doubling needs wider slots (the digit-bound
+  lemma is parametric) or a two-level packing — plus ~128 GiB containers.
+* Lehmer's conjecture itself remains open (no zero of τ is known at any
+  index); literature verifications go far past 65536, but they trust CAS
+  output — the point of this stack is that every step is checked by Lean's
+  kernel alone.

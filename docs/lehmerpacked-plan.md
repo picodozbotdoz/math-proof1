@@ -1,14 +1,15 @@
 # LehmerPacked.lean — iteration 6: COMPLETE
 
-**Outcome:** `Ramanujan.tau_ne_zero_of_le_16384` landed in
-`MathProof/Tau/LehmerPacked.lean` — `τ n ≠ 0` for all `1 ≤ n ≤ 16384`,
+**Outcome:** `Ramanujan.tau_ne_zero_of_le_65536` landed in
+`MathProof/Tau/LehmerPacked.lean` — `τ n ≠ 0` for all `1 ≤ n ≤ 65536`,
 kernel-verified (`decide +kernel`) via the packed-bignum mod-P pipeline
 (soundness: `pentRes_eq`, `packedMul_getD`, `deltaPacked_eq`,
 `tauOf_ne_zero_of_packed`; entry soundness rides Mathlib's pentagonal number
-theorem).  The 16384 decide runs on Modal only (measured: module build with both
-kernel decides = 149 s wall, 17.46 GiB peak tree RSS, 4 CPU / 32 GiB-request);
-the module is outside the CI target list like `LehmerMod`.  65536 is proved
-feasible by `Bench/Packed/BBenchPackedBal.lean` but needs > 64 GiB.
+theorem).  The kernel decides run on Modal only (measured: 512+16384 module
+build = 149 s wall / 17.46 GiB peak, 4 CPU / 32 GiB-request; adding the
+65536 decide = 570 s wall / 62.85 GiB peak, 2 CPU / 96 GiB-request via
+`LEAN_CHECK_MEMORY_MIB=98304`); the module is outside the CI target list
+like `LehmerMod`.
 
 Verification commands:
 
