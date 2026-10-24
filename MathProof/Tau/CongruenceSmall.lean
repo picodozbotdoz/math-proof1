@@ -20,7 +20,8 @@ Consequently (classical congruences going back to Ramanujan):
 
 * `Ramanujan.tau_even_of_ne_one_mod_eight` : `τ n` is **even** unless `n ≡ 1 [MOD 8]`;
 * `Ramanujan.tau_zero_mod_three_of_ne_one_mod_three` : `3 ∣ τ n` unless `n ≡ 1 [MOD 3]`;
-* `Ramanujan.tau_dvd_six_of` : `6 ∣ τ n` when `n ≢ 1` modulo both 8 and 3.
+* `Ramanujan.tau_div_two_and_three_of` : both divisibilities at once (hence
+  `6 ∣ τ n` when `n ≢ 1` modulo both 8 and 3, since 2 and 3 are coprime).
 
 The full characterization "`τ n` is odd ⟺ `n` is an odd square" additionally
 requires Jacobi's identity `∏ (1 - q ^ m) ^ 3 = ∑ (-1)^k (2k+1) q ^ (k(k+1)/2)`
