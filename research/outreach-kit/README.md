@@ -5,9 +5,13 @@ Lean / mathematics community. Work through it top to bottom; nothing here
 requires more than a few minutes each. Steps 1–2 are done on github.com,
 steps 3–4 are files in this repo, step 5 is a post you publish.
 
-- [ ] 1. GitHub repository settings (description, topics, license) — 5 min
-- [ ] 2. (Optional) GitHub Pages (site lives in `docs/`) — 2 min
-- [ ] 3. Tag a release `v0.1.0` and connect Zenodo for a citable DOI — 10 min
+- [x] 1. GitHub repository settings (description, topics, license) — done
+- [x] 2. GitHub Pages (site lives in `docs/`) — done
+- [x] 3. Release `v0.1.0` + Zenodo DOI — done; concept DOI
+      `10.5281/zenodo.23636675` (always-latest) is badged in the README and
+      linked from the site footer; the v0.1.0 version DOI is
+      `10.5281/zenodo.23636676`. For future releases: bump `version:` in
+      `CITATION.cff`, tag, publish — the metadata is already Zenodo-valid.
 - [ ] 4. Reservoir listing (automatic once license + 2 stars) — 5 min
 - [ ] 5. Lean Zulip post — 5 min
 

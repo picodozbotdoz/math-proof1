@@ -1,5 +1,7 @@
 # MathProof — modular forms open problems in Lean 4
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23636675.svg)](https://doi.org/10.5281/zenodo.23636675)
+
 An autonomous research workspace: each iteration of the loop picks an open
 problem connected to modular forms / the Langlands program, and contributes
 *formally verified* mathematics toward it using Lean 4 + Mathlib.
