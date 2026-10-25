@@ -150,7 +150,10 @@ theorem tau_prime_pow_mul (hp : p.Prime) {n : ℕ} (hn : ¬ p ∣ n) (a : ℕ) :
       tau_prime_pow_succ hp a]
     linear_combination h'
 
-private lemma exists_prime_pow_decomp {q : ℕ} (hq : q.Prime) {m : ℕ} (hm : 0 < m)
+/-- Decomposition along a prime: if the prime `q` divides `m > 0`, then
+`m = q ^ a * k` with `a ≥ 1` and `q ∤ k` (the exact prime-power factorization
+of `q` in `m`). -/
+lemma exists_prime_pow_decomp {q : ℕ} (hq : q.Prime) {m : ℕ} (hm : 0 < m)
     (hdvd : q ∣ m) : ∃ a k, 0 < a ∧ m = q ^ a * k ∧ ¬ q ∣ k := by
   revert hm hdvd
   induction m using Nat.strong_induction_on with

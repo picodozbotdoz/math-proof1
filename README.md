@@ -17,7 +17,14 @@ See `research/research-log.md` for the full log. Highlights:
   whose correctness is proved, so τ can be evaluated by Lean's kernel alone.
 * `Ramanujan.tau_one` … `Ramanujan.tau_twenty_one` — the first 21 values of
   OEIS A000594, each verified by `decide`.
-* **Toward Lehmer's conjecture** (`Ramanujan.LehmerConjecture`):
+* **Toward Lehmer's conjecture** (`Ramanujan.LehmerConjecture`) — now on an
+  **unbounded index set** (`Ramanujan.tau_ne_zero_of_forall_prime_pow`,
+  `Ramanujan.tau_ne_zero_of_prime_pow_le_65536`): `τ n ≠ 0` for every `n`
+  whose prime-power divisors are all `≤ 65536` — an infinite family
+  including all squarefree products of the 6542 primes up to 65536 (indices
+  of up to 28 305 digits; e.g. `τ(65519·65521) = τ 4292870399 ≠ 0`), via
+  Mordell multiplicativity layered on the kernel-verified bound.
+  The kernel-decide bound itself:
   `Ramanujan.tau_ne_zero_of_le_128` (over `ℤ`), `Ramanujan.tau_ne_zero_of_le_512`
   (mod `P = 999999937`, kernel `decide`), and
   `Ramanujan.tau_ne_zero_of_le_65536` (packed-bignum arithmetic: each

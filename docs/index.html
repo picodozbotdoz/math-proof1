@@ -105,7 +105,11 @@
       <code>Nat</code> in base 2⁸⁰, so one GMP <code>Nat.mul</code> computes a dense
       product — with entries from Euler's pentagonal number theorem and soundness
       proved against Mathlib. The 65536 check peaks at ~63&nbsp;GiB of kernel heap
-      (~570&nbsp;s wall).</p>
+      (~570&nbsp;s wall). <strong>And past the wall, for free:</strong> by Mordell
+      multiplicativity, <span class="math">τ&nbsp;n ≠ 0</span> for every <em>n</em>
+      whose prime-power divisors are all ≤&nbsp;65536 — an infinite family with
+      indices of up to 28&nbsp;305 digits (e.g.
+      <span class="math">τ(65519·65521)&nbsp;≠&nbsp;0</span>).</p>
     </div>
     <div class="card">
       <h3>Ramanujan's congruence (1916)</h3>
