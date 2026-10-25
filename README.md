@@ -44,6 +44,24 @@ See `research/research-log.md` for the full log. Highlights:
   identity, Jacobi's identity `E₄³ − E₆² = 1728 Δ`, integrality of the
   Eisenstein coefficients, and the bridge.
 
+## Hecke operators and Mordell's theorem (`MathProof/ModularForms/HeckeLevelOne.lean`, `MathProof/Tau/Mordell.lean`)
+
+* `HeckeLevelOne.heckeTP` — **the Hecke operator `T_p` on level-one cusp
+  forms**, constructed from scratch (`T_p f = p⁻¹ Σ_{j<p} f((τ+j)/p) +
+  p^{k-1} f(pτ)`): T- and S-invariance (via an explicit coset factorization
+  through the `ZMod p` involution `j ↦ −j⁻¹`), holomorphy, vanishing at the
+  cusps, and the q-expansion coefficient formula
+  `(T_p f)_m = f_{pm} + p^{k-1} [p ∣ m] f_{m/p}`.
+* `Ramanujan.heckeTP_discriminant_eq` — **the eigenform equation**
+  `T_p Δ = τ(p) · Δ`: Δ is a Hecke eigenform and its eigenvalue is the
+  Ramanujan τ function itself (one-dimensionality of `S₁₂(SL(2, ℤ))` + the
+  coefficient bridge).
+* `Ramanujan.tau_mul_coprime` — **Mordell's theorem (1917)**
+  `τ(mn) = τ(m)τ(n)` for coprime `m, n ≥ 1`, with the companions
+  `tau_prime_mul_of_not_dvd`, `tau_prime_pow_succ`
+  (`τ(p^{r+2}) = τ(p)τ(p^{r+1}) − p^11 τ(p^r)`), `tau_prime_pow_mul`, and
+  the eigenvalue identity `hecke_eigen_identity`.
+
 ## Building
 
 ```bash

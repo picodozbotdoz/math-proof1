@@ -398,3 +398,90 @@ Iteration 5 study (§6); development notes in `research/lehmerpacked-plan.md`.
   index); literature verifications go far past 65536, but they trust CAS
   output — the point of this stack is that every step is checked by Lean's
   kernel alone.
+
+## Iteration 7 — Hecke operators on S₁₂(SL(2, ℤ)) and Mordell's theorem
+
+**Status: complete (theorem formalized end-to-end).  2026-10-26.**
+HeckeLevelOne parts 1–3 (this iteration's operator-level groundwork) landed in
+three earlier commits; this entry records the iteration as a whole, completed
+by `MathProof/Tau/Mordell.lean`.
+
+### The problem
+
+Mordell's theorem (1917): the Ramanujan τ function is multiplicative on
+coprime arguments, `τ(mn) = τ(m)τ(n)` whenever `gcd(m, n) = 1`, together with
+the prime-power recursion `τ(p^{r+2}) = τ(p)·τ(p^{r+1}) − p^11·τ(p^r)`.  It is
+the structural backbone behind every statistical statement about τ (Lehmer's
+conjecture reduces to prime powers once it is in hand), and its proof — the
+Hecke operator T_p acting on the one-dimensional space S₁₂(SL(2, ℤ)) — is the
+embodiment of the Langlands philosophy in its simplest instance: *eigenvalues
+of an operator = arithmetic of coefficients*.
+
+### What this iteration contributes
+
+* `MathProof/ModularForms/HeckeLevelOne.lean` — the Hecke operator `T_p` at
+  level one, from scratch on top of Mathlib's `CuspForm` API:
+  * `heckeTPFun` on functions: `T_p f = p^{-1} Σ_{j<p} f((τ+j)/p) + p^{k-1} f(pτ)`;
+    T-invariance by a summation-periodicity argument, S-invariance via an
+    explicit coset factorization `σ_j = T^{j'} S T^{j''} ... ` built on the
+    `ZMod p` involution `phiInv p j = (p - j⁻¹) % p` (Euler's theorem in
+    `ZMod p`), holomorphy and vanishing at the cusps transported through the
+    `shiftDivP`/`mulP` maps.
+  * `heckeTP hp f : CuspForm 𝒮ℒ k` — the bundled operator, and
+    `heckeTP_qExpansion_coeff`: the coefficient formula
+    `(T_p f)_m = f_{pm} + p^{k-1} [p ∣ m] f_{m/p}`, proved by HasSum
+    uniqueness (root-of-unity filter `Σ_j ζ^{jn} = p·[p ∣ n]`).
+* `MathProof/Tau/Mordell.lean` — the payoff:
+  * `heckeTP_discriminant_eq`: the **eigenform equation** `T_p Δ = τ(p) · Δ`
+    (one-dimensionality of `S₁₂` from Mathlib's dimension formula + the
+    Iteration-2 coefficient bridge identifying the eigenvalue as `τ p`);
+  * `hecke_eigen_identity`: `τ(pm) + p^11 [p ∣ m] τ(m/p) = τ(p) τ(m)`;
+  * `tau_prime_mul_of_not_dvd`, `tau_prime_pow_succ`, `tau_prime_pow_mul`;
+  * **`tau_mul_coprime`: `τ(mn) = τ(m)τ(n)` for coprime `m, n ≥ 1`**
+    (strong induction on `m`, peeling the smallest prime factor via
+    `m.minFac` and a verified `q^a ∥ m` decomposition).
+  All theorems rest only on `propext, Classical.choice, Quot.sound`
+    (audited with `#print axioms`), no `sorry`, no `native_decide`.
+
+### Engineering notes (for future operator-level work)
+
+* For bundled `CuspForm`s, `qExpansion 1 f` elaborates through the `⇑`
+  coercion: coefficient-level rewriting must first push the coercion through
+  the scalar (`FunLike.coe_smul : ⇑(c • f) = c • ⇑f`) before
+  `ModularForm.qExpansion_smul` can fire — the smul patterns
+  `⇑(c • f)` vs `c • ⇑f` are not interchangeable.
+* Mathlib's coefficient formula writes the exponent as `(12 - 1 : ℤ)` — a
+  *zpow*; normalizing to `(p : ℂ) ^ 11` needs
+  `rw [(show (12 - 1 : ℤ) = ((11 : ℕ) : ℤ) from rfl), zpow_natCast]` (the
+  `rfl` re-expresses the `OfNat` literal as a `Nat.cast` so `zpow_natCast`
+  can match syntactically).
+* This toolchain's arithmetic API: `dvd_pow_self` now requires `n ≠ 0`;
+  `Nat.mul_div_cancel' (h : n ∣ m) : n * (m / n) = m` (multiplier first);
+  `Nat.one_lt_pow (h : n ≠ 0) (h' : 1 < a) : 1 < a ^ n`; `Nat.eq_one_or_pos`
+  does not exist (split with two `rcases` instead).  `if_pos`/`if_neg` are
+  deprecated in favor of `ite_eq_left/right` but still function.
+* Iteration-7's HeckeLevelOne commits had never been **pushed**, so
+  `lean_check.py` fresh clones lacked them ("bad import"); pushing is part
+  of every milestone now.
+
+### Results
+
+* Local (this 7 GB machine): HeckeLevelOne elaborates in ~90 s, Mordell in
+  ~35 s; whole light target builds clean.
+* Modal (`lean_check.py`, fresh clone): verified after push.
+* CI list extended: `MathProof.ModularForms.HeckeLevelOne`,
+  `MathProof.Tau.Mordell` join the default (light) targets and the root
+  `MathProof.lean`.
+
+### What remains / next steps
+
+* **Lehmer's conjecture** now reduces, via Mordell + the prime-power
+  recursion, to `τ(p^a) ≠ 0` for prime powers — connecting Iterations 6 and 7
+  (e.g. a certified nonvanishing bound over prime-power indices only).
+* Deligne's bound |τ(p)| ≤ 2p^{11/2} (Ramanujan conjecture) — the natural
+  next structural theorem; needs more analytic machinery (trace formula or
+  ℓ-adic input is out of reach, but the weight-12 Sturm-bound machinery of
+  Iteration 2 + eigenform identities give cheap numerical verifications
+  `|τ(p)| ≤ 2p^{5.5}` for small p).
+* Congruence properties of Hecke eigenvalues modulo primes (level-one
+  Hecke theory is now available in-repo for this).

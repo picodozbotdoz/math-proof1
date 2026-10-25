@@ -9,6 +9,8 @@ import MathProof.Tau.Lehmer
 -- import MathProof.Tau.LehmerPacked
 import MathProof.Tau.CongruenceSmall
 import MathProof.Tau.Bridge
+import MathProof.ModularForms.HeckeLevelOne
 import MathProof.ModularForms.Congruence691
+import MathProof.Tau.Mordell
 -- MathProof.AxCheck is also opt-in: it imports LehmerMod (heavy) to audit it.
 -- import MathProof.AxCheck
