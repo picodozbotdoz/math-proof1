@@ -41,7 +41,8 @@ venv; bare `python3` cannot import `modal`).
 
 - **Full / final build with `lean_build.py`** (app `math-proof1-build`):
   builds the pushed GitHub state (`picodozbotdoz/math-proof1`);
-  `--target ''` means the whole project:
+  `--target ''` runs the default (light) targets; heavy modules are built
+  explicitly, e.g. `--target MathProof.Tau.LehmerPacked`:
 
   ```bash
   /home/doz/dozenv/bin/modal run lean_build.py --target MathProof.Tau.Lehmer
@@ -136,7 +137,11 @@ surface the limitation to the user instead of creating workarounds on Modal.
   `E12_qExpansion_coeff` and Bernoulli evaluations `B₄, B₆, B₁₂`.
 - `MathProof/ModularForms/Congruence691.lean` — `tau_modEq_sigma`:
   `τ n ≡ σ₁₁ n [ZMOD 691]`.
-- `MathProof.lean` — root import file. **Every new module must be added here.**
+- `MathProof.lean` — root import file for the *light* modules. The heavy
+  kernel-decide modules (`LehmerMod`, `LehmerPacked`) and `AxCheck` are
+  deliberately **not** imported there — the root must stay cheap for
+  downstream consumers. Add every new light module here; heavy ones stay
+  standalone.
 - `research/research-log.md` — the research loop log. Each iteration is recorded
   here (problem, contributions, next steps); update it (and `README.md`)
   when completing an iteration.
@@ -166,3 +171,8 @@ surface the limitation to the user instead of creating workarounds on Modal.
   the integer coefficient is nonzero — no magnitude bound needed.
 - CI (`.github/workflows/lean_action_ci.yml`) runs `lean-action` + docgen on
   every push; keep `lake build` clean before committing.
+- `defaultTargets` in `lakefile.toml` lists the light modules only: a bare
+  `lake build` (CI, Reservoir's automated builder, downstream consumers of
+  the package) must never pull the heavy kernel decides. When adding a
+  module: light → add it to `defaultTargets`, `MathProof.lean`, and the CI
+  list; heavy → add it to none of those, and build it explicitly on Modal.

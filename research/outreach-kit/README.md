@@ -1,9 +1,10 @@
 # Outreach kit — making this work discoverable
 
 This directory holds ready-to-use material for publishing the project to the
-Lean / mathematics community. Work through it top to bottom; nothing here
-requires more than a few minutes each. Steps 1–2 are done on github.com,
-steps 3–4 are files in this repo, step 5 is a post you publish.
+Lean / mathematics community. Steps 1–3 are done. Items 4 and 6 are *passive*
+channels — they need no discussion, just waiting (4) and a one-page wiki edit
+(6). Item 5 (the Zulip post) is entirely optional: skip it without guilt if
+you would rather not discuss anything; discoverability does not depend on it.
 
 - [x] 1. GitHub repository settings (description, topics, license) — done
 - [x] 2. GitHub Pages (site lives in `docs/`) — done
@@ -12,8 +13,12 @@ steps 3–4 are files in this repo, step 5 is a post you publish.
       linked from the site footer; the v0.1.0 version DOI is
       `10.5281/zenodo.23636676`. For future releases: bump `version:` in
       `CITATION.cff`, tag, publish — the metadata is already Zenodo-valid.
-- [ ] 4. Reservoir listing (automatic once license + 2 stars) — 5 min
-- [ ] 5. Lean Zulip post — 5 min
+- [ ] 4. Reservoir listing — automatic, in progress; see
+      [`reservoir-submission.md`](reservoir-submission.md) for tracking
+- [ ] 5. (Optional) Lean Zulip post — skippable; draft kept in
+      [`zulip-post.md`](zulip-post.md)
+- [ ] 6. OEIS A000594 link — one moderated wiki edit; ready-to-paste text in
+      [`oeis-note.md`](oeis-note.md)
 
 ---
 
@@ -100,11 +105,21 @@ then the listing happens on its own. Full checklist and status:
 
 ---
 
-## 5. Lean Zulip post
+## 5. (Optional) Lean Zulip post
 
-A ready-to-paste announcement is in [`zulip-post.md`](zulip-post.md).
-Post it in the **#maths** stream (topic suggestion: *Ramanujan τ:
-kernel-decided nonvanishing to 65536*). The draft deliberately leads with
-the kernel-engineering result — the thing this community finds genuinely
-new — and keeps claims calibrated (the congruences are classical; the
-headline is the verified-computation bound and the scaling study).
+A ready-to-paste announcement is in [`zulip-post.md`](zulip-post.md), for
+the **#maths** stream of https://leanprover.zulipchat.com (topic suggestion:
+*Ramanujan τ: kernel-decided nonvanishing to 65536*). The draft deliberately
+leads with the kernel-engineering result — the thing this community finds
+genuinely new — and keeps claims calibrated. **This step is optional**:
+Reservoir (item 4) and OEIS (item 6) already carry discoverability, so skip
+it if you prefer not to discuss anything.
+
+---
+
+## 6. OEIS A000594 link
+
+The passive contribution with the best effort-to-reach ratio: number
+theorists consult the OEIS constantly. The exact text to paste and the
+procedure are in [`oeis-note.md`](oeis-note.md) — one moderated wiki edit,
+no discussion required.

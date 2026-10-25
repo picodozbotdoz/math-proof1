@@ -53,8 +53,35 @@ lake build MathProof.Tau.Lehmer # the nonvanishing computation (~2 CPU-min kerne
 
 On a small machine, build remotely instead (see `AGENTS.md`):
 ```bash
-/home/doz/dozenv/bin/modal run lean_build.py --target ''   # full project on Modal
+/home/doz/dozenv/bin/modal run lean_build.py --target ''   # light defaults on Modal; heavy modules need explicit --target
 ```
+
+## Using this library
+
+To use it from another Lean 4 project, require it pinned to a tag (the API
+is research code — no stability guarantee between versions):
+
+```toml
+# lakefile.toml
+[[require]]
+name = "MathProof"
+git = "https://github.com/picodozbotdoz/math-proof1"
+rev = "v0.1.0"
+```
+
+```lean
+-- or, in a lakefile.lean
+require MathProof from git "https://github.com/picodozbotdoz/math-proof1" @ "v0.1.0"
+```
+
+A plain `lake build` builds only the light modules, by design — import what
+you need: `import MathProof.ModularForms.Congruence691` gives
+`RamanujanCongruence.tau_modEq_sigma`, `import MathProof.Tau.Bridge` the
+τ↔Δ bridge, and `import MathProof` the whole light set. The heavy
+kernel-computation modules (`MathProof.Tau.LehmerMod` ≈ 6 GB,
+`MathProof.Tau.LehmerPacked` ≈ 63 GiB of kernel heap) are excluded from the
+default targets on purpose — import them directly only on a machine with
+the memory to spare.
 
 ## Layout
 

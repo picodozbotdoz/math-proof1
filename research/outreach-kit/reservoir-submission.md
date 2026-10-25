@@ -31,7 +31,7 @@ the missed index.
 ## Notes for the listing
 
 - **Expected build.** Reservoir's builder runs the default `lake` target.
-  This repo is set up so that the default build *excludes* the heavy
+  `defaultTargets` in `lakefile.toml` deliberately excludes the heavy
   kernel-decide modules (`LehmerMod`, `LehmerPacked` — their 65536 check
   needs ~63 GiB of kernel heap; see `AGENTS.md` and
   `research/lehmer-mod-scaling-study.md`). The automatic build is therefore
