@@ -19,7 +19,10 @@ abstract: >-
   computational theorems are checked to be propext alone. The 65536-level
   kernel decide requires ~63 GiB of heap and is built outside CI.
 authors:
-  - alias: picodoz
+  - family-names: Zulkarnaen
+    given-names: Dony
+    alias: picodoz
+    orcid: "https://orcid.org/0009-0001-3616-6040"
     website: https://github.com/picodozbotdoz
 keywords:
   - Lean
