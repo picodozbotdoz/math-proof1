@@ -46,12 +46,13 @@ repository" button and a license badge automatically.
 
 ---
 
-## 2. Optional: GitHub Pages for the Langlands site
+## 2. Optional: GitHub Pages for the project site
 
-The site lives at `docs/index.html` (the directory was renamed from
-`langlands-site/` to `docs/` precisely because branch-based Pages only
-offers `/ (root)` or `/docs` as the source folder). Enabling Pages serves
-it at the site root `https://picodozbotdoz.github.io/math-proof1/`:
+The site lives in `docs/`: `docs/index.html` is the project landing page and
+`docs/langlands.html` the interactive educational page (the directory was
+renamed from `langlands-site/` to `docs/` precisely because branch-based
+Pages only offers `/ (root)` or `/docs` as the source folder). Enabling
+Pages serves it at the site root `https://picodozbotdoz.github.io/math-proof1/`:
 
 Settings → Pages → Build and deployment → Source: **Deploy from a branch** →
 Branch `master`, folder `/docs` → Save.

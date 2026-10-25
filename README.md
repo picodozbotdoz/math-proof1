@@ -66,7 +66,7 @@ MathProof/Tau/Bridge.lean       # (qExpansion Δ).coeff n = τ(n)
 MathProof/ModularForms/Weight12.lean       # 691 • E₁₂ = 441 • E₄³ + 250 • E₆²
 MathProof/ModularForms/Congruence691.lean  # τ(n) ≡ σ₁₁(n) mod 691
 research/research-log.md        # the research loop log
-docs/                           # the Langlands site — the GitHub Pages root (folder /docs)
+docs/                           # GitHub Pages root: project landing page + interactive Langlands page
 research/outreach-kit/          # making this work discoverable: GitHub metadata, Reservoir, Zenodo, Zulip post
 ```
 

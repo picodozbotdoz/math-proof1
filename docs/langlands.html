@@ -1,0 +1,826 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>The Langlands program, by example (GL₂)</title>
+<meta name="description" content="Interactive explainer: automorphic forms and the Langlands program through the level-11 weight-2 newform attached to elliptic curve 11a1.">
+<style>
+:root{
+  --font-size-base:14px;
+  --background:#ffffff; --foreground:#1b1b28;
+  --card:#ffffff; --card-foreground:#1b1b28;
+  --popover:#ffffff; --popover-foreground:#1b1b28;
+  --primary:#3b3b52; --primary-foreground:#ffffff;
+  --secondary:#f1f1f4; --secondary-foreground:#1b1b28;
+  --muted:#f1f1f4; --muted-foreground:#6b6b80;
+  --accent:#ececf4; --accent-foreground:#1b1b28;
+  --border:#e2e2ea; --input:#e2e2ea; --ring:#7c7cf0;
+  --destructive:#c0392b;
+  --viz-series-1:#2563eb; --viz-series-2:#e0801a; --viz-series-3:#1a7f4b;
+  --viz-series-4:#7c4dc4; --viz-series-5:#c0392b; --viz-series-6:#b8860b;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --background:#16161f; --foreground:#e8e8f0;
+    --card:#1e1e2a; --card-foreground:#e8e8f0;
+    --popover:#242433; --popover-foreground:#e8e8f0;
+    --primary:#c9c9e8; --primary-foreground:#16161f;
+    --secondary:#262636; --secondary-foreground:#e8e8f0;
+    --muted:#262636; --muted-foreground:#9c9cb4;
+    --accent:#2c2c40; --accent-foreground:#e8e8f0;
+    --border:#33334a; --input:#3a3a52; --ring:#8f8ffb;
+    --viz-series-1:#6f9bff; --viz-series-2:#f0a04a; --viz-series-3:#4cc98a;
+    --viz-series-4:#b28ae8; --viz-series-5:#f07a6a; --viz-series-6:#e0b84f;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{background:var(--background);color:var(--foreground);font:400 var(--font-size-base)/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+main{max-width:920px;margin:0 auto;padding:28px 22px 64px}
+h1,h2,h3{line-height:1.3;margin:0.4em 0}
+p{margin:8px 0}
+a{color:var(--primary)}
+code{background:var(--muted);border-radius:5px;padding:1px 5px;font-size:12.5px}
+.text-small{font-size:12px}
+.text-muted{color:var(--muted-foreground)}
+.tabular-nums{font-variant-numeric:tabular-nums}
+.card{background:var(--card);color:var(--card-foreground);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:8px 0}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--border);background:transparent;color:var(--foreground);border-radius:8px;padding:5px 12px;font:inherit;cursor:pointer}
+.btn:hover{border-color:var(--muted-foreground)}
+.btn[aria-pressed="true"]{background:var(--primary);color:var(--primary-foreground);border-color:var(--primary)}
+.viz-tile{width:100%}
+.viz-tile[aria-pressed="true"]{background:var(--accent);color:var(--accent-foreground);border-color:transparent;box-shadow:0 0 0 2px var(--ring) inset}
+.nav{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.nav-pills .nav-link{border:none;background:transparent;color:var(--muted-foreground);border-radius:999px;padding:5px 14px;font:inherit;cursor:pointer}
+.nav-pills .nav-link:hover{color:var(--foreground)}
+.nav-pills .nav-link.active{background:var(--secondary);color:var(--foreground)}
+.viz-controls{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:8px 0}
+.viz-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin:6px 0}
+.viz-badge{display:inline-block;background:var(--accent);color:var(--accent-foreground);border-radius:999px;padding:1px 9px;font-size:11px}
+.form-check{display:flex;align-items:center;gap:7px;margin:0}
+.form-check-input{width:32px;height:18px;appearance:none;-webkit-appearance:none;background:var(--input);border-radius:999px;position:relative;cursor:pointer;transition:background .15s;flex:none}
+.form-check-input:checked{background:var(--primary)}
+.form-check-input::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:left .15s}
+.form-check-input:checked::after{left:16px}
+.form-check-label{cursor:pointer}
+.form-range{width:190px;accent-color:var(--primary)}
+.form-label{font-size:12px;color:var(--muted-foreground)}
+.cursor-interaction{cursor:pointer}
+[hidden]{display:none !important}
+@media (max-width:600px){ main{padding:18px 12px 48px} }
+</style>
+</head>
+<body>
+<main>
+<div id="langlands-viz">
+  <h3>The Langlands program, by example (GL&#8322;)</h3>
+
+  <div class="nav nav-pills" role="tablist" aria-label="Langlands views">
+    <button class="nav-link active" id="tab-sym" role="tab" aria-controls="panel-sym" aria-selected="true" type="button">Symmetry on &#8459;</button>
+    <button class="nav-link" id="tab-form" role="tab" aria-controls="panel-form" aria-selected="false" type="button">Modular form</button>
+    <button class="nav-link" id="tab-lfun" role="tab" aria-controls="panel-lfun" aria-selected="false" type="button">L-function</button>
+    <button class="nav-link" id="tab-dict" role="tab" aria-controls="panel-dict" aria-selected="false" type="button">Dictionary</button>
+  </div>
+
+  <!-- ============ PANEL 1: upper half-plane, SL2(Z), j-invariant ============ -->
+  <div id="panel-sym" role="tabpanel" aria-labelledby="tab-sym">
+    <div class="viz-controls">
+      <label class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="lv-paint" checked>
+        <span class="form-check-label">paint by j(z)</span>
+      </label>
+      <label class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="lv-orbit" checked>
+        <span class="form-check-label">orbit &amp; geodesics</span>
+      </label>
+      <span id="lv-status" class="text-small tabular-nums" aria-live="polite"></span>
+    </div>
+    <div class="lv-stage cursor-interaction" id="lv-stage">
+      <canvas id="lv-base" aria-label="Upper half-plane colored by the j-invariant; the tiling shows copies of the SL2(Z) fundamental domain"></canvas>
+      <canvas id="lv-over" aria-hidden="true"></canvas>
+    </div>
+    <div class="viz-row text-small text-muted">
+      <span>S: z &#8614; &#8722;1/z</span>
+      <span>T: z &#8614; z + 1</span>
+      <span>SL&#8322;(&#8484;) = &#10216;S, T&#10217;, S&#178; = (ST)&#179; = 1</span>
+      <span id="lv-colorkey">hue = arg j(z), lightness = log&#8202;|j(z)|</span>
+    </div>
+  </div>
+
+  <!-- ============ PANEL 2: newform coefficients + Satake ============ -->
+  <div id="panel-form" role="tabpanel" aria-labelledby="tab-form" hidden>
+    <div class="lv-fighead text-small text-muted">Fourier coefficients a&#8345; of f(&#964;) = q&#8729;&#8719;(1&#8722;q&#8319;)&#178;(1&#8722;q&#185;&#185;&#8319;)&#178;, weight 2, level 11</div>
+    <div id="lv-stems" class="lv-svgbox"></div>
+    <div class="viz-row" id="lv-chips" role="group" aria-label="Choose a prime"></div>
+    <div class="card" id="lv-pdetail" aria-live="polite"></div>
+    <p class="lv-qexp"><code id="lv-qexp"></code><span class="text-small text-muted"> &#8212; newform 11.2.a.a, attached to elliptic curve 11a1 (conductor 11)</span></p>
+  </div>
+
+  <!-- ============ PANEL 3: L-function two ways ============ -->
+  <div id="panel-lfun" role="tabpanel" aria-labelledby="tab-lfun" hidden>
+    <div class="viz-controls">
+      <span class="lv-slabel">s = <span id="lv-sval" class="tabular-nums">2.00</span></span>
+      <input type="range" class="form-range" id="lv-srange" min="1.3" max="3" step="0.05" value="2" aria-label="Value of s for the L-function">
+      <span class="lv-lgwrap">
+        <button type="button" class="lv-lg" data-series="sum" aria-pressed="true"><span class="lv-sw" style="background:var(--viz-series-1)"></span>&#931; over all n</button>
+        <button type="button" class="lv-lg" data-series="prod" aria-pressed="true"><span class="lv-sw" style="background:var(--viz-series-2)"></span>&#8719; over primes p</button>
+      </span>
+    </div>
+    <div class="lv-fighead text-small text-muted">L(s, f) = &#931;&#8345; a&#8345; n&#8315;&#738; = &#8719;&#8346; (1 &#8722; a&#8346; p&#8315;&#738; + p&#185;&#8315;&#178;&#738;)&#8315;&#185; &#8212; one function, two expansions</div>
+    <div id="lv-lplot" class="lv-svgbox"></div>
+    <div id="lv-lfinal" class="text-small tabular-nums" aria-live="polite"></div>
+    <div class="text-small text-muted">Hecke functional equation: &#923;(s, f) = &#923;(2&#8722;s, f), &#923;(s) = (&#8730;11/2&#960;)&#8383;&#915;(s)L(s) &#8212; symmetry about s = 1. The series converges absolutely only for s &gt; 3/2.</div>
+  </div>
+
+  <!-- ============ PANEL 4: the dictionary ============ -->
+  <div id="panel-dict" role="tabpanel" aria-labelledby="tab-dict" hidden>
+    <div class="dict-head text-small text-muted">
+      <span>Galois side &#8212; arithmetic</span>
+      <span class="dict-head-c">same L(s)</span>
+      <span>Automorphic side &#8212; analysis</span>
+    </div>
+    <div class="dict-grid" id="lv-dict"></div>
+    <div class="card text-small" id="lv-ddetail" aria-live="polite"></div>
+  </div>
+
+  <div id="lv-tip" class="lv-tip" role="tooltip" aria-hidden="true"></div>
+</div>
+
+<style>
+#langlands-viz{position:relative}
+#langlands-viz .lv-stage{position:relative;height:400px;margin:10px 0 6px}
+#langlands-viz .lv-stage canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;display:block}
+#langlands-viz .lv-svgbox{margin:6px 0 10px}
+#langlands-viz .lv-fighead{margin-top:8px}
+#langlands-viz .lv-qexp{margin:6px 0 2px;overflow-wrap:anywhere}
+#langlands-viz .lv-slabel{min-width:64px}
+#langlands-viz .lv-lgwrap{display:inline-flex;gap:8px;flex-wrap:wrap}
+#langlands-viz .lv-lg{display:inline-flex;align-items:center;gap:6px;background:none;border:none;padding:2px 2px;color:var(--foreground);font:inherit;cursor:pointer}
+#langlands-viz .lv-lg .lv-sw{width:14px;height:3px;border-radius:2px;display:inline-block}
+#langlands-viz .lv-lg[aria-pressed="false"]{opacity:.4}
+#langlands-viz .lv-kv{display:grid;grid-template-columns:auto 1fr;gap:3px 14px;align-items:baseline}
+#langlands-viz .lv-kv .lv-k{color:var(--muted-foreground);text-align:right;white-space:nowrap}
+#langlands-viz .lv-tip{position:absolute;display:none;pointer-events:none;background:var(--popover);color:var(--popover-foreground);border:1px solid var(--border);border-radius:6px;padding:5px 9px;font-size:12px;line-height:1.45;z-index:6;max-width:260px}
+#langlands-viz .dict-grid{display:grid;gap:8px;margin:8px 0 10px}
+#langlands-viz .dict-row{display:grid;grid-template-columns:minmax(0,1fr) 96px minmax(0,1fr);gap:10px;align-items:stretch;text-align:left;padding:8px 10px}
+#langlands-viz .dict-cell{display:flex;flex-direction:column;gap:3px;justify-content:center;min-width:0}
+#langlands-viz .dict-cell .text-muted{font-size:11px}
+#langlands-viz .dict-conn{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px}
+#langlands-viz .dict-head{display:grid;grid-template-columns:minmax(0,1fr) 96px minmax(0,1fr);gap:10px;margin-top:8px}
+#langlands-viz .dict-head-c{text-align:center}
+@media (max-width:600px){
+  #langlands-viz .lv-stage{height:320px}
+  #langlands-viz .dict-row,#langlands-viz .dict-head{grid-template-columns:1fr}
+  #langlands-viz .dict-head{display:none}
+  #langlands-viz .dict-conn{flex-direction:row;justify-content:flex-start;gap:10px}
+}
+</style>
+
+<script>
+(function () {
+  'use strict';
+  var root = document.getElementById('langlands-viz');
+  function $(id) { return document.getElementById(id); }
+  function cssVar(name) { return getComputedStyle(root).getPropertyValue(name).trim(); }
+
+  /* ================= data: newform 11.2.a.a ================= */
+  var NA = 900;
+  var a = new Float64Array(NA + 1);           // a[n], a[0]=0
+  (function () {
+    function prodSeries(step) {
+      var A = new Float64Array(NA + 1); A[0] = 1;
+      for (var n = 1; n * step <= NA; n++) {
+        var k = n * step;
+        for (var i = NA - k; i >= 0; i--) {
+          var c = A[i]; if (c === 0) continue;
+          A[i + k] -= 2 * c;
+          if (i + 2 * k <= NA) A[i + 2 * k] += c;
+        }
+      }
+      return A;
+    }
+    var P = prodSeries(1), P11 = prodSeries(11);
+    for (var n = 1; n <= NA; n++) {
+      var m = n - 1, s = 0, lo = Math.max(0, m - NA), hi = Math.min(m, NA);
+      for (var i = lo; i <= hi; i++) s += P[i] * P11[m - i];
+      a[n] = s;
+    }
+  })();
+  var CHIPS = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29];
+  var primes = (function () {                 // sieve to 600
+    var s = new Array(601).fill(true); s[0] = s[1] = false;
+    for (var i = 2; i * i <= 600; i++) if (s[i]) for (var j = i * i; j <= 600; j += i) s[j] = false;
+    var out = []; for (var k = 2; k <= 600; k++) if (s[k]) out.push(k);
+    return out;
+  })();
+  function isPrime(n) { return n >= 2 && primes.indexOf(n) >= 0; }
+
+  /* superscript + formatting helpers */
+  var SUP = { '0': '\u2070', '1': '\u00b9', '2': '\u00b2', '3': '\u00b3', '4': '\u2074', '5': '\u2075', '6': '\u2076', '7': '\u2077', '8': '\u2078', '9': '\u2079' };
+  var SUB = { '0': '\u2080', '1': '\u2081', '2': '\u2082', '3': '\u2083', '4': '\u2084', '5': '\u2085', '6': '\u2086', '7': '\u2087', '8': '\u2088', '9': '\u2089' };
+  function sup(n) { return String(n).split('').map(function (d) { return SUP[d]; }).join(''); }
+  function sub(n) { return String(n).split('').map(function (d) { return SUB[d]; }).join(''); }
+  var SP = '\u209a'; // subscript p
+  function fmt(x, d) { return x.toFixed(d === undefined ? 2 : d); }
+
+  /* ================= state ================= */
+  var zcode = window.zcode || {};
+  var state = { tab: 'sym', prime: 5, dictRow: 1, s: 2, paintJ: true, showOrbit: true, zx: 0.30, zy: 1.10 };
+  function loadState() {
+    try {
+      var w = zcode.widgetState || {};
+      var p = (w.privateContent && typeof w.privateContent === 'object') ? w.privateContent : (typeof w === 'object' ? w : {});
+      if (p.zx !== undefined) { state.zx = +p.zx; state.zy = +p.zy; }
+      if (p.tab) state.tab = p.tab;
+      if (p.prime) state.prime = +p.prime;
+      if (p.dictRow !== undefined) state.dictRow = +p.dictRow;
+      if (p.s) state.s = +p.s;
+      if (typeof p.paintJ === 'boolean') state.paintJ = p.paintJ;
+      if (typeof p.showOrbit === 'boolean') state.showOrbit = p.showOrbit;
+    } catch (e) { /* defaults */ }
+  }
+  var saveTimer = null;
+  function saveState() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(function () {
+      try {
+        zcode.setWidgetState({
+          modelContent: { dictRow: state.dictRow, prime: state.prime },
+          privateContent: { tab: state.tab, prime: state.prime, dictRow: state.dictRow, s: state.s, paintJ: state.paintJ, showOrbit: state.showOrbit, zx: state.zx, zy: state.zy }
+        });
+      } catch (e) { /* host absent */ }
+    }, 250);
+  }
+  document.addEventListener('zcode:set_globals', function (ev) {
+    try {
+      var g = ev.detail && ev.detail.globals && ev.detail.globals.widgetState;
+      if (g && g.privateContent && g.privateContent.zx !== undefined) { state.zx = +g.privateContent.zx; state.zy = +g.privateContent.zy; drawOverlay(); updateStatus(); }
+    } catch (e) { /* ignore */ }
+  });
+
+  /* ================= tooltip ================= */
+  var tip = $('lv-tip');
+  function showTip(html, cx, cy) {
+    tip.innerHTML = html; tip.style.display = 'block'; tip.setAttribute('aria-hidden', 'false');
+    var rr = root.getBoundingClientRect();
+    var x = cx - rr.left + 14, y = cy - rr.top + 12;
+    if (x + tip.offsetWidth > rr.width - 6) x = cx - rr.left - tip.offsetWidth - 12;
+    if (x < 4) x = 4;
+    tip.style.left = x + 'px'; tip.style.top = y + 'px';
+  }
+  function hideTip() { tip.style.display = 'none'; tip.setAttribute('aria-hidden', 'true'); }
+
+  /* ================= j-invariant ================= */
+  var S3 = null, S5 = null;
+  function buildS() {
+    if (S3) return;
+    var M = 2600;
+    S3 = new Float64Array(M); S5 = new Float64Array(M);
+    for (var n = 1; n < M; n++) for (var m = n; m < M; m += n) { S3[m] += n * n * n; S5[m] += n * n * n * n * n; }
+  }
+  function nTerms(y) { return Math.min(2500, Math.max(40, Math.ceil(24 / (2 * Math.PI * y)) + 40)); }
+  function jval(x, y) {           // returns [re, im] of j(x+iy)
+    buildS();
+    var NT = nTerms(y), mag = Math.exp(-2 * Math.PI * y), ang = 2 * Math.PI * (x - Math.round(x));
+    var qr = Math.cos(ang) * mag, qi = Math.sin(ang) * mag, pr = 1, pi = 0;
+    var e4r = 1, e4i = 0, e6r = 1, e6i = 0;
+    for (var n = 1; n <= NT; n++) {
+      var t = pr * qr - pi * qi; pi = pr * qi + pi * qr; pr = t;
+      e4r += 240 * S3[n] * pr; e4i += 240 * S3[n] * pi;
+      e6r -= 504 * S5[n] * pr; e6i -= 504 * S5[n] * pi;
+    }
+    var w3r = e4r * e4r * e4r - 3 * e4r * e4i * e4i, w3i = 3 * e4r * e4r * e4i - e4i * e4i * e4i;
+    var w6r = e6r * e6r - e6i * e6i, w6i = 2 * e6r * e6i;
+    var dr = (w3r - w6r) / 1728, di = (w3i - w6i) / 1728, den = dr * dr + di * di;
+    if (den < 1e-300) return null;
+    return [(w3r * dr + w3i * di) / den, (w3i * dr - w3r * di) / den];
+  }
+  function hsl2rgb(h, s, l) {
+    function f(n) {
+      var k = (n + h * 12) % 12;
+      var c = l - s * Math.min(l, 1 - l) * Math.max(-1, Math.min(k - 3, 9 - k, 1));
+      return Math.round(c * 255);
+    }
+    return [f(0), f(8), f(4)];
+  }
+
+  /* ================= panel 1: stage ================= */
+  var stage = $('lv-stage'), base = $('lv-base'), over = $('lv-over');
+  var bctx = base.getContext('2d'), octx = over.getContext('2d');
+  var cw = 0, chh = 0, view = { ymax: 2.2, xr: 2.2 };
+  var jre = null, jim = null, jok = null;
+
+  function paintBase() {
+    var W = stage.clientWidth, H = stage.clientHeight;
+    if (W < 60 || H < 60) return;
+    cw = W; chh = H;
+    view.xr = view.ymax * W / H;
+    base.width = W; base.height = H;
+    var img = bctx.createImageData(W, H), d = img.data;
+    buildS();
+    jre = new Float32Array(W * H); jim = new Float32Array(W * H); jok = new Uint8Array(W * H);
+    for (var py = 0; py < H; py++) {
+      var y = view.ymax * (1 - (py + 0.5) / H), row = py * W;
+      if (y < 0.008) continue;
+      var NT = nTerms(y), mag = Math.exp(-2 * Math.PI * y);
+      for (var px = 0; px < W; px++) {
+        var x = -view.xr / 2 + (px + 0.5) / W * view.xr;
+        var j = jval(x, y), i = row + px;
+        if (j) { jre[i] = j[0]; jim[i] = j[1]; jok[i] = 1; }
+      }
+    }
+    colorize(d, W * H);
+    bctx.putImageData(img, 0, 0);
+  }
+  function colorize(d, n) {
+    var ax = cssVar('--border'), muted = cssVar('--muted');
+    var axc = hexish(ax) || [128, 128, 128], muc = hexish(muted) || axc;
+    for (var i = 0; i < n; i++) {
+      var o = i * 4, r, g, b;
+      if (state.paintJ && jok[i]) {
+        var m = Math.log(Math.max(1e-30, Math.hypot(jre[i], jim[i])));
+        var l = (18 + 64 / (1 + Math.exp(-(m - 4.6) / 1.9))) / 100;
+        var hue = (Math.atan2(jim[i], jre[i]) / (2 * Math.PI) + 1) % 1;
+        var rgb = hsl2rgb(hue, 0.62, l);
+        r = rgb[0]; g = rgb[1]; b = rgb[2];
+      } else if (jok[i]) { r = muc[0]; g = muc[1]; b = muc[2]; }
+      else { r = axc[0]; g = axc[1]; b = axc[2]; }
+      d[o] = r; d[o + 1] = g; d[o + 2] = b; d[o + 3] = 255;
+    }
+  }
+  function hexish(v) {            // resolve "rgb(...)" / "#..." to [r,g,b]
+    if (!v) return null;
+    var m = v.match(/rgba?\(([^)]+)\)/);
+    if (m) { var p = m[1].split(',').map(parseFloat); return [p[0], p[1], p[2]]; }
+    m = v.match(/^#([0-9a-f]{6})$/i);
+    if (m) { var t = parseInt(m[1], 16); return [(t >> 16) & 255, (t >> 8) & 255, t & 255]; }
+    return null;
+  }
+  function X(x) { return (x + view.xr / 2) / view.xr * cw; }
+  function Y(y) { return (1 - y / view.ymax) * chh; }
+
+  function drawOverlay() {
+    if (!cw) return;
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    over.width = cw * dpr; over.height = chh * dpr;
+    octx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    octx.clearRect(0, 0, cw, chh);
+    var fg = cssVar('--foreground') || '#888', bg = cssVar('--background') || '#fff';
+    var acc = cssVar('--viz-series-1') || cssVar('--accent') || fg;
+
+    // real axis
+    octx.strokeStyle = fg; octx.globalAlpha = 0.5; octx.lineWidth = 1.5;
+    octx.beginPath(); octx.moveTo(0, chh - 0.5); octx.lineTo(cw, chh - 0.5); octx.stroke();
+
+    // faint integer gridlines + full unit circle (always)
+    octx.globalAlpha = state.paintJ ? 0.14 : 0.22;
+    octx.setLineDash([3, 4]); octx.lineWidth = 1;
+    octx.beginPath();
+    for (var gx = Math.ceil(-view.xr / 2); gx <= Math.floor(view.xr / 2); gx++) { octx.moveTo(X(gx), Y(0)); octx.lineTo(X(gx), 0); }
+    octx.stroke();
+    octx.beginPath(); octx.arc(X(0), Y(0), chh / view.ymax, 0, 2 * Math.PI); octx.stroke();
+    octx.setLineDash([]);
+
+    // fundamental domain boundary
+    octx.globalAlpha = 0.9; octx.lineWidth = 1.6;
+    octx.beginPath();
+    octx.arc(X(0), Y(0), chh / view.ymax, -Math.PI / 3, -2 * Math.PI / 3, true);
+    octx.moveTo(X(-0.5), Y(Math.sqrt(3) / 2)); octx.lineTo(X(-0.5), 0);
+    octx.moveTo(X(0.5), Y(Math.sqrt(3) / 2)); octx.lineTo(X(0.5), 0);
+    octx.stroke();
+
+    // orbit + geodesics
+    var z = { re: state.zx, im: state.zy };
+    var dd = z.re * z.re + z.im * z.im;
+    var Sz = { re: -z.re / dd, im: z.im / dd };          // S(z) = -1/z
+    var Tz = { re: z.re + 1, im: z.im }, mz = { re: z.re - 1, im: z.im };
+    var dt = (z.re + 1) * (z.re + 1) + z.im * z.im;
+    var STz = { re: -(z.re + 1) / dt, im: z.im / dt };   // S(Tz) = -1/(z+1)
+    if (state.showOrbit) {
+      octx.globalAlpha = 0.75; octx.setLineDash([5, 4]); octx.lineWidth = 1.4;
+      drawGeo(z, Sz); drawGeo(z, Tz);
+      octx.setLineDash([]);
+      var pts = [[Tz, 'Tz'], [mz, 'T\u207b\u00b9z'], [Sz, 'Sz'], [STz, 'STz']];
+      pts.forEach(function (pt) { drawPoint(pt[0], pt[1], fg, bg, false); });
+      drawPoint(z, 'z', acc, bg, true);
+    }
+    // F label
+    octx.globalAlpha = 0.85; octx.fillStyle = fg;
+    octx.font = 'italic 12px Georgia, serif';
+    octx.strokeStyle = bg; octx.lineWidth = 3; octx.lineJoin = 'round';
+    octx.strokeText('F', X(0.08), Y(1.28)); octx.fillText('F', X(0.08), Y(1.28));
+    octx.globalAlpha = 1;
+  }
+  function drawPoint(p, label, col, halo, big) {
+    var px = X(p.re), py = Y(p.im);
+    if (px < -20 || px > cw + 20 || py < -20 || py > chh + 20) return;
+    octx.globalAlpha = 1;
+    octx.beginPath(); octx.arc(px, py, big ? 5.5 : 4, 0, 2 * Math.PI);
+    octx.fillStyle = col; octx.fill();
+    if (big) { octx.beginPath(); octx.arc(px, py, 9, 0, 2 * Math.PI); octx.strokeStyle = col; octx.lineWidth = 1.2; octx.globalAlpha = 0.6; octx.stroke(); octx.globalAlpha = 1; }
+    octx.font = '11px ui-sans-serif, system-ui, sans-serif';
+    octx.strokeStyle = halo; octx.lineWidth = 3; octx.lineJoin = 'round';
+    var lx = px + 7, ly = py - 6;
+    if (lx + 26 > cw) lx = px - 30;
+    octx.strokeText(label, lx, ly); octx.fillStyle = col; octx.fillText(label, lx, ly);
+  }
+  function drawGeo(z1, z2) {      // hyperbolic geodesic: circle orthogonal to real axis
+    var pts = [];
+    if (Math.abs(z1.re - z2.re) < 1e-9) {
+      pts = [{ re: z1.re, im: z1.im }, { re: z1.re, im: (z1.im + z2.im) / 2 }, { re: z1.re, im: z2.im }];
+    } else {
+      var c = ((z1.re * z1.re + z1.im * z1.im) - (z2.re * z2.re + z2.im * z2.im)) / (2 * (z1.re - z2.re));
+      var R = Math.hypot(z1.re - c, z1.im);
+      var a1 = Math.atan2(z1.im, z1.re - c), a2 = Math.atan2(z2.im, z2.re - c);
+      var dplus = ((a2 - a1) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI);
+      var best = null;
+      [dplus, dplus - 2 * Math.PI].forEach(function (dd) {
+        var minIm = 1e9;
+        for (var t = 0; t <= 24; t++) {
+          var py = Math.sin(a1 + dd * t / 24) * R;
+          if (py < minIm) minIm = py;
+        }
+        if (best === null || minIm > best.minIm) best = { dd: dd, minIm: minIm };
+      });
+      pts = [];
+      for (var t = 0; t <= 24; t++) {
+        var th = a1 + best.dd * t / 24;
+        pts.push({ re: c + Math.cos(th) * R, im: Math.sin(th) * R });
+      }
+    }
+    octx.beginPath();
+    pts.forEach(function (p, i) { var px = X(p.re), py = Y(p.im); if (i === 0) octx.moveTo(px, py); else octx.lineTo(px, py); });
+    octx.strokeStyle = cssVar('--foreground') || '#888'; octx.stroke();
+  }
+
+  function updateStatus() {
+    var z = { x: state.zx, y: state.zy };
+    var d = z.x * z.x + z.y * z.y;
+    var j1 = jval(z.x, z.y), j2 = jval(z.x + 1, z.y), j3 = jval(-z.x / d, z.y / d);
+    function mag(j) { return j ? Math.hypot(j[0], j[1]) : NaN; }
+    var m1 = mag(j1), m2 = mag(j2), m3 = mag(j3);
+    var same = Math.abs(m1 - m2) < 1e-6 * Math.abs(m1) && Math.abs(m1 - m3) < 1e-6 * Math.abs(m1);
+    var js = m1 > 1e6 ? m1.toExponential(3) : fmt(m1, 1);
+    $('lv-status').textContent =
+      'z = ' + fmt(z.x, 3) + ' + ' + fmt(z.y, 3) + 'i \u00b7 |z| = ' + fmt(Math.sqrt(d), 3) +
+      ' \u00b7 j(z) = j(Tz) = j(Sz) = ' + js + (same ? ' \u2713' : '') + ' \u00b7 drag the point';
+  }
+
+  var dragging = false;
+  function setZ(e) {
+    var rect = stage.getBoundingClientRect();
+    var x = (e.clientX - rect.left) / rect.width * view.xr - view.xr / 2;
+    var y = view.ymax * (1 - (e.clientY - rect.top) / rect.height);
+    state.zx = Math.max(-view.xr / 2 + 0.04, Math.min(view.xr / 2 - 0.04, x));
+    state.zy = Math.max(0.035, Math.min(view.ymax - 0.04, y));
+    scheduleOverlay(); updateStatus();
+  }
+  var ovPending = false;
+  function scheduleOverlay() {
+    if (ovPending) return; ovPending = true;
+    requestAnimationFrame(function () { ovPending = false; drawOverlay(); });
+  }
+  stage.addEventListener('pointerdown', function (e) { dragging = true; stage.setPointerCapture(e.pointerId); setZ(e); });
+  stage.addEventListener('pointermove', function (e) { if (dragging) setZ(e); });
+  stage.addEventListener('pointerup', function () { dragging = false; saveState(); });
+  stage.addEventListener('pointercancel', function () { dragging = false; });
+
+  $('lv-paint').addEventListener('change', function () {
+    state.paintJ = this.checked;
+    $('lv-colorkey').style.display = state.paintJ ? '' : 'none';
+    repaintBase(); saveState();
+  });
+  $('lv-orbit').addEventListener('change', function () { state.showOrbit = this.checked; drawOverlay(); saveState(); });
+
+  function repaintBase() {
+    if (!jre && cw) return paintBase();
+    if (!cw) return;
+    var W = cw, H = chh;
+    base.width = W; base.height = H;
+    var img = bctx.createImageData(W, H);
+    colorize(img.data, W * H);
+    bctx.putImageData(img, 0, 0);
+  }
+  var themeObs = new MutationObserver(function () { drawOverlay(); });
+  try { themeObs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] }); } catch (e) { /* ignore */ }
+
+  /* ================= panel 2: stems + Satake ================= */
+  var stemsBox = $('lv-stems'), chipBox = $('lv-chips');
+  var stemScale = null;
+  CHIPS.forEach(function (p) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'btn'; b.textContent = 'p = ' + p; b.dataset.p = p;
+    b.addEventListener('click', function () { selectPrime(p); saveState(); });
+    chipBox.appendChild(b);
+  });
+  function factorStr(n) {
+    var out = [], m = n;
+    for (var p = 2; p * p <= m; p++) {
+      if (m % p === 0) { var e = 0; while (m % p === 0) { m /= p; e++; } out.push([p, e]); }
+    }
+    if (m > 1) out.push([m, 1]);
+    return out;
+  }
+  function drawStems() {
+    var W = stemsBox.clientWidth; if (W < 80) return;
+    var H = 210, ml = 34, mr = 10, mt = 16, mb = 26;
+    var NN = 64, ymin = 1e9, ymax = -1e9;
+    for (var n = 1; n <= NN; n++) { ymin = Math.min(ymin, a[n]); ymax = Math.max(ymax, a[n]); }
+    ymin = Math.floor(ymin) - 0.5; ymax = Math.ceil(ymax) + 0.5;
+    var iw = W - ml - mr, ihh = H - mt - mb;
+    function px(n) { return ml + (n - 0.5) / NN * iw; }
+    function py(v) { return mt + (ymax - v) / (ymax - ymin) * ihh; }
+    stemScale = { px: px, py: py, ml: ml, iw: iw, NN: NN };
+    var s = '<svg width="100%" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Stem chart of Fourier coefficients a n from 1 to 64">';
+    s += '<title>Fourier coefficients of the level-11 newform</title>';
+    for (var v = Math.ceil(ymin); v <= Math.floor(ymax); v++) {
+      if (v === 0) continue;
+      s += '<line x1="' + ml + '" y1="' + py(v) + '" x2="' + (W - mr) + '" y2="' + py(v) + '" stroke="var(--border)" stroke-opacity="0.5"/>';
+      s += '<text x="' + (ml - 6) + '" y="' + (py(v) + 4) + '" text-anchor="end" fill="var(--muted-foreground)" font-size="11">' + v + '</text>';
+    }
+    s += '<line x1="' + ml + '" y1="' + py(0) + '" x2="' + (W - mr) + '" y2="' + py(0) + '" stroke="var(--muted-foreground)" stroke-opacity="0.7"/>';
+    [1, 10, 20, 30, 40, 50, 60].forEach(function (t) {
+      s += '<text x="' + px(t) + '" y="' + (H - 8) + '" text-anchor="middle" fill="var(--muted-foreground)" font-size="11">' + t + '</text>';
+    });
+    s += '<text x="' + (W - mr) + '" y="' + (H - 8) + '" text-anchor="end" fill="var(--muted-foreground)" font-size="11">n</text>';
+    s += '<text x="' + (ml - 6) + '" y="' + (mt + 4) + '" text-anchor="end" fill="var(--muted-foreground)" font-size="11">a&#8345;</text>';
+    for (n = 1; n <= NN; n++) {
+      var isSel = n === state.prime, isp = isPrime(n);
+      var col = isSel ? 'var(--viz-series-1)' : 'var(--muted-foreground)';
+      var wdt = isSel ? 2.5 : 1.4, op = isSel ? 1 : (isp ? 0.85 : 0.4);
+      s += '<line x1="' + px(n) + '" y1="' + py(0) + '" x2="' + px(n) + '" y2="' + py(a[n]) + '" stroke="' + col + '" stroke-width="' + wdt + '" stroke-opacity="' + op + '"/>';
+      if (isSel || isp) s += '<circle cx="' + px(n) + '" cy="' + py(a[n]) + '" r="' + (isSel ? 3 : 2) + '" fill="' + col + '" fill-opacity="' + op + '"/>';
+    }
+    var pv = a[state.prime];
+    var ly = pv >= 0 ? py(pv) - 9 : py(pv) + 15;
+    s += '<text x="' + px(state.prime) + '" y="' + ly + '" text-anchor="middle" fill="var(--foreground)" font-size="12">a' + SP + ' = ' + pv + '</text>';
+    s += '<rect id="lv-stemhit" x="' + ml + '" y="' + mt + '" width="' + iw + '" height="' + ihh + '" fill="transparent"/>';
+    s += '</svg>';
+    stemsBox.innerHTML = s;
+    var hit = $('lv-stemhit');
+    hit.addEventListener('pointermove', function (e) {
+      var r = stemsBox.getBoundingClientRect();
+      var mx = (e.clientX - r.left) * (W / r.width);
+      var n = Math.max(1, Math.min(NN, Math.round((mx - ml) / iw * NN + 0.5)));
+      var fac = factorStr(n), note;
+      if (isPrime(n)) note = 'prime';
+      else if (fac.length === 2 && fac[0][1] === 1 && fac[1][1] === 1)
+        note = '= a' + sub(fac[0][0]) + '\u00b7a' + sub(fac[1][0]) + ' = ' + a[fac[0][0]] + '\u00b7' + a[fac[1][0]];
+      else note = 'Hecke recurrence at p^k';
+      showTip('<b>n = ' + n + '</b> \u00b7 a' + sub(n) + ' = ' + a[n] + ' <span style="opacity:.7">' + note + '</span>', e.clientX, e.clientY);
+    });
+    hit.addEventListener('pointerleave', hideTip);
+    hit.addEventListener('click', function (e) {
+      var r = stemsBox.getBoundingClientRect();
+      var mx = (e.clientX - r.left) * (W / r.width);
+      var n = Math.max(1, Math.min(NN, Math.round((mx - ml) / iw * NN + 0.5)));
+      var best = CHIPS[0], bd = 1e9;
+      CHIPS.forEach(function (p) { var dd = Math.abs(p - n); if (dd < bd) { bd = dd; best = p; } });
+      selectPrime(best); saveState();
+    });
+  }
+  function selectPrime(p) {
+    state.prime = p;
+    Array.prototype.forEach.call(chipBox.children, function (b) { b.setAttribute('aria-pressed', String(+b.dataset.p === p)); });
+    drawStems(); primeDetail(p);
+  }
+  function primeDetail(p) {
+    var av = a[p], ap2 = a[p * p];
+    var rows = [];
+    if (p === 11) {
+      rows.push(['a&#8321;&#8321;', av + ' (conductor &#8212; ramified)']);
+      rows.push(['a&#8321;&#8321;&#178;', ap2 + ' = a&#8321;&#8321;\u00b2 (ramified: local factor has degree 1)']);
+      rows.push(['Euler factor', '(1 &#8722; 1\u00b711<sup>&#8722;s</sup>)<sup>&#8722;1</sup>']);
+      rows.push(['reduction', 'split multiplicative (Tate curve)']);
+    } else {
+      rows.push(['a' + SP, String(av)]);
+      rows.push(['a' + SP + '\u00b2', ap2 + ' = a' + SP + '\u00b2 &#8722; ' + p + ' \u2713']);
+      var sterm = '(1 &#8722; ' + (av < 0 ? '(' + av + ')' : av) + '\u00b7' + p + '<sup>&#8722;s</sup> + ' + p + '<sup>1&#8722;2s</sup>)<sup>&#8722;1</sup>';
+      rows.push(['Euler factor', sterm]);
+      var disc = av * av - 4;
+      var sat;
+      if (disc < 0) {
+        var th = Math.acos(av / (2 * Math.sqrt(p))) * 180 / Math.PI;
+        sat = '\u03b1 = \u221a' + p + '\u00b7e<sup>\u00b1i\u03b8</sup>, \u03b8 = ' + fmt(th, 1) + '\u00b0 (Sato\u2013Tate angle)';
+      } else {
+        var lam = (av + Math.sqrt(disc)) / 2;
+        sat = '\u03b1 = \u221a' + p + '\u00b7' + fmt(lam, 3) + ' (real)';
+      }
+      sat += ' &nbsp;|&nbsp; \u03b1+\u03b2 = ' + av + ', \u03b1\u03b2 = ' + p + ', |\u03b1| = \u221a' + p + ' \u2713 <span class="text-muted">(Ramanujan\u2013Petersson, Deligne 1974)</span>';
+      rows.push(['Satake', sat]);
+    }
+    var html = '<div class="lv-kv">';
+    rows.forEach(function (r) { html += '<span class="lv-k">' + r[0] + '</span><span class="tabular-nums">' + r[1] + '</span>'; });
+    html += '</div>';
+    $('lv-pdetail').innerHTML = html;
+  }
+  function buildQexp() {
+    var t = 'f(\u03c4) = q';
+    for (var n = 2; n <= 14; n++) {
+      if (a[n] === 0) continue;
+      t += (a[n] < 0 ? ' \u2212 ' : ' + ') + (Math.abs(a[n]) === 1 ? '' : Math.abs(a[n])) + 'q' + sup(n);
+    }
+    t += ' + \u22ef';
+    $('lv-qexp').textContent = t;
+  }
+
+  /* ================= panel 3: L-function ================= */
+  var lbox = $('lv-lplot'), srange = $('lv-srange');
+  var lplot = null, showSum = true, showProd = true;
+  function computeL(s) {
+    var sum = new Float64Array(601), prod = new Float64Array(601);
+    sum[0] = 0; sum[1] = a[1];
+    prod[0] = prod[1] = 1;
+    var pi = 0;
+    for (var n = 2; n <= 600; n++) {
+      sum[n] = sum[n - 1] + a[n] / Math.pow(n, s);
+      var loc = 1;
+      if (primes[pi] === n) {
+        loc = (n === 11) ? (1 - a[n] / Math.pow(n, s)) : (1 - a[n] / Math.pow(n, s) + Math.pow(n, 1 - 2 * s));
+        loc = 1 / loc; pi++;
+      }
+      prod[n] = prod[n - 1] * loc;
+    }
+    return { sum: sum, prod: prod };
+  }
+  function drawL() {
+    var W = lbox.clientWidth; if (W < 80) return;
+    var s = state.s, L = computeL(s);
+    var H = 240, ml = 46, mr = 14, mt = 12, mb = 28;
+    var iw = W - ml - mr, ihh = H - mt - mb;
+    var lo = 1e9, hi = -1e9;
+    if (showSum) for (var n = 2; n <= 600; n++) { lo = Math.min(lo, L.sum[n]); hi = Math.max(hi, L.sum[n]); }
+    if (showProd) for (n = 2; n <= 600; n++) { lo = Math.min(lo, L.prod[n]); hi = Math.max(hi, L.prod[n]); }
+    var pad = (hi - lo) * 0.1 || 0.1; lo -= pad; hi += pad;
+    function px(n) { return ml + (n - 2) / 598 * iw; }
+    function py(v) { return mt + (hi - v) / (hi - lo) * ihh; }
+    lplot = { px: px, py: py, L: L, ml: ml, iw: iw };
+    var s1 = '<svg width="100%" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Partial Dirichlet series and partial Euler product of L of s versus number of terms">';
+    s1 += '<title>L(s,f) computed two ways</title>';
+    var range = hi - lo, step = Math.pow(10, Math.floor(Math.log10(range / 4)));
+    var err = range / 4 / step; if (err >= 5) step *= 5; else if (err >= 2) step *= 2;
+    for (var v = Math.ceil(lo / step) * step; v <= hi; v += step) {
+      s1 += '<line x1="' + ml + '" y1="' + py(v) + '" x2="' + (W - mr) + '" y2="' + py(v) + '" stroke="var(--border)" stroke-opacity="0.5"/>';
+      s1 += '<text x="' + (ml - 6) + '" y="' + (py(v) + 4) + '" text-anchor="end" fill="var(--muted-foreground)" font-size="11">' + (+v.toFixed(4)) + '</text>';
+    }
+    [100, 200, 300, 400, 500, 600].forEach(function (t) {
+      s1 += '<text x="' + px(t) + '" y="' + (H - 8) + '" text-anchor="middle" fill="var(--muted-foreground)" font-size="11">' + t + '</text>';
+    });
+    s1 += '<text x="' + (ml - 6) + '" y="' + (mt + 6) + '" text-anchor="end" fill="var(--muted-foreground)" font-size="11">L(s,f)</text>';
+    if (showSum) {
+      var d1 = '';
+      for (n = 2; n <= 600; n++) d1 += (n === 2 ? 'M' : 'L') + px(n).toFixed(1) + ' ' + py(L.sum[n]).toFixed(2);
+      s1 += '<path id="lv-psum" d="' + d1 + '" fill="none" stroke="var(--viz-series-1)" stroke-width="1.4"/>';
+    }
+    if (showProd) {
+      var d2 = '';
+      primes.forEach(function (p) { if (p >= 2 && p <= 600) d2 += (d2 === '' ? 'M' : 'L') + px(p).toFixed(1) + ' ' + py(L.prod[p]).toFixed(2); });
+      s1 += '<path id="lv-pprod" d="' + d2 + '" fill="none" stroke="var(--viz-series-2)" stroke-width="1.8" stroke-dasharray="7 4"/>';
+    }
+    s1 += '<line id="lv-guide" y1="' + mt + '" y2="' + (mt + ihh) + '" stroke="var(--muted-foreground)" stroke-opacity="0.5" style="display:none"/>';
+    s1 += '<circle id="lv-mk1" r="3" fill="var(--viz-series-1)" style="display:none"/><circle id="lv-mk2" r="3" fill="var(--viz-series-2)" style="display:none"/>';
+    s1 += '<rect id="lv-lhit" x="' + ml + '" y="' + mt + '" width="' + iw + '" height="' + ihh + '" fill="transparent"/>';
+    s1 += '</svg>';
+    lbox.innerHTML = s1;
+    var hit = $('lv-lhit');
+    hit.addEventListener('pointermove', function (e) {
+      if (!lplot) return;
+      var r = lbox.getBoundingClientRect();
+      var mx = (e.clientX - r.left) * (W / r.width);
+      var n = Math.max(2, Math.min(600, Math.round((mx - ml) / iw * 598 + 2)));
+      var g = $('lv-guide'), m1 = $('lv-mk1'), m2 = $('lv-mk2');
+      g.style.display = ''; g.setAttribute('x1', px(n)); g.setAttribute('x2', px(n));
+      var bp = 2; primes.forEach(function (p) { if (p <= n) bp = p; });
+      if (showSum) { m1.style.display = ''; m1.setAttribute('cx', px(n)); m1.setAttribute('cy', py(L.sum[n])); } else m1.style.display = 'none';
+      if (showProd) { m2.style.display = ''; m2.setAttribute('cx', px(bp)); m2.setAttribute('cy', py(L.prod[bp])); } else m2.style.display = 'none';
+      showTip('<b>N = ' + n + '</b>' + (showSum ? '<br><span style="color:var(--viz-series-1)">\u25a0</span> \u03a3 to n = ' + fmt(L.sum[n], 5) : '') + (showProd ? '<br><span style="color:var(--viz-series-2)">\u25a0</span> \u220f to p = ' + bp + ' = ' + fmt(L.prod[bp], 5) : ''), e.clientX, e.clientY);
+    });
+    hit.addEventListener('pointerleave', function () { hideTip(); $('lv-guide').style.display = 'none'; $('lv-mk1').style.display = 'none'; $('lv-mk2').style.display = 'none'; });
+    var fs = L.sum[600], fp = L.prod[600];
+    $('lv-lfinal').textContent = 's = ' + fmt(s, 2) + ':  \u03a3 over n \u2264 600 = ' + fmt(fs, 6) + '  \u00b7  \u220f over p \u2264 600 = ' + fmt(fp, 6) + '  \u00b7  gap = ' + Math.abs(fs - fp).toExponential(1);
+  }
+  var sTimer = null;
+  srange.addEventListener('input', function () {
+    state.s = parseFloat(srange.value);
+    $('lv-sval').textContent = fmt(state.s, 2);
+    clearTimeout(sTimer);
+    sTimer = setTimeout(function () { drawL(); saveState(); }, 60);
+  });
+  Array.prototype.forEach.call(root.querySelectorAll('.lv-lg'), function (b) {
+    b.addEventListener('click', function () {
+      var on = b.getAttribute('aria-pressed') === 'true';
+      b.setAttribute('aria-pressed', String(!on));
+      if (b.dataset.series === 'sum') showSum = !on; else showProd = !on;
+      drawL();
+    });
+  });
+
+  /* ================= panel 4: dictionary ================= */
+  var DICT = [
+    {
+      l: 'Dirichlet characters \u03c7', ld: '1-dimensional Galois reps',
+      r: 'Hecke characters', rd: 'automorphic forms on GL\u2081',
+      badge: 'proved',
+      d: 'Class field theory (19th c.; Kronecker\u2013Weber): every 1-dimensional Galois character comes from a Hecke character, with L(s,\u03c7) matching term by term. The n = 1 case of the Langlands correspondence \u2014 a theorem before Langlands.'
+    },
+    {
+      l: 'Elliptic curves E/\u211a', ld: '2-dimensional \u2113-adic reps',
+      r: 'Weight-2 newforms of level N\u2091', rd: 'automorphic reps of GL\u2082 \u2014 like f above',
+      badge: 'proved',
+      d: 'The modularity theorem (Wiles 1995; Taylor\u2013Wiles; BCDT 2001): #E(\ud835\udcd5_p) \u2212 (p+1) = a_p for every good prime p. The newform shown in this widget is exactly the one attached to the elliptic curve 11a1 \u2014 the theorem behind the proof of Fermat\u2019s Last Theorem.'
+    },
+    {
+      l: '2-dimensional Artin reps', ld: 'finite-image Galois reps',
+      r: 'Weight-1 newforms', rd: 'automorphic reps of GL\u2082',
+      badge: 'proved',
+      d: 'Deligne\u2013Serre (1974) attach a 2-dimensional Artin representation to every weight-1 newform. Converse proved for solvable image by Langlands (tetrahedral, octahedral) and Tunnell (1981, all solvable cases) \u2014 a key ingredient of Wiles\u2019 proof. Odd icosahedral cases: Buzzard\u2013Dickinson\u2013Shepherd-Barron\u2013Taylor (2001).'
+    },
+    {
+      l: 'Motives / \u2113-adic Galois reps', ld: 'any dimension n',
+      r: 'Automorphic reps of GL\u2099(\ud835\udc9c_\u211a)', rd: 'and more general groups G via the L-group \u1d38G',
+      badge: 'open',
+      d: 'The global Langlands correspondence (Langlands 1967\u201370): to each n-dimensional \u2113-adic representation \u03c1 of Gal(\u211a\u0304/\u211a) should correspond an automorphic representation \u03c0(\u03c1) with matching L-functions. Open for n \u2265 3; functoriality predicts how \u03c0\u2019s transfer between groups \u2014 the engine of the program.'
+    }
+  ];
+  var dictBox = $('lv-dict');
+  function buildDict() {
+    var html = '';
+    DICT.forEach(function (r, i) {
+      html += '<button type="button" class="btn viz-tile dict-row" data-i="' + i + '" aria-pressed="false">' +
+        '<span class="dict-cell"><span>' + r.l + '</span><span class="text-muted">' + r.ld + '</span></span>' +
+        '<span class="dict-conn"><span>L(s)</span><span class="viz-badge">' + r.badge + '</span></span>' +
+        '<span class="dict-cell"><span>' + r.r + '</span><span class="text-muted">' + r.rd + '</span></span></button>';
+    });
+    dictBox.innerHTML = html;
+    Array.prototype.forEach.call(dictBox.children, function (b) {
+      b.addEventListener('click', function () { selectRow(+b.dataset.i); saveState(); });
+    });
+  }
+  function selectRow(i) {
+    state.dictRow = i;
+    Array.prototype.forEach.call(dictBox.children, function (b) { b.setAttribute('aria-pressed', String(+b.dataset.i === i)); });
+    $('lv-ddetail').textContent = DICT[i].d;
+  }
+
+  /* ================= tabs ================= */
+  var tabBtns = Array.prototype.slice.call(root.querySelectorAll('[role="tab"]'));
+  function showTab(id) {
+    tabBtns.forEach(function (t) {
+      var sel = t.id === id;
+      t.classList.toggle('active', sel);
+      t.setAttribute('aria-selected', String(sel));
+    });
+    tabBtns.forEach(function (t) {
+      var panel = $(t.getAttribute('aria-controls'));
+      if (panel) panel.hidden = t.id !== id;
+    });
+    state.tab = id.replace('tab-', '');
+    saveState();
+    drawVisible();
+  }
+  tabBtns.forEach(function (t) { t.addEventListener('click', function () { showTab(t.id); }); });
+  var draws = [];
+  function drawVisible() {
+    draws.forEach(function (fn) { try { fn(); } catch (e) { /* ignore */ } });
+  }
+
+  /* ================= boot ================= */
+  loadState();
+  buildQexp();
+  buildDict();
+  selectPrime(state.prime);
+  selectRow(state.dictRow);
+  $('lv-paint').checked = state.paintJ;
+  $('lv-colorkey').style.display = state.paintJ ? '' : 'none';
+  $('lv-orbit').checked = state.showOrbit;
+  srange.value = String(state.s);
+  $('lv-sval').textContent = fmt(state.s, 2);
+
+  var resizeTimer = null;
+  draws.push(function () {
+    var W = stage.clientWidth, H = stage.clientHeight;
+    if (W < 60 || H < 60) return;
+    if (!cw || Math.abs(cw - W) > 2 || Math.abs(chh - H) > 2) {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function () { paintBase(); drawOverlay(); updateStatus(); }, 60);
+    } else { drawOverlay(); updateStatus(); }
+  });
+  draws.push(drawStems);
+  draws.push(drawL);
+
+  var ro = new ResizeObserver(function () { drawVisible(); });
+  ro.observe(stage); ro.observe(stemsBox); ro.observe(lbox);
+
+  var initTab = 'tab-' + (['sym', 'form', 'lfun', 'dict'].indexOf(state.tab) >= 0 ? state.tab : 'sym');
+  showTab(initTab);
+})();
+</script>
+
+<footer class="text-small text-muted" style="margin-top:28px;border-top:1px solid var(--border);padding-top:12px">
+  All data computed live in the browser: Fourier coefficients of the newform 11.2.a.a, its L-function, and the j-invariant on &#8459;. No external resources.
+</footer>
+</main>
+</body>
+</html>

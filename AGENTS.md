@@ -140,11 +140,13 @@ surface the limitation to the user instead of creating workarounds on Modal.
 - `research/research-log.md` — the research loop log. Each iteration is recorded
   here (problem, contributions, next steps); update it (and `README.md`)
   when completing an iteration.
-- `docs/index.html` — standalone single-file educational web page
-  (GL₂ Langlands by example). Self-contained by design: no network requests,
-  no CDN. Preview with `python3 -m http.server` from that directory.
-  `docs/` is the GitHub Pages source folder (`/docs`, deploy-from-branch),
-  so the page serves at `https://picodozbotdoz.github.io/math-proof1/`.
+- `docs/` — the GitHub Pages source folder (`/docs`, deploy-from-branch),
+  serving `https://picodozbotdoz.github.io/math-proof1/`: `docs/index.html`
+  is the project landing page (results, verified τ values — keep in sync
+  with `tau_one` … `tau_twenty_one` in `Basic.lean`), and `docs/langlands.html`
+  is the standalone interactive educational page (GL₂ Langlands by example),
+  self-contained by design: no network requests, no CDN. Preview with
+  `python3 -m http.server` from that directory.
 
 ## Conventions and gotchas
 
