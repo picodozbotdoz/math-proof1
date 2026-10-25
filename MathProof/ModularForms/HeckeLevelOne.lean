@@ -22,8 +22,8 @@ one-dimensional, `T_p Δ = τ(p) • Δ`, and comparing coefficients gives
 `τ(p n) = τ(p) τ(n)` for `p ∤ n` and the two-term recursion for `τ(p^r)`.
 -/
 
-open UpperHalfPlane ModularForm CuspForm Filter Function Periodic
-open scoped MatrixGroups
+open UpperHalfPlane ModularForm CuspForm Filter Function Periodic CongruenceSubgroup
+open scoped MatrixGroups Manifold
 
 namespace HeckeLevelOne
 
@@ -529,5 +529,190 @@ theorem heckeTPFun_slash_invariant (hp : p.Prime) (hf : IsSlashInvariantSL k f) 
     rw [hd, one_zpow, mul_one]
 
 end Invariance
+
+/-! ### From slash invariance of a level-one form to `IsSlashInvariantSL` -/
+
+section ToInvariant
+
+variable {k : ℤ} {F : Type*} [FunLike F ℍ ℂ] [SlashInvariantFormClass F 𝒮ℒ k]
+
+lemma toIsSlashInvariantSL (f : F) : IsSlashInvariantSL k f := by
+  have hinst : SlashInvariantFormClass F Γ(1) k := Gamma_one_coe_eq_SL ▸ ‹_›
+  exact fun γ z => SlashInvariantForm.slash_action_eqn_SL'' f (mem_Gamma_one γ) z
+
+end ToInvariant
+
+/-! ### Imaginary parts, limits at `i∞`, and holomorphy of the operator -/
+
+section Analysis
+
+variable {k : ℤ} {p : ℕ}
+
+lemma im_shiftDivP (hp : 0 < p) (j : ℕ) (z : ℍ) : (shiftDivP hp j z).im = z.im / p := by
+  rw [← UpperHalfPlane.coe_im, coe_shiftDivP, Complex.div_natCast_im,
+    Complex.add_im, Complex.natCast_im, add_zero, UpperHalfPlane.coe_im]
+
+lemma im_mulP (hp : 0 < p) (z : ℍ) : (mulP hp z).im = p * z.im := by
+  rw [← UpperHalfPlane.coe_im, coe_mulP, Complex.mul_im, Complex.natCast_im,
+    zero_mul, add_zero, Complex.natCast_re, UpperHalfPlane.coe_im]
+
+lemma tendsto_shiftDivP_atImInfty (hp : 0 < p) (j : ℕ) :
+    Tendsto (shiftDivP hp j) atImInfty atImInfty := by
+  suffices Tendsto (fun τ : ℍ => (p : ℝ)⁻¹ * τ.im) atImInfty atTop by
+    simpa [atImInfty, Function.comp_def, im_shiftDivP hp j, div_eq_inv_mul] using this
+  apply tendsto_comap.const_mul_atTop
+  exact inv_pos.mpr (by exact_mod_cast hp)
+
+lemma tendsto_mulP_atImInfty (hp : 0 < p) :
+    Tendsto (mulP hp) atImInfty atImInfty := by
+  suffices Tendsto (fun τ : ℍ => (p : ℝ) * τ.im) atImInfty atTop by
+    simpa [atImInfty, Function.comp_def, im_mulP hp] using this
+  apply tendsto_comap.const_mul_atTop
+  exact_mod_cast hp
+
+lemma differentiableOn_shiftDivP_comp {g : ℂ → ℂ}
+    (hg : DifferentiableOn ℂ g {z : ℂ | 0 < z.im}) (hp : 0 < p) (j : ℕ) :
+    DifferentiableOn ℂ (fun z : ℂ => g ((z + (j : ℂ)) / (p : ℂ))) {z : ℂ | 0 < z.im} := by
+  have hmap : Set.MapsTo (fun z : ℂ => (z + (j : ℂ)) / (p : ℂ)) {z : ℂ | 0 < z.im}
+      {z : ℂ | 0 < z.im} := by
+    intro z hz
+    simp only [Set.mem_setOf_eq]
+    rw [Complex.div_natCast_im, Complex.add_im, Complex.natCast_im, add_zero]
+    exact div_pos hz (by exact_mod_cast hp)
+  have hd1 : Differentiable ℂ (fun z : ℂ => z) := differentiable_id
+  have hd2 : Differentiable ℂ (fun z : ℂ => (j : ℂ)) := differentiable_const _
+  have hd3 : Differentiable ℂ (fun z : ℂ => (p : ℂ)) := differentiable_const _
+  have hdiff : Differentiable ℂ (fun z : ℂ => (z + (j : ℂ)) / (p : ℂ)) :=
+    (hd1.add hd2).div hd3 (fun _ => by exact_mod_cast hp.ne')
+  exact hg.comp hdiff.differentiableOn hmap
+
+lemma differentiableOn_mulP_comp {g : ℂ → ℂ}
+    (hg : DifferentiableOn ℂ g {z : ℂ | 0 < z.im}) (hp : 0 < p) :
+    DifferentiableOn ℂ (fun z : ℂ => g ((p : ℂ) * z)) {z : ℂ | 0 < z.im} := by
+  have hmap : Set.MapsTo (fun z : ℂ => (p : ℂ) * z) {z : ℂ | 0 < z.im}
+      {z : ℂ | 0 < z.im} := by
+    intro z hz
+    simp only [Set.mem_setOf_eq]
+    rw [Complex.mul_im, Complex.natCast_re, Complex.natCast_im, zero_mul, add_zero]
+    exact mul_pos (by exact_mod_cast hp) hz
+  have hdiff : Differentiable ℂ (fun z : ℂ => (p : ℂ) * z) :=
+    (differentiable_const _).mul differentiable_id
+  exact hg.comp hdiff.differentiableOn hmap
+
+variable {F : Type*} [FunLike F ℍ ℂ] [ModularFormClass F 𝒮ℒ k]
+
+theorem heckeTPFun_mdiff (f : F) (hp : 0 < p) : MDiff (heckeTPFun hp k f) := by
+  rw [UpperHalfPlane.mdifferentiable_iff]
+  have hf : DifferentiableOn ℂ ((f : ℍ → ℂ) ∘ UpperHalfPlane.ofComplex) {z : ℂ | 0 < z.im} :=
+    UpperHalfPlane.mdifferentiable_iff.mp (ModularFormClass.holo f)
+  have heq : ∀ z : ℂ, 0 < z.im →
+      ((heckeTPFun hp k f) ∘ UpperHalfPlane.ofComplex) z
+        = (p : ℂ)⁻¹ * ∑ j ∈ Finset.range p,
+            ((f : ℍ → ℂ) ∘ UpperHalfPlane.ofComplex) ((z + (j : ℂ)) / (p : ℂ))
+          + (p : ℂ) ^ (k - 1) * ((f : ℍ → ℂ) ∘ UpperHalfPlane.ofComplex) ((p : ℂ) * z) := by
+    intro z hz
+    have e1 : ∀ j ∈ Finset.range p, shiftDivP hp j (UpperHalfPlane.ofComplex z)
+        = UpperHalfPlane.ofComplex ((z + (j : ℂ)) / (p : ℂ)) := by
+      intro j _
+      have hpos : 0 < ((z + (j : ℂ)) / (p : ℂ)).im := by
+        rw [Complex.div_natCast_im, Complex.add_im, Complex.natCast_im, add_zero]
+        exact div_pos hz (by exact_mod_cast hp)
+      refine UpperHalfPlane.ext_iff.mpr ?_
+      rw [coe_shiftDivP, UpperHalfPlane.ofComplex_apply_of_im_pos hpos,
+        UpperHalfPlane.ofComplex_apply_of_im_pos hz]
+    have e2 : mulP hp (UpperHalfPlane.ofComplex z)
+        = UpperHalfPlane.ofComplex ((p : ℂ) * z) := by
+      have hpos : 0 < ((p : ℂ) * z).im := by
+        rw [Complex.mul_im, Complex.natCast_re, Complex.natCast_im, zero_mul, add_zero]
+        exact mul_pos (by exact_mod_cast hp) hz
+      refine UpperHalfPlane.ext_iff.mpr ?_
+      rw [coe_mulP, UpperHalfPlane.ofComplex_apply_of_im_pos hpos,
+        UpperHalfPlane.ofComplex_apply_of_im_pos hz]
+    rw [Function.comp_apply, heckeTPFun_apply,
+      Finset.sum_congr rfl (fun j hj => by rw [e1 j hj]), e2]
+    simp only [Function.comp_apply]
+  have h1 : ∀ j ∈ Finset.range p, DifferentiableOn ℂ
+      (fun z : ℂ => ((f : ℍ → ℂ) ∘ UpperHalfPlane.ofComplex) ((z + (j : ℂ)) / (p : ℂ)))
+      {z : ℂ | 0 < z.im} := fun j _ => differentiableOn_shiftDivP_comp hf hp j
+  have h2 := DifferentiableOn.sum h1
+  rw [show (∑ j ∈ Finset.range p,
+        fun z : ℂ => ((f : ℍ → ℂ) ∘ UpperHalfPlane.ofComplex) ((z + (j : ℂ)) / (p : ℂ)))
+      = fun z : ℂ => ∑ j ∈ Finset.range p,
+        ((f : ℍ → ℂ) ∘ UpperHalfPlane.ofComplex) ((z + (j : ℂ)) / (p : ℂ)) from by
+    funext z
+    simp [Finset.sum_apply]] at h2
+  have h3 : DifferentiableOn ℂ
+      (fun z : ℂ => ((f : ℍ → ℂ) ∘ UpperHalfPlane.ofComplex) ((p : ℂ) * z))
+      {z : ℂ | 0 < z.im} := differentiableOn_mulP_comp hf hp
+  have hc1 : DifferentiableOn ℂ (fun _ : ℂ => (p : ℂ)⁻¹) {z : ℂ | 0 < z.im} :=
+    (differentiable_const _).differentiableOn
+  have hc2 : DifferentiableOn ℂ (fun _ : ℂ => (p : ℂ) ^ (k - 1)) {z : ℂ | 0 < z.im} :=
+    (differentiable_const ((p : ℂ) ^ (k - 1))).differentiableOn
+  have hdRHS : DifferentiableOn ℂ
+      (fun z : ℂ => (p : ℂ)⁻¹ * ∑ j ∈ Finset.range p,
+          ((f : ℍ → ℂ) ∘ UpperHalfPlane.ofComplex) ((z + (j : ℂ)) / (p : ℂ))
+        + (p : ℂ) ^ (k - 1) * ((f : ℍ → ℂ) ∘ UpperHalfPlane.ofComplex) ((p : ℂ) * z))
+      {z : ℂ | 0 < z.im} := (hc1.mul h2).add (hc2.mul h3)
+  refine hdRHS.congr (fun z hz => heq z hz)
+
+private theorem tendsto_finset_sum_zero {ι : Type*} (s : Finset ι) (u : ι → ℍ → ℂ)
+    (h : ∀ i ∈ s, Tendsto (u i) atImInfty (nhds 0)) :
+    Tendsto (fun z : ℍ => ∑ i ∈ s, u i z) atImInfty (nhds 0) := by
+  classical
+  induction s using Finset.induction with
+  | empty => simpa using tendsto_const_nhds
+  | insert i s hi ih =>
+      simp only [Finset.sum_insert hi]
+      simpa using Tendsto.add (h i (Finset.mem_insert_self i s))
+        (ih fun x hx => h x (Finset.mem_insert_of_mem hx))
+
+variable {F : Type*} [FunLike F ℍ ℂ] [CuspFormClass F 𝒮ℒ k]
+
+theorem heckeTPFun_isZeroAtImInfty (f : F) (hp : 0 < p) :
+    IsZeroAtImInfty (heckeTPFun hp k f) := by
+  have hsum : Tendsto
+      (fun z : ℍ => ∑ j ∈ Finset.range p, (f : ℍ → ℂ) (shiftDivP hp j z)) atImInfty (nhds 0) :=
+    tendsto_finset_sum_zero _ _
+      (fun j _ => (CuspFormClass.zero_at_infty f).comp (tendsto_shiftDivP_atImInfty hp j))
+  have hmul : Tendsto (fun z : ℍ => (f : ℍ → ℂ) (mulP hp z)) atImInfty (nhds 0) :=
+    (CuspFormClass.zero_at_infty f).comp (tendsto_mulP_atImInfty hp)
+  have h1 : Tendsto (fun z : ℍ => (p : ℂ)⁻¹ *
+      ∑ j ∈ Finset.range p, (f : ℍ → ℂ) (shiftDivP hp j z)) atImInfty (nhds 0) := by
+    simpa [mul_zero] using hsum.const_mul (p : ℂ)⁻¹
+  have h2 : Tendsto (fun z : ℍ => (p : ℂ) ^ (k - 1) *
+      (f : ℍ → ℂ) (mulP hp z)) atImInfty (nhds 0) := by
+    simpa [mul_zero] using hmul.const_mul ((p : ℂ) ^ (k - 1))
+  refine Tendsto.congr (fun z => (heckeTPFun_apply hp k (f : ℍ → ℂ) z).symm) ?_
+  simpa using h1.add h2
+
+end Analysis
+
+/-! ### The Hecke operator on cusp forms -/
+
+section Bundled
+
+variable {k : ℤ} {p : ℕ}
+
+/-- The Hecke operator `T_p` on level-one cusp forms (`p` prime): `T_p f` is again a cusp form
+of the same weight, with underlying function `heckeTPFun`. -/
+noncomputable def heckeTP (hp : p.Prime) (f : CuspForm 𝒮ℒ k) : CuspForm 𝒮ℒ k where
+  toFun := heckeTPFun hp.pos k (f : ℍ → ℂ)
+  slash_action_eq' := by
+    intro g hg
+    obtain ⟨γ, rfl⟩ := MonoidHom.mem_range.mp hg
+    exact heckeTPFun_slash_invariant hp (toIsSlashInvariantSL f) γ
+  holo' := heckeTPFun_mdiff f hp.pos
+  zero_at_cusps' := by
+    intro c hc
+    rw [OnePoint.isZeroAt_iff_forall_SL2Z hc]
+    intro γ _
+    rw [heckeTPFun_slash_invariant hp (toIsSlashInvariantSL f) γ]
+    exact heckeTPFun_isZeroAtImInfty f hp.pos
+
+@[simp]
+lemma heckeTP_apply (hp : p.Prime) (f : CuspForm 𝒮ℒ k) (z : ℍ) :
+    heckeTP hp f z = heckeTPFun hp.pos k (f : ℍ → ℂ) z := rfl
+
+end Bundled
 
 end HeckeLevelOne
