@@ -67,7 +67,15 @@ MathProof/ModularForms/Weight12.lean       # 691 • E₁₂ = 441 • E₄³ + 
 MathProof/ModularForms/Congruence691.lean  # τ(n) ≡ σ₁₁(n) mod 691
 docs/research-log.md            # the research loop log
 langlands-site/                 # standalone educational web page (GL₂ Langlands by example)
+docs/outreach-kit/              # making this work discoverable: GitHub metadata, Reservoir, Zenodo, Zulip post
 ```
+
+## License and citation
+
+Released under the Apache License 2.0 (the same license as Mathlib), see
+[LICENSE](LICENSE). Citation metadata lives in [CITATION.cff](CITATION.cff)
+(rendered by GitHub under "Cite this repository"); connecting the repository
+to Zenodo turns each release tag into a versioned DOI.
 
 ---
 *The original GitHub-Pages setup instructions (kept for reference): under

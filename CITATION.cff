@@ -1,0 +1,35 @@
+cff-version: 1.2.0
+message: >-
+  If you use this work, please cite it using the metadata below.
+title: >-
+  MathProof: formally verified modular-forms mathematics in Lean 4 —
+  Ramanujan's τ function and Lehmer's conjecture
+abstract: >-
+  A Lean 4 + Mathlib library of formally verified mathematics around the
+  Ramanujan tau function. It defines τ as the coefficient of q^n in the
+  discriminant Δ = q ∏_{m≥1} (1 - q^m)^24, proves the analytic bridge
+  (qExpansion 1 Δ).coeff n = τ n to Mathlib's modular discriminant, proves
+  Ramanujan's weight-12 identity 691·E12 = 441·E4^3 + 250·E6^2 via the Sturm
+  bound, and derives Ramanujan's congruence τ(n) ≡ σ11(n) (mod 691) for all
+  n ≥ 1, together with the small-modulus congruences (τ n even unless
+  n ≡ 1 mod 8; 3 ∣ τ n unless n ≡ 1 mod 3). On the computational side it
+  certifies τ n ≠ 0 for all 1 ≤ n ≤ 65536 (and primes n ≤ 65536) entirely
+  inside Lean's kernel via packed-bignum arithmetic in base 2^80 — no
+  external computer algebra, no native_decide, no sorry; the axioms of the
+  computational theorems are checked to be propext alone. The 65536-level
+  kernel decide requires ~63 GiB of heap and is built outside CI.
+authors:
+  - alias: picodoz
+    website: https://github.com/picodozbotdoz
+keywords:
+  - Lean
+  - mathlib
+  - formal verification
+  - modular forms
+  - Ramanujan tau function
+  - Lehmer's conjecture
+  - number theory
+license: Apache-2.0
+repository-code: https://github.com/picodozbotdoz/math-proof1
+version: v0.1.0
+date-released: 2026-10-25
