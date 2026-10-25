@@ -6,7 +6,7 @@ requires more than a few minutes each. Steps 1–2 are done on github.com,
 steps 3–4 are files in this repo, step 5 is a post you publish.
 
 - [ ] 1. GitHub repository settings (description, topics, license) — 5 min
-- [ ] 2. (Optional) GitHub Pages for `langlands-site/` — 2 min
+- [ ] 2. (Optional) GitHub Pages (site lives in `docs/`) — 2 min
 - [ ] 3. Tag a release `v0.1.0` and connect Zenodo for a citable DOI — 10 min
 - [ ] 4. Reservoir listing (automatic once license + 2 stars) — 5 min
 - [ ] 5. Lean Zulip post — 5 min
@@ -48,17 +48,16 @@ repository" button and a license badge automatically.
 
 ## 2. Optional: GitHub Pages for the Langlands site
 
-The repo already contains the standalone educational page
-`langlands-site/index.html`. Enabling Pages exposes it at
-`https://picodozbotdoz.github.io/math-proof1/langlands-site/`:
+The site lives at `docs/index.html` (the directory was renamed from
+`langlands-site/` to `docs/` precisely because branch-based Pages only
+offers `/ (root)` or `/docs` as the source folder). Enabling Pages serves
+it at the site root `https://picodozbotdoz.github.io/math-proof1/`:
 
 Settings → Pages → Build and deployment → Source: **Deploy from a branch** →
-Branch `master`, folder `/langlands-site` → Save.
+Branch `master`, folder `/docs` → Save.
 
-(An earlier plan to build Pages via GitHub Actions was abandoned; the
-static-folder route needs no Actions at all. The note at the bottom of the
-README about Actions-based Pages is obsolete — feel free to delete it when
-this lands.)
+A `.nojekyll` file sits in `docs/` so Pages serves the HTML verbatim
+instead of running Jekyll. No GitHub Actions are involved.
 
 ---
 

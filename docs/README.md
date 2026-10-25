@@ -8,7 +8,7 @@ files — so any static file server can host it.
 ## Quick preview locally
 
 ```bash
-cd langlands-site
+cd docs
 python3 -m http.server 8000
 # open http://localhost:8000
 ```
@@ -21,7 +21,7 @@ python3 -m http.server 8000
 server {
     listen 80;
     server_name example.com;
-    root /var/www/langlands-site;
+    root /var/www/docs;
     index index.html;
 }
 ```
@@ -30,7 +30,7 @@ server {
 
 ```
 example.com {
-    root * /var/www/langlands-site
+    root * /var/www/docs
     file_server
 }
 ```

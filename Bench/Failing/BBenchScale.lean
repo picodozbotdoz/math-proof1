@@ -4,7 +4,7 @@ import Mathlib.Tactic
 # Bench: unforced list arithmetic at 768  (scaling-study artifact)
 
 One measurement point for the memory-scaling curve of the naive kernel
-evaluation (`docs/lehmer-mod-scaling-study.md`): 512 needs > 6 GB, 1024 was
+evaluation (`research/lehmer-mod-scaling-study.md`): 512 needs > 6 GB, 1024 was
 observed at > 71 GB; this file measures 768 with the exact `LehmerMod`
 definitions (verbatim copies) to pin down the growth exponent between the two.
 

@@ -3,7 +3,7 @@
 **This directory is not part of the proof library.** Nothing here is imported
 by `MathProof.lean`, built by the default target, or run in CI.  These are the
 measurement artifacts of
-[docs/lehmer-mod-scaling-study.md](../docs/lehmer-mod-scaling-study.md)
+[research/lehmer-mod-scaling-study.md](../research/lehmer-mod-scaling-study.md)
 (iteration 5): they exist to record *how* the packed-bignum scheme was
 benchmarked and to let anyone reproduce the numbers.  They prove no new
 mathematics — the `decide`s assert computations against **data-generated

@@ -44,8 +44,8 @@ inside the kernel, with soundness proved against Mathlib's
 naive route dies (kernel suspension retention plus the `maxHeartbeats`
 deterministic-timeout cap) and what the packed route costs at each size:
 
-- study: `docs/lehmer-mod-scaling-study.md` in the repo;
-- research log: `docs/research-log.md`.
+- study: `research/lehmer-mod-scaling-study.md` in the repo;
+- research log: `research/research-log.md`.
 
 Since the congruences are classical mathematics, I make no novelty claim
 there — I'd genuinely welcome pointers to earlier formalizations (I did not

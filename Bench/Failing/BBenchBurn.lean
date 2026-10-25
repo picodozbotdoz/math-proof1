@@ -5,7 +5,7 @@
 recursion depth ≈ `k + 1000` and O(1) live data (strict accumulators).  If
 peak RSS still grows linearly in the step count, the kernel evaluator's memory
 cost is proportional to *total reduction work*, not to the live set — the law
-that explains every measurement in `docs/lehmer-mod-scaling-study.md`.
+that explains every measurement in `research/lehmer-mod-scaling-study.md`.
 (A first version recursed to depth `n` and was killed by the kernel's
 `(kernel) deep recursion` guard — depth, not work, is separately capped.)
 -/

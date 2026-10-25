@@ -214,7 +214,7 @@ set_option maxHeartbeats 8000000 -- lift the kernel's deterministic time cap
 /-!
 # Bench: packed-bignum kernel arithmetic for `Δ` mod `P`  (scaling-study artifact)
 
-Self-contained benchmark for the Lehmer scaling study (`docs/lehmer-mod-scaling-study.md`).
+Self-contained benchmark for the Lehmer scaling study (`research/lehmer-mod-scaling-study.md`).
 Computes the coefficients of `(∏_{m} (1 - X ^ m)) ^ 24` mod `P = 999999937` by
 packing each coefficient list into a single bignum in base `2 ^ 80` and letting
 the kernel's GMP-backed `Nat.mul` do the dense convolution at C speed:

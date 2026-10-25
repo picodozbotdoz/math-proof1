@@ -266,7 +266,7 @@ mod 2, `(1 − T)^24 = ((1 − T)^8)^3 = (1 − T^8)^3` (freshman's dream), so
 ## Iteration 5 (study) — Why LehmerMod dies at 1024, and the packed-bignum route to 65536
 
 **Status: study + kernel benchmarks complete; no new theorems landed yet.
-2026-10-24.**  Full write-up: `docs/lehmer-mod-scaling-study.md`.
+2026-10-24.**  Full write-up: `research/lehmer-mod-scaling-study.md`.
 
 ### The problem
 
@@ -333,7 +333,7 @@ and specified the next iteration's design.
 ## Iteration 6 — Lehmer's conjecture: the verified bound raised 512 → 65536 by packed-bignum kernel arithmetic
 
 **Status: complete. 2026-10-24.**  Implements the route specified by the
-Iteration 5 study (§6); development notes in `docs/lehmerpacked-plan.md`.
+Iteration 5 study (§6); development notes in `research/lehmerpacked-plan.md`.
 
 ### What this iteration contributes
 

@@ -120,7 +120,7 @@ surface the limitation to the user instead of creating workarounds on Modal.
   MathProof/Tau/LehmerPacked.lean`.
 - `MathProof/Tau/CongruenceSmall.lean` — gap congruences mod 2 and 3:
   `τ n` even unless `n ≡ 1 [MOD 8]`, `3 ∣ τ n` unless `n ≡ 1 [MOD 3]`.
-- `docs/lehmer-mod-scaling-study.md` — measured analysis of why
+- `research/lehmer-mod-scaling-study.md` — measured analysis of why
   `LehmerMod.lean` cannot pass 512 (kernel retention + heartbeat cap) and the
   benchmarked packed-bignum route to 16384–65536 (Iteration 5 study).
 - `Bench/` — the study's benchmark modules in a dedicated library
@@ -137,12 +137,14 @@ surface the limitation to the user instead of creating workarounds on Modal.
 - `MathProof/ModularForms/Congruence691.lean` — `tau_modEq_sigma`:
   `τ n ≡ σ₁₁ n [ZMOD 691]`.
 - `MathProof.lean` — root import file. **Every new module must be added here.**
-- `docs/research-log.md` — the research loop log. Each iteration is recorded
+- `research/research-log.md` — the research loop log. Each iteration is recorded
   here (problem, contributions, next steps); update it (and `README.md`)
   when completing an iteration.
-- `langlands-site/index.html` — standalone single-file educational web page
+- `docs/index.html` — standalone single-file educational web page
   (GL₂ Langlands by example). Self-contained by design: no network requests,
   no CDN. Preview with `python3 -m http.server` from that directory.
+  `docs/` is the GitHub Pages source folder (`/docs`, deploy-from-branch),
+  so the page serves at `https://picodozbotdoz.github.io/math-proof1/`.
 
 ## Conventions and gotchas
 

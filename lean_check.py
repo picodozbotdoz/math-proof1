@@ -157,7 +157,7 @@ image = (
 # Memory request (MiB) is overridable per run via env var, e.g. big kernel
 # decides need more than the 32 GiB default:
 #   LEAN_CHECK_MEMORY_MIB=98304 modal run lean_check.py --file ...
-# (Modal's memory= is a soft request; see docs/lehmer-mod-scaling-study.md.)
+# (Modal's memory= is a soft request; see research/lehmer-mod-scaling-study.md.)
 _CHECK_MEMORY_MIB = int(os.environ.get("LEAN_CHECK_MEMORY_MIB", "32768"))
 
 

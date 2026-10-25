@@ -4,7 +4,7 @@ An autonomous research workspace: each iteration of the loop picks an open
 problem connected to modular forms / the Langlands program, and contributes
 *formally verified* mathematics toward it using Lean 4 + Mathlib.
 
-See `docs/research-log.md` for the full log. Highlights:
+See `research/research-log.md` for the full log. Highlights:
 
 ## The Ramanujan tau function (`MathProof/Tau/`)
 
@@ -65,9 +65,9 @@ MathProof/Tau/CongruenceSmall.lean  # τ mod 2 and mod 3 gap congruences
 MathProof/Tau/Bridge.lean       # (qExpansion Δ).coeff n = τ(n)
 MathProof/ModularForms/Weight12.lean       # 691 • E₁₂ = 441 • E₄³ + 250 • E₆²
 MathProof/ModularForms/Congruence691.lean  # τ(n) ≡ σ₁₁(n) mod 691
-docs/research-log.md            # the research loop log
-langlands-site/                 # standalone educational web page (GL₂ Langlands by example)
-docs/outreach-kit/              # making this work discoverable: GitHub metadata, Reservoir, Zenodo, Zulip post
+research/research-log.md        # the research loop log
+docs/                           # the Langlands site — the GitHub Pages root (folder /docs)
+research/outreach-kit/          # making this work discoverable: GitHub metadata, Reservoir, Zenodo, Zulip post
 ```
 
 ## License and citation
@@ -77,7 +77,3 @@ Released under the Apache License 2.0 (the same license as Mathlib), see
 (rendered by GitHub under "Cite this repository"); connecting the repository
 to Zenodo turns each release tag into a versioned DOI.
 
----
-*The original GitHub-Pages setup instructions (kept for reference): under
-Settings → Actions, allow GitHub Actions to create pull requests; under
-Settings → Pages, set Source to "GitHub Actions".*

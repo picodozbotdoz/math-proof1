@@ -34,7 +34,7 @@ the missed index.
   This repo is set up so that the default build *excludes* the heavy
   kernel-decide modules (`LehmerMod`, `LehmerPacked` — their 65536 check
   needs ~63 GiB of kernel heap; see `AGENTS.md` and
-  `docs/lehmer-mod-scaling-study.md`). The automatic build is therefore
+  `research/lehmer-mod-scaling-study.md`). The automatic build is therefore
   expected to succeed; if a maintainer ever asks, point them at those two
   documents rather than treating it as a failure.
 - **Metadata.** The repository description and topics from step 1 of the

@@ -3,7 +3,7 @@ import Mathlib.Tactic
 /-!
 # Bench: strict-forced list arithmetic at 1024  (scaling-study artifact)
 
-Hypothesis under test (`docs/lehmer-mod-scaling-study.md`): the 71 GB kernel
+Hypothesis under test (`research/lehmer-mod-scaling-study.md`): the 71 GB kernel
 heap of `MathProof/Tau/LehmerMod.lean` at `d = 1024` comes from the lazy kernel
 evaluator retaining the whole Θ(d²) suspension DAG of the list computation
 (nothing forces the intermediate lists until the final scan).  This file

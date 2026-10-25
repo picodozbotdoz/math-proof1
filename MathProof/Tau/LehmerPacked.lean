@@ -10,7 +10,7 @@ Iteration 6.  Raises the kernel-verified nonvanishing bound for the Ramanujan
 packed into a single `Nat` in base `2 ^ 80`, so every dense polynomial
 multiplication is one GMP-backed `Nat.mul` plus O(d) digit extractions —
 O(d) kernel big-operations instead of Θ(d ^ 2) list-cell reduction steps
-(see `docs/lehmer-mod-scaling-study.md`).
+(see `research/lehmer-mod-scaling-study.md`).
 
 * Entry list: `Ramanujan.etaList d` — the coefficients of `∏ (1 - X ^ m)` mod
   `P` (Euler's pentagonal number theorem: ±1 at generalized pentagonal
@@ -1215,7 +1215,7 @@ theorem packed_nonvanishing_512 : allNonzero (pow24Packed (etaList 512)) = true 
   decide +kernel
 
 -- The 16384 decide needs ~16 GiB of kernel heap: build this module on the
--- Modal builder, not in CI (see AGENTS.md and docs/lehmer-mod-scaling-study.md).
+-- Modal builder, not in CI (see AGENTS.md and research/lehmer-mod-scaling-study.md).
 set_option maxRecDepth 1000000
 set_option maxHeartbeats 8000000 in
 theorem packed_nonvanishing_16384 : allNonzero (pow24Packed (etaList 16384)) = true := by
@@ -1237,7 +1237,7 @@ theorem tau_prime_ne_zero_of_le_16384 {p : ℕ} (hp : p.Prime) (hle : p ≤ 1638
   tau_ne_zero_of_le_16384 (Nat.Prime.pos hp) hle
 
 -- The 65536 decide needs ~60 GiB of kernel heap: build on the Modal builder
--- only, never in CI (see docs/lehmer-mod-scaling-study.md and
+-- only, never in CI (see research/lehmer-mod-scaling-study.md and
 -- Bench/Packed/BBenchPackedBal.lean).
 set_option maxHeartbeats 8000000 in
 theorem packed_nonvanishing_65536 : allNonzero (pow24Packed (etaList 65536)) = true := by
