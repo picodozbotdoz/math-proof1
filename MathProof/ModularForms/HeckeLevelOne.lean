@@ -1,4 +1,5 @@
 import Mathlib.NumberTheory.ModularForms.LevelOne.DimensionFormula
+import Mathlib.RingTheory.RootsOfUnity.Complex
 
 /-!
 # The Hecke operator `T_p` on level-one modular forms
@@ -23,7 +24,7 @@ one-dimensional, `T_p Δ = τ(p) • Δ`, and comparing coefficients gives
 -/
 
 open UpperHalfPlane ModularForm CuspForm Filter Function Periodic CongruenceSubgroup
-open scoped MatrixGroups Manifold
+open scoped MatrixGroups Manifold Real
 
 namespace HeckeLevelOne
 
@@ -714,5 +715,219 @@ lemma heckeTP_apply (hp : p.Prime) (f : CuspForm 𝒮ℒ k) (z : ℍ) :
     heckeTP hp f z = heckeTPFun hp.pos k (f : ℍ → ℂ) z := rfl
 
 end Bundled
+
+/-! ### The q-expansion coefficient formula -/
+
+section QFormula
+
+variable {k : ℤ} {p : ℕ}
+
+private lemma qParam_one (z : ℂ) : 𝕢 1 z = Complex.exp (2 * π * Complex.I * z) := by
+  simp [Periodic.qParam]
+
+lemma qParam_mulP (hp : 0 < p) (τ : ℍ) : 𝕢 1 (mulP hp τ) = (𝕢 1 τ) ^ p := by
+  rw [qParam_one, qParam_one, coe_mulP,
+    show 2 * π * Complex.I * ((p : ℂ) * τ) = (p : ℂ) * (2 * π * Complex.I * τ) from by
+      push_cast
+      ring]
+  exact Complex.exp_nat_mul _ _
+
+lemma qParam_shiftDivP (hp : 0 < p) (j : ℕ) (τ : ℍ) :
+    𝕢 1 (shiftDivP hp j τ)
+      = Complex.exp (2 * π * Complex.I * τ / (p : ℂ))
+        * Complex.exp (2 * π * Complex.I / (p : ℂ)) ^ j := by
+  rw [qParam_one, coe_shiftDivP]
+  have h1 : 2 * π * Complex.I * (((τ : ℂ) + (j : ℂ)) / (p : ℂ))
+      = 2 * π * Complex.I * τ / (p : ℂ) + (j : ℂ) * (2 * π * Complex.I / (p : ℂ)) := by
+    field_simp
+  rw [h1, Complex.exp_add, Complex.exp_nat_mul]
+
+lemma rho_pow_p (hp : 0 < p) (τ : ℍ) :
+    Complex.exp (2 * π * Complex.I * τ / (p : ℂ)) ^ p = 𝕢 1 τ := by
+  rw [← Complex.exp_nat_mul, qParam_one,
+    mul_div_cancel₀ _ (by exact_mod_cast hp.ne' : ((p : ℂ)) ≠ 0)]
+
+lemma sum_xi_pow (hp : p.Prime) (n : ℕ) :
+    ∑ j ∈ Finset.range p, Complex.exp (2 * π * Complex.I / (p : ℂ)) ^ (j * n)
+      = if p ∣ n then (p : ℂ) else 0 := by
+  have hξ : IsPrimitiveRoot (Complex.exp (2 * π * Complex.I / (p : ℂ))) p :=
+    Complex.isPrimitiveRoot_exp p hp.pos.ne'
+  by_cases hpn : p ∣ n
+  · obtain ⟨m, rfl⟩ := hpn
+    rw [if_pos (dvd_mul_right p m)]
+    have e : ∀ j ∈ Finset.range p,
+        Complex.exp (2 * π * Complex.I / (p : ℂ)) ^ (j * (p * m)) = 1 := by
+      intro j _
+      rw [show j * (p * m) = p * (j * m) from by ring, pow_mul, hξ.pow_eq_one, one_pow]
+    rw [Finset.sum_congr rfl e]
+    simp
+  · rw [if_neg hpn]
+    have hcop : Nat.Coprime n p := (hp.coprime_iff_not_dvd.mpr hpn).symm
+    have hprim : IsPrimitiveRoot
+        (Complex.exp (2 * π * Complex.I / (p : ℂ)) ^ n) p := hξ.pow_of_coprime n hcop
+    have e : ∀ j ∈ Finset.range p,
+        Complex.exp (2 * π * Complex.I / (p : ℂ)) ^ (j * n)
+          = (Complex.exp (2 * π * Complex.I / (p : ℂ)) ^ n) ^ j := by
+      intro j _
+      rw [Nat.mul_comm j n, pow_mul]
+    rw [Finset.sum_congr rfl e, hprim.geom_sum_eq_zero hp.one_lt]
+
+lemma paddedEq_smul (hp : 0 < p) (u : ℕ → ℂ) (r : ℂ) :
+    (fun m => if p ∣ m then u (m / p) * r ^ m else 0)
+      = Function.extend (fun n => p * n) (fun n => u n * r ^ (p * n)) 0 := by
+  funext m
+  by_cases hpm : p ∣ m
+  · obtain ⟨n, rfl⟩ := hpm
+    rw [Nat.mul_div_cancel_left _ hp,
+      Function.Injective.extend_apply (mulLeft_injective hp) _ _ n]
+    simp [dvd_mul_right]
+  · have h1 : Function.extend (fun n => p * n) (fun n => u n * r ^ (p * n)) 0 m = 0 :=
+      Function.extend_apply' (f := fun n => p * n) _ _ m
+        (by rintro ⟨x, hx⟩; exact hpm ⟨x, hx.symm⟩)
+    rw [h1]
+    simp [hpm]
+
+theorem hasSum_padMul_smul (hp : 0 < p) (u : ℕ → ℂ) (r : ℂ) {L : ℂ}
+    (h : HasSum (fun n => u n * r ^ (p * n)) L) :
+    HasSum (fun m => if p ∣ m then u (m / p) * r ^ m else 0) L := by
+  rw [paddedEq_smul hp u r]
+  exact hasSum_extend_zero (mulLeft_injective hp) |>.mpr h
+
+private theorem hasSum_finset_sum {ι : Type*} (s : Finset ι) (g : ι → ℕ → ℂ) (a : ι → ℂ)
+    (h : ∀ j ∈ s, HasSum (g j) (a j)) :
+    HasSum (fun n => ∑ j ∈ s, g j n) (∑ j ∈ s, a j) := by
+  classical
+  induction s using Finset.induction with
+  | empty => simpa using hasSum_zero
+  | insert i s hi ih =>
+      simp only [Finset.sum_insert hi]
+      exact HasSum.add (h i (Finset.mem_insert_self i s))
+        (ih fun x hx => h x (Finset.mem_insert_of_mem hx))
+
+/-- **The `T_p`- HasSum**: the q-expansion of `T_p f` at `τ` sums, coefficient-wise,
+to `f_{p m} + p^(k-1) [p ∣ m] f_{m/p}`. -/
+theorem heckeTP_qExpansion_hasSum {F : Type*} [FunLike F ℍ ℂ] [ModularFormClass F 𝒮ℒ k]
+    (hp : p.Prime) (f : F) (τ : ℍ) :
+    HasSum (fun m : ℕ => ((qExpansion 1 f).coeff (p * m)
+        + (p : ℂ) ^ (k - 1) * (if p ∣ m then (qExpansion 1 f).coeff (m / p) else 0))
+        * 𝕢 1 τ ^ m)
+      (heckeTPFun hp.pos k (f : ℍ → ℂ) τ) := by
+  have hbase : ∀ w : ℍ,
+      HasSum (fun n : ℕ => (qExpansion 1 f).coeff n * 𝕢 1 w ^ n) ((f : ℍ → ℂ) w) :=
+    fun w => ModularForm.hasSum_qExpansion (f := f) one_pos one_mem_strictPeriods_SL w
+  -- the `f (p • τ)` summand
+  have hpz : HasSum (fun m => (if p ∣ m then (qExpansion 1 f).coeff (m / p) * 𝕢 1 τ ^ m else 0))
+      ((f : ℍ → ℂ) (mulP hp.pos τ)) := by
+    refine hasSum_padMul_smul hp.pos (fun n => (qExpansion 1 f).coeff n) (𝕢 1 τ) ?_
+    refine HasSum.congr_fun (hbase (mulP hp.pos τ)) ?_
+    intro n
+    rw [qParam_mulP hp.pos τ, ← pow_mul]
+  have hpz' : HasSum
+      (fun m => (p : ℂ) ^ (k - 1) *
+        (if p ∣ m then (qExpansion 1 f).coeff (m / p) * 𝕢 1 τ ^ m else 0))
+      ((p : ℂ) ^ (k - 1) * (f : ℍ → ℂ) (mulP hp.pos τ)) := by
+    simpa [smul_eq_mul] using hpz.const_smul ((p : ℂ) ^ (k - 1))
+  -- the `Σ_j f((τ + j)/p)` summand
+  have hj : ∀ j ∈ Finset.range p,
+      HasSum (fun n : ℕ => (qExpansion 1 f).coeff n
+        * (Complex.exp (2 * π * Complex.I * τ / (p : ℂ))
+            * Complex.exp (2 * π * Complex.I / (p : ℂ)) ^ j) ^ n)
+        ((f : ℍ → ℂ) (shiftDivP hp.pos j τ)) := by
+    intro j _
+    refine HasSum.congr_fun (hbase (shiftDivP hp.pos j τ)) ?_
+    intro n
+    rw [qParam_shiftDivP hp.pos j τ, mul_pow]
+  have hsumj : HasSum (fun n : ℕ => ∑ j ∈ Finset.range p, (qExpansion 1 f).coeff n
+      * (Complex.exp (2 * π * Complex.I * τ / (p : ℂ))
+          * Complex.exp (2 * π * Complex.I / (p : ℂ)) ^ j) ^ n)
+      (∑ j ∈ Finset.range p, (f : ℍ → ℂ) (shiftDivP hp.pos j τ)) :=
+    hasSum_finset_sum (Finset.range p) _ _ hj
+  -- reshape the j-family with the root-of-unity filter
+  have hfam : (fun n : ℕ => ∑ j ∈ Finset.range p, (qExpansion 1 f).coeff n
+      * (Complex.exp (2 * π * Complex.I * τ / (p : ℂ))
+          * Complex.exp (2 * π * Complex.I / (p : ℂ)) ^ j) ^ n)
+      = fun n : ℕ => (qExpansion 1 f).coeff n
+          * Complex.exp (2 * π * Complex.I * τ / (p : ℂ)) ^ n
+          * (if p ∣ n then (p : ℂ) else 0) := by
+    funext n
+    have hterm : ∀ j ∈ Finset.range p,
+        ((qExpansion 1 f).coeff n
+          * (Complex.exp (2 * π * Complex.I * τ / (p : ℂ))
+              * Complex.exp (2 * π * Complex.I / (p : ℂ)) ^ j) ^ n)
+        = (qExpansion 1 f).coeff n
+            * Complex.exp (2 * π * Complex.I * τ / (p : ℂ)) ^ n
+            * Complex.exp (2 * π * Complex.I / (p : ℂ)) ^ (j * n) := by
+      intro j _
+      rw [mul_pow, ← pow_mul]
+      ring
+    have hfac : ∑ j ∈ Finset.range p,
+        ((qExpansion 1 f).coeff n
+          * Complex.exp (2 * π * Complex.I * τ / (p : ℂ)) ^ n
+          * Complex.exp (2 * π * Complex.I / (p : ℂ)) ^ (j * n))
+        = ((qExpansion 1 f).coeff n
+            * Complex.exp (2 * π * Complex.I * τ / (p : ℂ)) ^ n)
+          * ∑ j ∈ Finset.range p,
+            Complex.exp (2 * π * Complex.I / (p : ℂ)) ^ (j * n) := by rw [Finset.mul_sum]
+    rw [Finset.sum_congr rfl hterm, hfac, sum_xi_pow hp n]
+  rw [hfam] at hsumj
+  -- convert to the padded family and strip the factor `p`
+  have hfam2 : (fun n : ℕ => (qExpansion 1 f).coeff n
+        * Complex.exp (2 * π * Complex.I * τ / (p : ℂ)) ^ n
+        * (if p ∣ n then (p : ℂ) else 0))
+      = fun n : ℕ => if p ∣ n then
+          ((p : ℂ) * ((qExpansion 1 f).coeff (p * (n / p)) * 𝕢 1 τ ^ (n / p))) else 0 := by
+    funext n
+    by_cases hpn : p ∣ n
+    · obtain ⟨m, rfl⟩ := hpn
+      rw [if_pos (dvd_mul_right p m), if_pos (dvd_mul_right p m),
+        Nat.mul_div_cancel_left _ hp.pos, pow_mul, rho_pow_p hp.pos τ]
+      ring
+    · rw [if_neg hpn, if_neg hpn, mul_zero]
+  rw [hfam2] at hsumj
+  have hu : HasSum (fun m => (p : ℂ) * ((qExpansion 1 f).coeff (p * m) * 𝕢 1 τ ^ m))
+      (∑ j ∈ Finset.range p, (f : ℍ → ℂ) (shiftDivP hp.pos j τ)) :=
+    hasSum_unpadMul
+      (u := fun m => (p : ℂ) * ((qExpansion 1 f).coeff (p * m) * 𝕢 1 τ ^ m)) hp.pos hsumj
+  have hc : HasSum (fun m => (p : ℂ)⁻¹ *
+        ((p : ℂ) * ((qExpansion 1 f).coeff (p * m) * 𝕢 1 τ ^ m)))
+      ((p : ℂ)⁻¹ * ∑ j ∈ Finset.range p, (f : ℍ → ℂ) (shiftDivP hp.pos j τ)) := by
+    simpa [smul_eq_mul] using hu.const_smul ((p : ℂ)⁻¹)
+  have hu' : HasSum (fun m => (qExpansion 1 f).coeff (p * m) * 𝕢 1 τ ^ m)
+      ((p : ℂ)⁻¹ * ∑ j ∈ Finset.range p, (f : ℍ → ℂ) (shiftDivP hp.pos j τ)) :=
+    HasSum.congr_fun hc (fun m => by
+      rw [inv_mul_cancel_left₀ (by exact_mod_cast hp.pos.ne' : ((p : ℂ)) ≠ 0)])
+  -- combine
+  have hc2 : HasSum (fun m : ℕ => (qExpansion 1 f).coeff (p * m) * 𝕢 1 τ ^ m
+      + (p : ℂ) ^ (k - 1)
+        * (if p ∣ m then (qExpansion 1 f).coeff (m / p) * 𝕢 1 τ ^ m else 0))
+      ((p : ℂ)⁻¹ * ∑ j ∈ Finset.range p, (f : ℍ → ℂ) (shiftDivP hp.pos j τ)
+        + (p : ℂ) ^ (k - 1) * (f : ℍ → ℂ) (mulP hp.pos τ)) := hu'.add hpz'
+  have hval : (p : ℂ)⁻¹ * ∑ j ∈ Finset.range p, (f : ℍ → ℂ) (shiftDivP hp.pos j τ)
+      + (p : ℂ) ^ (k - 1) * (f : ℍ → ℂ) (mulP hp.pos τ)
+      = heckeTPFun hp.pos k (f : ℍ → ℂ) τ := rfl
+  rw [← hval]
+  refine HasSum.congr_fun hc2 (fun m => ?_)
+  by_cases hpm : p ∣ m
+  · rw [if_pos hpm, if_pos hpm]
+    ring
+  · rw [if_neg hpm, if_neg hpm]
+    ring
+
+/-- **Coefficient formula for `T_p`**: `(T_p f)_m = f_{p m} + p^(k-1) [p ∣ m] f_{m / p}`. -/
+theorem heckeTP_qExpansion_coeff (hp : p.Prime) {k : ℤ} (f : CuspForm 𝒮ℒ k) (m : ℕ) :
+    (qExpansion 1 (heckeTP hp f)).coeff m
+      = (qExpansion 1 (f : CuspForm 𝒮ℒ k)).coeff (p * m)
+        + (p : ℂ) ^ (k - 1)
+          * (if p ∣ m then (qExpansion 1 (f : CuspForm 𝒮ℒ k)).coeff (m / p) else 0) := by
+  have h := ModularFormClass.qExpansion_coeff_unique (f := heckeTP hp f)
+    (c := fun n => (qExpansion 1 (f : CuspForm 𝒮ℒ k)).coeff (p * n)
+      + (p : ℂ) ^ (k - 1)
+        * (if p ∣ n then (qExpansion 1 (f : CuspForm 𝒮ℒ k)).coeff (n / p) else 0))
+    one_pos one_mem_strictPeriods_SL
+    (fun τ => by
+      simpa [smul_eq_mul] using heckeTP_qExpansion_hasSum hp f τ) m
+  exact h.symm
+
+end QFormula
 
 end HeckeLevelOne
