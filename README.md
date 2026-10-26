@@ -89,9 +89,9 @@ computation:
 Maeda's conjecture (open) says the characteristic polynomial of the Hecke
 operator `T₂` on `S_k(SL(2, ℤ))` is irreducible over `ℚ` (with full symmetric
 Galois group).  It is now **formally verified, from the Hecke operator itself,
-for every level-one weight with `dim S_k ∈ {2, 3}`**: `k = 24, 28, 30, 32, 34,
-38` and `36, 40, 42, 44, 46, 50` (`MaedaWeightK.charpoly_T2`,
-`MaedaWeightK.maeda`), **including the Galois group** (`S₃` for the cubic weights,
+for every level-one weight with `dim S_k ∈ {2, 3, 4}`**: `k = 24, 28, 30, 32, 34,
+38` (dim 2), `36, 40, 42, 44, 46, 50` (dim 3) and `48, 52, 54, 56, 58, 62` (dim 4) (`MaedaWeightK.charpoly_T2`,
+`MaedaWeightK.maeda`), **including the Galois group** for dim ≤ 3 (`S₃` for the cubic weights,
 `MaedaGalois.maeda_galoisK`).  E.g. on `S₂₄`, `T₂` has characteristic polynomial
 `X² − 1080 X − 20468736`, irreducible (Hecke field `ℚ(√144169)`).  The
 weight-generic machinery (`MaedaLevelOne.lean`) reads the matrix of `T₂` off
@@ -181,7 +181,7 @@ MathProof/Tau/Bridge.lean       # (qExpansion Δ).coeff n = τ(n)
 MathProof/ModularForms/Weight12.lean       # 691 • E₁₂ = 441 • E₄³ + 250 • E₆²
 MathProof/ModularForms/EigenLevelOne.lean  # Mordell + Lehmer for any rank-one S_k
 MathProof/ModularForms/LehmerWeight*.lean  # weights 16–26: congruences, sieves, initial segments
-MathProof/ModularForms/Maeda*.lean         # Maeda's conjecture for dim S_k ≤ 3 (weights 24–50)
+MathProof/ModularForms/Maeda*.lean         # Maeda's conjecture for dim S_k ≤ 4 (weights 24–62)
 MathProof/ModularForms/Congruence691.lean  # τ(n) ≡ σ₁₁(n) mod 691
 research/research-log.md        # the research loop log
 docs/                           # GitHub Pages root: project landing page + interactive Langlands page

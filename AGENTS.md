@@ -187,6 +187,10 @@ surface the limitation to the user instead of creating workarounds on Modal.
   don't hand-edit).
   `MaedaGalois.lean` — `galActionHom_bijective_of_cubic` (S₃ from a non-square
   discriminant) and the six cubic-weight Galois instances.
+  `MaedaDim4.lean` — memoized list coefficients (`seqPL`, `seqP_getD`; use these
+  for indices ≳ 6, plain `seqP` decides blow up), `charpoly_dim4`,
+  `charpoly_fin_four`, quartic irreducibility certificate;
+  `MaedaDim4Weights.lean` — generated, weights 48–62.
 - `MathProof.lean` — root import file for the *light* modules. The heavy
   kernel-decide modules (`LehmerMod`, `LehmerPacked`) and `AxCheck` are
   deliberately **not** imported there — the root must stay cheap for

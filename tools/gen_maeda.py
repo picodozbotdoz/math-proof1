@@ -63,6 +63,12 @@ def compute(k):
     ell=[l for l in range(3,200) if isp(l) and all(sum(c*pow(x,d-i,l) for i,c in enumerate(cp))%l for x in range(l))]
     return d,basis,fs,Mat,cp,ell
 def polyterm(cp):
+    s = polyterm1(cp)
+    if len(s) <= 96: return s
+    parts = s.split(" + ")
+    half = (len(parts) + 1) // 2
+    return " + ".join(parts[:half]) + "\n    + " + " + ".join(parts[half:])
+def polyterm1(cp):
     d=len(cp)-1
     parts=[f"X ^ {d}"]
     for i,c in enumerate(cp[1:],1):
@@ -86,8 +92,15 @@ def section(k):
     for j,((i,a,b),f) in enumerate(basis,1):
         out.append(f"/-- `Δ^{i} E₄^{a} E₆^{b}`. -/\nnoncomputable def f{j} : CuspForm 𝒮ℒ (({k} : ℕ) : ℤ) :=\n  prodForm _ {i-1} {a} {b} (by norm_num)\n")
         out.append(f"lemma c{j} (n : ℕ) : (qExpansion 1 f{j}).coeff n = seqP {i-1} {a} {b} n :=\n  prodForm_coeff _ _ _ _ _ n\n")
+        if d == 4:
+            vs=[str(f[n]) for n in range(9)]
+            vals=",\n     ".join(", ".join(vs[r:r+4]) for r in range(0,9,4))
+            out.append(f"lemma L{j} : seqPL {i-1} {a} {b} 9 =\n    [{vals}] := by\n  decide +kernel\n")
         for n in idx:
-            out.append(f"lemma q{j}_{n} : (qExpansion 1 f{j}).coeff {n} = ({f[n]} : ℂ) := by\n  rw [c{j}, show seqP {i-1} {a} {b} {n} = {f[n]} by decide +kernel]; norm_num\n")
+            if d == 4:
+                out.append(f"lemma q{j}_{n} : (qExpansion 1 f{j}).coeff {n} = ({f[n]} : ℂ) := by\n  rw [c{j}, seqP_getD (N := 9) (by norm_num), L{j}]\n  norm_num [List.getD_cons_succ, List.getD_cons_zero]\n")
+            else:
+                out.append(f"lemma q{j}_{n} : (qExpansion 1 f{j}).coeff {n} = ({f[n]} : ℂ) := by\n  rw [c{j}, show seqP {i-1} {a} {b} {n} = {f[n]} by decide +kernel]; norm_num\n")
     m=k-12
     out.append(f"""lemma finrank_eq : Module.finrank ℂ (CuspForm 𝒮ℒ (({k} : ℕ) : ℤ)) = {d} := by
   apply Module.finrank_eq_of_rank_eq
@@ -108,6 +121,8 @@ def section(k):
     ql=[f"q{j}_{n}" for j in range(1,d+1) for n in range(1,d+1)]
     fargs=" ".join(f"f{j}" for j in range(1,d+1))
     out.append(f"/-- The integer characteristic polynomial of `T₂` on `S_{k}`. -/\nnoncomputable def P : ℤ[X] :=\n  {polyterm(cp)}\n")
+    if d==4:
+        return section4(k,d,basis,fs,cp,out,ql,tl,fargs)
     thm="charpoly_dim2" if d==2 else "charpoly_dim3"
     fin = "Matrix.charpoly_fin_two" if d==2 else "charpoly_fin_three"
     extra = "Matrix.trace_fin_two, Matrix.det_fin_two" if d==2 else "Matrix.det_fin_three"
@@ -134,6 +149,60 @@ theorem maeda : Irreducible (P.map (Int.castRingHom ℚ)) := by
 end MaedaWeight{k}
 """)
     return "\n".join(out)
+
+def irr_mod4(cp,l):
+    a,b,c,d=[x%l for x in cp[1:]]
+    if any((x**4+a*x**3+b*x**2+c*x+d)%l==0 for x in range(l)): return False
+    for u in range(l):
+        for v in range(l):
+            s_=(a-u)%l; t=(b-v-u*s_)%l
+            if (u*t+v*s_-c)%l==0 and (v*t-d)%l==0: return False
+    return True
+
+def section4(k,d,basis,fs,cp,out,ql,tl,fargs):
+    l=[l for l in range(3,400) if isp(l) and irr_mod4(cp,l)][0]
+    c1,c2,c3,c4=cp[1:]
+    cst=lambda c: f"(({c} : ℤ) : ZMod {l})"
+    a,b,c,dd="r3","r2","r1","r0"
+    out.append(f"""/-- **The characteristic polynomial of `T₂` on `S_{k}`.** -/
+theorem charpoly_T2 : T2.charpoly = P.map (Int.castRingHom ℂ) := by
+  rw [charpoly_dim4 finrank_eq {fargs}
+    {' '.join(ql[:8])}
+    {' '.join(ql[8:])} T2
+    {' '.join(tl[:8])}
+    {' '.join(tl[8:])}, charpoly_fin_four]
+  simp [P, map_ofNat]
+  ring
+
+/-- The coefficients of `P` modulo {l}. -/
+def r3 : ZMod {l} := {cst(c1)}
+/-- See `r3`. -/
+def r2 : ZMod {l} := {cst(c2)}
+/-- See `r3`. -/
+def r1 : ZMod {l} := {cst(c3)}
+/-- See `r3`. -/
+def r0 : ZMod {l} := {cst(c4)}
+
+lemma noRoot : ∀ x : ZMod {l}, x ^ 4 + {a} * x ^ 3 + {b} * x ^ 2 + {c} * x + {dd} ≠ 0 := by
+  decide +kernel
+
+lemma noQuad : ∀ u v : ZMod {l},
+    ¬ (u * ({b} - v - u * ({a} - u)) + v * ({a} - u) = {c}
+      ∧ v * ({b} - v - u * ({a} - u)) = {dd}) := by
+  decide +kernel
+
+/-- **Maeda's conjecture in weight {k}** (irreducibility): the characteristic
+polynomial of `T₂` on `S_{k}(SL(2, ℤ))` is irreducible over `ℚ` (irreducible mod {l}). -/
+theorem maeda : Irreducible (P.map (Int.castRingHom ℚ)) := by
+  have : Fact (Nat.Prime {l}) := ⟨by norm_num⟩
+  exact irreducible_quartic_of_mod (by unfold P; monicity!) {l} r3 r2 r1 r0
+    (by simp [P, r3, r2, r1, r0, map_ofNat])
+    noRoot noQuad
+
+end MaedaWeight{k}
+""")
+    return "\n".join(out)
+
 ks=[int(a) for a in sys.argv[1:]]
 hdr='''import MathProof.ModularForms.MaedaLevelOne
 
@@ -151,4 +220,9 @@ open UpperHalfPlane ModularForm CuspForm Polynomial MaedaLevelOne
 open scoped MatrixGroups
 
 '''
+if any(compute(k)[0] == 4 for k in ks):
+    hdr = hdr.replace("import MathProof.ModularForms.MaedaLevelOne", "import MathProof.ModularForms.MaedaDim4")
+    hdr = hdr.replace("with `dim S_k ∈ {2, 3}`", "with `dim S_k = 4`")
+    hdr = hdr.replace("(from `charpoly_dim2` / `charpoly_dim3`), the characteristic polynomial and its\nirreducibility over `ℚ` (no root modulo a small prime).",
+                      "(from `charpoly_dim4`), the characteristic polynomial and its irreducibility\nover `ℚ` (irreducible modulo a small prime: no root and no quadratic factor).")
 print(hdr+"\n".join(section(k) for k in ks))
