@@ -14,5 +14,6 @@ import MathProof.Tau.Mordell
 import MathProof.Tau.LehmerUnbounded
 import MathProof.Tau.PowChain
 import MathProof.Tau.LehmerSieve691
+import MathProof.Tau.LehmerPrimeReduction
 -- MathProof.AxCheck is also opt-in: it imports LehmerMod (heavy) to audit it.
 -- import MathProof.AxCheck

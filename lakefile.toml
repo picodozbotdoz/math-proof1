@@ -20,6 +20,7 @@ defaultTargets = [
   "MathProof.Tau.LehmerUnbounded",
   "MathProof.Tau.PowChain",
   "MathProof.Tau.LehmerSieve691",
+  "MathProof.Tau.LehmerPrimeReduction",
 ]
 
 [leanOptions]
