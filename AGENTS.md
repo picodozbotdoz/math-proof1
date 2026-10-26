@@ -191,6 +191,9 @@ surface the limitation to the user instead of creating workarounds on Modal.
   for indices ≳ 6, plain `seqP` decides blow up), `charpoly_dim4`,
   `charpoly_fin_four`, quartic irreducibility certificate;
   `MaedaDim4Weights.lean` — generated, weights 48–62.
+  `MaedaGalois4.lean` — `galActionHom_bijective_of_quartic` (S₄ from irreducible
+  resolvent + non-square discriminant; `vieta4`, `disc4`, `resolvent`) and the
+  six instances.
 - `MathProof.lean` — root import file for the *light* modules. The heavy
   kernel-decide modules (`LehmerMod`, `LehmerPacked`) and `AxCheck` are
   deliberately **not** imported there — the root must stay cheap for

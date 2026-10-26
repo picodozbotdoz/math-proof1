@@ -1044,3 +1044,43 @@ Modal, zero warnings.
 * `dim S_k ≥ 5` (k = 60, 64, …): a `Fin n`-generic `charpoly_dimN` and a
   general irreducibility certificate (degree-`n` factor search mod ℓ, or a
   Rabin-test certificate) — the list-based coefficient engine already scales.
+
+## Iteration 16 — Maeda's conjecture in full through dimension 4: Galois group `S₄`
+
+**Status: complete (light, in CI).  2026-10-26.**
+
+`MathProof/ModularForms/MaedaGalois4.lean`:
+
+* **`galActionHom_bijective_of_quartic`** — an irreducible monic quartic
+  `X⁴ + aX³ + bX² + cX + d` over `ℚ` whose resolvent cubic
+  `Y³ − bY² + (ac − 4d)Y − (a²d − 4bd + c²)` is irreducible and whose
+  discriminant is not a square has Galois group `S₄` (the action on the four
+  complex roots is all of `Perm`).  Mathlib has no quartic Galois criterion;
+  the proof is by degree counting plus one fact about `A₄`:
+  * Vieta in the splitting field `K` (`vieta4`), then two `ring` identities —
+    `θ = x₀x₁ + x₂x₃` is a root of the resolvent, and
+    `δ = ∏_{i<j}(x_i − x_j)` has `δ² = disc4 a b c d` (a degree-12 identity);
+  * `4 ∣ [K:ℚ]` (root of `P`), `3 ∣ [K:ℚ]` (`θ`), `Gal ↪ S₄`: `|Gal| ∈ {12, 24}`;
+  * if `|Gal| = 12`, its image is the index-2 subgroup `A₄`
+    (`eq_alternatingGroup_of_index_eq_two`); `ℚ(δ)` is quadratic, so its
+    fixing subgroup has index 2 (Galois correspondence:
+    `card_fixingSubgroup_eq_finrank`); an index-2 subgroup contains all
+    squares, each 3-cycle is `(c²)²`, and 3-cycles generate `A₄`
+    (`closure_three_cycles_eq_alternating`) — contradiction.
+* Instances `maeda_galois48 … maeda_galois62`: resolvent cubics irreducible
+  mod 43, 53, 47, 47, 53, 53; discriminants non-residues mod 23, 29, 29, 29,
+  31, 29.
+
+### Results
+
+**Maeda's conjecture — irreducibility of the `T₂` characteristic polynomial
+and full symmetric Galois group — is formally verified for all 18 level-one
+weights with `dim S_k ≤ 4`** (`k = 24 … 62`, `k ≠ 26`): `S₂` (6 weights),
+`S₃` (6), `S₄` (6).  Modal: 261 s, zero warnings.
+
+### What remains / next steps
+
+* `dim S_k ≥ 5` (k = 60, 64, …): needs a `Fin n`-generic `charpoly_dimN`, an
+  irreducibility certificate for degree ≥ 5, and — for the Galois group — a
+  criterion beyond resolvents (e.g. irreducible + a transposition + an
+  `(n−1)`-cycle via Dedekind's theorem, which Mathlib lacks).

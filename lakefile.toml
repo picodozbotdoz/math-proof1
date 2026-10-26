@@ -34,6 +34,7 @@ defaultTargets = [
   "MathProof.ModularForms.MaedaGalois",
   "MathProof.ModularForms.MaedaDim4",
   "MathProof.ModularForms.MaedaDim4Weights",
+  "MathProof.ModularForms.MaedaGalois4",
 ]
 
 [leanOptions]

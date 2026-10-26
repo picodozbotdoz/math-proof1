@@ -54,6 +54,7 @@ jobs:
             MathProof.ModularForms.MaedaGalois
             MathProof.ModularForms.MaedaDim4
             MathProof.ModularForms.MaedaDim4Weights
+            MathProof.ModularForms.MaedaGalois4
       # GitHub Pages is not enabled on this repository, so the docgen deploy
       # step always fails today; keep it non-fatal until Pages is switched on
       # (Settings -> Pages -> Source: GitHub Actions), then drop this flag.
