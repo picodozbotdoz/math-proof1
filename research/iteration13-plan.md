@@ -24,8 +24,8 @@ sieve on primes, initial segment up to the least prime in the bad class.
 2. [DONE] `BernoulliHigh.lean` (B₁₃…B₂₂ by recurrence chain; 49 s).
 3. [DONE] `LehmerWeight16.lean`: congruence mod 3617, sieve,
    `a16_ne_zero_of_lt_21701`.
-4. [ ] `LehmerWeight18.lean` (template of 16).
-5. [ ] `LehmerWeight20.lean`, `LehmerWeight22.lean` (G is a product; two-prime
+4. [DONE] `LehmerWeight18.lean` (template of 16).
+5. [DONE] `LehmerWeight20.lean`, `LehmerWeight22.lean` (G is a product; two-prime
    moduli; congruence via ℤ-divisibility + coprime cancel).
 6. [ ] Weight 26 (gcd(25, 657930) = 5: five bad classes) — optional.
 7. [ ] Log / README / docs / AGENTS; commit.

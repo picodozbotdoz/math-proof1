@@ -18,5 +18,8 @@ import MathProof.Tau.LehmerPrimeReduction
 import MathProof.ModularForms.BernoulliHigh
 import MathProof.ModularForms.EigenLevelOne
 import MathProof.ModularForms.LehmerWeight16
+import MathProof.ModularForms.LehmerWeight18
+import MathProof.ModularForms.LehmerWeight20
+import MathProof.ModularForms.LehmerWeight22
 -- MathProof.AxCheck is also opt-in: it imports LehmerMod (heavy) to audit it.
 -- import MathProof.AxCheck
