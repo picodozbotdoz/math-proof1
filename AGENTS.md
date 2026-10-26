@@ -137,6 +137,29 @@ surface the limitation to the user instead of creating workarounds on Modal.
   `E12_qExpansion_coeff` and Bernoulli evaluations `B₄, B₆, B₁₂`.
 - `MathProof/ModularForms/Congruence691.lean` — `tau_modEq_sigma`:
   `τ n ≡ σ₁₁ n [ZMOD 691]`.
+- `MathProof/ModularForms/HeckeLevelOne.lean` — the Hecke operator `T_p` on
+  level-one cusp forms from scratch (invariance via explicit coset
+  factorization, q-expansion coefficient formula `(T_p f)_m = f_{pm} +
+  p^{k-1} [p ∣ m] f_{m/p}`).
+- `MathProof/Tau/Mordell.lean` — **Mordell's theorem** `tau_mul_coprime`
+  (τ multiplicative on coprime arguments) via `heckeTP_discriminant_eq`
+  (`T_p Δ = τ(p)·Δ`, the eigenform equation) and the prime-power recursion
+  `tau_prime_pow_succ`.
+- `MathProof/Tau/LehmerUnbounded.lean` — `tau_ne_zero_of_prime_pows`: τ ≠ 0
+  on all of `n` from prime-power-block nonvanishing (Mordell lift).
+- `MathProof/Tau/PowChain.lean` (light) + `MathProof/Tau/LehmerPow32.lean`
+  (heavy, Modal): Mordell-recursion chains over `ZMod P` seeded by
+  `LehmerPacked.tauResList` — `τ(p^a) ≠ 0` for `p ≤ 65536`, `p^a ≤ 2^32`
+  (one decide walks all 65535 chains; 2089 s / 143.8 GiB measured).
+- `MathProof/Tau/LehmerSieve691.lean` (light) — the mod-691 sieve
+  (`691 ∤ σ₁₁ n → τ n ≠ 0`): every prime `p ≢ −1 [MOD 691]` of arbitrary
+  size has `τ p ≠ 0`; root-of-unity classification `prime_pow_dvd_sigma_iff`.
+- `MathProof/Tau/LehmerPrimePower.lean` (heavy, Modal) — iteration-8
+  instantiation `tau_ne_zero_of_prime_pow_le_65536` +
+  `tau_of_65519_mul_65521_ne_zero`.
+- `MathProof/Tau/LehmerGrand.lean` (heavy, Modal) — `tau_ne_zero_grand`
+  (chains ⊕ sieve fused; every `n < 2^32` whose large prime factors avoid
+  `−1 [MOD 691]`), `tau_of_4294967295_ne_zero`.
 - `MathProof.lean` — root import file for the *light* modules. The heavy
   kernel-decide modules (`LehmerMod`, `LehmerPacked`) and `AxCheck` are
   deliberately **not** imported there — the root must stay cheap for

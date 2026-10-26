@@ -37,6 +37,13 @@ See `research/research-log.md` for the full log. Highlights:
   `decide +kernel`) — `τ n ≠ 0` for all `1 ≤ n ≤ 65536`, verified entirely
   inside Lean's kernel (no external CAS, no `native_decide`); the 65536
   check needs ~63 GiB of kernel heap, so it is built on Modal, not in CI.
+* **The grand fusion** (`Ramanujan.tau_ne_zero_grand`,
+  `Ramanujan.tau_ne_zero_of_lt_two_pow_32`, in `MathProof/Tau/LehmerGrand.lean`):
+  one theorem consuming every route — `τ n ≠ 0` for every `n` (unbounded)
+  whose prime-power divisors are chain-covered (`p ≤ 65536`,
+  `p ^ a ≤ 2 ^ 32`) or sieve-covered (`691 ∤ σ₁₁ (p^a)`); in particular
+  **every `n < 2 ^ 32` whose prime factors above 65536 avoid the single
+  class `−1 [MOD 691]`** (e.g. `τ (2 ^ 32 − 1) ≠ 0`).
 * **The mod-691 Lehmer sieve** (`Ramanujan.tau_prime_ne_zero_of_mod`,
   `Ramanujan.tau_ne_zero_of_not_dvd_sigma`): `τ n ≠ 0` whenever
   `691 ∤ σ₁₁ n` — in particular **every prime `p ≢ −1 [MOD 691]` of

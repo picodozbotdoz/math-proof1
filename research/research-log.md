@@ -702,3 +702,59 @@ classes, with no bound on `n` at all.
 * Multi-modulus: the same sieve at other primes `ℓ` with a
   `τ ≡ σ_{k}`-type congruence (691 is the only classical one at weight 12,
   but level-raising and ℓ-adic congruences exist).
+
+## Iteration 11 — The grand fusion: chains ⊕ sieve, and the complete bad-class classification
+
+**Status: complete (grand theorem kernel-verified on Modal; classification light).  2026-10-26.**
+
+### The problem
+
+Iterations 6–10 built three independent nonvanishing routes (dense kernel
+compute, Mordell recursion chains, mod-691 sieve) but no single theorem
+consumed them together.  Also missing: *which* prime powers `p ^ a` actually
+fail the sieve — a finite classification question (691 residue classes ×
+order-periodic exponents) that had only been answered numerically for the
+seed prime `p = 2`.
+
+### What this iteration contributes
+
+* `MathProof/Tau/LehmerSieve691.lean` (light, extended):
+  * `sigma_prime_pow_zmod` — `σ₁₁ (p ^ a)` as a geometric sum in `ZMod 691`;
+  * **`prime_pow_dvd_sigma_iff`** — for `p ^ 11 ≢ 1 [MOD 691]`:
+    `691 ∣ σ₁₁ (p ^ (a+1)) ↔ (p ^ 11) ^ (a+2) ≡ 1 [MOD 691]` — the bad
+    prime-power classes are exactly the root-of-unity conditions on `p ^ 11`
+    (period = its multiplicative order); proved by a one-line geometric
+    telescoping in the field `ZMod 691`.
+* `MathProof/Tau/LehmerGrand.lean` (heavy, Modal-verified: **1759 s wall /
+  143.8 GiB peak tree RSS** — it imports the chain module, whose decides
+  dominate):
+  * **`tau_ne_zero_grand`** — `τ n ≠ 0` for every `n ≥ 1` (unbounded) such
+    that each prime-power divisor `p ^ a` is chain-covered
+    (`p ≤ 65536`, `p ^ a ≤ 2 ^ 32`) or sieve-covered (`691 ∤ σ₁₁ (p ^ a)`);
+  * **`tau_ne_zero_of_lt_two_pow_32`** — `τ n ≠ 0` for **every `0 < n < 2^32`
+    whose prime factors above 65536 avoid the single class `−1 [MOD 691]`**
+    (a factor `p > 2 ^ 16` occurs to the first power only, then the sieve
+    applies; small-prime powers are chain-covered).  This is the first
+    *all-of-an-initial-segment* statement at the 2³² scale in the stack;
+  * `tau_of_4294967295_ne_zero` — `τ (2 ^ 32 − 1) ≠ 0`: the largest 32-bit
+    index, via its Fermat factorization `3 · 5 · 17 · 257 · 65537` (the only
+    large factor 65537 satisfies `65537 % 691 = 583 ≠ 690`).
+
+### Results
+
+* The stack's nonvanishing theorem is now a *single* consumable statement
+  (`tau_ne_zero_grand`) with three interchangeable coverage routes, and the
+  cleanest consequence: all 32-bit indices except a measure-zero residue
+  condition on their large prime factors.
+* The bad-class question is closed structurally: a prime power fails the
+  sieve iff `p ^ 11 ≡ 1` with `691 ∣ (a+1)` (σ = a+1 case) or
+  `(p ^ 11)^(a+1) ≡ 1` (root-of-unity case) — both readable off
+  `prime_pow_dvd_sigma_iff` and the `p ^ 11 ≡ 1` edge.
+
+### What remains / next steps
+
+* A kernel-decided *table* `∀ x ∈ range 691, ∀ a ∈ range 690, ...` turning
+  the root-of-unity condition into a literal lookup (period 690 suffices)
+  would make the sieve checkable by `decide` for any concrete `(p, a)`.
+* Primes `p ≡ −1 [MOD 691]` above 65536 remain the only unreachable primes;
+  the next tool for them is analytic (Deligne-type bounds), not modular.

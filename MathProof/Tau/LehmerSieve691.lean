@@ -138,4 +138,68 @@ set_option maxRecDepth 200000
 theorem tau_of_2147483647_ne_zero : tau 2147483647 ≠ 0 :=
   tau_prime_ne_zero_of_mod (by norm_num) (by norm_num)
 
+
+/-! ### The root-of-unity classification of bad prime-power classes -/
+
+local instance : Fact (Nat.Prime 691) := ⟨by norm_num⟩
+
+private lemma natCast_zmod_eq_zero_iff (n : ℕ) :
+    ((n : ℕ) : ZMod 691) = 0 ↔ 691 ∣ n := by
+  constructor
+  · intro h
+    have h' : ((n : ℤ) : ZMod 691) = 0 := by exact_mod_cast h
+    exact Int.natCast_dvd_natCast.mp (ZMod.intCast_zmod_eq_zero_iff_dvd _ _ |>.mp h')
+  · intro hdvd
+    have h' : ((n : ℤ) : ZMod 691) = 0 :=
+      ZMod.intCast_zmod_eq_zero_iff_dvd _ _ |>.mpr (Int.natCast_dvd_natCast.mpr hdvd)
+    exact_mod_cast h'
+
+/-- `σ₁₁` of a prime power as a geometric sum in `ZMod 691`. -/
+theorem sigma_prime_pow_zmod {p : ℕ} (hp : p.Prime) (a : ℕ) :
+    ((sigma 11 (p ^ (a + 1)) : ℕ) : ZMod 691)
+      = ∑ j ∈ Finset.range (a + 2), (((p : ℕ) : ZMod 691) ^ 11) ^ j := by
+  have hterm : ∀ j : ℕ, ((p ^ (j * 11) : ℕ) : ZMod 691)
+      = (((p : ℕ) : ZMod 691) ^ 11) ^ j := by
+    intro j
+    push_cast
+    rw [Nat.mul_comm j 11, pow_mul]
+  rw [ArithmeticFunction.sigma_apply_prime_pow hp, Nat.cast_sum]
+  exact Finset.sum_congr rfl fun j _ => hterm j
+
+private lemma geom_sum_mul_sub (g : ZMod 691) (n : ℕ) :
+    (g - 1) * ∑ j ∈ Finset.range n, g ^ j = g ^ n - 1 := by
+  induction n with
+  | zero => simp
+  | succ n ih =>
+      rw [Finset.sum_range_succ]
+      linear_combination ih
+
+/-- **Root-of-unity criterion**: for a prime `p` with `p ^ 11 ≢ 1 [MOD 691]`,
+the prime-power block `p ^ (a+1)` fails the sieve — `691 ∣ σ₁₁ (p ^ (a+1))` —
+exactly when `(p ^ 11) ^ (a + 2) ≡ 1 [MOD 691]`, a periodic condition on `a`
+(period = the multiplicative order of `p ^ 11` in `(ZMod 691)ˣ`). -/
+theorem prime_pow_dvd_sigma_iff {p : ℕ} (hp : p.Prime)
+    (hne : (((p : ℕ) : ZMod 691) ^ 11) ≠ 1) (a : ℕ) :
+    691 ∣ sigma 11 (p ^ (a + 1))
+      ↔ (((p : ℕ) : ZMod 691) ^ 11) ^ (a + 2) = 1 := by
+  set g : ZMod 691 := ((p : ℕ) : ZMod 691) ^ 11 with hg
+  have hsum : ((sigma 11 (p ^ (a + 1)) : ℕ) : ZMod 691)
+      = ∑ j ∈ Finset.range (a + 2), g ^ j := sigma_prime_pow_zmod hp a
+  have htele := geom_sum_mul_sub g (a + 2)
+  have hne' : g - 1 ≠ 0 := sub_ne_zero_of_ne hne
+  constructor
+  · intro hdvd
+    have hz : ((sigma 11 (p ^ (a + 1)) : ℕ) : ZMod 691) = 0 :=
+      (natCast_zmod_eq_zero_iff _).mpr hdvd
+    rw [← hsum, hz, mul_zero] at htele
+    exact sub_eq_zero.mp htele.symm
+  · intro hroot
+    rw [hroot, sub_self] at htele
+    rcases mul_eq_zero.mp htele with h | h
+    · exact absurd h hne'
+    · have hzcast : ((sigma 11 (p ^ (a + 1)) : ℕ) : ZMod 691) = 0 := by
+        rw [hsum]; exact h
+      exact (natCast_zmod_eq_zero_iff (sigma 11 (p ^ (a + 1)))).mp hzcast
+
 end Ramanujan
+
