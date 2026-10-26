@@ -168,6 +168,16 @@ surface the limitation to the user instead of creating workarounds on Modal.
   `LehmerPacked`) — `tau_ne_zero_of_lt_70481`,
   `tau_ne_zero_of_prime_factors_le_65536_or_mod` (supersedes the chain-based
   `LehmerGrand` at less than half the memory).
+- `MathProof/ModularForms/EigenLevelOne.lean` (light) — weight-generic
+  `IsNormalizedRankOne k f a`: Hecke eigenform, Mordell, Lehmer prime-power
+  lemma and reduction to primes for any normalized generator of a rank-one
+  `S_k`; `eq_smul`.  `BernoulliHigh.lean` — `B₁₃ … B₂₆` (recurrence chain).
+- `MathProof/ModularForms/LehmerWeight{16,18,20,22,26}.lean` (light) — the
+  eigenforms `Δ·E_{k−12}`: integer coefficients, congruence mod the `B_k`
+  numerator (from `E_k − H ∈ S_k`, no Sturm bound), prime sieve, initial
+  segment (`a16_ne_zero_of_lt_21701`, …).  Weights 20/22 have composite
+  moduli (ℤ-divisibility + coprime cancel); weight 26 has five bad classes
+  (explicit `X⁵ − 1` factorization in `ZMod 657931`).
 - `MathProof.lean` — root import file for the *light* modules. The heavy
   kernel-decide modules (`LehmerMod`, `LehmerPacked`) and `AxCheck` are
   deliberately **not** imported there — the root must stay cheap for

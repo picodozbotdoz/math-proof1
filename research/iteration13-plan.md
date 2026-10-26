@@ -27,5 +27,5 @@ sieve on primes, initial segment up to the least prime in the bad class.
 4. [DONE] `LehmerWeight18.lean` (template of 16).
 5. [DONE] `LehmerWeight20.lean`, `LehmerWeight22.lean` (G is a product; two-prime
    moduli; congruence via ℤ-divisibility + coprime cancel).
-6. [ ] Weight 26 (gcd(25, 657930) = 5: five bad classes) — optional.
-7. [ ] Log / README / docs / AGENTS; commit.
+6. [DONE] Weight 26 (gcd(25, 657930) = 5: five bad classes) — optional.
+7. [DONE] Log / README / docs / AGENTS; commit.

@@ -829,3 +829,73 @@ been formalized.
   generalizes verbatim (odd exponent `k − 1`).
 * The Iteration-9/11 chain modules are superseded mathematically; they
   remain as the record of the computational route.
+
+## Iteration 13 — Lehmer's question for every one-dimensional level-one eigenform
+
+**Status: complete (all light, in CI).  2026-10-26.**
+
+### The problem
+
+`S_k(SL(2, ℤ))` is one-dimensional exactly for `k = 12, 16, 18, 20, 22, 26`,
+spanned by the normalized Hecke eigenforms `Δ, Δ E₄, Δ E₆, Δ E₄², Δ E₄ E₆,
+Δ E₄² E₆`.  Lehmer's question — do the Fourier coefficients ever vanish? — is
+open for every one of them, not only for `τ`.  Iterations 2–12 built the
+toolkit only for `Δ`.
+
+### What this iteration contributes
+
+* `MathProof/ModularForms/EigenLevelOne.lean` — the toolkit once, for any
+  weight: if `f` spans a rank-one `S_k` with integer coefficients `a n`,
+  `a 1 = 1` (`IsNormalizedRankOne`), then `f` is a Hecke eigenform
+  (`heckeTP_eq`), `a (p m) + p^(k−1) [p ∣ m] a (m/p) = a p a m`, the
+  prime-power recursion, **Mordell multiplicativity** (`mul_coprime`),
+  **Lehmer's prime-power lemma** (`prime_pow_ne_zero`, for even `k`, via the
+  Iteration-12 recurrence lemmas generalized to exponent `p^K`), and
+  nonvanishing-iff-on-primes; plus `eq_smul` (every cusp form is
+  `(coeff 1) • f`).
+* `MathProof/ModularForms/BernoulliHigh.lean` — `B₁₃ … B₂₆` by the recurrence
+  chain (`B₁₆ = −3617/510`, `B₁₈ = 43867/798`, `B₂₀ = −174611/330`,
+  `B₂₂ = 854513/138`, `B₂₆ = 8553103/6`).
+* `LehmerWeight{16,18,20,22,26}.lean` — for each eigenform: integer
+  coefficients `a_k = τ ⋆ (coefficients of E_{k−12})`, the analytic identity
+  `qExpansion f_k = qExpansion Δ · qExpansion E_{k−12}`, rank one via Mathlib's
+  `S_k ≃ M_{k−12}`, and
+
+  | k  | eigenform   | congruence (new, formal)            | sieve-free primes | all `0 < n <` |
+  |----|-------------|-------------------------------------|-------------------|---------------|
+  | 16 | `Δ E₄`      | `a ≡ σ₁₅ [ZMOD 3617]`               | `p ≢ −1`          | **21701**     |
+  | 18 | `Δ E₆`      | `a ≡ σ₁₇ [ZMOD 43867]`              | `p ≢ −1`          | **263201**    |
+  | 20 | `Δ E₄²`     | `a ≡ σ₁₉ [ZMOD 174611 = 283·617]`   | `p ≢ −1`          | **1746109**   |
+  | 22 | `Δ E₄ E₆`   | `a ≡ σ₂₁ [ZMOD 77683 = 131·593]`    | `p ≢ −1`          | **1087561**   |
+  | 26 | `Δ E₄² E₆`  | `a ≡ σ₂₅ [ZMOD 657931]`             | 5 classes `−ζ`    | **1315861**   |
+
+  Each congruence comes from one rank-one argument: `E_k − H ∈ S_k` for an
+  integral product `H` of `E₄, E₆` (constant terms cancel), hence
+  `E_k − H = (β − h₁) f_k`; clearing the Bernoulli denominator and cancelling
+  a unit gives the congruence — no Sturm bound and no dense computation.
+  Each initial segment ends at the least prime in a bad class; all smaller
+  candidates are composite (`norm_num`).  In weight 26,
+  `gcd(25, 657930) = 5`, so the bad classes are the five `−ζ` with
+  `ζ⁵ = 1`; they are pinned down by factoring `X⁵ − 1` explicitly in
+  `ZMod 657931` (elementary symmetric functions checked by `decide`).
+
+### Results
+
+* Five new formally verified Lehmer-type theorems, each **unconditional on an
+  initial segment** (up to 1.7 million for `Δ E₄²`) and **unbounded on the
+  sieve-free multiplicative semigroup**, with zero kernel-heavy computation:
+  every module is light (each Modal check ≈ 1–2 min, zero warnings).
+* The formal weight-`k` Ramanujan congruences mod the `B_k` numerators
+  (Ramanujan/Swinnerton-Dyer) for `k = 16 … 26`.
+* Contrast with weight 12: there the 691 class is the only sieve, so the
+  initial segment needs the dense 65536 computation; in higher weight the
+  large congruence primes make the sieve alone reach far further.
+
+### What remains / next steps
+
+* Weights with `dim S_k ≥ 2` (24, 28, …): the Hecke algebra is no longer
+  scalar; the eigenforms have coefficients in a real quadratic (or larger)
+  field — Maeda's conjecture territory.  `EigenLevelOne` would need a
+  Hecke-stable-basis version.
+* Push the weight-12 initial segment with the derivative-based congruences
+  (mod 5, 7, 23 …), now that Mathlib has Ramanujan's θ-formulas.

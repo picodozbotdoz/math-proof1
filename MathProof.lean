@@ -21,5 +21,6 @@ import MathProof.ModularForms.LehmerWeight16
 import MathProof.ModularForms.LehmerWeight18
 import MathProof.ModularForms.LehmerWeight20
 import MathProof.ModularForms.LehmerWeight22
+import MathProof.ModularForms.LehmerWeight26
 -- MathProof.AxCheck is also opt-in: it imports LehmerMod (heavy) to audit it.
 -- import MathProof.AxCheck

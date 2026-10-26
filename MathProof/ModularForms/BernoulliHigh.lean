@@ -1,13 +1,14 @@
 import MathProof.ModularForms.Weight12
 
 /-!
-# Bernoulli numbers `B₁₃ … B₂₂`
+# Bernoulli numbers `B₁₃ … B₂₆`
 
 Continues the defining-recurrence chain of `MathProof/ModularForms/Weight12.lean`
-(`decide` on Mathlib's well-founded `bernoulli` is too slow) up to `B₂₂`, for
-the Eisenstein series `E₁₆, E₁₈, E₂₀, E₂₂` used by the higher-weight Lehmer
-sieves.  The numerators `3617, 43867, 174611 = 283 · 617, 854513 = 11 · 131 · 593`
-are the moduli of the Ramanujan-type congruences in those weights.
+(`decide` on Mathlib's well-founded `bernoulli` is too slow) up to `B₂₆`, for
+the Eisenstein series `E₁₆, E₁₈, E₂₀, E₂₂, E₂₆` used by the higher-weight
+Lehmer sieves.  The numerators `3617, 43867, 174611 = 283 · 617,
+854513 = 11 · 131 · 593, 8553103 = 13 · 657931` give the moduli of the
+Ramanujan-type congruences in those weights.
 -/
 
 namespace RamanujanWeight12
@@ -392,6 +393,214 @@ theorem bernoulli'_twentyTwo : bernoulli' 22 = 854513 / 138 := by
     show Nat.choose 22 20 = 231 from by decide,
     show Nat.choose 22 21 = 22 from by decide]
 
+theorem bernoulli'_twentyThree : bernoulli' 23 = 0 := by
+  rw [bernoulli'_def]
+  norm_num [Finset.sum_range_succ,
+    Finset.sum_range_zero,
+    bernoulli'_zero,
+    bernoulli'_one,
+    bernoulli'_two,
+    bernoulli'_three,
+    bernoulli'_four,
+    bernoulli'_five,
+    bernoulli'_six,
+    bernoulli'_seven,
+    bernoulli'_eight,
+    bernoulli'_nine,
+    bernoulli'_ten,
+    bernoulli'_eleven,
+    bernoulli'_twelve,
+    bernoulli'_thirteen,
+    bernoulli'_fourteen,
+    bernoulli'_fifteen,
+    bernoulli'_sixteen,
+    bernoulli'_seventeen,
+    bernoulli'_eighteen,
+    bernoulli'_nineteen,
+    bernoulli'_twenty,
+    bernoulli'_twentyOne,
+    bernoulli'_twentyTwo,
+    show Nat.choose 23 2 = 253 from by decide,
+    show Nat.choose 23 3 = 1771 from by decide,
+    show Nat.choose 23 4 = 8855 from by decide,
+    show Nat.choose 23 5 = 33649 from by decide,
+    show Nat.choose 23 6 = 100947 from by decide,
+    show Nat.choose 23 7 = 245157 from by decide,
+    show Nat.choose 23 8 = 490314 from by decide,
+    show Nat.choose 23 9 = 817190 from by decide,
+    show Nat.choose 23 10 = 1144066 from by decide,
+    show Nat.choose 23 11 = 1352078 from by decide,
+    show Nat.choose 23 12 = 1352078 from by decide,
+    show Nat.choose 23 13 = 1144066 from by decide,
+    show Nat.choose 23 14 = 817190 from by decide,
+    show Nat.choose 23 15 = 490314 from by decide,
+    show Nat.choose 23 16 = 245157 from by decide,
+    show Nat.choose 23 17 = 100947 from by decide,
+    show Nat.choose 23 18 = 33649 from by decide,
+    show Nat.choose 23 19 = 8855 from by decide,
+    show Nat.choose 23 20 = 1771 from by decide,
+    show Nat.choose 23 21 = 253 from by decide,
+    show Nat.choose 23 22 = 23 from by decide]
+
+theorem bernoulli'_twentyFour : bernoulli' 24 = -(236364091 / 2730) := by
+  rw [bernoulli'_def]
+  norm_num [Finset.sum_range_succ,
+    Finset.sum_range_zero,
+    bernoulli'_zero,
+    bernoulli'_one,
+    bernoulli'_two,
+    bernoulli'_three,
+    bernoulli'_four,
+    bernoulli'_five,
+    bernoulli'_six,
+    bernoulli'_seven,
+    bernoulli'_eight,
+    bernoulli'_nine,
+    bernoulli'_ten,
+    bernoulli'_eleven,
+    bernoulli'_twelve,
+    bernoulli'_thirteen,
+    bernoulli'_fourteen,
+    bernoulli'_fifteen,
+    bernoulli'_sixteen,
+    bernoulli'_seventeen,
+    bernoulli'_eighteen,
+    bernoulli'_nineteen,
+    bernoulli'_twenty,
+    bernoulli'_twentyOne,
+    bernoulli'_twentyTwo,
+    bernoulli'_twentyThree,
+    show Nat.choose 24 2 = 276 from by decide,
+    show Nat.choose 24 3 = 2024 from by decide,
+    show Nat.choose 24 4 = 10626 from by decide,
+    show Nat.choose 24 5 = 42504 from by decide,
+    show Nat.choose 24 6 = 134596 from by decide,
+    show Nat.choose 24 7 = 346104 from by decide,
+    show Nat.choose 24 8 = 735471 from by decide,
+    show Nat.choose 24 9 = 1307504 from by decide,
+    show Nat.choose 24 10 = 1961256 from by decide,
+    show Nat.choose 24 11 = 2496144 from by decide,
+    show Nat.choose 24 12 = 2704156 from by decide,
+    show Nat.choose 24 13 = 2496144 from by decide,
+    show Nat.choose 24 14 = 1961256 from by decide,
+    show Nat.choose 24 15 = 1307504 from by decide,
+    show Nat.choose 24 16 = 735471 from by decide,
+    show Nat.choose 24 17 = 346104 from by decide,
+    show Nat.choose 24 18 = 134596 from by decide,
+    show Nat.choose 24 19 = 42504 from by decide,
+    show Nat.choose 24 20 = 10626 from by decide,
+    show Nat.choose 24 21 = 2024 from by decide,
+    show Nat.choose 24 22 = 276 from by decide,
+    show Nat.choose 24 23 = 24 from by decide]
+
+theorem bernoulli'_twentyFive : bernoulli' 25 = 0 := by
+  rw [bernoulli'_def]
+  norm_num [Finset.sum_range_succ,
+    Finset.sum_range_zero,
+    bernoulli'_zero,
+    bernoulli'_one,
+    bernoulli'_two,
+    bernoulli'_three,
+    bernoulli'_four,
+    bernoulli'_five,
+    bernoulli'_six,
+    bernoulli'_seven,
+    bernoulli'_eight,
+    bernoulli'_nine,
+    bernoulli'_ten,
+    bernoulli'_eleven,
+    bernoulli'_twelve,
+    bernoulli'_thirteen,
+    bernoulli'_fourteen,
+    bernoulli'_fifteen,
+    bernoulli'_sixteen,
+    bernoulli'_seventeen,
+    bernoulli'_eighteen,
+    bernoulli'_nineteen,
+    bernoulli'_twenty,
+    bernoulli'_twentyOne,
+    bernoulli'_twentyTwo,
+    bernoulli'_twentyThree,
+    bernoulli'_twentyFour,
+    show Nat.choose 25 2 = 300 from by decide,
+    show Nat.choose 25 3 = 2300 from by decide,
+    show Nat.choose 25 4 = 12650 from by decide,
+    show Nat.choose 25 5 = 53130 from by decide,
+    show Nat.choose 25 6 = 177100 from by decide,
+    show Nat.choose 25 7 = 480700 from by decide,
+    show Nat.choose 25 8 = 1081575 from by decide,
+    show Nat.choose 25 9 = 2042975 from by decide,
+    show Nat.choose 25 10 = 3268760 from by decide,
+    show Nat.choose 25 11 = 4457400 from by decide,
+    show Nat.choose 25 12 = 5200300 from by decide,
+    show Nat.choose 25 13 = 5200300 from by decide,
+    show Nat.choose 25 14 = 4457400 from by decide,
+    show Nat.choose 25 15 = 3268760 from by decide,
+    show Nat.choose 25 16 = 2042975 from by decide,
+    show Nat.choose 25 17 = 1081575 from by decide,
+    show Nat.choose 25 18 = 480700 from by decide,
+    show Nat.choose 25 19 = 177100 from by decide,
+    show Nat.choose 25 20 = 53130 from by decide,
+    show Nat.choose 25 21 = 12650 from by decide,
+    show Nat.choose 25 22 = 2300 from by decide,
+    show Nat.choose 25 23 = 300 from by decide,
+    show Nat.choose 25 24 = 25 from by decide]
+
+theorem bernoulli'_twentySix : bernoulli' 26 = 8553103 / 6 := by
+  rw [bernoulli'_def]
+  norm_num [Finset.sum_range_succ,
+    Finset.sum_range_zero,
+    bernoulli'_zero,
+    bernoulli'_one,
+    bernoulli'_two,
+    bernoulli'_three,
+    bernoulli'_four,
+    bernoulli'_five,
+    bernoulli'_six,
+    bernoulli'_seven,
+    bernoulli'_eight,
+    bernoulli'_nine,
+    bernoulli'_ten,
+    bernoulli'_eleven,
+    bernoulli'_twelve,
+    bernoulli'_thirteen,
+    bernoulli'_fourteen,
+    bernoulli'_fifteen,
+    bernoulli'_sixteen,
+    bernoulli'_seventeen,
+    bernoulli'_eighteen,
+    bernoulli'_nineteen,
+    bernoulli'_twenty,
+    bernoulli'_twentyOne,
+    bernoulli'_twentyTwo,
+    bernoulli'_twentyThree,
+    bernoulli'_twentyFour,
+    bernoulli'_twentyFive,
+    show Nat.choose 26 2 = 325 from by decide,
+    show Nat.choose 26 3 = 2600 from by decide,
+    show Nat.choose 26 4 = 14950 from by decide,
+    show Nat.choose 26 5 = 65780 from by decide,
+    show Nat.choose 26 6 = 230230 from by decide,
+    show Nat.choose 26 7 = 657800 from by decide,
+    show Nat.choose 26 8 = 1562275 from by decide,
+    show Nat.choose 26 9 = 3124550 from by decide,
+    show Nat.choose 26 10 = 5311735 from by decide,
+    show Nat.choose 26 11 = 7726160 from by decide,
+    show Nat.choose 26 12 = 9657700 from by decide,
+    show Nat.choose 26 13 = 10400600 from by decide,
+    show Nat.choose 26 14 = 9657700 from by decide,
+    show Nat.choose 26 15 = 7726160 from by decide,
+    show Nat.choose 26 16 = 5311735 from by decide,
+    show Nat.choose 26 17 = 3124550 from by decide,
+    show Nat.choose 26 18 = 1562275 from by decide,
+    show Nat.choose 26 19 = 657800 from by decide,
+    show Nat.choose 26 20 = 230230 from by decide,
+    show Nat.choose 26 21 = 65780 from by decide,
+    show Nat.choose 26 22 = 14950 from by decide,
+    show Nat.choose 26 23 = 2600 from by decide,
+    show Nat.choose 26 24 = 325 from by decide,
+    show Nat.choose 26 25 = 26 from by decide]
+
 /-- `B₁₆ = −3617 / 510`. -/
 theorem bernoulli_sixteen : bernoulli 16 = -(3617 / 510 : ℚ) := by
   rw [bernoulli_eq_bernoulli'_of_ne_one (by decide), bernoulli'_sixteen]
@@ -407,5 +616,9 @@ theorem bernoulli_twenty : bernoulli 20 = -(174611 / 330 : ℚ) := by
 /-- `B₂₂ = 854513 / 138`. -/
 theorem bernoulli_twentyTwo : bernoulli 22 = (854513 / 138 : ℚ) := by
   rw [bernoulli_eq_bernoulli'_of_ne_one (by decide), bernoulli'_twentyTwo]
+
+/-- `B₂₆ = 8553103 / 6`. -/
+theorem bernoulli_twentySix : bernoulli 26 = (8553103 / 6 : ℚ) := by
+  rw [bernoulli_eq_bernoulli'_of_ne_one (by decide), bernoulli'_twentySix]
 
 end RamanujanWeight12

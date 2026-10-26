@@ -27,6 +27,7 @@ defaultTargets = [
   "MathProof.ModularForms.LehmerWeight18",
   "MathProof.ModularForms.LehmerWeight20",
   "MathProof.ModularForms.LehmerWeight22",
+  "MathProof.ModularForms.LehmerWeight26",
 ]
 
 [leanOptions]

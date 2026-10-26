@@ -67,6 +67,23 @@ See `research/research-log.md` for the full log. Highlights:
   `n ≡ 1 [MOD 8]`, and divisible by 3 unless `n ≡ 1 [MOD 3]` — by the
   freshman's dream collapse of the Euler product mod 2 and mod 3.
 
+## Lehmer's question beyond weight 12 (`MathProof/ModularForms/LehmerWeight*.lean`)
+
+`S_k(SL(2, ℤ))` is one-dimensional for `k = 12, 16, 18, 20, 22, 26`.  For each
+higher-weight eigenform the whole Lehmer toolkit is formalized once
+(`MathProof/ModularForms/EigenLevelOne.lean`: Hecke eigenform, Mordell, Lehmer
+reduction to primes), together with a new **formal Ramanujan-type
+congruence** and an unconditional initial segment — with no dense
+computation:
+
+| eigenform | congruence | coefficient `≠ 0` for all `0 < n <` |
+|-----------|------------|--------------------------------------|
+| `Δ E₄` (16) | `a ≡ σ₁₅ [ZMOD 3617]` | 21701 (`LehmerWeight16.a16_ne_zero_of_lt_21701`) |
+| `Δ E₆` (18) | `a ≡ σ₁₇ [ZMOD 43867]` | 263201 |
+| `Δ E₄²` (20) | `a ≡ σ₁₉ [ZMOD 283·617]` | 1746109 |
+| `Δ E₄ E₆` (22) | `a ≡ σ₂₁ [ZMOD 131·593]` | 1087561 |
+| `Δ E₄² E₆` (26) | `a ≡ σ₂₅ [ZMOD 657931]` | 1315861 |
+
 ## Eisenstein series and the 691 congruence (`MathProof/ModularForms/`)
 
 * `RamanujanWeight12.E12_rel` — **Ramanujan's weight-12 identity**
@@ -149,6 +166,8 @@ MathProof/Tau/LehmerPrimeGrand.lean      # (heavy) τ n ≠ 0 for all n < 70481;
 MathProof/Tau/CongruenceSmall.lean  # τ mod 2 and mod 3 gap congruences
 MathProof/Tau/Bridge.lean       # (qExpansion Δ).coeff n = τ(n)
 MathProof/ModularForms/Weight12.lean       # 691 • E₁₂ = 441 • E₄³ + 250 • E₆²
+MathProof/ModularForms/EigenLevelOne.lean  # Mordell + Lehmer for any rank-one S_k
+MathProof/ModularForms/LehmerWeight*.lean  # weights 16–26: congruences, sieves, initial segments
 MathProof/ModularForms/Congruence691.lean  # τ(n) ≡ σ₁₁(n) mod 691
 research/research-log.md        # the research loop log
 docs/                           # GitHub Pages root: project landing page + interactive Langlands page
