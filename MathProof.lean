@@ -1,4 +1,3 @@
-import MathProof.Basic
 import MathProof.Tau.Basic
 import MathProof.Tau.Lehmer
 -- The heavy kernel-decide modules are deliberately NOT imported here:

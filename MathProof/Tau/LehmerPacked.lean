@@ -1277,4 +1277,10 @@ theorem tau_prime_ne_zero_of_le_65536 {p : ℕ} (hp : p.Prime) (hle : p ≤ 6553
     tau p ≠ 0 :=
   tau_ne_zero_of_le_65536 (Nat.Prime.pos hp) hle
 
+-- Axiom audit of this module's headline theorems, printed whenever it is
+-- built (they live in a heavy module, so `MathProof/AxCheck.lean` cannot
+-- afford to import them; see that file for the project-wide audit).
+#print axioms tau_ne_zero_of_le_65536
+#print axioms tau_prime_ne_zero_of_le_65536
+
 end Ramanujan

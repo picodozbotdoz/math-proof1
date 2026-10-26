@@ -113,4 +113,10 @@ theorem tau_of_two_pow_32_ne_zero : tau 4294967296 ≠ 0 := by
   have h : tau (2 ^ 32) ≠ 0 := tau_two_pow_ne_zero 32 (le_refl _)
   rwa [show (2 : ℕ) ^ 32 = 4294967296 from by norm_num] at h
 
+-- Axiom audit of this module's headline theorems, printed whenever it is
+-- built (they live in a heavy module, so `MathProof/AxCheck.lean` cannot
+-- afford to import them; see that file for the project-wide audit).
+#print axioms tau_prime_pow_ne_zero_of_le_two_pow_32
+#print axioms tau_ne_zero_of_prime_pow_le_two_pow_32
+
 end Ramanujan

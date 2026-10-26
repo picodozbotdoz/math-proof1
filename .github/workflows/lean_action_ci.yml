@@ -17,10 +17,15 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
-      # Build every module EXCEPT MathProof.Tau.LehmerMod: its kernel
-      # `decide +kernel` nonvanishing checks need ~20 GB of heap (1024 bound),
-      # far beyond the 7 GB a GitHub runner offers.  LehmerMod is verified on
-      # the Modal builder instead (see AGENTS.md): `modal run lean_build.py`.
+      # Build the LIGHT modules only — the same list as `defaultTargets` in
+      # lakefile.toml, kept in sync per AGENTS.md.  The heavy kernel-decide
+      # modules are excluded: MathProof.Tau.LehmerMod (~6 GB heap for its
+      # 512 decide), MathProof.Tau.LehmerPacked (~63 GiB), MathProof.Tau.
+      # LehmerPow32 (~144 GiB) and their dependents LehmerPrimePower /
+      # LehmerGrand, plus MathProof.AxCheck (imports LehmerMod) and the root
+      # MathProof.lean — all far beyond the ~7 GB a GitHub runner offers.
+      # They are verified on the Modal builder instead (see AGENTS.md):
+      # `modal run lean_check.py` / `lean_build.py`.
       - uses: leanprover/lean-action@v1
         with:
           build-args: >-
@@ -28,6 +33,7 @@ jobs:
             MathProof.Tau.Lehmer
             MathProof.Tau.CongruenceSmall
             MathProof.Tau.Bridge
+            MathProof.ModularForms.Weight12
             MathProof.ModularForms.Congruence691
             MathProof.ModularForms.HeckeLevelOne
             MathProof.Tau.Mordell

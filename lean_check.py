@@ -236,6 +236,11 @@ def main(
     for line in out.splitlines():
         path = line[3:].strip()
         if path.endswith(".lean") or path == "lakefile.toml":
+            # Deleted files (status D) carry no content to overlay; the fresh
+            # clone keeps its stale copy, but it is only elaborated if still
+            # imported, which the overlaid tree decides.
+            if not Path(path).exists():
+                continue
             files[path] = Path(path).read_text()
 
     if file:

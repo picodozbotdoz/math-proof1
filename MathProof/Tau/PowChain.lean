@@ -66,7 +66,7 @@ theorem ppowAt_eq_tau {p : ℕ} (hp : p.Prime) (a : ℕ) :
   | _ a ih =>
     match a with
     | 0 => simp [ppowAt, tau_one]
-    | 1 => simp [ppowAt, Nat.pow_one]
+    | 1 => simp [ppowAt]
     | a + 2 =>
       simp only [ppowAt]
       rw [ih (a + 1) (by omega), ih a (by omega), tau_prime_pow_succ hp a]
@@ -133,7 +133,6 @@ def chainsOK : ℕ → List ℕ → Bool
   | _, [] => true
   | m, r :: l => seedChainOK m r && chainsOK (m + 1) l
 
-set_option maxHeartbeats 1000000 in
 theorem chainsOK_iff (m : ℕ) (l : List ℕ) :
     chainsOK m l = true ↔ ∀ i, i < l.length → seedChainOK (m + i) (l.getD i 0) = true := by
   induction l generalizing m with

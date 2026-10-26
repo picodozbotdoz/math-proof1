@@ -1,14 +1,14 @@
 name = "MathProof"
 version = "0.1.0"
 keywords = ["math"]
-# Default targets = the light modules only: a bare `lake build` (CI, Reservoir's
-# automated builder, downstream consumers) must never pull the heavy kernel-
-# decide modules (MathProof.Tau.LehmerMod ~6 GB, MathProof.Tau.LehmerPacked
-# ~63 GiB) nor the root `MathProof.lean` / `MathProof.AxCheck` (AxCheck
-# transitively imports LehmerMod).  Those are built explicitly on Modal;
-# see AGENTS.md.
+# Default targets = the light modules only (kept in sync with the CI build
+# list in .github/workflows/lean_action_ci.yml): a bare `lake build` (CI,
+# Reservoir's automated builder, downstream consumers) must never pull the
+# heavy kernel-decide modules (MathProof.Tau.LehmerMod ~6 GB, LehmerPacked
+# ~63 GiB, LehmerPow32 ~144 GiB and their dependents) nor the root
+# `MathProof.lean` / `MathProof.AxCheck` (AxCheck transitively imports
+# LehmerMod).  Those are built explicitly on Modal; see AGENTS.md.
 defaultTargets = [
-  "MathProof.Basic",
   "MathProof.Tau.Basic",
   "MathProof.Tau.Lehmer",
   "MathProof.Tau.CongruenceSmall",

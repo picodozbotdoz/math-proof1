@@ -87,4 +87,10 @@ theorem tau_of_4294967295_ne_zero : tau 4294967295 ≠ 0 := by
     rw [hpeq]; norm_num
   · exact absurd (Nat.le_of_dvd (by norm_num : 0 < 65535) h) (by omega)
 
+-- Axiom audit of this module's headline theorem, printed whenever it is
+-- built (it lives in a heavy module, so `MathProof/AxCheck.lean` cannot
+-- afford to import it; see that file for the project-wide audit).
+#print axioms tau_ne_zero_grand
+#print axioms tau_of_4294967295_ne_zero
+
 end Ramanujan

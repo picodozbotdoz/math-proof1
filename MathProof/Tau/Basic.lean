@@ -348,7 +348,10 @@ noncomputable def tauOf (i : ℕ) : ℤ := ((etaPoly (i + 1)) ^ 24).coeff i
 
 /-- **The Ramanujan tau function**: `tau n` is the coefficient of `q ^ n` in the
 q-expansion `Δ = q ∏_{m ≥ 1} (1 - q ^ m) ^ 24` of the modular discriminant, for
-`n ≥ 1` (OEIS A000594). -/
+`n ≥ 1` (OEIS A000594).  The definition is meaningful only for `n ≥ 1`: at
+`n = 0` the truncated subtraction `n - 1` makes `tau 0` unfold to `tauOf 0 = 1`
+(see `tau_zero`), so every statement about `tau` in this project guards the
+index with `1 ≤ n` / `0 < n`. -/
 noncomputable def tau (n : ℕ) : ℤ := tauOf (n - 1)
 
 /-- Master computation lemma: `tauOf i` is read off the verified list
@@ -359,6 +362,13 @@ theorem tauOf_eq_getD (d i : ℕ) (h : i < d) :
   exact (etaPow24_stable i d h).symm
 
 theorem tau_eq (n : ℕ) : tau (n + 1) = tauOf n := rfl
+
+/-- **Edge case**: `tau 0` unfolds — via the truncated `n - 1` in the
+definition — to `tauOf 0 = 1`.  This value is an artifact of the encoding and
+is never used: all theorems below assume `1 ≤ n`. -/
+theorem tau_zero : tau 0 = 1 := by
+  change tauOf 0 = 1
+  rw [tauOf_eq_getD 1 0 (by omega)]; decide
 
 /-! ### Initial values (OEIS A000594), verified by the kernel -/
 
