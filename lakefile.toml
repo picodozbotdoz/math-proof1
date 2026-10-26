@@ -18,6 +18,7 @@ defaultTargets = [
   "MathProof.ModularForms.HeckeLevelOne",
   "MathProof.Tau.Mordell",
   "MathProof.Tau.LehmerUnbounded",
+  "MathProof.Tau.PowChain",
 ]
 
 [leanOptions]

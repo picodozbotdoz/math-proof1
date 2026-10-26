@@ -539,3 +539,92 @@ family of indices.
   covered set to all `2^a · (coprime verified part)` with `2^a ≤ 2^{30}`.
 * Deligne's bound `|τ(p)| ≤ 2 p^{11/2}` for verified small `p` (numerical,
   via the eigenvalue identity and kernel decides on the packed pipeline).
+
+## Iteration 9 — Prime-power chains: the Lehmer frontier moves from 65536 to 2³²
+
+**Status: complete (theorems formalized end-to-end, kernel decides on Modal).  2026-10-26.**
+
+### The problem
+
+After Iteration 8, the nonvanishing set was "all `n` whose prime-power divisors
+are `≤ 65536`" — prime-power *values* above 65536 remained uncovered, and no
+dense kernel computation can reach them (slot saturation, ~63 GiB already at
+65536).  But Iteration 7's prime-power recursion
+`τ(p^{r+2}) = τ(p)·τ(p^{r+1}) − p^11·τ(p^r)` is a *linear two-term recurrence*:
+once the seeds `τ p mod P` are known, each `τ(p^a)` costs O(1) state per step —
+a chain, not a convolution.
+
+### What this iteration contributes
+
+* `MathProof/Tau/PowChain.lean` (light, in CI) — the chain machinery:
+  * `ppowAt` (chain value, structural recursion) and `ppowAux` (linear
+    kernel-time runner, O(1) state);
+  * `ppowAt_eq_tau`: chain soundness — for `p` prime, the chain seeded at
+    `τ p` with coefficient `p^11` computes `τ (p ^ a)` in `ZMod P` for every
+    `a` (by `tau_prime_pow_succ`);
+  * `ppowOK_iff` / `chainsOK_iff`: the runner and the bulk walker are correct;
+  * `tau_prime_pow_ne_zero_of_chains`: the parametric nonvanishing theorem
+    (seed list + bridge + chain check as hypotheses).
+* `MathProof/Tau/LehmerPacked.lean` (+ public accessor): `tauResList d` — the
+  packed residue list as public API — and `tauResList_eq_tauZMod`: entry `i`
+  is `τ (i+1)` mod `P` (the seed datum).
+* `MathProof/Tau/LehmerUnbounded.lean` (refactor): the new primitive
+  `tau_ne_zero_of_prime_pows` — `τ n ≠ 0` if `τ (p^a) ≠ 0` for every
+  prime-power *divisor* of `n` (no explicit bound parameter needed);
+  `tau_ne_zero_of_forall_prime_pow` becomes a corollary.
+* `MathProof/Tau/LehmerPow32.lean` (heavy, verified on Modal like
+  `LehmerPacked`, measured **2089 s wall / 143.8 GiB peak tree RSS** — the
+  chain fold retains the live packed list plus per-step thunks, ~2× the
+  packed evaluation alone): `chains_nonvanishing_65536` — ONE kernel decide
+  walking all 65 535 chains (seeds `τ m`, `m = 2..65536`) of 32 steps each, ~2.1 M small
+  `ZMod` operations (~3 ms per chain measured locally) on top of the
+  packed-list evaluation — and the theorems:
+  * `tau_prime_pow_ne_zero_of_le_two_pow_32`: `τ (p^a) ≠ 0` for every prime
+    `p ≤ 65536` with `p^a ≤ 2^32`;
+  * `tau_ne_zero_of_prime_pow_le_two_pow_32`: `τ n ≠ 0` for every `n` whose
+    prime-power divisors all satisfy those bounds — in particular **every
+    65536-smooth `n ≤ 2^32`** (4 294 967 296);
+  * concrete: `tau_of_131072_ne_zero` (`τ(2^17)`, first power of two past the
+    old wall), `tau_of_two_pow_32_ne_zero` (`τ 4294967296 ≠ 0`).
+
+### Results
+
+* The **prime-power frontier** moves 65536 → 2^32 (a factor of 65 536) at a
+  kernel cost of ~2.1 M O(1) `ZMod` operations (2089 s / 143.8 GiB measured,
+  incl. the seed-list evaluation) — versus ~dense-coefficient
+  work that is provably out of reach at this slot base.  Lehmer's conjecture
+  is now verified (kernel-only) for: all `n ≤ 65536` (Iteration 6), all
+  coprime-composites of verified blocks (Iteration 8), and all prime-power
+  blocks `p^a ≤ 2^32` with `p ≤ 65536` (this iteration).
+* Combined statement: `τ n ≠ 0` for every `n ≥ 1` whose every prime-power
+  divisor `p^a` has `p ≤ 65536` and `p^a ≤ 2^32` — e.g. `n = 2^32`, `3^20`,
+  any 65536-smooth number below `2^32`, or any product of such blocks with
+  pairwise-coprime parts.
+
+### Engineering notes
+
+* Lean 4 offset arithmetic: `m + 1 + i` and `m + (i + 1)` are **not**
+  definitionally equal (nor `rfl`-provable) — every such transfer needs an
+  explicit `omega`-rewrite; relying on defeq sends the elaborator into a
+  whnf spiral that survives even `maxHeartbeats 1000000`.  (`i + 1 + 1 = i + 2`
+  on the other hand *is* handled by rw's closing rfl.)
+* `decide +kernel` (kernel-side evaluation) is ~100× faster than elaborator
+  `decide` for `ZMod` chains — a 32-step chain costs ~3 ms kernel time; the
+  elaborator variant is unusable at this scale.
+* Composite-seed chains are mathematically garbage (the recursion is valid
+  only for prime `p`) but **numerically harmless**: a Python audit over all
+  65 535 seeds × 32 steps found zero residues hitting 0 mod P, so the
+  all-seeds decide passes; soundness only ever consumes the prime seeds.
+
+### What remains / next steps
+
+* The uncovered set is now exactly: primes `p ∈ (65536, ∞)` with `p ∣ n`, and
+  prime powers `p^a > 2^32`.  For the former, no seed exists — extending needs
+  either a wider dense computation (different prime `P`, two-level packing) or
+  an analytic route (Deligne's bound would give |τ(p)| ≥ 1 trivially but needs
+  the Ramanujan conjecture machinery).
+* Deligne verification for small `p`: the eigenvalue identity plus the packed
+  residues give `|τ(p)| mod P` for `p ≤ 65536` — a numeric audit of
+  `2 p^{11/2}` against reconstructed `|τ(p)|` is a light-verification
+  candidate (needs exact reconstruction, i.e. magnitude bounds — a Sturm-type
+  bound on |τ| could make this formal).

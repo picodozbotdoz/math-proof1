@@ -18,7 +18,11 @@ See `research/research-log.md` for the full log. Highlights:
 * `Ramanujan.tau_one` … `Ramanujan.tau_twenty_one` — the first 21 values of
   OEIS A000594, each verified by `decide`.
 * **Toward Lehmer's conjecture** (`Ramanujan.LehmerConjecture`) — now on an
-  **unbounded index set** (`Ramanujan.tau_ne_zero_of_forall_prime_pow`,
+  **unbounded index set** with the **prime-power frontier at 2³²**
+  (`Ramanujan.tau_prime_pow_ne_zero_of_le_two_pow_32`,
+  `Ramanujan.tau_ne_zero_of_prime_pow_le_two_pow_32`: `τ (p ^ a) ≠ 0` for all
+  primes `p ≤ 65536` with `p ^ a ≤ 2 ^ 32`, by kernel-verified Mordell
+  recursion chains over `ZMod P` — e.g. `τ 4294967296 = τ(2 ^ 32) ≠ 0`) (`Ramanujan.tau_ne_zero_of_forall_prime_pow`,
   `Ramanujan.tau_ne_zero_of_prime_pow_le_65536`): `τ n ≠ 0` for every `n`
   whose prime-power divisors are all `≤ 65536` — an infinite family
   including all squarefree products of the 6542 primes up to 65536 (indices

@@ -1186,6 +1186,26 @@ theorem tauOf_ne_zero_of_packed {d i : ℕ} (hd : d ≤ 65536) (hi : i < d)
     simpa [Nat.ModEq] using hmod0
   exact absurd hv hmod
 
+/-! ### The packed residue list as a public accessor -/
+
+/-- The packed τ-residue list: `tauResList d` has length `d`; for `d ≤ 65536`
+its `i`-th entry is an integer whose residue mod `P = 999999937` is
+`τ (i + 1)` (see `tauResList_eq_tauZMod`).  Computed by the packed-bignum
+pipeline: `etaList d` (pentagonal entries) raised to the 24th power. -/
+def tauResList (d : ℕ) : List ℕ := pow24Packed (etaList d)
+
+theorem tauResList_length (d : ℕ) : (tauResList d).length = d := by
+  rw [tauResList, pow24Packed_length, etaList_length]
+
+/-- **Residue bridge**: for `i < d ≤ 65536`, the `i`-th packed entry, cast
+into `ZMod P`, is the residue of `τ (i + 1)` — the seed datum for the
+prime-power recursion chains (`MathProof/Tau/PowChain.lean`). -/
+theorem tauResList_eq_tauZMod (d i : ℕ) (hd : d ≤ 65536) (hi : i < d) :
+    (((tauResList d).getD i 0 : ℕ) : ZMod P) = ((tau (i + 1) : ℤ) : ZMod P) := by
+  rw [tauResList, deltaPacked_eq d i hd hi, tau_eq i, tauOf,
+    coeff_pow_congr' (fun j hj => etaPoly_coeff_stable j (i + 1) d (by omega) (by omega)) 24 i
+      (le_refl i)]
+
 /-! ### The kernel-verified nonvanishing checks -/
 
 private theorem allNonzero_iff {l : List ℕ} :
