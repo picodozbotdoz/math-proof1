@@ -37,6 +37,12 @@ See `research/research-log.md` for the full log. Highlights:
   `decide +kernel`) — `τ n ≠ 0` for all `1 ≤ n ≤ 65536`, verified entirely
   inside Lean's kernel (no external CAS, no `native_decide`); the 65536
   check needs ~63 GiB of kernel heap, so it is built on Modal, not in CI.
+* **The mod-691 Lehmer sieve** (`Ramanujan.tau_prime_ne_zero_of_mod`,
+  `Ramanujan.tau_ne_zero_of_not_dvd_sigma`): `τ n ≠ 0` whenever
+  `691 ∤ σ₁₁ n` — in particular **every prime `p ≢ −1 [MOD 691]` of
+  arbitrary size** has `τ p ≠ 0` (e.g. `τ 65537 ≠ 0`, `τ(2³¹ − 1) ≠ 0`),
+  `τ(2 ^ a) ≠ 0` for all `a ≤ 64`, and any Lehmer counterexample `n` must
+  satisfy `691 ∣ σ₁₁ n`.
 * **Small-prime congruences** (`Ramanujan.tau_even_of_ne_one_mod_eight`,
   `Ramanujan.tau_zero_mod_three_of_ne_one_mod_three`): `τ n` is even unless
   `n ≡ 1 [MOD 8]`, and divisible by 3 unless `n ≡ 1 [MOD 3]` — by the

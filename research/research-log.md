@@ -628,3 +628,77 @@ a chain, not a convolution.
   `2 p^{11/2}` against reconstructed `|τ(p)|` is a light-verification
   candidate (needs exact reconstruction, i.e. magnitude bounds — a Sturm-type
   bound on |τ| could make this formal).
+
+## Iteration 10 — The mod-691 Lehmer sieve: unbounded primes, necessary conditions
+
+**Status: complete (light theorems, kernel-decided finite facts, CI).  2026-10-26.**
+
+### The problem
+
+After Iterations 6–9, the nonvanishing set covers: all `n ≤ 65536` (dense),
+all coprime composites of verified blocks (Mordell), and all prime-power
+blocks `p^a ≤ 2^32` with `p ≤ 65536` (chains).  The one structural hole:
+**primes `p > 65536`** — no seed exists for them anywhere in the stack.  The
+observation: Ramanujan's congruence `τ n ≡ σ₁₁ n [ZMOD 691]` (Iteration 2)
+is itself a nonvanishing certificate — `691 ∤ σ₁₁ n` forces `τ n ≠ 0` —
+and σ₁₁ is *multiplicative*, so the test is a sieve that runs on residue
+classes, with no bound on `n` at all.
+
+### What this iteration contributes
+
+* `MathProof/Tau/LehmerSieve691.lean` (light, in CI):
+  * `tau_ne_zero_of_not_dvd_sigma` — the sieve: `691 ∤ σ₁₁ n → τ n ≠ 0`
+    (two lines on top of Iteration 2, but the payoff is unbounded);
+  * `lehmer_zero_dvd_sigma` — the contrapositive: any Lehmer counterexample
+    `n` must satisfy `691 ∣ σ₁₁ n` (a formalized necessary condition);
+  * `prime_dvd_sigma_iff` — for `p` prime, `691 ∣ σ₁₁ p ↔ p ≡ −1 [MOD 691]`,
+    the finite fact kernel-decided over the 691 residues (the unique
+    solution of `x ^ 11 ≡ −1` is `x = 690`);
+  * **`tau_prime_ne_zero_of_mod`** — every prime `p ≢ 690 [MOD 691]`, of
+    *arbitrary size*, has `τ p ≠ 0` — the first unbounded-prime coverage in
+    the stack: 690 of 691 residue classes, all primes to infinity;
+  * `tau_ne_zero_of_sigma_prime_pows` — the divisor-indexed combination with
+    `tau_ne_zero_of_prime_pows` (the sieve need only run on prime-power
+    blocks);
+  * `tau_two_pow_ne_zero_sieve` — `τ (2 ^ a) ≠ 0` for all `a ≤ 64`
+    (geometric sums kernel-decided mod 691): the power-of-two tower now
+    reaches index `2 ^ 64`, `2 ^ 32` beyond the chain bound;
+  * showcases: `tau_of_65537_ne_zero` (the first prime past the wall),
+    `tau_of_2147483647_ne_zero` (the Mersenne prime `2³¹ − 1`).
+
+### Results
+
+* Combined coverage after this iteration: `τ n ≠ 0` is verified for every
+  `n ≥ 1` (unbounded) such that every prime-power divisor `p ^ a ∥ n`
+  satisfies at least one of: (a) `p ≤ 65536` and `p ^ a ≤ 2 ^ 32` (chains),
+  or (b) `691 ∤ σ₁₁ (p ^ a)` (sieve — e.g. all primes `p ≢ −1 [MOD 691]`,
+  all `2 ^ a`, `a ≤ 64`).  The remaining uncovered set: primes
+  `p ≡ −1 [MOD 691]` above 65536, and large prime powers past `2 ^ 32`
+  whose σ₁₁-residue vanishes.
+* All theorems: `propext, Classical.choice, Quot.sound` only; the finite
+  facts are kernel-decided (`bad_residues`, `two_pow_sigma_nonzero`);
+  the module is in the CI target list (13.9 GiB peak on the Modal fresh
+  clone, 64 s wall).
+
+### Engineering notes
+
+* `Nat.pow_mod (a b n) : a ^ b % n = (a % n) ^ b % n` is the whole bridge
+  between "divisibility by 691" and "a fact about the 691 residues".
+* Bare `set_option` cannot sit between a docstring and its declaration —
+  place it above the doc comment (`set_option ... in` likewise fails before
+  `private` in this toolchain).
+* Literal exponent evaluation cuts off at `2 ^ 256`:
+  `exponentiation.threshold` must be raised for the `2 ^ 704`-scale
+  geometric sums of the kernel decide.
+
+### What remains / next steps
+
+* Fuse the sieve with the chain coverage into one grand nonvanishing theorem
+  (the union of hypotheses (a)/(b) above) — pure glue, `LehmerPow32`-side.
+* The order-based classification of bad prime-power classes
+  (`ord_{691}(p) ∣ 11 (a+1)`): 73 residue classes admit some bad exponent;
+  a complete `(p mod 691, a mod ord)` table is kernel-decidable and would
+  make the sieve unconditional per residue class pair.
+* Multi-modulus: the same sieve at other primes `ℓ` with a
+  `τ ≡ σ_{k}`-type congruence (691 is the only classical one at weight 12,
+  but level-raising and ℓ-adic congruences exist).

@@ -19,6 +19,7 @@ defaultTargets = [
   "MathProof.Tau.Mordell",
   "MathProof.Tau.LehmerUnbounded",
   "MathProof.Tau.PowChain",
+  "MathProof.Tau.LehmerSieve691",
 ]
 
 [leanOptions]
