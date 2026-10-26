@@ -43,27 +43,27 @@ namespace RamanujanWeight12
 Computed by unfolding the defining recurrence one step at a time; every step
 is a fixed rational arithmetic problem for `norm_num`. -/
 
-private theorem bernoulli'_five : bernoulli' 5 = 0 := by
+theorem bernoulli'_five : bernoulli' 5 = 0 := by
   rw [bernoulli'_def]
   norm_num [Finset.sum_range_succ, Finset.sum_range_zero, bernoulli'_zero, bernoulli'_one,
     bernoulli'_two, bernoulli'_three, bernoulli'_four,
     show Nat.choose 5 2 = 10 from by decide]
 
-private theorem bernoulli'_six : bernoulli' 6 = 1 / 42 := by
+theorem bernoulli'_six : bernoulli' 6 = 1 / 42 := by
   rw [bernoulli'_def]
   norm_num [Finset.sum_range_succ, Finset.sum_range_zero, bernoulli'_zero, bernoulli'_one,
     bernoulli'_two, bernoulli'_three, bernoulli'_four, bernoulli'_five,
     show Nat.choose 6 2 = 15 from by decide,
     show Nat.choose 6 4 = 15 from by decide]
 
-private theorem bernoulli'_seven : bernoulli' 7 = 0 := by
+theorem bernoulli'_seven : bernoulli' 7 = 0 := by
   rw [bernoulli'_def]
   norm_num [Finset.sum_range_succ, Finset.sum_range_zero, bernoulli'_zero, bernoulli'_one,
     bernoulli'_two, bernoulli'_three, bernoulli'_four, bernoulli'_five, bernoulli'_six,
     show Nat.choose 7 2 = 21 from by decide,
     show Nat.choose 7 4 = 35 from by decide]
 
-private theorem bernoulli'_eight : bernoulli' 8 = -(1 / 30) := by
+theorem bernoulli'_eight : bernoulli' 8 = -(1 / 30) := by
   rw [bernoulli'_def]
   norm_num [Finset.sum_range_succ, Finset.sum_range_zero, bernoulli'_zero, bernoulli'_one,
     bernoulli'_two, bernoulli'_three, bernoulli'_four, bernoulli'_five, bernoulli'_six,
@@ -72,7 +72,7 @@ private theorem bernoulli'_eight : bernoulli' 8 = -(1 / 30) := by
     show Nat.choose 8 4 = 70 from by decide,
     show Nat.choose 8 6 = 28 from by decide]
 
-private theorem bernoulli'_nine : bernoulli' 9 = 0 := by
+theorem bernoulli'_nine : bernoulli' 9 = 0 := by
   rw [bernoulli'_def]
   norm_num [Finset.sum_range_succ, Finset.sum_range_zero, bernoulli'_zero, bernoulli'_one,
     bernoulli'_two, bernoulli'_three, bernoulli'_four, bernoulli'_five, bernoulli'_six,
@@ -81,7 +81,7 @@ private theorem bernoulli'_nine : bernoulli' 9 = 0 := by
     show Nat.choose 9 4 = 126 from by decide,
     show Nat.choose 9 6 = 84 from by decide]
 
-private theorem bernoulli'_ten : bernoulli' 10 = 5 / 66 := by
+theorem bernoulli'_ten : bernoulli' 10 = 5 / 66 := by
   rw [bernoulli'_def]
   norm_num [Finset.sum_range_succ, Finset.sum_range_zero, bernoulli'_zero, bernoulli'_one,
     bernoulli'_two, bernoulli'_three, bernoulli'_four, bernoulli'_five, bernoulli'_six,
@@ -91,7 +91,7 @@ private theorem bernoulli'_ten : bernoulli' 10 = 5 / 66 := by
     show Nat.choose 10 6 = 210 from by decide,
     show Nat.choose 10 8 = 45 from by decide]
 
-private theorem bernoulli'_eleven : bernoulli' 11 = 0 := by
+theorem bernoulli'_eleven : bernoulli' 11 = 0 := by
   rw [bernoulli'_def]
   norm_num [Finset.sum_range_succ, Finset.sum_range_zero, bernoulli'_zero, bernoulli'_one,
     bernoulli'_two, bernoulli'_three, bernoulli'_four, bernoulli'_five, bernoulli'_six,
@@ -101,7 +101,7 @@ private theorem bernoulli'_eleven : bernoulli' 11 = 0 := by
     show Nat.choose 11 6 = 462 from by decide,
     show Nat.choose 11 8 = 165 from by decide]
 
-private theorem bernoulli'_twelve : bernoulli' 12 = -(691 / 2730) := by
+theorem bernoulli'_twelve : bernoulli' 12 = -(691 / 2730) := by
   rw [bernoulli'_def]
   norm_num [Finset.sum_range_succ, Finset.sum_range_zero, bernoulli'_zero, bernoulli'_one,
     bernoulli'_two, bernoulli'_three, bernoulli'_four, bernoulli'_five, bernoulli'_six,
