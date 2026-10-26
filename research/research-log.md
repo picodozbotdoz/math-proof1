@@ -965,11 +965,19 @@ the linear map `T₂ : S_k → S_k`) and `MaedaWeightK.maeda` (irreducible over
 `dim = 2` irreducibility is the whole of Maeda (Galois group `S₂`).  Whole
 instance file: 167 s on Modal, zero warnings; no `sorry`, no `native_decide`.
 
+* **Galois group (full Maeda).** `MathProof/ModularForms/MaedaGalois.lean`:
+  `galActionHom_bijective_of_cubic` — an irreducible cubic over `ℚ` with
+  non-square discriminant has Galois group `S₃` (proved from scratch: in the
+  splitting field `δ = (x−y)(x−z)(y−z)` has `δ² = disc`, so `2 · 3 ∣ |Gal|`,
+  and `Gal ↪ S₃`).  Mathlib's prime-degree criterion needs two non-real roots,
+  which Hecke polynomials never have (their roots are real).  Instances
+  `maeda_galois36 … maeda_galois50`: the six discriminants are non-squares
+  (non-residues mod 29, 41, 43, 41, 23, 41).  **Maeda's conjecture — irreducible
+  charpoly and full symmetric Galois group — is therefore formally verified for
+  every level-one weight with `dim S_k ≤ 3`** (for `dim 2`, `S₂` is automatic).
+
 ### What remains / next steps
 
-* Galois group `S₃` for the cubic weights: irreducible + non-square
-  discriminant (needs Mathlib's cubic Galois-group criterion, or a Dedekind
-  cycle-type certificate mod a prime where the cubic splits as 1 + 2).
 * `dim S_k ≥ 4` (k = 48, 52, …): a `charpoly_dimN` via triangular bases in
   general `Fin n`, and irreducibility of quartics+ mod ℓ (degree > 3 needs
   more than "no roots": e.g. a Rabin/Berlekamp-style certificate).
