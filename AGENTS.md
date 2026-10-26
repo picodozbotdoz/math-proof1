@@ -160,6 +160,14 @@ surface the limitation to the user instead of creating workarounds on Modal.
 - `MathProof/Tau/LehmerGrand.lean` (heavy, Modal) — `tau_ne_zero_grand`
   (chains ⊕ sieve fused; every `n < 2^32` whose large prime factors avoid
   `−1 [MOD 691]`), `tau_of_4294967295_ne_zero`.
+- `MathProof/Tau/LehmerPrimeReduction.lean` (light) — Lehmer's lemma
+  `tau_prime_pow_ne_zero` (`τ p ≠ 0 → τ (p^a) ≠ 0`, elementary: p-adic vs
+  archimedean dominance of the recurrence), `lehmerConjecture_iff_primes`,
+  any-exponent sieve and the parametric initial-segment lemma.
+- `MathProof/Tau/LehmerPrimeGrand.lean` (heavy, Modal; needs only
+  `LehmerPacked`) — `tau_ne_zero_of_lt_70481`,
+  `tau_ne_zero_of_prime_factors_le_65536_or_mod` (supersedes the chain-based
+  `LehmerGrand` at less than half the memory).
 - `MathProof.lean` — root import file for the *light* modules. The heavy
   kernel-decide modules (`LehmerMod`, `LehmerPacked`) and `AxCheck` are
   deliberately **not** imported there — the root must stay cheap for

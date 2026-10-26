@@ -22,12 +22,12 @@ a statement about primes only.
 
 ## Stages
 
-1. [~] `MathProof/Tau/LehmerPrimeReduction.lean` (Modal OK, registered light) (light): recurrence lemmas,
+1. [DONE] `MathProof/Tau/LehmerPrimeReduction.lean` (light): recurrence lemmas,
    `tau_prime_pow_ne_zero`, `tau_ne_zero_of_prime_factors`,
    `lehmerConjecture_iff_primes`, sieve upgrade
    (`p % 691 ≠ 690` for all prime factors ⇒ `τ n ≠ 0`, any exponents),
    parametric initial-segment lemma.  Register as light (lakefile, root, CI).
-2. [ ] `MathProof/Tau/LehmerPrimeGrand.lean` (heavy, needs LehmerPacked
+2. [DONE: 481 s / 62.85 GiB] `MathProof/Tau/LehmerPrimeGrand.lean` (heavy, needs LehmerPacked
    ~63 GiB): every `n` whose prime factors are `≤ 65536` or `≢ −1 [MOD 691]`;
    initial segment `τ n ≠ 0` for all `0 < n < 70481` (70481 = least prime
    `> 65536` with `p ≡ −1 [MOD 691]`; candidates 65644 … 69790 composite).
@@ -42,4 +42,4 @@ a statement about primes only.
    (Extra τ sieves mod 2,3,5,7 from pure Eisenstein identities only reach
    τ mod 4 — checked: `1800 τ = 691σ₃ + 1382σ₇ − 273σ₁₁ + 331680 S₃₇`;
    the deep ones need Ramanujan's θ, now in Mathlib's `RamanujanFormula`.)
-4. [ ] Log / README / docs / AGENTS.md layout; commit.
+4. [DONE] Log / README / docs / AGENTS.md layout; commit.

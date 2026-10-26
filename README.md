@@ -37,6 +37,18 @@ See `research/research-log.md` for the full log. Highlights:
   `decide +kernel`) — `τ n ≠ 0` for all `1 ≤ n ≤ 65536`, verified entirely
   inside Lean's kernel (no external CAS, no `native_decide`); the 65536
   check needs ~63 GiB of kernel heap, so it is built on Modal, not in CI.
+* **Lehmer's reduction to primes** (`Ramanujan.lehmerConjecture_iff_primes`,
+  `Ramanujan.tau_prime_pow_ne_zero`, in `MathProof/Tau/LehmerPrimeReduction.lean`):
+  `τ p ≠ 0 → τ (p ^ a) ≠ 0` for every exponent (Lehmer 1947, elementary
+  proof — no Deligne bound), so **Lehmer's conjecture is equivalent to
+  `τ p ≠ 0` for all primes `p`**.  Consequences: `τ n ≠ 0` for every `n`
+  whose prime factors are each `≤ 65536` or `≢ −1 [MOD 691]`, **any
+  exponents** (`Ramanujan.tau_ne_zero_of_prime_factors_le_65536_or_mod`;
+  e.g. `τ (2 ^ a) ≠ 0` for all `a`), and **`τ n ≠ 0` for every
+  `0 < n < 70481`** (`Ramanujan.tau_ne_zero_of_lt_70481`, in
+  `MathProof/Tau/LehmerPrimeGrand.lean`) — the first unconditional initial
+  segment past the dense bound; `70481` is the least prime `> 65536` with
+  `p ≡ −1 [MOD 691]`.
 * **The grand fusion** (`Ramanujan.tau_ne_zero_grand`,
   `Ramanujan.tau_ne_zero_of_lt_two_pow_32`, in `MathProof/Tau/LehmerGrand.lean`):
   one theorem consuming every route — `τ n ≠ 0` for every `n` (unbounded)
@@ -132,6 +144,8 @@ MathProof/Tau/Basic.lean        # τ: definition, stability, verified values
 MathProof/Tau/Lehmer.lean       # Lehmer's conjecture + verified bound 128
 MathProof/Tau/LehmerMod.lean    # mod-P arithmetic: verified bound 512
 MathProof/Tau/LehmerPacked.lean # packed-bignum mod-P arithmetic: verified bound 65536
+MathProof/Tau/LehmerPrimeReduction.lean  # Lehmer's lemma: τ p ≠ 0 → τ(p^a) ≠ 0; conjecture ⇔ primes
+MathProof/Tau/LehmerPrimeGrand.lean      # (heavy) τ n ≠ 0 for all n < 70481; any-exponent sieve
 MathProof/Tau/CongruenceSmall.lean  # τ mod 2 and mod 3 gap congruences
 MathProof/Tau/Bridge.lean       # (qExpansion Δ).coeff n = τ(n)
 MathProof/ModularForms/Weight12.lean       # 691 • E₁₂ = 441 • E₄³ + 250 • E₆²

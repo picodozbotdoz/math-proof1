@@ -233,8 +233,17 @@ def main(
         ["git", "status", "--porcelain", "--untracked-files=all"],
         capture_output=True, text=True, check=True,
     ).stdout
-    for line in out.splitlines():
-        path = line[3:].strip()
+    paths = [line[3:].strip() for line in out.splitlines()]
+    # Also overlay files committed locally but not yet pushed: the remote
+    # side clones origin's default branch, so local commits are otherwise
+    # invisible to it.
+    diff = sp.run(
+        ["git", "diff", "--name-only", "origin/master"],
+        capture_output=True, text=True,
+    )
+    if diff.returncode == 0:
+        paths += [p.strip() for p in diff.stdout.splitlines() if p.strip()]
+    for path in dict.fromkeys(paths):
         if path.endswith(".lean") or path == "lakefile.toml":
             # Deleted files (status D) carry no content to overlay; the fresh
             # clone keeps its stale copy, but it is only elaborated if still

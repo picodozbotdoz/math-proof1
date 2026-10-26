@@ -758,3 +758,74 @@ seed prime `p = 2`.
   would make the sieve checkable by `decide` for any concrete `(p, a)`.
 * Primes `p ≡ −1 [MOD 691]` above 65536 remain the only unreachable primes;
   the next tool for them is analytic (Deligne-type bounds), not modular.
+
+## Iteration 12 — Lehmer's reduction: the conjecture is a statement about primes
+
+**Status: complete (reduction light; instantiation Modal-verified).  2026-10-26.**
+
+### The problem
+
+Iterations 8–11 reduced nonvanishing of `τ n` to the prime-power blocks
+`τ (p ^ a)`, but the blocks themselves were only reachable by
+kernel-decided Mordell chains (`p ≤ 65536`, `p ^ a ≤ 2 ^ 32`, ~144 GiB) or
+block-by-block sieve conditions `691 ∤ σ₁₁ (p ^ a)`.  Lehmer (1947) showed
+that the exponent is irrelevant: **`τ p ≠ 0` implies `τ (p ^ a) ≠ 0` for all
+`a`**, so a minimal zero of `τ` is a prime.  This classical reduction had not
+been formalized.
+
+### What this iteration contributes
+
+* `MathProof/Tau/LehmerPrimeReduction.lean` (light, in CI):
+  * `rec_ne_zero_of_valuation`, `rec_ne_zero_of_sq_ge` — nonvanishing of the
+    two-term recurrence `u (a+2) = t u (a+1) − p ^ 11 u a` in its two
+    regimes, by elementary arguments (no Deligne bound):
+    *p-adic dominance* when `p ^ 6 ∤ t` (`t = p ^ v s`, `v ≤ 5`: then
+    `u a = p ^ (a v) w` with `w ≡ s ^ a [ZMOD p]`) and *archimedean
+    dominance* when `p ^ 6 ∣ t` (then `p ≥ 5`, `t ² ≥ 4 p ^ 11`, and the
+    sequence is sign-monotone);
+  * **`tau_prime_pow_ne_zero`** — Lehmer's lemma `τ p ≠ 0 → τ (p ^ a) ≠ 0`;
+  * **`lehmerConjecture_iff_primes`** — `LehmerConjecture ↔ ∀ p prime, τ p ≠ 0`;
+  * `tau_ne_zero_of_prime_factors`, `tau_ne_zero_of_prime_factors_mod`
+    (the 691 sieve with no exponent restriction: `τ n ≠ 0` whenever no prime
+    factor of `n` is `≡ −1 [MOD 691]`), `tau_ne_zero_of_primes_le_or_mod`,
+    the parametric initial-segment lemma `tau_ne_zero_of_lt_of_prime_gap`;
+  * showcases `tau_two_pow_ne_zero` (`τ (2 ^ a) ≠ 0` for **every** `a`),
+    `tau_65537_pow_ne_zero`.
+* `MathProof/Tau/LehmerPrimeGrand.lean` (heavy, Modal):
+  * `tau_ne_zero_of_prime_factors_le_65536_or_mod` — `τ n ≠ 0` for every `n`
+    whose prime factors are each `≤ 65536` or `≢ −1 [MOD 691]`, **any
+    exponents**: strictly stronger than Iteration 11's `tau_ne_zero_grand`,
+    and it needs only the packed decide (~63 GiB), not the chains (~144 GiB);
+  * **`tau_ne_zero_of_lt_70481`** — `τ n ≠ 0` for **every** `0 < n < 70481`:
+    the first unconditional initial segment beyond the dense bound 65536.
+    `70481` is the least prime `> 65536` in the class `−1 [MOD 691]`
+    (`prime_gap_691_65536_70481`: the candidates `691 k + 690`,
+    `94 ≤ k ≤ 100`, are composite — `norm_num`).
+
+### Results
+
+* `LehmerPrimeReduction` (light): Modal `lean_check` clean, no warnings.
+* `LehmerPrimeGrand` (heavy): Modal `lean_check` **481 s wall / 62.85 GiB
+  peak tree RSS** (the packed 65536 decide dominates); axioms of
+  `tau_ne_zero_of_lt_70481` and
+  `tau_ne_zero_of_prime_factors_le_65536_or_mod`: `propext`,
+  `Classical.choice`, `Quot.sound` only.  Compare Iteration 11's
+  `LehmerGrand`: 1759 s / 143.8 GiB for a strictly weaker statement.
+* Lehmer's conjecture is now formally *equivalent* to a statement about
+  primes, and every exponent restriction in the stack is gone.
+
+### What remains / next steps
+
+* The unconditional initial segment now grows exactly with sieve strength:
+  it ends at the least prime `> 65536` lying in *every* bad class.  Lehmer's
+  own 1947 bound came from the moduli `2^11 · 3^7 · 5^3 · 7^2 · 23 · 691`.
+  Pure Eisenstein identities only reach `τ` mod 4 at 2 (checked:
+  `1800 τ = 691 σ₃ + 1382 σ₇ − 273 σ₁₁ + 331680 Σ σ₃ σ₇`); the deeper
+  congruences need Ramanujan's θ-operator, whose formulas
+  (`∂E₄ = −E₆/3`, …) Mathlib now has (`RamanujanFormula.lean`).
+* Generalized Lehmer for the other one-dimensional level-one eigenforms
+  `Δ E₄, Δ E₆, Δ E₈, Δ E₁₀, Δ E₁₄` (weights 16–26): `HeckeLevelOne` is
+  weight-generic and Mathlib supplies `S_k ≃ M_{k−12}`; the prime lemma
+  generalizes verbatim (odd exponent `k − 1`).
+* The Iteration-9/11 chain modules are superseded mathematically; they
+  remain as the record of the computational route.
