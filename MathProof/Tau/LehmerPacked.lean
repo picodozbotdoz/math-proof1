@@ -219,14 +219,14 @@ private theorem isqrtNew_spec : ∀ (f n g : ℕ), 0 < n → Nat.sqrt n ≤ g �
   | zero =>
       intro n g hn hg hf
       have h1 : 0 < Nat.sqrt n := Nat.sqrt_pos.mpr hn
-      show g = Nat.sqrt n
+      change g = Nat.sqrt n
       omega
   | succ f ih =>
       intro n g hn hg hf
       have hspos : 0 < Nat.sqrt n := Nat.sqrt_pos.mpr hn
       have hpos : 0 < g := Nat.lt_of_lt_of_le hspos hg
       by_cases hstep : (g + n / g) / 2 < g
-      · simp only [isqrtNew, if_pos hstep]
+      · simp only [isqrtNew, ite_eq_left hstep]
         have hge : Nat.sqrt n ≤ (g + n / g) / 2 := by
           rcases Nat.lt_or_ge g (2 * Nat.sqrt n) with hlt | hge
           · exact isqrt_step_ge n g hpos hg (le_of_lt hlt)
@@ -238,7 +238,7 @@ private theorem isqrtNew_spec : ∀ (f n g : ℕ), 0 < n → Nat.sqrt n ≤ g �
         have h3 : g * 2 ≤ g + n / g := (Nat.le_div_iff_mul_le (by norm_num)).mp h2
         have h4 : g ≤ n / g := by omega
         have hgg : g * g ≤ n := (Nat.le_div_iff_mul_le hpos).mp h4
-        simp only [isqrtNew, if_neg hstep]
+        simp only [isqrtNew, ite_eq_right hstep]
         exact le_antisymm (Nat.le_sqrt.mpr hgg) hg
 
 private theorem isqrtNew_eq_sqrt {N : ℕ} (hN : 0 < N) (hN' : N ≤ sqrtGuess * sqrtGuess) :
@@ -325,7 +325,7 @@ private theorem pentRes_of_pent (k : ℤ) (hbd : pentagonal k ≤ 174762) :
     pentRes (pentagonal k) = if 2 ∣ k then 1 else P - 1 := by
   match k with
   | (0 : ℕ) =>
-      rw [if_pos (by norm_num : (2:ℤ) ∣ ((0:ℕ):ℤ)),
+      rw [ite_eq_left (by norm_num : (2:ℤ) ∣ ((0:ℕ):ℤ)),
         show pentagonal ((0 : ℕ) : ℤ) = 0 from by rw [pentagonal_def]; norm_num]
       decide
   | (jj + 1 : ℕ) =>
@@ -334,53 +334,53 @@ private theorem pentRes_of_pent (k : ℤ) (hbd : pentagonal k ≤ 174762) :
       rw [pent_ofNat jj, pentRes_unfold _ hi174]
       have hs := sqrt24_a' jj
       have hsq := sq24_a' jj
-      rw [hs, if_pos hsq.symm]
+      rw [hs, ite_eq_left hsq.symm]
       have h6a : 6 * jj + 5 + 1 = 6 * (jj + 1) := by omega
-      rw [h6a, Nat.mul_mod_right, if_pos (rfl : (0:ℕ) = 0),
+      rw [h6a, Nat.mul_mod_right, ite_eq_left (rfl : (0:ℕ) = 0),
         Nat.mul_div_cancel_left _ (by norm_num)]
       by_cases hpar : (jj + 1) % 2 = 0
       · have hdvd : (2:ℤ) ∣ (((jj + 1 : ℕ) : ℤ)) := by
           obtain ⟨m, hm⟩ := Nat.dvd_of_mod_eq_zero hpar
           exact ⟨(m : ℤ), by omega⟩
-        rw [hpar, if_pos (rfl : (0:ℕ) = 0), if_pos hdvd]
+        rw [hpar, ite_eq_left (rfl : (0:ℕ) = 0), ite_eq_left hdvd]
       · have h1m : (jj + 1) % 2 = 1 := by omega
         have hne : (2:ℤ) ∣ (((jj + 1 : ℕ) : ℤ)) → False := by
           intro hcon
           obtain ⟨t, ht⟩ := hcon
           omega
-        rw [h1m, if_neg (by norm_num : (1:ℕ) ≠ 0), if_neg hne]
+        rw [h1m, ite_eq_right (by norm_num : (1:ℕ) ≠ 0), ite_eq_right hne]
   | Int.negSucc jj =>
       have hi174 : (jj + 1) * (3 * jj + 4) / 2 ≤ 174762 := by
         rw [← pent_negSucc jj]; exact hbd
       rw [pent_negSucc jj, pentRes_unfold _ hi174]
       have hs := sqrt24_b' jj
       have hsq := sq24_b' jj
-      rw [hs, if_pos hsq.symm]
+      rw [hs, ite_eq_left hsq.symm]
       have h6a : (6 * jj + 7 + 1) % 6 = 2 := by omega
-      rw [h6a, if_neg (by norm_num : (2:ℕ) ≠ 0),
-        if_neg (by omega : ¬ 6 * jj + 7 < 1)]
+      rw [h6a, ite_eq_right (by norm_num : (2:ℕ) ≠ 0),
+        ite_eq_right (by omega : ¬ 6 * jj + 7 < 1)]
       have h6b : 6 * jj + 7 - 1 = 6 * (jj + 1) := by omega
-      rw [h6b, Nat.mul_mod_right, if_pos (rfl : (0:ℕ) = 0),
+      rw [h6b, Nat.mul_mod_right, ite_eq_left (rfl : (0:ℕ) = 0),
         Nat.mul_div_cancel_left _ (by norm_num)]
       by_cases hpar : (jj + 1) % 2 = 0
       · have hdvd : (2:ℤ) ∣ (Int.negSucc jj) := by
           obtain ⟨m, hm⟩ := Nat.dvd_of_mod_eq_zero hpar
           refine ⟨(-(m : ℤ)), ?_⟩
           omega
-        rw [hpar, if_pos (rfl : (0:ℕ) = 0), if_pos hdvd]
+        rw [hpar, ite_eq_left (rfl : (0:ℕ) = 0), ite_eq_left hdvd]
       · have hne : (2:ℤ) ∣ (Int.negSucc jj) → False := by
           intro hcon
           obtain ⟨t, ht⟩ := hcon
           have h2 : (jj + 1) % 2 = 1 := by omega
           omega
         have h1m : (jj + 1) % 2 = 1 := by omega
-        rw [h1m, if_neg (by norm_num : (1:ℕ) ≠ 0), if_neg hne]
+        rw [h1m, ite_eq_right (by norm_num : (1:ℕ) ≠ 0), ite_eq_right hne]
 
 private theorem pentRes_zero_of_not (i : ℕ) (hi : i ≤ 174762)
     (h : ∀ k : ℤ, pentagonal k ≠ i) : pentRes i = 0 := by
   rw [pentRes_unfold i hi]
   by_cases hs : Nat.sqrt (24 * i + 1) * Nat.sqrt (24 * i + 1) = 24 * i + 1
-  · rw [if_pos hs]
+  · rw [ite_eq_left hs]
     by_cases h6a : (Nat.sqrt (24 * i + 1) + 1) % 6 = 0
     · exfalso
       have h6d : Nat.sqrt (24 * i + 1) + 1 = 6 * ((Nat.sqrt (24 * i + 1) + 1) / 6) := by
@@ -393,10 +393,10 @@ private theorem pentRes_zero_of_not (i : ℕ) (hi : i ≤ 174762)
         rw [hm] at hs
         exact div24_cancel (hs.symm.trans hsq.symm)
       exact h (((m + 1 : ℕ) : ℤ)) (by rw [pent_ofNat m, hiv])
-    · rw [if_neg h6a]
+    · rw [ite_eq_right h6a]
       by_cases h1 : Nat.sqrt (24 * i + 1) < 1
-      · rw [if_pos h1]
-      · rw [if_neg h1]
+      · rw [ite_eq_left h1]
+      · rw [ite_eq_right h1]
         by_cases h6b : (Nat.sqrt (24 * i + 1) - 1) % 6 = 0
         · exfalso
           have h6d : Nat.sqrt (24 * i + 1) - 1 = 6 * ((Nat.sqrt (24 * i + 1) - 1) / 6) := by
@@ -416,8 +416,8 @@ private theorem pentRes_zero_of_not (i : ℕ) (hi : i ≤ 174762)
               rw [hm] at hs
               exact div24_cancel (hs.symm.trans hsq.symm)
             exact h (Int.negSucc m) (by rw [pent_negSucc m, hiv])
-        · rw [if_neg h6b]
-  · rw [if_neg hs]
+        · rw [ite_eq_right h6b]
+  · rw [ite_eq_right hs]
 
 /-- The pentagonal entry at `i` is the reduction of the true coefficient of
 Mathlib's `pentagonalSeries ℤ` (Euler's pentagonal number theorem). -/
@@ -429,10 +429,10 @@ private theorem pentRes_eq (i : ℕ) (hi : i ≤ 174762) :
     have h := pentRes_of_pent k hbd
     rw [← hk, h, PowerSeries.coeff_pentagonalSeries_pentagonal]
     by_cases hk2 : (2:ℤ) ∣ k
-    · rw [if_pos hk2, Int.negOnePow_even k ((even_iff_two_dvd).mpr hk2)]
+    · rw [ite_eq_left hk2, Int.negOnePow_even k ((even_iff_two_dvd).mpr hk2)]
       push_cast
       norm_num
-    · rw [if_neg hk2, Int.negOnePow_odd k ⟨k / 2, by omega⟩]
+    · rw [ite_eq_right hk2, Int.negOnePow_odd k ⟨k / 2, by omega⟩]
       have hPm1 : ((P - 1 : ℕ) : ZMod P) = -1 := by
         have h1 : ((P - 1 : ℕ) : ZMod P) + 1 = 0 := by
           have h4 : (P - 1 : ℕ) + 1 = P := by omega
@@ -517,7 +517,7 @@ private theorem digitsLin_app : ∀ (h m N : ℕ),
         rw [Nat.div_div_eq_div_mul, pow_succ, Nat.mul_comm (twoW ^ h) twoW]
       have ihm := ih m (N / twoW)
       rw [e3] at ihm
-      show digitsLin (h + 1 + m) N = digitsLin (h + 1) N ++ digitsLin m (N / twoW ^ (h + 1))
+      change digitsLin (h + 1 + m) N = digitsLin (h + 1) N ++ digitsLin m (N / twoW ^ (h + 1))
       rw [e1, digitsLin, digitsLin, ihm, List.cons_append]
 
 /-- `(a % (b * c)) / b = (a / b) % c`: splitting a mixed-radix remainder. -/
@@ -560,7 +560,7 @@ private theorem digitsLin_split : ∀ (h m N : ℕ),
           mod_mul_div N twoW (twoW ^ h) twoW_pos (Nat.pow_pos twoW_pos)]
       have htdiv2 : N / twoW ^ (h + 1) = (N / twoW) / twoW ^ h := by
         rw [hpow, Nat.mul_comm (twoW ^ h) twoW, ← Nat.div_div_eq_div_mul]
-      show digitsLin (h + 1 + m) N
+      change digitsLin (h + 1 + m) N
         = digitsLin (h + 1) (N % twoW ^ (h + 1)) ++ digitsLin m (N / twoW ^ (h + 1))
       rw [show h + 1 + m = (h + m) + 1 from by omega, digitsLin, digitsLin,
         List.cons_append, hhead, htdiv, htdiv2]
@@ -573,7 +573,7 @@ private theorem digitsBal_eq (F k N : ℕ) : digitsBal F k N = digitsLin k N := 
       by_cases hk : k ≤ 64
       · simp [digitsBal, hk]
       · have h1 : k / 2 + (k - k / 2) = k := by omega
-        simp only [digitsBal, if_neg hk]
+        simp only [digitsBal, ite_eq_right hk]
         rw [ih, ih, ← twoW_pow, ← digitsLin_split (k / 2) (k - k / 2) N, h1]
 
 private theorem digitsBal_length : ∀ (F k N : ℕ), (digitsBal F k N).length = k := by
@@ -585,7 +585,7 @@ private theorem digitsBal_length : ∀ (F k N : ℕ), (digitsBal F k N).length =
       by_cases hk : k ≤ 64
       · simp [digitsBal, hk, digitsLin_length]
       · have h1 : k / 2 + (k - k / 2) = k := by omega
-        simp only [digitsBal, if_neg hk, List.length_append, ih, h1]
+        simp only [digitsBal, ite_eq_right hk, List.length_append, ih, h1]
 
 private theorem digitsBal_getD_lt (F k N e : ℕ) : (digitsBal F k N).getD e 0 < P := by
   by_cases h : e < k
@@ -684,7 +684,7 @@ private theorem convL_getD : ∀ (a b : List ℕ) (i : ℕ),
             rw [hc, getD_padd0, getD_pscale0, getD_pshift0]
           match i with
           | 0 =>
-              rw [hstep 0, if_pos rfl, add_zero, Finset.sum_range_succ]
+              rw [hstep 0, ite_eq_left rfl, add_zero, Finset.sum_range_succ]
               simp
           | i + 1 =>
               have hsum : ∑ j ∈ Finset.range (i + 1 + 1),
@@ -696,7 +696,7 @@ private theorem convL_getD : ∀ (a b : List ℕ) (i : ℕ),
                 simp only [List.getD_cons_succ, Nat.succ_sub_succ, List.getD_cons_zero,
                   Nat.sub_zero]
                 omega
-              rw [hstep (i + 1), if_neg (by omega), Nat.add_sub_cancel, ih (y :: bs) i, hsum]
+              rw [hstep (i + 1), ite_eq_right (by omega), Nat.add_sub_cancel, ih (y :: bs) i, hsum]
               simp only [List.getD_cons_succ, Nat.succ_sub_succ, List.getD_cons_zero]
 
 /-! #### Packing lemmas -/
@@ -736,7 +736,7 @@ private theorem packAsc_lt : ∀ (l : List ℕ), (∀ e, l.getD e 0 < twoW) →
           Nat.mul_le_mul_left twoW h1
         rw [Nat.mul_add, Nat.mul_one, Nat.mul_comm twoW (twoW ^ List.length cs)] at h2
         exact h2
-      show c + twoW * packAsc cs < twoW ^ (List.length (c :: cs))
+      change c + twoW * packAsc cs < twoW ^ (List.length (c :: cs))
       rw [List.length_cons, pow_succ twoW]
       omega
 
@@ -837,7 +837,7 @@ private theorem packAsc_convL : ∀ (a b : List ℕ),
       cases b with
       | nil => rfl
       | cons y bs =>
-          show (0 : ℕ) = 0 * packAsc (y :: bs)
+          change (0 : ℕ) = 0 * packAsc (y :: bs)
           rw [Nat.zero_mul]
   | cons x as ih =>
       intro b
@@ -847,7 +847,7 @@ private theorem packAsc_convL : ∀ (a b : List ℕ),
           have hc : convL (x :: as) (y :: bs)
               = padd0 (pscale0 x (y :: bs)) (pshift0 (convL as (y :: bs))) := rfl
           rw [hc, packAsc_padd0, packAsc_pscale0, packAsc_pshift0, ih]
-          show x * packAsc (y :: bs) + twoW * (packAsc as * packAsc (y :: bs))
+          change x * packAsc (y :: bs) + twoW * (packAsc as * packAsc (y :: bs))
             = (x + twoW * packAsc as) * packAsc (y :: bs)
           ring
 
@@ -859,7 +859,7 @@ private theorem packBal_eq : ∀ (F : ℕ) (l : List ℕ), packBal F l = packAsc
       intro l
       by_cases h : l.length ≤ 64
       · simp [packBal, h]
-      · simp only [packBal, if_neg h]
+      · simp only [packBal, ite_eq_right h]
         rw [ih, ih, ← twoW_pow, ← packAsc_take_drop (l.length / 2) l (by omega)]
 
 /-! #### The slot bound and the product soundness -/
@@ -1069,13 +1069,13 @@ private theorem coeff_mul_one_sub (p : ℤ[X]) (m i : ℕ) (hi : i < m) :
     have hc : (1 - X ^ m : ℤ[X]).coeff b.2 = 0 := by
       have hcp := coeff_one_sub_X_pow m 1 b.2 (by omega)
       rw [pow_one] at hcp
-      rw [hcp, if_neg hb2]
+      rw [hcp, ite_eq_right hb2]
     rw [hc, mul_zero]
   rw [Polynomial.coeff_mul,
     Finset.sum_eq_single (i, 0) key (by simp [Finset.mem_antidiagonal])]
-  show p.coeff i * (1 - X ^ m : ℤ[X]).coeff 0 = p.coeff i
+  change p.coeff i * (1 - X ^ m : ℤ[X]).coeff 0 = p.coeff i
   have hcp := coeff_one_sub_X_pow m 1 0 (by omega)
-  rw [pow_one, if_pos rfl] at hcp
+  rw [pow_one, ite_eq_left rfl] at hcp
   rw [hcp, mul_one]
 
 /-- The coefficients of `etaPoly` below the truncation point are stable. -/
@@ -1224,6 +1224,7 @@ private theorem allNonzero_iff {l : List ℕ} :
 
 -- η = 1 − X − X² + X⁵ + X⁷ − X¹² − X¹⁵ + …: the first 16 pentagonal residues.
 set_option maxHeartbeats 8000000 in
+-- reason: the kernel `decide` evaluates the packed 24th power at d = 16
 example :
     (etaList 16).take 16 =
       [1, P - 1, P - 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, P - 1, 0, 0, P - 1] := by
@@ -1231,6 +1232,8 @@ example :
 
 -- End-to-end computational check at 512: τ residues mod P are nonzero.
 set_option maxHeartbeats 8000000 in
+-- reason: the `decide +kernel` at d = 512 elaborates the packed pipeline
+-- past the default budget
 theorem packed_nonvanishing_512 : allNonzero (pow24Packed (etaList 512)) = true := by
   decide +kernel
 
@@ -1238,6 +1241,8 @@ theorem packed_nonvanishing_512 : allNonzero (pow24Packed (etaList 512)) = true 
 -- Modal builder, not in CI (see AGENTS.md and research/lehmer-mod-scaling-study.md).
 set_option maxRecDepth 1000000
 set_option maxHeartbeats 8000000 in
+-- reason: the 16384-entry kernel decide (~18 GiB heap) elaborates the packed
+-- pipeline far past the default budget and recursion depth
 theorem packed_nonvanishing_16384 : allNonzero (pow24Packed (etaList 16384)) = true := by
   decide +kernel
 
@@ -1260,6 +1265,8 @@ theorem tau_prime_ne_zero_of_le_16384 {p : ℕ} (hp : p.Prime) (hle : p ≤ 1638
 -- only, never in CI (see research/lehmer-mod-scaling-study.md and
 -- Bench/Packed/BBenchPackedBal.lean).
 set_option maxHeartbeats 8000000 in
+-- reason: the 65536-entry kernel decide (~63 GiB heap) elaborates the packed
+-- pipeline far past the default budget
 theorem packed_nonvanishing_65536 : allNonzero (pow24Packed (etaList 65536)) = true := by
   decide +kernel
 

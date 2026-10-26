@@ -37,7 +37,7 @@ section Pad
 variable {p : ℕ} {u : ℕ → ℂ} {L : ℂ}
 
 private lemma mulLeft_injective (hp : 0 < p) : Function.Injective (fun m : ℕ => p * m) :=
-  fun a b h => Nat.eq_of_mul_eq_mul_left hp h
+  fun _ _ h => Nat.eq_of_mul_eq_mul_left hp h
 
 /-- The family `u`, reindexed onto the multiples of `p` and extended by `0`. -/
 lemma paddedEq (hp : 0 < p) :
@@ -75,7 +75,7 @@ section Points
 
 variable {k : ℤ} {p : ℕ} {f : ℍ → ℂ}
 
-lemma im_div_natCast (x : ℂ) (j : ℕ) {p : ℕ} (hp : 0 < p) :
+lemma im_div_natCast (x : ℂ) (j : ℕ) {p : ℕ} (_hp : 0 < p) :
     Complex.im ((x + (j : ℂ)) / (p : ℂ)) = x.im / p := by
   rw [Complex.div_natCast_im, Complex.add_im, Complex.natCast_im, add_zero]
 
@@ -269,13 +269,13 @@ lemma phiInv_lt {p : ℕ} (hp : 0 < p) (j : ℕ) : phiInv p j < p := Nat.mod_lt 
 
 lemma phiInv_cast (hp : p.Prime) {j : ℕ} (hj : (j : ZMod p) ≠ 0) :
     ((phiInv p j : ℕ) : ZMod p) = -((j : ZMod p)⁻¹) := by
-  haveI : NeZero p := ⟨hp.pos.ne'⟩
-  haveI : Fact p.Prime := ⟨hp⟩
+  have : NeZero p := ⟨hp.pos.ne'⟩
+  have : Fact p.Prime := ⟨hp⟩
   have hv : ((j : ZMod p)⁻¹.val) < p := ZMod.val_lt _
   have hv0 : ((j : ZMod p)⁻¹.val) ≠ 0 := by
     intro h0
     have huv : (((j : ZMod p)⁻¹ : ZMod p).val : ZMod p) = (j : ZMod p)⁻¹ := by
-      simpa [ZMod.cast_id] using ZMod.natCast_val ((j : ZMod p)⁻¹)
+      simp [ZMod.cast_id]
     rw [h0] at huv
     have hzero : ((j : ZMod p)⁻¹) = 0 := by simpa using huv.symm
     exact hj (inv_eq_zero.mp hzero)
@@ -287,11 +287,11 @@ lemma phiInv_cast (hp : p.Prime) {j : ℕ} (hj : (j : ZMod p) ≠ 0) :
     rw [Nat.cast_sub (le_of_lt hv)]
   rw [hcast, ZMod.natCast_self, zero_sub]
   congr 1
-  simpa [ZMod.cast_id] using ZMod.natCast_val ((j : ZMod p)⁻¹)
+  simp [ZMod.cast_id]
 
 lemma phiInv_cast_ne_zero (hp : p.Prime) {j : ℕ} (hj : (j : ZMod p) ≠ 0) :
     ((phiInv p j : ℕ) : ZMod p) ≠ 0 := by
-  haveI : Fact p.Prime := ⟨hp⟩
+  have : Fact p.Prime := ⟨hp⟩
   rw [phiInv_cast hp hj]
   exact neg_ne_zero.mpr (inv_ne_zero hj)
 
@@ -304,7 +304,7 @@ lemma phiInv_ne_zero (hp : p.Prime) {j : ℕ} (hj : (j : ZMod p) ≠ 0) :
 
 lemma phiInv_dvd (hp : p.Prime) {j : ℕ} (hj : (j : ZMod p) ≠ 0) :
     p ∣ j * phiInv p j + 1 := by
-  haveI : Fact p.Prime := ⟨hp⟩
+  have : Fact p.Prime := ⟨hp⟩
   rw [← ZMod.natCast_eq_zero_iff (j * phiInv p j + 1) p]
   push_cast
   rw [phiInv_cast hp hj, mul_neg,
@@ -313,8 +313,8 @@ lemma phiInv_dvd (hp : p.Prime) {j : ℕ} (hj : (j : ZMod p) ≠ 0) :
 
 lemma phiInv_involution (hp : p.Prime) {j : ℕ} (hj : (j : ZMod p) ≠ 0) (hjlt : j < p) :
     phiInv p (phiInv p j) = j := by
-  haveI : NeZero p := ⟨hp.pos.ne'⟩
-  haveI : Fact p.Prime := ⟨hp⟩
+  have : NeZero p := ⟨hp.pos.ne'⟩
+  have : Fact p.Prime := ⟨hp⟩
   have h1 := phiInv_cast hp (phiInv_cast_ne_zero hp hj)
   rw [phiInv_cast hp hj, inv_neg, inv_inv, neg_neg] at h1
   have h2 := congrArg ZMod.val h1
@@ -341,7 +341,7 @@ def sigmaMatrix (p j j' : ℕ) (hdiv : p ∣ j * j' + 1) : SL(2, ℤ) :=
       rw [mul_comm] at h
       exact_mod_cast h
     rw [Matrix.det_fin_two]
-    show ((j : ℤ) * (-(j' : ℤ)) - (-(((j * j' + 1) / p : ℕ) : ℤ)) * (p : ℤ)) = 1
+    change ((j : ℤ) * (-(j' : ℤ)) - (-(((j * j' + 1) / p : ℕ) : ℤ)) * (p : ℤ)) = 1
     linarith [h1]⟩
 
 end Sigma
@@ -403,17 +403,23 @@ theorem heckeTPFun_S (hp : p.Prime) (hf : IsSlashInvariantSL k f) (z : ℍ) :
           (shiftDivP hp.pos (phiInv p j) z) rfl rfl rfl rfl,
         coe_shiftDivP, Int.cast_neg, Int.cast_neg,
         Int.cast_natCast, Int.cast_natCast, Int.cast_natCast, Int.cast_natCast, hc2]
+      -- `hw`: the denominator factor simplifies, `p • ((z + φ)/p) = z + φ`
       have hw : (p : ℂ) * (((z : ℂ) + (phiInv p j : ℂ)) / (p : ℂ))
           = (z : ℂ) + (phiInv p j : ℂ) := by
         rw [mul_comm, div_mul_cancel₀ _ hp0]
+      -- `hD`: the denominator of the σ_j-translate is `z ≠ 0`
       have hD : ((p : ℂ) * (((z : ℂ) + (phiInv p j : ℂ)) / (p : ℂ))
           + -((phiInv p j : ℂ))) ≠ 0 := by
         rw [hw, add_neg_cancel_right]
         exact hz
+      -- `hc'`: the numerator identity, `p • ((jφ + 1)/p) = jφ + 1`
       have hc' : (p : ℂ) * (((j : ℂ) * (phiInv p j : ℂ) + 1) / (p : ℂ))
           = (j : ℂ) * (phiInv p j : ℂ) + 1 := by
         rw [mul_comm, div_mul_cancel₀ _ hp0]
+      -- `hzz1`: the unit factor `z⁻¹ z = 1`
       have hzz1 : (z : ℂ)⁻¹ * (z : ℂ) = 1 := inv_mul_cancel₀ hz
+      -- the cross-multiplied point identity of `hpt`; the certificate
+      -- combines the three identities above as `hc' − z⁻¹ • hw − hzz1`
       rw [div_eq_div_iff hp0 hD]
       linear_combination hc' - (z : ℂ)⁻¹ * hw - hzz1
     rw [hpt, hf (sigmaMatrix p j (phiInv p j) hdiv) (shiftDivP hp.pos (phiInv p j) z)]
@@ -577,7 +583,7 @@ lemma differentiableOn_shiftDivP_comp {g : ℂ → ℂ}
   have hmap : Set.MapsTo (fun z : ℂ => (z + (j : ℂ)) / (p : ℂ)) {z : ℂ | 0 < z.im}
       {z : ℂ | 0 < z.im} := by
     intro z hz
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     rw [Complex.div_natCast_im, Complex.add_im, Complex.natCast_im, add_zero]
     exact div_pos hz (by exact_mod_cast hp)
   have hd1 : Differentiable ℂ (fun z : ℂ => z) := differentiable_id
@@ -593,7 +599,7 @@ lemma differentiableOn_mulP_comp {g : ℂ → ℂ}
   have hmap : Set.MapsTo (fun z : ℂ => (p : ℂ) * z) {z : ℂ | 0 < z.im}
       {z : ℂ | 0 < z.im} := by
     intro z hz
-    simp only [Set.mem_setOf_eq]
+    simp only [Set.mem_ofPred_eq]
     rw [Complex.mul_im, Complex.natCast_re, Complex.natCast_im, zero_mul, add_zero]
     exact mul_pos (by exact_mod_cast hp) hz
   have hdiff : Differentiable ℂ (fun z : ℂ => (p : ℂ) * z) :=
@@ -661,7 +667,7 @@ private theorem tendsto_finset_sum_zero {ι : Type*} (s : Finset ι) (u : ι →
     Tendsto (fun z : ℍ => ∑ i ∈ s, u i z) atImInfty (nhds 0) := by
   classical
   induction s using Finset.induction with
-  | empty => simpa using tendsto_const_nhds
+  | empty => simp
   | insert i s hi ih =>
       simp only [Finset.sum_insert hi]
       simpa using Tendsto.add (h i (Finset.mem_insert_self i s))
@@ -728,7 +734,6 @@ private lemma qParam_one (z : ℂ) : 𝕢 1 z = Complex.exp (2 * π * Complex.I 
 lemma qParam_mulP (hp : 0 < p) (τ : ℍ) : 𝕢 1 (mulP hp τ) = (𝕢 1 τ) ^ p := by
   rw [qParam_one, qParam_one, coe_mulP,
     show 2 * π * Complex.I * ((p : ℂ) * τ) = (p : ℂ) * (2 * π * Complex.I * τ) from by
-      push_cast
       ring]
   exact Complex.exp_nat_mul _ _
 
@@ -754,14 +759,14 @@ lemma sum_xi_pow (hp : p.Prime) (n : ℕ) :
     Complex.isPrimitiveRoot_exp p hp.pos.ne'
   by_cases hpn : p ∣ n
   · obtain ⟨m, rfl⟩ := hpn
-    rw [if_pos (dvd_mul_right p m)]
+    rw [ite_eq_left (dvd_mul_right p m)]
     have e : ∀ j ∈ Finset.range p,
         Complex.exp (2 * π * Complex.I / (p : ℂ)) ^ (j * (p * m)) = 1 := by
       intro j _
       rw [show j * (p * m) = p * (j * m) from by ring, pow_mul, hξ.pow_eq_one, one_pow]
     rw [Finset.sum_congr rfl e]
     simp
-  · rw [if_neg hpn]
+  · rw [ite_eq_right hpn]
     have hcop : Nat.Coprime n p := (hp.coprime_iff_not_dvd.mpr hpn).symm
     have hprim : IsPrimitiveRoot
         (Complex.exp (2 * π * Complex.I / (p : ℂ)) ^ n) p := hξ.pow_of_coprime n hcop
@@ -798,7 +803,7 @@ private theorem hasSum_finset_sum {ι : Type*} (s : Finset ι) (g : ι → ℕ �
     HasSum (fun n => ∑ j ∈ s, g j n) (∑ j ∈ s, a j) := by
   classical
   induction s using Finset.induction with
-  | empty => simpa using hasSum_zero
+  | empty => simp
   | insert i s hi ih =>
       simp only [Finset.sum_insert hi]
       exact HasSum.add (h i (Finset.mem_insert_self i s))
@@ -879,10 +884,10 @@ theorem heckeTP_qExpansion_hasSum {F : Type*} [FunLike F ℍ ℂ] [ModularFormCl
     funext n
     by_cases hpn : p ∣ n
     · obtain ⟨m, rfl⟩ := hpn
-      rw [if_pos (dvd_mul_right p m), if_pos (dvd_mul_right p m),
+      rw [ite_eq_left (dvd_mul_right p m), ite_eq_left (dvd_mul_right p m),
         Nat.mul_div_cancel_left _ hp.pos, pow_mul, rho_pow_p hp.pos τ]
       ring
-    · rw [if_neg hpn, if_neg hpn, mul_zero]
+    · rw [ite_eq_right hpn, ite_eq_right hpn, mul_zero]
   rw [hfam2] at hsumj
   have hu : HasSum (fun m => (p : ℂ) * ((qExpansion 1 f).coeff (p * m) * 𝕢 1 τ ^ m))
       (∑ j ∈ Finset.range p, (f : ℍ → ℂ) (shiftDivP hp.pos j τ)) :=
@@ -908,9 +913,9 @@ theorem heckeTP_qExpansion_hasSum {F : Type*} [FunLike F ℍ ℂ] [ModularFormCl
   rw [← hval]
   refine HasSum.congr_fun hc2 (fun m => ?_)
   by_cases hpm : p ∣ m
-  · rw [if_pos hpm, if_pos hpm]
+  · rw [ite_eq_left hpm, ite_eq_left hpm]
     ring
-  · rw [if_neg hpm, if_neg hpm]
+  · rw [ite_eq_right hpm, ite_eq_right hpm]
     ring
 
 /-- **Coefficient formula for `T_p`**: `(T_p f)_m = f_{p m} + p^(k-1) [p ∣ m] f_{m / p}`. -/

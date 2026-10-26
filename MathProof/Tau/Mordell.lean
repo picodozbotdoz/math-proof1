@@ -82,11 +82,11 @@ theorem hecke_eigen_identity (hp : p.Prime) (m : ℕ) (hm : 1 ≤ m) :
   by_cases hpm : p ∣ m
   · have hmp : p ≤ m := Nat.le_of_dvd (by omega) hpm
     have h1mp : 1 ≤ m / p := (Nat.one_le_div_iff hp.pos).mpr hmp
-    rw [if_pos hpm, cuspDiscriminant_coeff (m / p) (by omega)] at hc
-    rw [if_pos hpm]
+    rw [ite_eq_left hpm, cuspDiscriminant_coeff (m / p) (by omega)] at hc
+    rw [ite_eq_left hpm]
     exact hc.symm
-  · rw [if_neg hpm, mul_zero, add_zero] at hc
-    rw [if_neg hpm, mul_zero, add_zero]
+  · rw [ite_eq_right hpm, mul_zero, add_zero] at hc
+    rw [ite_eq_right hpm, mul_zero, add_zero]
     exact hc.symm
 
 /-- **Mordell**: `τ (p * n) = τ p * τ n` for a prime `p` not dividing `n`. -/
@@ -97,7 +97,7 @@ theorem tau_prime_mul_of_not_dvd (hp : p.Prime) {n : ℕ} (hn : ¬ p ∣ n) :
     | zero => exact absurd (dvd_zero p) hn
     | succ k => omega
   have h := hecke_eigen_identity hp n hn1
-  rw [if_neg hn, mul_zero, add_zero] at h
+  rw [ite_eq_right hn, mul_zero, add_zero] at h
   exact_mod_cast h
 
 /-- **The prime-power recursion**: `τ (p ^ (r+2)) = τ p * τ (p ^ (r+1)) - p ^ 11 * τ (p ^ r)`. -/
@@ -108,7 +108,7 @@ theorem tau_prime_pow_succ (hp : p.Prime) (r : ℕ) :
   have hdiv : p ∣ p ^ (r + 1) := by rw [pow_succ']; exact dvd_mul_right _ _
   have hdivpow : p ^ (r + 1) / p = p ^ r := by
     rw [pow_succ', Nat.mul_div_cancel_left _ hp.pos]
-  rw [if_pos hdiv, hdivpow] at h
+  rw [ite_eq_left hdiv, hdivpow] at h
   have h' : tau (p * p ^ (r + 1)) + p ^ 11 * tau (p ^ r) = tau p * tau (p ^ (r + 1)) := by
     exact_mod_cast h
   rw [show p ^ (r + 2) = p * p ^ (r + 1) from by
@@ -140,7 +140,7 @@ theorem tau_prime_pow_mul (hp : p.Prime) {n : ℕ} (hn : ¬ p ∣ n) (a : ℕ) :
     have hdivpow : p ^ (a + 1) * n / p = p ^ a * n := by
       rw [show p ^ (a + 1) * n = p * (p ^ a * n) from by rw [pow_succ']; ring,
         Nat.mul_div_cancel_left _ hp.pos]
-    rw [if_pos hdiv, hdivpow] at h
+    rw [ite_eq_left hdiv, hdivpow] at h
     have h' : tau (p * (p ^ (a + 1) * n)) + p ^ 11 * tau (p ^ a * n)
         = tau p * tau (p ^ (a + 1) * n) := by
       exact_mod_cast h
@@ -178,7 +178,7 @@ lemma exists_prime_pow_decomp {q : ℕ} (hq : q.Prime) {m : ℕ} (hm : 0 < m)
     · exact ⟨1, k, by omega, by rw [hk, pow_one], hkq⟩
 
 /-- **Mordell's theorem (1917)**: `τ (m * n) = τ m * τ n` for coprime `m, n ≥ 1`. -/
-theorem tau_mul_coprime {m n : ℕ} (hmn : Nat.Coprime m n) (hm : 0 < m) (hn : 0 < n) :
+theorem tau_mul_coprime {m n : ℕ} (hmn : Nat.Coprime m n) (hm : 0 < m) (_hn : 0 < n) :
     tau (m * n) = tau m * tau n := by
   revert hmn hm
   induction m using Nat.strong_induction_on with

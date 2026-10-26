@@ -19,8 +19,8 @@ instead of over `ℤ`:
   the reduction of the true integer coefficient mod `P`.  The proof transports
   the `ℤ` computation into `ZMod P` (`L2PMod` mirrors `L2P`).
 
-* `Ramanujan.tau_ne_zero_of_le_256` (see the end of the file): `τ n ≠ 0` for
-  all `1 ≤ n ≤ 256`, verified entirely inside Lean's kernel.  The key logical
+* `Ramanujan.tau_ne_zero_of_le_512` (see the end of the file): `τ n ≠ 0` for
+  all `1 ≤ n ≤ 512`, verified entirely inside Lean's kernel.  The key logical
   point: a residue that is nonzero mod `P` certifies the integer coefficient
   is nonzero — no magnitude bound on `τ` is needed.
 -/
@@ -237,7 +237,7 @@ private theorem getD_psubM : ∀ (a b : List ℕ) (i : ℕ),
           | 0 =>
               simp only [psubM, List.getD_cons_zero]
               exact h1
-          | i + 1 => simp only [psubM, List.getD_cons_succ, h1, ih bs i]
+          | i + 1 => simp only [psubM, List.getD_cons_succ, ih bs i]
 
 private theorem getD_shiftByM (m : ℕ) : ∀ (l : List ℕ) (i : ℕ),
     ((shiftByM m l).getD i 0 : ZMod P)
@@ -279,7 +279,7 @@ private theorem PbuildM_getD (d : ℕ) : ∀ (N i : ℕ), i < d →
           = ((PbuildM d N).getD i 0 : ZMod P)
             - ((shiftByM (N + 1) (PbuildM d N)).getD i 0 : ZMod P) := by
         rw [PbuildM, getD_takeN d (psubM (PbuildM d N) (shiftByM (N + 1) (PbuildM d N))) i]
-        rw [if_pos hi]
+        rw [ite_eq_left hi]
         exact getD_psubM _ _ _
       rw [hsplit, getD_shiftByM, etaPolyMod_succ]
       have hmul : (etaPolyMod N * (1 - X ^ (N + 1))).coeff i
@@ -287,9 +287,9 @@ private theorem PbuildM_getD (d : ℕ) : ∀ (N i : ℕ), i < d →
         rw [mul_sub, mul_one, Polynomial.coeff_sub]
       rw [hmul, Polynomial.coeff_mul_X_pow']
       by_cases h : N + 1 ≤ i
-      · rw [if_neg (show ¬ i < N + 1 by omega), if_pos h,
+      · rw [ite_eq_right (show ¬ i < N + 1 by omega), ite_eq_left h,
         ih (i - (N + 1)) (by omega), ih i hi]
-      · rw [if_pos (show i < N + 1 by omega), if_neg h, sub_zero, sub_zero]
+      · rw [ite_eq_left (show i < N + 1 by omega), ite_eq_right h, sub_zero, sub_zero]
         exact ih i hi
 
 /-- Low coefficients of `p`-th powers agree when low coefficients agree
@@ -321,7 +321,7 @@ theorem deltaCoeffsMod_eq (d i : ℕ) (hi : i < d) :
   -- the mod-P list, as a polynomial
   have htake : ((deltaCoeffsMod d).getD i 0 : ZMod P)
       = ((pow24M (PbuildM d d)).getD i 0 : ZMod P) := by
-    rw [deltaCoeffsMod, getD_takeN d _ i, if_pos hi]
+    rw [deltaCoeffsMod, getD_takeN d _ i, ite_eq_left hi]
   have hL2P : ((pow24M (PbuildM d d)).getD i 0 : ZMod P)
       = ((L2PMod (pow24M (PbuildM d d))).coeff i) := (coeff_L2PMod _ i).symm
   have hpow : (L2PMod (pow24M (PbuildM d d))).coeff i
@@ -395,7 +395,7 @@ private theorem allNonzeroModLt_eq_true_iff {N : ℕ} {l : List ℕ} :
 set_option maxRecDepth 100000 -- kernel evaluation depth for the checks below
 
 /-- **Verified non-vanishing of `τ` up to 16** (smoke test of the mod-`P`
-pipeline; superseded by the 256 check below)). -/
+pipeline; superseded by the 512 checks below). -/
 theorem deltaCoeffsMod_16_nonvanishing : allNonzeroModLt 16 (deltaCoeffsMod 16) = true := by
   decide
 

@@ -230,13 +230,13 @@ theorem Pbuild_getD (d : ℕ) : ∀ (N i : ℕ), i < d →
       intro i hi
       have hsplit : (Pbuild d (N + 1)).getD i 0
           = (Pbuild d N).getD i 0 - (shiftBy (N + 1) (Pbuild d N)).getD i 0 := by
-        simp only [Pbuild, getD_take, hi, if_true, getD_psub]
+        simp only [Pbuild, getD_take, hi, ite_true, getD_psub]
       rw [hsplit, getD_shiftBy, ih i hi, etaPoly_succ, mul_sub, mul_one,
         Polynomial.coeff_sub, Polynomial.coeff_mul_X_pow']
       by_cases h : N + 1 ≤ i
-      · rw [if_neg (show ¬ i < N + 1 by omega), if_pos h,
+      · rw [ite_eq_right (show ¬ i < N + 1 by omega), ite_eq_left h,
         ih (i - (N + 1)) (by omega)]
-      · rw [if_pos (show i < N + 1 by omega), if_neg h, sub_zero]
+      · rw [ite_eq_left (show i < N + 1 by omega), ite_eq_right h, sub_zero]
 
 /-! ### Low coefficients of products -/
 
@@ -270,7 +270,7 @@ theorem coeff_one_sub_X_pow (m k i : ℕ) (hi : i < m) :
           = (((1 - X ^ m : ℤ[X])) ^ k).coeff i
             - (((1 - X ^ m : ℤ[X])) ^ k * X ^ m).coeff i := by
         rw [pow_succ, mul_sub, mul_one, Polynomial.coeff_sub]
-      rw [h0, Polynomial.coeff_mul_X_pow', if_neg (show ¬ (m ≤ i) by omega),
+      rw [h0, Polynomial.coeff_mul_X_pow', ite_eq_right (show ¬ (m ≤ i) by omega),
         sub_zero, ih]
 
 /-- Multiplying by `(1 - X ^ m) ^ 24` does not change coefficients below `m`. -/
@@ -285,7 +285,7 @@ theorem coeff_mul_one_sub_pow24 (p : ℤ[X]) (m i : ℕ) (hi : i < m) :
       apply hne
       rw [Prod.ext_iff]
       omega
-    rw [coeff_one_sub_X_pow m 24 b.2 (by omega), if_neg hb2, mul_zero]
+    rw [coeff_one_sub_X_pow m 24 b.2 (by omega), ite_eq_right hb2, mul_zero]
   rw [Polynomial.coeff_mul,
     Finset.sum_eq_single (i, 0) key (by simp [Finset.mem_antidiagonal]),
     coeff_one_sub_X_pow m 24 0 (by omega)]

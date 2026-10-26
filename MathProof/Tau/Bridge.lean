@@ -20,7 +20,6 @@ products (`Ramanujan.etaPow24_stable`), a coefficient bound
 geometrically on a small disc, and uniqueness of power-series representations.
 -/
 
-set_option maxHeartbeats 1000000
 set_option maxRecDepth 10000
 
 namespace Ramanujan
@@ -98,7 +97,7 @@ theorem sum_antidiagonal_range_le {N : ℕ} (a b : ℕ → ℕ) :
         Finset.sum_le_sum_of_subset (Finset.filter_subset _ _)
     _ = (∑ j ∈ Finset.range N, a j) * (∑ k ∈ Finset.range N, b k) := by
         rw [Finset.sum_product]
-        show ∑ x ∈ Finset.range N, ∑ y ∈ Finset.range N, a x * b y
+        change ∑ x ∈ Finset.range N, ∑ y ∈ Finset.range N, a x * b y
           = (∑ j ∈ Finset.range N, a j) * (∑ k ∈ Finset.range N, b k)
         exact (Finset.sum_mul_sum (s := Finset.range N) (t := Finset.range N)
           (f := a) (g := b)).symm
@@ -154,6 +153,8 @@ theorem pnorm_one_sub_X (m : ℕ) (hm : 1 ≤ m) : pnorm (1 - (X ^ m : ℤ[X])) 
   simp [Finset.sum_add_distrib]
 
 set_option maxHeartbeats 2000000 in
+-- reason: the succ-step proof chains `pnorm_mul_le` (a large `Finset.sum_le_sum`)
+-- with `Nat.pow` arithmetic and trips the default 200000 budget
 /-- The coefficients of the truncated η-powers are exponentially bounded. -/
 theorem pnorm_etaPow24_le (M : ℕ) : pnorm ((etaPoly M) ^ 24) ≤ 2 ^ (24 * M) := by
   induction M with
@@ -204,7 +205,7 @@ theorem deltaPoly_coeff (M : ℕ) {m : ℕ} (hm1 : 1 ≤ m) (hmM : m ≤ M) :
   rfl
 
 theorem etaPoly_natDegree_le (M : ℕ) : (etaPoly M).natDegree ≤ M * M := by
-  show (∏ i ∈ Finset.range M, (1 - (X ^ (i + 1) : ℤ[X]))).natDegree ≤ M * M
+  change (∏ i ∈ Finset.range M, (1 - (X ^ (i + 1) : ℤ[X]))).natDegree ≤ M * M
   have h1 : ∀ i ∈ Finset.range M, (1 - (X ^ (i + 1) : ℤ[X])).natDegree ≤ M := by
     intro i hi
     refine (Polynomial.natDegree_sub_le _ _).trans ?_
@@ -308,6 +309,8 @@ theorem dist_poly_sum_le {z : ℂ} (hz1 : ‖z‖ < 1) (M : ℕ) :
       = ∑ i ∈ Finset.range n, ((deltaPoly M).coeff i : ℂ) * z ^ i := by
     rw [Polynomial.aeval_eq_sum_range' hndeg z]
     exact Finset.sum_congr rfl fun i _ ↦ by simp
+  -- split the degree range at `M + 1`: the low part carries the τ-values
+  -- (degrees `≤ M`), the high part is the geometric tail bounded in `hhigh`
   have hsplit : ∑ i ∈ Finset.range n, ((deltaPoly M).coeff i : ℂ) * z ^ i
       = (∑ i ∈ Finset.range (M + 1), ((deltaPoly M).coeff i : ℂ) * z ^ i)
         + ∑ k ∈ Finset.range (n - (M + 1)),
@@ -319,7 +322,7 @@ theorem dist_poly_sum_le {z : ℂ} (hz1 : ‖z‖ < 1) (M : ℕ) :
     refine Finset.sum_congr rfl fun i hi ↦ ?_
     rcases Nat.eq_zero_or_pos i with rfl | h0
     · have hc0 : (deltaPoly M).coeff 0 = 0 := by
-        show (X * (etaPoly M) ^ 24 : ℤ[X]).coeff 0 = 0
+        change (X * (etaPoly M) ^ 24 : ℤ[X]).coeff 0 = 0
         exact Polynomial.coeff_X_mul_zero _
       rw [hc0, deltaCoeffsFun_zero]
       simp
@@ -338,7 +341,7 @@ theorem dist_poly_sum_le {z : ℂ} (hz1 : ‖z‖ < 1) (M : ℕ) :
       have hidx : M + 1 + k = (M + k) + 1 := by omega
       have hshift : (deltaPoly M).coeff (M + 1 + k) = ((etaPoly M) ^ 24).coeff (M + k) := by
         rw [hidx]
-        show (X * (etaPoly M) ^ 24 : ℤ[X]).coeff ((M + k) + 1) = ((etaPoly M) ^ 24).coeff (M + k)
+        change (X * (etaPoly M) ^ 24 : ℤ[X]).coeff ((M + k) + 1) = ((etaPoly M) ^ 24).coeff (M + k)
         exact Polynomial.coeff_X_mul _ (M + k)
       rw [hshift]
       exact coeff_natAbs_le_pnorm.trans (pnorm_etaPow24_le M)
@@ -455,7 +458,8 @@ private lemma hasFPowSeries_deltaFun :
     calc 2 ^ 24 * ‖z‖ < 2 ^ 24 * (1 / 2 ^ 24) :=
           mul_lt_mul_of_pos_left hz (by positivity : (0 : ℝ) < 2 ^ 24)
       _ = 1 := h1
-  simpa [smul_eq_mul, FormalMultilinearSeries.coeff_ofScalars, zero_add] using (summable_deltaCoeffsFun hz24).hasSum
+  simpa [smul_eq_mul, FormalMultilinearSeries.coeff_ofScalars, zero_add] using
+    (summable_deltaCoeffsFun hz24).hasSum
 
 /-- Near `0`, the cusp function of `Δ` agrees with the τ-series. -/
 private lemma eventually_eq_cuspFunction_deltaFun :

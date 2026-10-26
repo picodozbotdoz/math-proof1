@@ -71,13 +71,13 @@ private theorem coeff_one_sub_X_pow_eq_zero {R : Type*} [CommRing R] {c s : ℕ}
         rw [coeff_sub, coeff_one, coeff_X_pow]
         by_cases h0 : k = 0
         · subst h0
-          rw [if_pos rfl, if_neg hcs.ne, if_pos rfl]
+          rw [ite_eq_left rfl, ite_eq_right hcs.ne, ite_eq_left rfl]
           ring
-        · rw [if_neg h0, if_neg h0]
+        · rw [ite_eq_right h0, ite_eq_right h0]
           by_cases hs : k = c * s
-          · rw [if_pos hs, if_pos hs]
+          · rw [ite_eq_left hs, ite_eq_left hs]
             ring
-          · rw [if_neg hs, if_neg hs]
+          · rw [ite_eq_right hs, ite_eq_right hs]
             ring
       rw [pow_succ, coeff_mul]
       refine Finset.sum_eq_zero fun x hx ↦ ?_
@@ -86,31 +86,31 @@ private theorem coeff_one_sub_X_pow_eq_zero {R : Type*} [CommRing R] {c s : ℕ}
       dsimp only
       rcases Nat.eq_zero_or_pos b' with hb' | hb'
       · subst hb'
-        rw [hcoeff, if_pos rfl, mul_one]
+        rw [hcoeff, ite_eq_left rfl, mul_one]
         rw [Nat.add_zero] at hab
         rw [hab]
         exact ih _ hb
       · by_cases hs : b' = c * s
-        · rw [hcoeff, if_neg hb'.ne', if_pos hs, mul_neg_one, neg_eq_zero]
+        · rw [hcoeff, ite_eq_right hb'.ne', ite_eq_left hs, mul_neg_one, neg_eq_zero]
           refine ih _ ?_
           have key : b % c = a % c := by
             rw [← hab, hs, Nat.add_mul_mod_self_left]
           rw [key] at hb
           exact hb
-        · rw [hcoeff, if_neg hb'.ne', if_neg hs, mul_zero]
+        · rw [hcoeff, ite_eq_right hb'.ne', ite_eq_right hs, mul_zero]
 
 /-- A product of powers `(1 - X ^ (c * (m + s))) ^ r` has no coefficients at
 indices not divisible by `c`. -/
 private theorem coeff_prod_one_sub_pow_eq_zero {R : Type*} [CommRing R] {c s : ℕ}
     (hc : 0 < c) (hs : 0 < s) (r : ℕ) :
-    ∀ (N i : ℕ) (hi : i % c ≠ 0),
+    ∀ (N i : ℕ) (_hi : i % c ≠ 0),
       (∏ m ∈ Finset.range N, (1 - X ^ (c * (m + s)) : R[X]) ^ r).coeff i = 0 := by
   intro N
   induction N with
   | zero =>
       intro i hi
       have hi0 : i ≠ 0 := fun h ↦ hi (by rw [h]; exact Nat.zero_mod c)
-      rw [Finset.prod_range_zero, Polynomial.coeff_one, if_neg hi0]
+      rw [Finset.prod_range_zero, Polynomial.coeff_one, ite_eq_right hi0]
   | succ N ih =>
       intro i hi
       rw [Finset.prod_range_succ, coeff_mul]
@@ -167,7 +167,7 @@ private theorem map_etaPow24_mod_three (N : ℕ) :
 coefficient of `(etaPoly ((n-1)+1)) ^ 24` at index `n - 1` is a product of
 powers `(1 - X ^ (c * (m + 1))) ^ r` over `ZMod p`, then `p ∣ τ n` whenever
 `(n - 1) % c ≠ 0`. -/
-private theorem tau_dvd_of_coeff_map_eq_zero (p : ℕ) {n : ℕ} (h1 : 1 ≤ n) {c r : ℕ}
+private theorem tau_dvd_of_coeff_map_eq_zero (p : ℕ) {n : ℕ} (_h1 : 1 ≤ n) {c r : ℕ}
     (hmap : ∀ N : ℕ, Polynomial.map (Int.castRingHom (ZMod p)) ((etaPoly N) ^ 24)
       = ∏ m ∈ Finset.range N, (1 - X ^ (c * (m + 1)) : (ZMod p)[X]) ^ r)
     (hc : 0 < c) (hi : (n - 1) % c ≠ 0) : (p : ℤ) ∣ tau n := by

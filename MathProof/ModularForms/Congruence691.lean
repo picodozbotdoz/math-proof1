@@ -133,7 +133,8 @@ theorem E4cube_sub_E6sq_qExpansion :
       ModularForm.qExpansion_pow one_pos one_mem_strictPeriods_SL]
   -- pointwise, the combination equals 1728 • Δ
   have hpt : ∀ z : ℍ, ((ModularForm.mcast (show (3 : ℤ) * 4 = 12 by decide) (E₄.pow 3)
-      - ModularForm.mcast (show (2 : ℤ) * 6 = 12 by decide) (E₆.pow 2) : ModularForm 𝒮ℒ 12) : ℍ → ℂ) z
+      - ModularForm.mcast (show (2 : ℤ) * 6 = 12 by decide) (E₆.pow 2) :
+        ModularForm 𝒮ℒ 12) : ℍ → ℂ) z
       = (1728 : ℂ) * (ModularForm.discriminant : ℍ → ℂ) z := by
     intro z
     have hcoe4 : ((ModularForm.mcast (show (3 : ℤ) * 4 = 12 by decide) (E₄.pow 3) :
@@ -147,7 +148,8 @@ theorem E4cube_sub_E6sq_qExpansion :
       funext w
       rfl
     have hval : ((ModularForm.mcast (show (3 : ℤ) * 4 = 12 by decide) (E₄.pow 3)
-        - ModularForm.mcast (show (2 : ℤ) * 6 = 12 by decide) (E₆.pow 2) : ModularForm 𝒮ℒ 12) : ℍ → ℂ) z
+        - ModularForm.mcast (show (2 : ℤ) * 6 = 12 by decide) (E₆.pow 2) :
+          ModularForm 𝒮ℒ 12) : ℍ → ℂ) z
         = E₄ z ^ 3 - E₆ z ^ 2 := by
       rw [FunLike.coe_sub, Pi.sub_apply, hcoe4, hcoe6]
     rw [hval, ModularForm.discriminant_eq_E₄_cube_sub_E₆_sq z]
@@ -172,7 +174,8 @@ theorem E4cube_sub_E6sq_qExpansion :
   calc (qExpansion 1 (E₄ : ModularForm 𝒮ℒ 4)) ^ 3
       - (qExpansion 1 (E₆ : ModularForm 𝒮ℒ 6)) ^ 2
       = qExpansion 1 ((ModularForm.mcast (show (3 : ℤ) * 4 = 12 by decide) (E₄.pow 3)
-          - ModularForm.mcast (show (2 : ℤ) * 6 = 12 by decide) (E₆.pow 2) : ModularForm 𝒮ℒ 12)) := hqJ.symm
+          - ModularForm.mcast (show (2 : ℤ) * 6 = 12 by decide) (E₆.pow 2) :
+            ModularForm 𝒮ℒ 12)) := hqJ.symm
     _ = qExpansion 1 (((1728 : ℂ) • (CuspForm.discriminant : CuspForm 𝒮ℒ 12) :
           CuspForm 𝒮ℒ 12) : ℍ → ℂ) :=
           congrArg (qExpansion (1 : ℝ)) (hfun.trans hcoe.symm)
