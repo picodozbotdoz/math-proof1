@@ -49,6 +49,8 @@ jobs:
             MathProof.ModularForms.LehmerWeight22
             MathProof.ModularForms.LehmerWeight26
             MathProof.ModularForms.MaedaWeight24
+            MathProof.ModularForms.MaedaLevelOne
+            MathProof.ModularForms.MaedaSmallWeights
       # GitHub Pages is not enabled on this repository, so the docgen deploy
       # step always fails today; keep it non-fatal until Pages is switched on
       # (Settings -> Pages -> Source: GitHub Actions), then drop this flag.

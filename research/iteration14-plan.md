@@ -28,9 +28,9 @@ charpoly X² − 1080 X − 20468736, disc = 576 · 144169 (non-residue mod 23).
    lemma (Sturm, order > 2), T₂ matrix, basis, `heckeTPₗ` linear map,
    `LinearMap.charpoly = X² − 1080X − 20468736`, irreducible over ℚ (mod 23 +
    Gauss).
-2. [ ] Generalize: dims 2 (k = 28, 30, 32, 34, 38) and 3 (k = 36, 40, …) —
+2. [DONE] Generalize: dims 2 (k = 28, 30, 32, 34, 38) and 3 (k = 36, 40, …) —
    kernel-computed coefficients, cubic irreducibility mod ℓ.
-3. [ ] Log / README / docs / AGENTS; commit.
+3. [DONE] Log / README / docs / AGENTS; commit.
 
 ## Notes for stage 2 (from the weight-24 build)
 
