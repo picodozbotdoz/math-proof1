@@ -173,11 +173,13 @@ surface the limitation to the user instead of creating workarounds on Modal.
   lemma and reduction to primes for any normalized generator of a rank-one
   `S_k`; `eq_smul`.  `BernoulliHigh.lean` — `B₁₃ … B₂₆` (recurrence chain).
 - `MathProof/ModularForms/LehmerWeight{16,18,20,22,26}.lean` (light) — the
-  eigenforms `Δ·E_{k−12}`: integer coefficients, congruence mod the `B_k`
-  numerator (from `E_k − H ∈ S_k`, no Sturm bound), prime sieve, initial
-  segment (`a16_ne_zero_of_lt_21701`, …).  Weights 20/22 have composite
-  moduli (ℤ-divisibility + coprime cancel); weight 26 has five bad classes
-  (explicit `X⁵ − 1` factorization in `ZMod 657931`).
+  eigenforms `Δ·E_{k−12}`: integer coefficients, congruence mod the reduced
+  `B_k` numerator `num B_k / gcd(num B_k, 2k·den B_k)` (from `E_k − H ∈ S_k`,
+  no Sturm bound), prime sieve, initial segment (`a16_ne_zero_of_lt_21701`,
+  …).  Exact moduli 3617, 43867, 283·617, 131·593 (= num B₂₂ / 11) and 657931
+  (= num B₂₆ / 13); the 20/22 moduli are composite (per-prime sieve + coprime
+  cancel); weight 26 has five bad classes (explicit `X⁵ − 1` factorization in
+  `ZMod 657931`).
 - `MathProof/ModularForms/Maeda{Weight24,LevelOne,SmallWeights}.lean`
   (light) — Maeda's conjecture (irreducible charpoly of `T₂`) for all
   level-one weights with `dim S_k ∈ {2, 3}`.  `MaedaLevelOne`: `prodForm`

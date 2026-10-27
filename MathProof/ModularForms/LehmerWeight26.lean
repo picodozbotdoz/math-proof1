@@ -7,7 +7,7 @@ import MathProof.ModularForms.BernoulliHigh
 
 Weight 26 is the last level-one weight with `dim S_k = 1`; the space is
 spanned by `f₂₆ = Δ E₄² E₆ = q − 48 q² − 195804 q³ + ⋯`.  Same toolkit as
-`MathProof/ModularForms/LehmerWeight26.lean`, with one new feature: the
+`MathProof/ModularForms/LehmerWeight16.lean`, with one new feature: the
 congruence prime `657931` (from `B₂₆ = 8553103 / 6`, `8553103 = 13 · 657931`)
 has `gcd(25, 657930) = 5`, so `p ^ 25 ≡ −1` no longer pins `p ≡ −1`.  The bad
 classes are `−ζ` for the five fifth roots of unity `ζ ∈ ZMod 657931`, which

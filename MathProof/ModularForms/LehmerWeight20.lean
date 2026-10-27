@@ -33,16 +33,10 @@ namespace LehmerWeight20
 /-- The q-expansion of `E₄`. -/
 local notation "q₄" => qExpansion 1 (E₄ : ModularForm 𝒮ℒ 4)
 
-/-- The q-expansion of `E₆`. -/
-local notation "q₆" => qExpansion 1 (E₆ : ModularForm 𝒮ℒ 6)
-
 /-! ### The form and its integer coefficients -/
 
 /-- The integer q-coefficients of `E₄`. -/
 def e4 (m : ℕ) : ℤ := if m = 0 then 1 else 240 * (sigma 3 m : ℤ)
-
-/-- The integer q-coefficients of `E₆`. -/
-def e6 (m : ℕ) : ℤ := if m = 0 then 1 else -504 * (sigma 5 m : ℤ)
 
 /-- The integer q-coefficients of `E₄²` (the convolution `e₄ ⋆ e₄`). -/
 def g20 (m : ℕ) : ℤ := ∑ x ∈ Finset.antidiagonal m, e4 x.1 * e4 x.2
@@ -67,10 +61,6 @@ lemma delta_coeff (m : ℕ) :
 lemma e4_coeff (m : ℕ) :
     (q₄).coeff m = ((e4 m : ℤ) : ℂ) :=
   RamanujanCongruence.E4_coeff_eq m
-
-lemma e6_coeff (m : ℕ) :
-    (q₆).coeff m = ((e6 m : ℤ) : ℂ) :=
-  RamanujanCongruence.E6_coeff_eq m
 
 lemma qExpansion_G :
     qExpansion 1 (E₄.mul E₄) = q₄ * q₄ :=
@@ -172,12 +162,6 @@ lemma E4_coeff_zero' : (q₄).coeff 0 = 1 := by
 
 lemma E4_coeff_one' : (q₄).coeff 1 = 240 := by
   rw [e4_coeff]; simp [e4]
-
-lemma E6_coeff_zero' : (q₆).coeff 0 = 1 := by
-  rw [e6_coeff]; simp [e6]
-
-lemma E6_coeff_one' : (q₆).coeff 1 = -504 := by
-  rw [e6_coeff]; simp [e6]
 
 lemma H20_coeff_zero : (qExpansion 1 H20).coeff 0 = 1 := by
   rw [qExpansion_H20]

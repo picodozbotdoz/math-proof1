@@ -885,8 +885,10 @@ toolkit only for `Δ`.
   initial segment** (up to 1.7 million for `Δ E₄²`) and **unbounded on the
   sieve-free multiplicative semigroup**, with zero kernel-heavy computation:
   every module is light (each Modal check ≈ 1–2 min, zero warnings).
-* The formal weight-`k` Ramanujan congruences mod the `B_k` numerators
-  (Ramanujan/Swinnerton-Dyer) for `k = 16 … 26`.
+* The formal weight-`k` Ramanujan congruences mod the reduced `B_k` numerators
+  `num B_k / gcd(num B_k, 2k·den B_k)` (Ramanujan/Swinnerton-Dyer) for
+  `k = 16 … 26` — exactly 3617, 43867, 283·617, 131·593 (= `num B₂₂ / 11`)
+  and 657931 (= `num B₂₆ / 13`).
 * Contrast with weight 12: there the 691 class is the only sieve, so the
   initial segment needs the dense 65536 computation; in higher weight the
   large congruence primes make the sieve alone reach far further.
@@ -1032,7 +1034,7 @@ byte-identically): the six weights.
 `MaedaWeightK.charpoly_T2` and `MaedaWeightK.maeda` for each.  With Iteration 14:
 **irreducibility of the `T₂` characteristic polynomial (the core of Maeda's
 conjecture) is formally verified for all 18 level-one weights with
-`dim S_k ≤ 4`** (k = 24–62 except the one-dimensional 26); the full symmetric
+`dim S_k ≤ 4`** (k = 24–62 except 26, dim 1, and 60, dim 5); the full symmetric
 Galois group is verified for `dim ≤ 3`.  Whole dimension-4 file: 145 s on
 Modal, zero warnings.
 
@@ -1075,7 +1077,7 @@ Modal, zero warnings.
 
 **Maeda's conjecture — irreducibility of the `T₂` characteristic polynomial
 and full symmetric Galois group — is formally verified for all 18 level-one
-weights with `dim S_k ≤ 4`** (`k = 24 … 62`, `k ≠ 26`): `S₂` (6 weights),
+weights with `dim S_k ≤ 4`** (`k = 24 … 62`, `k ∉ {26, 60}`): `S₂` (6 weights),
 `S₃` (6), `S₄` (6).  Modal: 261 s, zero warnings.
 
 ### What remains / next steps

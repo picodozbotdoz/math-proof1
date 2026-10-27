@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
-"""Generate MathProof/ModularForms/MaedaSmallWeights.lean (Maeda instances).
+"""Generate the Maeda instance files for the level-one weights with dim <= 4.
 
-Usage: python3 tools/gen_maeda.py 28 30 32 34 38 36 40 42 44 46 50 > MathProof/ModularForms/MaedaSmallWeights.lean
-Computes, for each level-one weight k with dim S_k in {2,3}, the triangular basis
+Usage (dim S_k in {2, 3}; the committed file covers 28-50):
+  python3 tools/gen_maeda.py 28 30 32 34 38 36 40 42 44 46 50 > MathProof/ModularForms/MaedaSmallWeights.lean
+Usage (dim S_k = 4; the committed file covers 48-62):
+  python3 tools/gen_maeda.py 48 52 54 56 58 62 > MathProof/ModularForms/MaedaDim4Weights.lean
+
+Computes, for each level-one weight k, the triangular basis
 Delta^i E4^a E6^b, its q-coefficients, the matrix and charpoly of T_2 and a prime
-ell with no root mod ell, then emits the Lean instances (everything is re-checked
-by Lean: these numbers are only certificates)."""
-import sys
+ell with no root mod ell (dim 4: additionally no quadratic factor), then emits the
+Lean instances (everything is re-checked by Lean: these numbers are only
+certificates)."""
+import argparse
 from fractions import Fraction as F
 from itertools import product
 N=12
@@ -19,6 +24,24 @@ def pw(a,e):
 E4=[1]+[240*sigma(3,n) for n in range(1,N)]
 E6=[1]+[-504*sigma(5,n) for n in range(1,N)]
 tau=[0,1,-24,252,-1472,4830,-6048,-16744,84480,-113643,-115920,534612]
+
+# The table above must agree with the kernel-proven `tauTable` in
+# MathProof/ModularForms/MaedaLevelOne.lean (itself proven equal to
+# `Ramanujan.tau_one … tau_twenty_one`); fail loudly on drift.
+def _check_tau_table():
+    import re
+    from pathlib import Path
+    src = (Path(__file__).resolve().parent.parent
+           / "MathProof/ModularForms/MaedaLevelOne.lean")
+    m = re.search(r"tauTable\s*:\s*List\s*ℤ\s*:=\s*\[([^\]]+)\]", src.read_text())
+    if m is None:
+        raise SystemExit("tauTable not found in MathProof/ModularForms/MaedaLevelOne.lean")
+    lean = [int(x) for x in m.group(1).replace("\n", " ").split(",")]
+    if tau != lean[:len(tau)]:
+        raise SystemExit(f"tau table drift vs MaedaLevelOne.lean: {tau} != {lean[:len(tau)]}")
+
+_check_tau_table()
+
 def G(w):  # E4^a E6^b weight w, minimal b
     for b in (0,1):
         if (w-6*b)>=0 and (w-6*b)%4==0: return ((w-6*b)//4,b)
@@ -31,7 +54,7 @@ def det(M):
     return sum((-1)**j*M[0][j]*det([r[:j]+r[j+1:] for r in M[1:]]) for j in range(n))
 def charpoly(M):
     # coefficients via Faddeev–LeVerrier
-    n=len(M); import copy
+    n=len(M)
     I=[[F(int(i==j)) for j in range(n)] for i in range(n)]
     Mk=[[F(0)]*n for _ in range(n)]; c=[F(1)]
     A=[[F(x) for x in r] for r in M]
@@ -39,6 +62,7 @@ def charpoly(M):
         Mk=[[sum(A[i][l]*Mk[l][j] for l in range(n)) + (c[-1] if i==j else 0) for j in range(n)] for i in range(n)]
         AM=[[sum(A[i][l]*Mk[l][j] for l in range(n)) for j in range(n)] for i in range(n)]
         c.append(-sum(AM[i][i] for i in range(n))/k)
+    assert all(x.denominator == 1 for x in c), "non-integral charpoly coefficients"
     return [int(x) for x in c]  # X^n + c1 X^{n-1} + ...
 def isp(n):
     return n>1 and all(n%i for i in range(2,int(n**.5)+1))
@@ -203,7 +227,12 @@ end MaedaWeight{k}
 """)
     return "\n".join(out)
 
-ks=[int(a) for a in sys.argv[1:]]
+_parser = argparse.ArgumentParser(
+    description="Generate Maeda instances for the given level-one weights "
+                "(dim S_k in {2, 3, 4}); see the module docstring for usage.")
+_parser.add_argument("weights", metavar="K", type=int, nargs="+",
+                     help="even level-one weights with dim S_k in {2, 3, 4}")
+ks = _parser.parse_args().weights
 hdr='''import MathProof.ModularForms.MaedaLevelOne
 
 /-!

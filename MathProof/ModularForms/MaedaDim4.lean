@@ -82,6 +82,9 @@ theorem irreducible_quartic {K : Type*} [Field K] (a b c d : K)
   refine ⟨fun h => by simp [h] at hdeg, fun f g hf hg hfg hmem => ?_⟩
   rw [hdeg, Finset.mem_Ioc] at hmem
   have hfdeg : f.natDegree + g.natDegree = 4 := by rw [← hf.natDegree_mul hg, hfg, hdeg]
+  -- `hmem` says `g.natDegree ∈ Ioc 0 2`: the Mathlib iff only quantifies over
+  -- factor pairs with the small factor on the right (a (3, 1) split appears
+  -- with the factors swapped), so `g` is linear or quadratic.
   rcases (by omega : g.natDegree = 1 ∨ g.natDegree = 2) with h1 | h2
   · -- a linear factor gives a root
     set r := g.coeff 0

@@ -30,7 +30,7 @@ theorem tau_ne_zero_of_prime_factors_le_65536_or_mod {n : ℕ} (hn : 0 < n)
     (h : ∀ p : ℕ, p.Prime → p ∣ n → p ≤ 65536 ∨ p % 691 ≠ 690) : tau n ≠ 0 :=
   tau_ne_zero_of_primes_le_or_mod (fun _ hp hle => tau_prime_ne_zero_of_le_65536 hp hle) hn h
 
-/-- No prime in `(65536, 70481)` is `≡ −1 [MOD 691]`: the eight candidates
+/-- No prime in `(65536, 70481)` is `≡ −1 [MOD 691]`: the seven candidates
 `691 k + 690` (`94 ≤ k ≤ 100`) are composite. -/
 theorem prime_gap_691_65536_70481 :
     ∀ p : ℕ, p.Prime → 65536 < p → p < 70481 → p % 691 ≠ 690 := by
