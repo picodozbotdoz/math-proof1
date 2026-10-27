@@ -5,6 +5,8 @@ Usage (dim S_k in {2, 3}; the committed file covers 28-50):
   python3 tools/gen_maeda.py 28 30 32 34 38 36 40 42 44 46 50 > MathProof/ModularForms/MaedaSmallWeights.lean
 Usage (dim S_k = 4; the committed file covers 48-62):
   python3 tools/gen_maeda.py 48 52 54 56 58 62 > MathProof/ModularForms/MaedaDim4Weights.lean
+Usage (dim S_k = 5; the committed file covers 60-74):
+  python3 tools/gen_maeda.py 60 64 66 68 70 74 > MathProof/ModularForms/MaedaDim5Weights.lean
 
 Computes, for each level-one weight k, the triangular basis
 Delta^i E4^a E6^b, its q-coefficients, the matrix and charpoly of T_2 and a prime
@@ -91,7 +93,11 @@ def polyterm(cp):
     if len(s) <= 96: return s
     parts = s.split(" + ")
     half = (len(parts) + 1) // 2
-    return " + ".join(parts[:half]) + "\n    + " + " + ".join(parts[half:])
+    a, b = " + ".join(parts[:half]), " + ".join(parts[half:])
+    if len(b) <= 90:  # halving keeps both lines <= ~96 (dims 2-4)
+        return a + "\n    + " + b
+    # dim >= 5: coefficients up to ~54 digits force one term per line
+    return "\n    + ".join(parts)
 def polyterm1(cp):
     d=len(cp)-1
     parts=[f"X ^ {d}"]
@@ -120,9 +126,15 @@ def section(k):
             vs=[str(f[n]) for n in range(9)]
             vals=",\n     ".join(", ".join(vs[r:r+4]) for r in range(0,9,4))
             out.append(f"lemma L{j} : seqPL {i-1} {a} {b} 9 =\n    [{vals}] := by\n  decide +kernel\n")
+        if d == 5:
+            vs=[str(f[n]) for n in range(11)]
+            vals=",\n     ".join(", ".join(vs[r:r+4]) for r in range(0,11,4))
+            out.append(f"lemma L{j} : seqPL {i-1} {a} {b} 11 =\n    [{vals}] := by\n  decide +kernel\n")
         for n in idx:
             if d == 4:
                 out.append(f"lemma q{j}_{n} : (qExpansion 1 f{j}).coeff {n} = ({f[n]} : ℂ) := by\n  rw [c{j}, seqP_getD (N := 9) (by norm_num), L{j}]\n  norm_num [List.getD_cons_succ, List.getD_cons_zero]\n")
+            elif d == 5:
+                out.append(f"lemma q{j}_{n} : (qExpansion 1 f{j}).coeff {n} = ({f[n]} : ℂ) := by\n  rw [c{j}, seqP_getD (N := 11) (by norm_num), L{j}]\n  norm_num [List.getD_cons_succ, List.getD_cons_zero]\n")
             else:
                 out.append(f"lemma q{j}_{n} : (qExpansion 1 f{j}).coeff {n} = ({f[n]} : ℂ) := by\n  rw [c{j}, show seqP {i-1} {a} {b} {n} = {f[n]} by decide +kernel]; norm_num\n")
     m=k-12
@@ -147,6 +159,8 @@ def section(k):
     out.append(f"/-- The integer characteristic polynomial of `T₂` on `S_{k}`. -/\nnoncomputable def P : ℤ[X] :=\n  {polyterm(cp)}\n")
     if d==4:
         return section4(k,d,basis,fs,cp,out,ql,tl,fargs)
+    if d==5:
+        return section5(k,d,basis,fs,cp,out,ql,tl,fargs)
     thm="charpoly_dim2" if d==2 else "charpoly_dim3"
     fin = "Matrix.charpoly_fin_two" if d==2 else "charpoly_fin_three"
     extra = "Matrix.trace_fin_two, Matrix.det_fin_two" if d==2 else "Matrix.det_fin_three"
@@ -181,6 +195,17 @@ def irr_mod4(cp,l):
         for v in range(l):
             s_=(a-u)%l; t=(b-v-u*s_)%l
             if (u*t+v*s_-c)%l==0 and (v*t-d)%l==0: return False
+    return True
+
+def irr_mod5(cp,l):
+    """No root and no monic quadratic x cubic factorization mod l (Lean-style
+    certificate, matching `irreducible_quintic`'s `hquad`)."""
+    a1,a2,a3,a4,a5=[x%l for x in cp[1:]]
+    if any((x**5+a1*x**4+a2*x**3+a3*x**2+a4*x+a5)%l==0 for x in range(l)): return False
+    for u in range(l):
+        for v in range(l):
+            s=(a2-v-u*(a1-u))%l; t=(a3-v*(a1-u)-u*s)%l
+            if (u*t+v*s-a4)%l==0 and (v*t-a5)%l==0: return False
     return True
 
 def section4(k,d,basis,fs,cp,out,ql,tl,fargs):
@@ -227,6 +252,53 @@ end MaedaWeight{k}
 """)
     return "\n".join(out)
 
+def section5(k,d,basis,fs,cp,out,ql,tl,fargs):
+    l=[l for l in range(3,600) if isp(l) and irr_mod5(cp,l)][0]
+    c1,c2,c3,c4,c5=cp[1:]
+    cst=lambda c: f"(({c} : ℤ) : ZMod {l})"
+    out.append(f"""/-- **The characteristic polynomial of `T₂` on `S_{k}`.** -/
+theorem charpoly_T2 : T2.charpoly = P.map (Int.castRingHom ℂ) := by
+  rw [charpoly_dim5 finrank_eq {fargs}
+    {' '.join(ql[:13])}
+    {' '.join(ql[13:])} T2
+    {' '.join(tl[:13])}
+    {' '.join(tl[13:])}, charpoly_fin_five]
+  simp [P, map_ofNat]
+  ring
+
+/-- The coefficients of `P` modulo {l}. -/
+def r4 : ZMod {l} := {cst(c1)}
+/-- See `r4`. -/
+def r3 : ZMod {l} := {cst(c2)}
+/-- See `r4`. -/
+def r2 : ZMod {l} := {cst(c3)}
+/-- See `r4`. -/
+def r1 : ZMod {l} := {cst(c4)}
+/-- See `r4`. -/
+def r0 : ZMod {l} := {cst(c5)}
+
+lemma noRoot : ∀ x : ZMod {l},
+    x ^ 5 + r4 * x ^ 4 + r3 * x ^ 3 + r2 * x ^ 2 + r1 * x + r0 ≠ 0 := by
+  decide +kernel
+
+lemma noQuad : ∀ u v : ZMod {l},
+    ¬ (u * (r2 - v * (r4 - u) - u * (r3 - v - u * (r4 - u)))
+        + v * (r3 - v - u * (r4 - u)) = r1
+      ∧ v * (r2 - v * (r4 - u) - u * (r3 - v - u * (r4 - u))) = r0) := by
+  decide +kernel
+
+/-- **Maeda's conjecture in weight {k}** (irreducibility): the characteristic
+polynomial of `T₂` on `S_{k}(SL(2, ℤ))` is irreducible over `ℚ` (irreducible mod {l}). -/
+theorem maeda : Irreducible (P.map (Int.castRingHom ℚ)) := by
+  have : Fact (Nat.Prime {l}) := ⟨by norm_num⟩
+  exact irreducible_quintic_of_mod (by unfold P; monicity!) {l} r4 r3 r2 r1 r0
+    (by simp [P, r4, r3, r2, r1, r0, map_ofNat])
+    noRoot noQuad
+
+end MaedaWeight{k}
+""")
+    return "\n".join(out)
+
 _parser = argparse.ArgumentParser(
     description="Generate Maeda instances for the given level-one weights "
                 "(dim S_k in {2, 3, 4}); see the module docstring for usage.")
@@ -249,7 +321,12 @@ open UpperHalfPlane ModularForm CuspForm Polynomial MaedaLevelOne
 open scoped MatrixGroups
 
 '''
-if any(compute(k)[0] == 4 for k in ks):
+if any(compute(k)[0] == 5 for k in ks):
+    hdr = hdr.replace("import MathProof.ModularForms.MaedaLevelOne", "import MathProof.ModularForms.MaedaDim5")
+    hdr = hdr.replace("with `dim S_k ∈ {2, 3}`", "with `dim S_k = 5`")
+    hdr = hdr.replace("(from `charpoly_dim2` / `charpoly_dim3`), the characteristic polynomial and its\nirreducibility over `ℚ` (no root modulo a small prime).",
+                      "(from `charpoly_dim5`), the characteristic polynomial and its irreducibility\nover `ℚ` (irreducible modulo a small prime: no root and no quadratic factor).")
+elif any(compute(k)[0] == 4 for k in ks):
     hdr = hdr.replace("import MathProof.ModularForms.MaedaLevelOne", "import MathProof.ModularForms.MaedaDim4")
     hdr = hdr.replace("with `dim S_k ∈ {2, 3}`", "with `dim S_k = 4`")
     hdr = hdr.replace("(from `charpoly_dim2` / `charpoly_dim3`), the characteristic polynomial and its\nirreducibility over `ℚ` (no root modulo a small prime).",

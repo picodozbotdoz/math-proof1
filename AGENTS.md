@@ -196,6 +196,14 @@ surface the limitation to the user instead of creating workarounds on Modal.
   `MaedaGalois4.lean` — `galActionHom_bijective_of_quartic` (S₄ from irreducible
   resolvent + non-square discriminant; `vieta4`, `disc4`, `resolvent`) and the
   six instances.
+  `MaedaDim5.lean` — `charpoly_dim5` (five-row back-substitution),
+  `charpoly_fin_five` (principal-minor formula, proved by two rounds of
+  `det_succ_row_zero` + `ring`), `irreducible_quintic` /
+  `irreducible_quintic_of_mod` (no root + no monic quadratic × cubic
+  factorization ⇒ irreducible; the cubic's `r, s, t` are forced by `u, v`,
+  leaving an `ℓ²`-pair scan);
+  `MaedaDim5Weights.lean` — generated (`tools/gen_maeda.py`), weights 60–74
+  (the six `dim S_k = 5` weights; irreducibility only, Galois `S₅` pending).
 - `MathProof.lean` — root import file for the *light* modules. The heavy
   kernel-decide modules (`LehmerMod`, `LehmerPacked`) and `AxCheck` are
   deliberately **not** imported there — the root must stay cheap for
