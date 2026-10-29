@@ -492,3 +492,233 @@ Everything below was tried, failed, and re-looked-up; reuse the right column.
 * Commit granularity: the definition module (τ + 21 values) and the
   nonvanishing bound were separate commits (`b060851`, `8b4e954`) so a
   broken heavy `decide` never blocks the light history.
+
+---
+
+# Part III — the MaedaGalois5 debugging campaign (group theory, Main, Criterion)
+
+*Lessons from the session that built `perm_normal_cases`,
+`perm_no_index_three_four`, `alternating_no_index_two`, the quintic `S₅`
+criterion (`galActionHom_bijective_of_quintic`), the permutation
+representation `ρ`, the Sylow argument, and the six Galois instances —
+roughly ten Modal verification rounds, each 8–17 minutes, before green.*
+
+Part I documented the *kernel* wall (ring/`decide` on the identities).
+This part documents everything *around* it: name resolution, tactic-level
+matching, syntax ordering, generator bugs, and the verification workflow
+that finally converged.
+
+## 17. Name resolution: the misses, and what they cost
+
+Every bullet below cost a full Modal round trip.  The pattern: a name that
+*should* exist, doesn't (or lives elsewhere), and the cascade of follow-on
+errors buries the root cause.
+
+| tried (this session) | outcome | what actually worked |
+|---|---|---|
+| `Equiv.apply_inv_apply` | unknown constant | `Equiv.symm_apply_apply σ v : σ⁻¹ (σ v) = v` — as a *term*, not a rewrite (see §19) |
+| `Finset.prod_univ_succ` / `Finset.prod_univ_zero` | unknown constant | **`Fin.`** `prod_univ_succ` / `prod_univ_zero` (`Mathlib/Algebra/BigOperators/Fin.lean`) |
+| `orderOf_dvd_iff_pow_eq_one _ 5` | "Function expected" — the lemma has **all-implicit** binders (`variable {x} {n}`) | named args: `(orderOf_dvd_iff_pow_eq_one (n := 5)).mpr h` |
+| `adjoin.finrank` / `ℚ⟮δ⟯` unknown | namespace not open | `open Module IntermediateField` (MaedaGalois4 already had it — diff the opens of the file you are mirroring) |
+| `Algebra.algebraMap_injective` | unknown constant | `FaithfulSMul.algebraMap_injective R A` |
+| `Subgroup.coe_injective` | unknown constant | `Subgroup.subtype_injective` (on `SubgroupClass.subtype`) or `Subtype.ext` |
+| `Subgroup.val` | unknown constant | `Subgroup.subtype H` (or `congrArg (Subgroup.subtype H) h`) |
+| `Subgroup.card_subgroup_dvd` | unknown constant | `Subgroup.card_subgroup_dvd_card` |
+| `Fintype.bijective_iff_injective_and_card` **and** `Finite.…` and `Function.…` | all unknown in this Mathlib's module build | avoid: construct the `Equiv` directly with `match` + `Equiv.ofBijective ![…] (by decide)` on concrete tables |
+| `Subgroup.index_ne_zero` | unknown constant | one line: `H.index_mul_card` + `Nat.card_pos` (as part II found) |
+| `Sylow.card_sylow_modEq_one` as a top-level name | unknown constant (it lives in `namespace Sylow`, and `Nat.ModEq` unfolds to `%`) | `Sylow.card_sylow_modEq_one (p := p) (G := G)` used *directly as* `… % p = 1` |
+| `Polynomial.map_ne_zero hφinj hne` | argument order: first explicit is `p ≠ 0` | `Polynomial.map_ne_zero hmon.ne_zero hφinj` |
+| `hsep.map (algebraMap ℚ K)` | `Separable.map`'s `f` is **implicit** — passing it makes "Function expected" | `have hsepK : Separable (p.map f) := hsep.map` |
+| `Subgroup.val` in `congrArg Subgroup.val h5H` | unknown | `congrArg (Subgroup.subtype H) h5H` |
+
+**Meta-lesson.**  When mirroring an existing file (here `MaedaGalois4.lean`),
+diff four things up front: the `open` line, the local attribute line
+(`attribute [local instance] Polynomial.Gal.splits_ℚ_ℂ` — needed for anything
+touching `Gal.galActionHom p ℂ`), the section variables, and the exact
+argument orders (`Separable.map`, `map_ne_zero`).  Every one of these bit us.
+
+## 18. `rw` is keyed and syntactic: the failure catalog
+
+`rw` matches on the head symbol of the lemma's LHS with *reducible* defeq.
+Consequences, each observed here:
+
+* **Associativity**: pattern `c ^ 3 * (c * c)` never matches a goal term
+  `c ^ 3 * c * c` (left-assoc).  Write the `have hc` in the *same
+  association* as the goal, or prove it `by group` and let `group` close.
+* **Instance unfolding**: `σ⁻¹` elaborates to `Inv.inv σ`, the rewrite key of
+  `Equiv.symm_apply_apply` is `Equiv.symm σ` — keys differ, `rw` fails even
+  though the terms are definitionally equal.  Use the lemma as a *term*
+  (`show σ⁻¹ (σ v) = v from Equiv.symm_apply_apply σ v` — `rfl` also fails
+  here, do not try it) or `simp only` first.
+* **Function-vs-multiset**: `rw [h6]` where `h6 : ∏ i : Fin 6, g i = …` does
+  not fire against `Multiset.prod (Multiset.map g …)` (`Finset.prod` is a
+  definition, not reducible).  Keep both sides in the same representation.
+* **Numeral abstraction**: `rw [← hc]` with `hc : orderOf c = 5` inside a goal
+  `(c ^ 5 : ↥H) = 1` abstracts the literal `5` **everywhere**, including
+  `Fin 5` in `H : Subgroup (Perm (Fin 5))` — motive error
+  `Subgroup (Perm (Fin _a))`.  Use `congrArg (fun n : ℕ => (c ^ n : ↥H)) hc`
+  (typed exponent, no literal abstraction) or `.symm.trans` chains.
+* **`simp only [lemma]` recursion with arith lemmas**: `simp only
+  [Fin.prod_univ_succ]` on a six-factor product recursed into simp's internal
+  polynomial normalizer (`evalMulProd`/`evalAdd`) and died at 8 M heartbeats.
+  Unroll products with the *castSucc chain* + `rfl` instead
+  (`Fin.prod_univ_castSucc` ×5 + `rfl`; no sixth step, no `prod_univ_zero`).
+* **rw-at with bundled lists**: `rw [lem] at h4 h3 h2 h1 h0` (and the same for
+  `simp only … at`) can fail part-way and poison the branch.  One hypothesis
+  per call.  (Re-learned from iteration 15; the generator must emit it that
+  way from the start.)
+
+## 19. `set_option`, docstrings, and the parser
+
+* `set_option a v in set_option b w in decl` **does not parse** at command
+  level ("unexpected token 'set_option'; expected 'lemma'").  A *single*
+  multi-option command does: `set_option maxHeartbeats 8000000 maxRecDepth 8000 in`.
+* A docstring attaches to the *next command*: `/-- doc -/ set_option … in
+  theorem …` fails with "expected 'lemma'".  Order must be
+  `set_option … in /-- doc -/ theorem …` (and de-duplicate when a script
+  inserts options — double docstrings also produce "unterminated comment").
+* File-level `set_option maxHeartbeats 8000000` feeds *every* tactic: the
+  same proof that OOM'd at file-level 8 M heartbeats ran in a fraction of the
+  memory with the budget scoped to the two declarations that need it, plus a
+  modest file-level default.  Scope budgets per declaration; keep
+  `maxRecDepth` separate from `maxHeartbeats` in the same command.
+
+## 20. Identity shape: ∏-form vs eval-form (elaboration-level, not kernel)
+
+The `∏ i : Fin 6, (X - C (Θᵢ))`-form of the resolvent factorization never
+elaborated: `whnf` deterministic timeouts at **64 M heartbeats**, even before
+`ring` ran (the simp-only prelude expanding `resolvent5` and Vieta is itself
+the bomb).  The fix that worked is *mathematically trivial*: restate as the
+**eval form**, one factor at a time —
+
+```lean
+theorem resolvent_eval_theta (x : Fin 5 → K) (j : Fin 6) :
+    (resolvent5 (va x) (vb x) (vc x) (vd x) (ve x)).eval (ThetaVals x j) = 0 := by
+  fin_cases j
+  all_goals simp only [resolvent5]; rw [eval_add, eval_mul, eval_pow, eval_X, eval_C]
+    simp only [va, vb, vc, vd, ve, …]; ring
+```
+
+Six small `ring` goals instead of one 10,780-monomial one.  Downstream, the
+resolvent root is transferred with `eval_mul`/`prod_eq_zero` (or, as landed,
+`rw [← hRmap, ← hr, htv]; exact resolvent_eval_theta x j`).  Corollary of
+Part I §1, but at the *elaboration* level: the same "many small goals beat
+one big one" rule applies before the kernel is ever involved.
+
+## 21. Tactics: fin_cases/decide, omega, and the free-variable wall
+
+* **`decide` cannot prove goals with free variables** ("Expected type must not
+  contain free variables").  `fin_cases σ` on `σ : Perm (Fin 5)` enumerates all
+  120 cases, *then* each case is decidable.  But decide will also *refute*
+  cases where the ∃-goal is false (e.g. `σ = 1`): filter with the hypotheses
+  in a `first` cascade —
+
+  ```lean
+  fin_cases σ
+  all_goals first
+    | exact absurd (by decide) h1   -- σ = 1 case, decided off-line
+    | exact absurd h5 (by decide)   -- wrong torsion, decided off-line
+    | decide                        -- genuine case
+  ```
+
+* **`fin_cases` + `simp_all [table]`** proves injectivity of concrete lookup
+  tables; but wrapping it in `Equiv.ofBijective f (by …)` with `f` mentioning
+  a free `j` fails — build the six `Equiv`s by `match` on the index instead,
+  each with a concrete table (`decide` closes each `Bijective`).
+* **`decide` in a `def` body via `match`** keeps `cycPerm j` reducible on
+  concrete indices, which is exactly what downstream `decide`s need.
+* **`omega` and `∣`**: `t ∣ 5` with an atom `t` is within omega's reach, but
+  `5 ^ n` is not.  Bounds like `125 ≤ 5 ^ n` + `5 ^ n ≤ 120` must be combined
+  by `Nat.le_trans` + `exact absurd … (by norm_num)`, not omega.
+* **`interval_cases n`** rewrites `n` everywhere *including inside `5 ^ n`* —
+  pair each case with the right `pow_zero`/`pow_two` rewrites, or use the
+  `Nat.lt_or_ge` + explicit cases structure.
+* **`rcases … with h | h` name collisions**: reusing `h1` (a hypothesis) as an
+  rcases binder name silently shadows it; later `rw [h1]` then hits the wrong
+  term ("Unknown identifier" / wrong-shape rewrites downstream).
+* **`Subgroup.coe_pow` has `H` explicit**: `Subgroup.coe_pow H c 5` — an
+  `.symm` projection on `Subgroup.coe_pow c 5` fails with "Invalid field
+  `symm`: The environment does not contain `Function.symm`" (the under-applied
+  term is a ∀-function, so dot-notation resolves into it).
+
+## 22. Definitions: the quintic Vieta sign, and C-atom hygiene
+
+* **Quintic Vieta sign**: for `∏ i, (X − x i) = X⁵ + aX⁴ + … + e`, the
+  constant coefficient is `e = −x₀x₁x₂x₃x₄` — **minus**, unlike the quartic
+  (even degree).  Defining `ve x := x 0 * … * x 4` (plus) made `vieta5`'s
+  hprod *mathematically false*, and `ring` failed with a residual that looked
+  like a tactic bug.  `ring` failing on an identity you "know" is true is a
+  sign-flip hunt, not a tactic hunt.
+* **`C`-atoms**: `ring` treats `C (x 0 * x 1)` and `C (x 0) * C (x 1)` as
+  unrelated atoms.  After unfolding coefficient-functions under `C`, push the
+  map through with `simp only […, map_neg, map_add, map_mul, map_pow]` *before*
+  `ring` (mirrors `vieta4`'s `simp only [map_add, map_mul]; ring`).
+* **Bundled `simp only … at h₁ h₂ …` fails part-way** (the `d0` case here);
+  per-hypothesis `have h : … := by …; simp only […]; norm_num; exact h` blocks
+  are verbose but survive.
+* **`noncomputable` is contagious through `@[no_expose]` instances**: in this
+  Mathlib, `instance : Add R[X]` is `@[no_expose]`, so *any* def that builds a
+  polynomial by `+` (here `resolvent5`) must be `noncomputable` — the error
+  ("failed to compile definition … depends on 'instAdd'") otherwise takes a
+  round trip to decode.  `decide`-proofs downstream are unaffected.
+* **`set s := p.rootSet K` + `Fintype.equivFinOfCardEq`** is the clean way to
+  get an indexed root tuple `x : Fin 5 → K` with `hx : ∀ i, x i ∈ s`,
+  injectivity, and a roots-multiset conversion
+  (`Multiset.count_eq_one_of_mem hnd …` on both sides).
+
+## 23. Generated-Lean bugs (emitter class)
+
+* **Missing commas in emitted lists**: `rw [q1_1 q1_2 q1_3 …]` — space-joined
+  hypothesis names parse as *application* (`h11 h12` = `h11 applied to h12`),
+  producing "Function expected" far from the real bug.  Emitters must `", ".join`.
+* **Orphan docstring fragments** after scripted insertion: the "unterminated
+  comment" error with balanced-looking text — scan comment depth
+  programmatically (`/-` vs `-/` counting) before uploading.
+* **Python-level shadowing**: two `def wrap` in the same emitter — the later
+  definition silently wins and emits sign-less lines (a dropped `+` produces
+  `e 6` juxtaposition = application errors inside Lean defs).  Keep one
+  canonical helper; assert single definitions in the emitter.
+* **JSON round-trip**: monomial keys come back as *strings* — normalize
+  `tuple(int(d) for d in m)` at load, and remember the e↔(a,b,c,d,e) sign map
+  `e1=−a, e2=b, e3=−c, e4=d, e5=−e` lives in the *emitter*, not the data.
+* Regression discipline pays: dims 2–4 regenerating **byte-identically** after
+  every emitter change caught two of these before any Modal round trip.
+
+## 24. Process: the Modal verification loop
+
+* **Bisection by scratch carving** (S5 / Resolvent / Main / Criterion
+  sections, then B1/B2/C, then P1…P2m): each scratch keeps the same imports +
+  file-level options so parse-level errors surface in ~2 min and the real
+  errors localize to one section.  Ten rounds, each 8–17 min wall — the
+  error maps, not the compute, are the bottleneck; batch *all* fixes per
+  round instead of one-per-round.
+* **Stub the expensive proofs** (`sorry` on the two big `ring`s) to get the
+  rest of the file checked in the same round trip; run the expensive proofs
+  in dedicated high-RAM runs (`LEAN_CHECK_MEMORY_MIB=98304`).
+* **Memory signature of error recovery**: a run that elborates with unknown
+  identifiers thrashes to 90–160 GiB RSS and produces garbage cascade errors;
+  a clean run of the *same content* stays at 15–30 GiB.  Kill thrashing runs
+  early (the file has a parse error you haven't seen yet), fix, re-run.
+* **Build cache** (user-requested): `lean_check.py` now saves `.lake/build`
+  as one tarball on the existing `lean-cache` volume keyed by local git HEAD
+  and restores it before building — lake's own traces keep restores safe, a
+  single sequential volume read/write avoids the many-tiny-writes stall, and
+  `LEAN_CHECK_NO_CACHE=1` opts out.  First run still rebuilds (`[cache]
+  empty`); every later run skips unchanged modules.
+* **This host has 7 GB RAM**: never elaborate anything locally; grep Mathlib
+  sources locally (cheap), compile on Modal only.
+
+## 25. Carry-forwards
+
+1. The eval-form identity pattern (§20) is the template for the dim ≥ 6
+   resolvent/Dedekind work: state root-certificates per factor, never as
+   product identities.
+2. Emitter lint pass before upload: comma-join audit, comment-depth check,
+   docstring/set_option order, single-definition check, and byte-identical
+   regression of already-committed generated files.
+3. The `first | exact absurd (by decide) h1 | exact absurd h5 (by decide) |
+   decide` cascade is the reusable shape for any finite-case lemma with
+   side conditions (e.g. future Dedekind/Frobenius cycle tables).
+4. Keep `MaedaGalois5`-style files out of `defaultTargets` until the heavy
+   identities are verified; the light group-theory + criterion layer
+   (everything except the two rings) is CI-cheap and was reviewed first.
