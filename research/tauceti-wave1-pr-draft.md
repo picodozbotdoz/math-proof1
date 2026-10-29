@@ -64,3 +64,14 @@ Branch `tauceti/wave4-lehmer` (stack: wave1 → wave3(wave2) → 3 commits).  Re
 3. `LevelOne/LehmerSieve691.lean` (needs W3 + 2): sieve `691 ∤ σ₁₁ n → τ n ≠ 0`, `prime_dvd_sigma_iff`,
    `ramanujanTau_prime_ne_zero_of_mod`, all-exponent sieve, root-of-unity classification, `τ(65537^a) ≠ 0`.  Off-roadmap too.
 Header/licence/authorship: human decision (see Wave 1 notes).
+
+---
+# Wave 5 drafts (NOT submitted) — Bernoulli values, rank-one Lehmer toolkit, weights 16–26
+
+Branch `tauceti/wave5-weights`.  PR order (each standalone on `main` after prerequisites):
+1. `NumberTheory/Bernoulli/Values.lean` (independent, ~700 lines of `norm_num` chain — likely `proof-quality` feedback; a shorter generic computation of `bernoulli n` for concrete n would be a worthwhile *Mathlib-level* improvement, `decide +kernel` takes >10 min at n=16).
+2. `LevelOne/HeckeRecurrence.lean` + fold into LehmerReduction/TauMultiplicative (wave 4).
+3. `LevelOne/RankOneEigenform.lean` (needs only TauCeti `Eigenform`; independent of τ) — natural ModularForms-roadmap fit (generalizes `discriminantEigenform`).
+4. `LevelOne/RankOneLehmer.lean` (needs 2, 3).
+5. `LevelOne/LehmerWeight{16,18,20,22,26}.lean` — five PRs (or one per weight); need 1, 4, wave 3 (congruence helpers), wave 1/4 (τ).
+Roadmap fit: only (3) is plausibly on the ModularForms roadmap; the rest need a hook (H3).

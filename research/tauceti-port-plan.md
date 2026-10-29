@@ -80,18 +80,18 @@ Status key: `[ ]` todo · `[~]` in progress · `[x]` merged · `[-]` stays local
 | [~] | A9 | `Tau/LehmerPrimeReduction` (τp≠0 ⇒ τ(p^a)≠0; reduction to primes) | 223 | re-base on `discriminantEigenform` in TauCeti (A7 dropped) | |
 | [~] | A10 | `Tau/LehmerUnbounded` | 79 | re-base on `discriminantEigenform`; needs A9 | |
 | [~] | A11 | `Tau/LehmerSieve691` (mod-691 sieve) | 205 | 4 set_option; needs A5 | |
-| [ ] | A12 | `ModularForms/BernoulliHigh` (B₁₃…B₂₆) | 624 | check vs Mathlib Bernoulli evaluations; decide-on-WF warning in AGENTS.md | |
+| [~] | A12 | `ModularForms/BernoulliHigh` (B₁₃…B₂₆) | 624 | check vs Mathlib Bernoulli evaluations; decide-on-WF warning in AGENTS.md | |
 | [ ] | A13 | `Tau/CongruenceSmall` (mod 2, 3 gaps) | 214 | needs A2/A3 | |
 
 #### Tier B — conditional (only if a roadmap item asks)
 | st | id | module | lines | blockers / notes | PR |
 |----|----|--------|-------|------------------|----|
 | [ ] | B1 | `Tau/Lehmer` (τ≠0 for n≤128) | 88 | 2 set_option; tiny, nice Lehmer anchor | |
-| [ ] | B2 | `ModularForms/LehmerWeight16` | 271 | congruence mod B_k numerator; needs A8 | |
-| [ ] | B3 | `ModularForms/LehmerWeight18` | 283 | | |
-| [ ] | B4 | `ModularForms/LehmerWeight20` | 301 | | |
-| [ ] | B5 | `ModularForms/LehmerWeight22` | 321 | | |
-| [ ] | B6 | `ModularForms/LehmerWeight26` | 350 | | |
+| [~] | B2 | `ModularForms/LehmerWeight16` | 271 | congruence mod B_k numerator; needs A8 | |
+| [~] | B3 | `ModularForms/LehmerWeight18` | 283 | | |
+| [~] | B4 | `ModularForms/LehmerWeight20` | 301 | | |
+| [~] | B5 | `ModularForms/LehmerWeight22` | 321 | | |
+| [~] | B6 | `ModularForms/LehmerWeight26` | 350 | | |
 | [ ] | B7 | `ModularForms/MaedaLevelOne` | 338 | `decide +kernel` for `seqP`; heartbeat-sensitive | |
 | [ ] | B8 | `ModularForms/MaedaWeight24` | 298 | | |
 | [ ] | B9 | `ModularForms/MaedaCertC` | 91 | | |
@@ -174,3 +174,4 @@ LehmerPrimeReduction, LehmerUnbounded, CongruenceSmall, BernoulliHigh, LehmerWei
 - 2026-10-30 Wave 2 (A4): `LevelOne/Weight12Identity.lean` on local branch `tauceti/wave2-e12-identity` (based on `main`, independent of Wave 1 — no stacking). Builds clean; `bernoulli 12` by `decide +kernel`, no set_option; axioms std. Unpushed. Next: A5 (needs Wave 1 + 2 merged for a non-stacked PR; local draft allowed).
 - 2026-10-30 Wave 3 (A5): `LevelOne/CongruenceMod691.lean` on local branch `tauceti/wave3-tau-congruence-691` (= wave1 + wave2 merged + 1 commit). Builds clean, axioms std (see draft). Also added public `E₁₂_qExpansion_rel` to the Wave 2 file. Real PR order: W1 and W2 independently, then W3 after both merge. Unpushed.
 - 2026-10-30 Wave 4 (A9–A11) local branch `tauceti/wave4-lehmer` (on top of wave3): `LevelOne/TauMultiplicative.lean` (A10 + Mordell/recurrence in ℤ via `discriminantEigenform`, replaces A7), `LehmerReduction.lean` (A9), `LehmerSieve691.lean` (A11; `Prime 691`/`bad_residues` via `norm_num`/`decide +kernel`, 2^64 showcase dropped). All build clean with linters, no set_option, axioms std. 3 commits, unpushed. PR-order: TauMultiplicative needs W1 only; LehmerReduction needs TauMultiplicative; Sieve needs W3 + LehmerReduction. **OFF-ROADMAP (scope-rubric risk) — needs H3 hook.**
+- 2026-10-30 Wave 5 (A12 + B2–B6) local branch `tauceti/wave5-weights` (on wave4). New modules: `NumberTheory/Bernoulli/Values.lean` (B12–B26 by recurrence chain; `decide +kernel` on bernoulli 16+ did not finish in 10 min — abandoned), `LevelOne/HeckeRecurrence.lean` (rec lemmas + generic Lehmer prime-power lemma + generic nonvanishing; **LehmerReduction/TauMultiplicative now use it — fold into the wave-4 PRs**), `RankOneEigenform.lean` (replaces EigenLevelOne: any rank-one level-one weight → TauCeti `Eigenform 1 k`), `RankOneLehmer.lean`, `LehmerWeight{16,18,20,22,26}.lean`. All build with linters, no set_option/sorry, axioms std. `CongruenceMod691`: `E4_coeff_eq`, `E6_coeff_eq`, `coeff_{mul,pow}_intCast` made public (**fold into wave-3 PR**). Unpushed. Off-roadmap. Remaining local-only: Maeda family (B7–B14), heavy Lehmer (Tier C).
