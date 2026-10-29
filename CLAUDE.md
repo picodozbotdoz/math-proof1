@@ -16,7 +16,7 @@ theorems must depend on `propext` only; analytic ones may use the standard
 three axioms. Audit with:
 
 ```bash
-/home/doz/dozenv/bin/modal run lean_check.py --target MathProof.AxCheck
+tools/modal_run.sh --target MathProof.AxCheck   # Modal account: see AGENTS.md (xyz)
 ```
 
 Heavy modules (`LehmerPacked`, `LehmerPow32`, `LehmerGrand`) carry their own

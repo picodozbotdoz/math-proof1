@@ -979,7 +979,7 @@ Set ↥H)` was elaborated exactly once instead of in each hypothesis.
     byte-identically.**  That is why the E6-only `maxRecDepth` was made
     conditional on `k == 6` instead of being emitted everywhere.
 * **Account migration without recomputation.**  When the doz workspace ran
-  out of credits mid-E6, the cache tarball was copied to a new `lean-cache`
+  disabled mid-E6, the cache tarball was copied to a new `lean-cache`
   volume in the xyz account.  Creating that volume was explicitly approved
   by the user, as the AGENTS.md policy requires.  The first xyz run
   restored it and rebuilt nothing.  Policy discipline: a `kill` the

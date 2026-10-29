@@ -14,9 +14,20 @@ Toolchain and Mathlib are pinned (`lean-toolchain`, `lakefile.toml`: Lean
 ### Primary: build on Modal
 
 All builds and verification runs happen on Modal (modal.com) via the existing
-scripts `lean_build.py` / `lean_check.py` — don't invent new plumbing. Run them
-with `/home/doz/dozenv/bin/modal` (the `modal` CLI only exists in the `dozenv`
-venv; bare `python3` cannot import `modal`).
+scripts `lean_build.py` / `lean_check.py` — don't invent new plumbing.
+
+**Modal account (since 2026-10-29): Linux user `xyz`.**  The doz workspace
+(`/home/doz/dozenv/bin/modal` fails with `workspace … is
+disabled`).  The canonical CLI is `/home/xyz/xyzenv/bin/modal`, reached via
+passwordless `sudo -u xyz`; xyz cannot read `/home/doz`, so the working tree
+is mirrored into `/home/xyz/math-proof1` first.  `tools/modal_run.sh` does
+both — mirror + `modal run lean_check.py` as xyz — and passes every argument
+through; use it instead of calling `modal` directly (bare `python3` cannot
+import `modal` either).  `MODAL_USER` / `MODAL_BIN` / `MODAL_MIRROR` override
+the account.  The heavy MaedaGalois5 chain has its own staged runner,
+`tools/stage_chain.sh [first-stage]` (one `lean_check` per module, stops at
+the first failure, resumable through the build cache; never run two heavy
+stages concurrently).
 
 - **Iterate with `lean_check.py`** (app `mathproof-check`): fresh-clones the
   GitHub repo, overlays every locally modified *or untracked* `.lean` file
@@ -26,8 +37,8 @@ venv; bare `python3` cannot import `modal`).
   No push needed (~1 min round trip):
 
   ```bash
-  /home/doz/dozenv/bin/modal run lean_check.py --target MathProof.Tau.CongruenceSmall
-  /home/doz/dozenv/bin/modal run lean_check.py --file MathProof/Tau/SomeFile.lean
+  tools/modal_run.sh --target MathProof.Tau.CongruenceSmall
+  tools/modal_run.sh --file MathProof/Tau/SomeFile.lean
   ```
 
   **Telemetry**: both scripts print `[telemetry]` resource lines for the
@@ -42,11 +53,13 @@ venv; bare `python3` cannot import `modal`).
 - **Full / final build with `lean_build.py`** (app `math-proof1-build`):
   builds the pushed GitHub state (`picodozbotdoz/math-proof1`);
   `--target ''` runs the default (light) targets; heavy modules are built
-  explicitly, e.g. `--target MathProof.Tau.LehmerPacked`:
+  explicitly, e.g. `--target MathProof.Tau.LehmerPacked`.  It needs no
+  working-tree mirror beyond the script itself, so run it as xyz from the
+  mirror `tools/modal_run.sh` keeps up to date:
 
   ```bash
-  /home/doz/dozenv/bin/modal run lean_build.py --target MathProof.Tau.Lehmer
-  /home/doz/dozenv/bin/modal run lean_build.py --target ''   # full `lake build`
+  sudo -n -u xyz bash -lc 'cd ~/math-proof1 && ~/xyzenv/bin/modal run lean_build.py --target MathProof.Tau.Lehmer'
+  sudo -n -u xyz bash -lc "cd ~/math-proof1 && ~/xyzenv/bin/modal run lean_build.py --target ''"   # full `lake build`
   ```
 
   Caveat: it clones only when `/tmp/repo` is absent, so a reused container can
@@ -121,7 +134,7 @@ surface the limitation to the user instead of creating workarounds on Modal.
   The kernel decides need ~18 GiB (16384) / ~63 GiB (65536) of heap: build on
   Modal only (like `LehmerMod`, not in the CI target list); for the 65536
   decide override the check container's memory, e.g.
-  `LEAN_CHECK_MEMORY_MIB=98304 modal run lean_check.py --file
+  `LEAN_CHECK_MEMORY_MIB=98304 tools/modal_run.sh --file
   MathProof/Tau/LehmerPacked.lean`.
 - `MathProof/Tau/CongruenceSmall.lean` — gap congruences mod 2 and 3:
   `τ n` even unless `n ≡ 1 [MOD 8]`, `3 ∣ τ n` unless `n ≡ 1 [MOD 3]`.
