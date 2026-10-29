@@ -122,14 +122,15 @@ def section(k):
     for j,((i,a,b),f) in enumerate(basis,1):
         out.append(f"/-- `Δ^{i} E₄^{a} E₆^{b}`. -/\nnoncomputable def f{j} : CuspForm 𝒮ℒ (({k} : ℕ) : ℤ) :=\n  prodForm _ {i-1} {a} {b} (by norm_num)\n")
         out.append(f"lemma c{j} (n : ℕ) : (qExpansion 1 f{j}).coeff n = seqP {i-1} {a} {b} n :=\n  prodForm_coeff _ _ _ _ _ n\n")
-        if d == 4:
-            vs=[str(f[n]) for n in range(9)]
-            vals=",\n     ".join(", ".join(vs[r:r+4]) for r in range(0,9,4))
-            out.append(f"lemma L{j} : seqPL {i-1} {a} {b} 9 =\n    [{vals}] := by\n  decide +kernel\n")
-        if d == 5:
-            vs=[str(f[n]) for n in range(11)]
-            vals=",\n     ".join(", ".join(vs[r:r+4]) for r in range(0,11,4))
-            out.append(f"lemma L{j} : seqPL {i-1} {a} {b} 11 =\n    [{vals}] := by\n  decide +kernel\n")
+        if d in (4, 5):
+            # the kernel certificate is about the axiom-free `seqPLc`
+            # (MaedaCertC); `seqPLc_eq` transfers it to `seqPL`
+            NL = 9 if d == 4 else 11
+            vs=[str(f[n]) for n in range(NL)]
+            vals=",\n     ".join(", ".join(vs[r:r+4]) for r in range(0,NL,4))
+            out.append(f"lemma L{j}c : seqPLc {i-1} {a} {b} {NL} =\n    [{vals}] := by\n  decide +kernel\n")
+            out.append(f"lemma L{j} : seqPL {i-1} {a} {b} {NL} =\n    [{vals}] := by\n"
+                       f"  rw [← seqPLc_eq (by norm_num)]\n  exact L{j}c\n")
         for n in idx:
             if d == 4:
                 out.append(f"lemma q{j}_{n} : (qExpansion 1 f{j}).coeff {n} = ({f[n]} : ℂ) := by\n  rw [c{j}, seqP_getD (N := 9) (by norm_num), L{j}]\n  norm_num [List.getD_cons_succ, List.getD_cons_zero]\n")
@@ -208,6 +209,63 @@ def irr_mod5(cp,l):
             if (u*t+v*s-a4)%l==0 and (v*t-a5)%l==0: return False
     return True
 
+def zcert(name, l, vars_, zmod_stmt, int_conds, rdefs):
+    """An axiom-free certificate `{name}_cert` over bounded ℕ with ℤ
+    arithmetic (`decide +kernel`) and the `ZMod {l}` statement `{name}`
+    derived from it (HornerCert: cast each variable, push_cast,
+    linear_combination).  `int_conds` are ℤ expressions E with the meaning
+    "E % l = 0"; one condition gives `E % l ≠ 0`, two give `¬ (… ∧ …)`."""
+    binders = " → ".join(f"∀ {v} : ℕ, {v} < {l}" for v in vars_)
+    if len(int_conds) == 1:
+        body = f"({int_conds[0]}) % {l} ≠ 0"
+    else:
+        body = "¬ (" + "\n      ∧ ".join(f"({e}) % {l} = 0" for e in int_conds) + ")"
+    def wrap(text, indent="      ", width=98):
+        out = []
+        for raw in text.split("\n"):
+            lead = raw[:len(raw) - len(raw.lstrip())]
+            line = lead
+            for w in raw.split():
+                if line.strip() and len(line) + 1 + len(w) > width:
+                    out.append(line)
+                    line = indent + w
+                else:
+                    line = f"{line} {w}" if line.strip() else line + w
+            out.append(line)
+        return "\n".join(out)
+    cert = wrap(f"""lemma {name}_cert : {binders} →
+    {body} := by""") + "\n  decide +kernel\n"
+    ys = ["y", "z"]
+    lines = [f"lemma {name} : {zmod_stmt} := by"]
+    hs = [f"h{i + 1}" for i in range(len(int_conds))]
+    if len(int_conds) == 1:
+        lines.append(f"  intro {' '.join(vars_)} h1")
+    else:
+        lines.append(f"  rintro {' '.join(vars_)} ⟨{', '.join(hs)}⟩")
+    for v, y in zip(vars_, ys):
+        lines.append(f"  obtain ⟨{y}, h{y}, rfl⟩ := HornerCert.exists_natCast_eq {v}")
+    # the hypotheses' left/right sides, to unfold only the `r`s each mentions
+    # (an unused simp argument is a lint warning)
+    import re as _re
+    sides = zmod_stmt.split("∧") if len(hs) > 1 else [zmod_stmt]
+    for h, side in zip(hs, sides):
+        used = [r for r in rdefs if _re.search(rf"\b{r}\b", side)]
+        if used:
+            lines.append(f"  simp only [{', '.join(used)}] at {h}")
+        lines.append(f"  push_cast at {h}")
+    args = " ".join(f"{y} h{y}" for y in ys[:len(vars_)])
+    if len(int_conds) == 1:
+        lines.append(f"  refine {name}_cert {args} (HornerCert.emod_eq_zero_of_cast ?_)")
+        lines.append("  push_cast")
+        lines.append("  linear_combination h1")
+    else:
+        holes = ", ".join("HornerCert.emod_eq_zero_of_cast ?_" for _ in hs)
+        lines.append(f"  refine {name}_cert {args}\n    ⟨{holes}⟩")
+        for h in hs:
+            lines.append(f"  · push_cast")
+            lines.append(f"    linear_combination {h}")
+    return cert + "\n" + "\n".join(lines) + "\n"
+
 def section4(k,d,basis,fs,cp,out,ql,tl,fargs):
     l=[l for l in range(3,400) if isp(l) and irr_mod4(cp,l)][0]
     c1,c2,c3,c4=cp[1:]
@@ -232,14 +290,16 @@ def r1 : ZMod {l} := {cst(c3)}
 /-- See `r3`. -/
 def r0 : ZMod {l} := {cst(c4)}
 
-lemma noRoot : ∀ x : ZMod {l}, x ^ 4 + {a} * x ^ 3 + {b} * x ^ 2 + {c} * x + {dd} ≠ 0 := by
-  decide +kernel
-
-lemma noQuad : ∀ u v : ZMod {l},
-    ¬ (u * ({b} - v - u * ({a} - u)) + v * ({a} - u) = {c}
-      ∧ v * ({b} - v - u * ({a} - u)) = {dd}) := by
-  decide +kernel
-
+{zcert("noRoot", l, ["x"],
+        f"∀ x : ZMod {l}, x ^ 4 + {a} * x ^ 3 + {b} * x ^ 2 + {c} * x + {dd} ≠ 0",
+        [f"X ^ 4 + ({c1}) * X ^ 3 + ({c2}) * X ^ 2 + ({c3}) * X + ({c4})".replace("X", "(x : ℤ)")],
+        ["r3", "r2", "r1", "r0"])}
+{zcert("noQuad", l, ["u", "v"],
+        f"∀ u v : ZMod {l},\n    ¬ (u * ({b} - v - u * ({a} - u)) + v * ({a} - u) = {c}\n      ∧ v * ({b} - v - u * ({a} - u)) = {dd})",
+        [e.replace("U", "(u : ℤ)").replace("V", "(v : ℤ)") for e in (
+            f"U * (({c2}) - V - U * (({c1}) - U)) + V * (({c1}) - U) - ({c3})",
+            f"V * (({c2}) - V - U * (({c1}) - U)) - ({c4})")],
+        ["r3", "r2", "r1", "r0"])}
 /-- **Maeda's conjecture in weight {k}** (irreducibility): the characteristic
 polynomial of `T₂` on `S_{k}(SL(2, ℤ))` is irreducible over `ℚ` (irreducible mod {l}). -/
 theorem maeda : Irreducible (P.map (Int.castRingHom ℚ)) := by
@@ -277,16 +337,16 @@ def r1 : ZMod {l} := {cst(c4)}
 /-- See `r4`. -/
 def r0 : ZMod {l} := {cst(c5)}
 
-lemma noRoot : ∀ x : ZMod {l},
-    x ^ 5 + r4 * x ^ 4 + r3 * x ^ 3 + r2 * x ^ 2 + r1 * x + r0 ≠ 0 := by
-  decide +kernel
-
-lemma noQuad : ∀ u v : ZMod {l},
-    ¬ (u * (r2 - v * (r4 - u) - u * (r3 - v - u * (r4 - u)))
-        + v * (r3 - v - u * (r4 - u)) = r1
-      ∧ v * (r2 - v * (r4 - u) - u * (r3 - v - u * (r4 - u))) = r0) := by
-  decide +kernel
-
+{zcert("noRoot", l, ["x"],
+        f"∀ x : ZMod {l},\n    x ^ 5 + r4 * x ^ 4 + r3 * x ^ 3 + r2 * x ^ 2 + r1 * x + r0 ≠ 0",
+        [f"X ^ 5 + ({c1}) * X ^ 4 + ({c2}) * X ^ 3 + ({c3}) * X ^ 2\n      + ({c4}) * X + ({c5})".replace("X", "(x : ℤ)")],
+        ["r4", "r3", "r2", "r1", "r0"])}
+{zcert("noQuad", l, ["u", "v"],
+        f"∀ u v : ZMod {l},\n    ¬ (u * (r2 - v * (r4 - u) - u * (r3 - v - u * (r4 - u)))\n        + v * (r3 - v - u * (r4 - u)) = r1\n      ∧ v * (r2 - v * (r4 - u) - u * (r3 - v - u * (r4 - u))) = r0)",
+        [e.replace("U", "(u : ℤ)").replace("V", "(v : ℤ)") for e in (
+            f"U * (({c3}) - V * (({c1}) - U) - U * (({c2}) - V - U * (({c1}) - U)))\n        + V * (({c2}) - V - U * (({c1}) - U)) - ({c4})",
+            f"V * (({c3}) - V * (({c1}) - U) - U * (({c2}) - V - U * (({c1}) - U))) - ({c5})")],
+        ["r4", "r3", "r2", "r1", "r0"])}
 /-- **Maeda's conjecture in weight {k}** (irreducibility): the characteristic
 polynomial of `T₂` on `S_{k}(SL(2, ℤ))` is irreducible over `ℚ` (irreducible mod {l}). -/
 theorem maeda : Irreducible (P.map (Int.castRingHom ℚ)) := by
@@ -322,12 +382,12 @@ open scoped MatrixGroups
 
 '''
 if any(compute(k)[0] == 5 for k in ks):
-    hdr = hdr.replace("import MathProof.ModularForms.MaedaLevelOne", "import MathProof.ModularForms.MaedaDim5")
+    hdr = hdr.replace("import MathProof.ModularForms.MaedaLevelOne", "import MathProof.ModularForms.MaedaDim5\nimport MathProof.ModularForms.MaedaCertC")
     hdr = hdr.replace("with `dim S_k ∈ {2, 3}`", "with `dim S_k = 5`")
     hdr = hdr.replace("(from `charpoly_dim2` / `charpoly_dim3`), the characteristic polynomial and its\nirreducibility over `ℚ` (no root modulo a small prime).",
                       "(from `charpoly_dim5`), the characteristic polynomial and its irreducibility\nover `ℚ` (irreducible modulo a small prime: no root and no quadratic factor).")
 elif any(compute(k)[0] == 4 for k in ks):
-    hdr = hdr.replace("import MathProof.ModularForms.MaedaLevelOne", "import MathProof.ModularForms.MaedaDim4")
+    hdr = hdr.replace("import MathProof.ModularForms.MaedaLevelOne", "import MathProof.ModularForms.MaedaCertC")
     hdr = hdr.replace("with `dim S_k ∈ {2, 3}`", "with `dim S_k = 4`")
     hdr = hdr.replace("(from `charpoly_dim2` / `charpoly_dim3`), the characteristic polynomial and its\nirreducibility over `ℚ` (no root modulo a small prime).",
                       "(from `charpoly_dim4`), the characteristic polynomial and its irreducibility\nover `ℚ` (irreducible modulo a small prime: no root and no quadratic factor).")

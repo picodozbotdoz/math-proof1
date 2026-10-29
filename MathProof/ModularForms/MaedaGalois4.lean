@@ -209,20 +209,38 @@ noncomputable def R : ℤ[X] :=
     + C (-21446669142705803440133505024) * X
     + C (-8308616729745868551297190273263222933946368)
 
+/-- Axiom-free certificate: plain `ℤ` arithmetic over bounded `ℕ` (`HornerCert`). -/
+lemma noRootR_cert : ∀ y : ℕ, y < 43 → ((y : ℤ) ^ 3 + (467142374034432) * (y : ℤ) ^ 2 +
+      (-21446669142705803440133505024) * (y : ℤ) + (-8308616729745868551297190273263222933946368))
+      % 43 ≠ 0 := by
+  decide +kernel
+
 lemma noRootR : ∀ y : ZMod 43,
     y ^ 3 + (467142374034432 : ZMod 43) * y ^ 2
       + (-21446669142705803440133505024 : ZMod 43) * y
       + (-8308616729745868551297190273263222933946368 : ZMod 43) ≠ 0 := by
-  decide +kernel
+  intro y h1
+  obtain ⟨z, hz, rfl⟩ := HornerCert.exists_natCast_eq y
+  refine noRootR_cert z hz (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 /-- The discriminant of the weight-48 quartic. -/
 def Dval : ℤ :=
   3162223814975332907582154541 * 10 ^ 60
     + 908107145851772707217804681584460594432386392764973056000000
 
+/-- Axiom-free certificate (`HornerCert`): the discriminant is not a square mod 23. -/
+lemma nonsquare_cert : ∀ y : ℕ, y < 23 → (Dval - (y : ℤ) * (y : ℤ)) % 23 ≠ 0 := by
+  decide +kernel
+
 /-- The discriminant is not a square mod 23. -/
 lemma nonsquare : ∀ x : ZMod 23, ((Dval : ℤ) : ZMod 23) ≠ x * x := by
-  decide +kernel
+  intro x h1
+  obtain ⟨z, hz, rfl⟩ := HornerCert.exists_natCast_eq x
+  refine nonsquare_cert z hz (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 lemma hP : MaedaWeight48.P.map (Int.castRingHom ℚ)
     = X ^ 4 + C (-5785560 : ℚ) * X ^ 3 + C (-467142374034432 : ℚ) * X ^ 2
@@ -270,20 +288,38 @@ noncomputable def R : ℤ[X] :=
     + C (-27293510302774154857049021743104) * X
     + C (-224518765122805048047034799291103928016235921408)
 
+/-- Axiom-free certificate: plain `ℤ` arithmetic over bounded `ℕ` (`HornerCert`). -/
+lemma noRootR_cert : ∀ y : ℕ, y < 53 → ((y : ℤ) ^ 3 + (7956172284567552) * (y : ℤ) ^ 2 +
+      (-27293510302774154857049021743104) * (y : ℤ) +
+      (-224518765122805048047034799291103928016235921408)) % 53 ≠ 0 := by
+  decide +kernel
+
 lemma noRootR : ∀ y : ZMod 53,
     y ^ 3 + (7956172284567552 : ZMod 53) * y ^ 2
       + (-27293510302774154857049021743104 : ZMod 53) * y
       + (-224518765122805048047034799291103928016235921408 : ZMod 53) ≠ 0 := by
-  decide +kernel
+  intro y h1
+  obtain ⟨z, hz, rfl⟩ := HornerCert.exists_natCast_eq y
+  refine noRootR_cert z hz (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 /-- The discriminant of the weight-52 quartic. -/
 def Dval : ℤ :=
   97330908765702604639063896235197413 * 10 ^ 60
     + 751066579167949973325285984844742144363313932623937536000000
 
+/-- Axiom-free certificate (`HornerCert`): the discriminant is not a square mod 29. -/
+lemma nonsquare_cert : ∀ y : ℕ, y < 29 → (Dval - (y : ℤ) * (y : ℤ)) % 29 ≠ 0 := by
+  decide +kernel
+
 /-- The discriminant is not a square mod 29. -/
 lemma nonsquare : ∀ x : ZMod 29, ((Dval : ℤ) : ZMod 29) ≠ x * x := by
-  decide +kernel
+  intro x h1
+  obtain ⟨z, hz, rfl⟩ := HornerCert.exists_natCast_eq x
+  refine nonsquare_cert z hz (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 lemma hP : MaedaWeight52.P.map (Int.castRingHom ℚ)
     = X ^ 4 + C (-32756040 : ℚ) * X ^ 3 + C (-7956172284567552 : ℚ) * X ^ 2
@@ -331,20 +367,38 @@ noncomputable def R : ℤ[X] :=
     + C (-231965802664780604285009163976704) * X
     + C (-4448694761996293716971078167345064424815084961792)
 
+/-- Axiom-free certificate: plain `ℤ` arithmetic over bounded `ℕ` (`HornerCert`). -/
+lemma noRootR_cert : ∀ y : ℕ, y < 47 → ((y : ℤ) ^ 3 + (19584715019010048) * (y : ℤ) ^ 2 +
+      (-231965802664780604285009163976704) * (y : ℤ) +
+      (-4448694761996293716971078167345064424815084961792)) % 47 ≠ 0 := by
+  decide +kernel
+
 lemma noRootR : ∀ y : ZMod 47,
     y ^ 3 + (19584715019010048 : ZMod 47) * y ^ 2
       + (-231965802664780604285009163976704 : ZMod 47) * y
       + (-4448694761996293716971078167345064424815084961792 : ZMod 47) ≠ 0 := by
-  decide +kernel
+  intro y h1
+  obtain ⟨z, hz, rfl⟩ := HornerCert.exists_natCast_eq y
+  refine noRootR_cert z hz (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 /-- The discriminant of the weight-54 quartic. -/
 def Dval : ℤ :=
   33670898108132403594211663077253810797 * 10 ^ 60
     + 217667352121563148360107346892630172944577599065030656000000
 
+/-- Axiom-free certificate (`HornerCert`): the discriminant is not a square mod 29. -/
+lemma nonsquare_cert : ∀ y : ℕ, y < 29 → (Dval - (y : ℤ) * (y : ℤ)) % 29 ≠ 0 := by
+  decide +kernel
+
 /-- The discriminant is not a square mod 29. -/
 lemma nonsquare : ∀ x : ZMod 29, ((Dval : ℤ) : ZMod 29) ≠ x * x := by
-  decide +kernel
+  intro x h1
+  obtain ⟨z, hz, rfl⟩ := HornerCert.exists_natCast_eq x
+  refine nonsquare_cert z hz (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 lemma hP : MaedaWeight54.P.map (Int.castRingHom ℚ)
     = X ^ 4 + C (68476320 : ℚ) * X ^ 3 + C (-19584715019010048 : ℚ) * X ^ 2
@@ -392,20 +446,38 @@ noncomputable def R : ℤ[X] :=
     + C (-1278785767850917911663371442192384) * X
     + C (-39332447916091063227336331600133628703891991298048)
 
+/-- Axiom-free certificate: plain `ℤ` arithmetic over bounded `ℕ` (`HornerCert`). -/
+lemma noRootR_cert : ∀ y : ℕ, y < 47 → ((y : ℤ) ^ 3 + (69659795501724672) * (y : ℤ) ^ 2 +
+      (-1278785767850917911663371442192384) * (y : ℤ) +
+      (-39332447916091063227336331600133628703891991298048)) % 47 ≠ 0 := by
+  decide +kernel
+
 lemma noRootR : ∀ y : ZMod 47,
     y ^ 3 + (69659795501724672 : ZMod 47) * y ^ 2
       + (-1278785767850917911663371442192384 : ZMod 47) * y
       + (-39332447916091063227336331600133628703891991298048 : ZMod 47) ≠ 0 := by
-  decide +kernel
+  intro y h1
+  obtain ⟨z, hz, rfl⟩ := HornerCert.exists_natCast_eq y
+  refine noRootR_cert z hz (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 /-- The discriminant of the weight-56 quartic. -/
 def Dval : ℤ :=
   90778194376858155463846341618250985518379 * 10 ^ 60
     + 914782083632162388683561987793062110040704076607851069440000
 
+/-- Axiom-free certificate (`HornerCert`): the discriminant is not a square mod 29. -/
+lemma nonsquare_cert : ∀ y : ℕ, y < 29 → (Dval - (y : ℤ) * (y : ℤ)) % 29 ≠ 0 := by
+  decide +kernel
+
 /-- The discriminant is not a square mod 29. -/
 lemma nonsquare : ∀ x : ZMod 29, ((Dval : ℤ) : ZMod 29) ≠ x * x := by
-  decide +kernel
+  intro x h1
+  obtain ⟨z, hz, rfl⟩ := HornerCert.exists_natCast_eq x
+  refine nonsquare_cert z hz (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 lemma hP : MaedaWeight56.P.map (Int.castRingHom ℚ)
     = X ^ 4 + C (-208622520 : ℚ) * X ^ 3 + C (-69659795501724672 : ℚ) * X ^ 2
@@ -453,20 +525,38 @@ noncomputable def R : ℤ[X] :=
     + C (-83970534274004337362634983671332864) * X
     + C (-33406661530772641858613853476935397620808925327654912)
 
+/-- Axiom-free certificate: plain `ℤ` arithmetic over bounded `ℕ` (`HornerCert`). -/
+lemma noRootR_cert : ∀ y : ℕ, y < 53 → ((y : ℤ) ^ 3 + (411086477602603008) * (y : ℤ) ^ 2 +
+      (-83970534274004337362634983671332864) * (y : ℤ) +
+      (-33406661530772641858613853476935397620808925327654912)) % 53 ≠ 0 := by
+  decide +kernel
+
 lemma noRootR : ∀ y : ZMod 53,
     y ^ 3 + (411086477602603008 : ZMod 53) * y ^ 2
       + (-83970534274004337362634983671332864 : ZMod 53) * y
       + (-33406661530772641858613853476935397620808925327654912 : ZMod 53) ≠ 0 := by
-  decide +kernel
+  intro y h1
+  obtain ⟨z, hz, rfl⟩ := HornerCert.exists_natCast_eq y
+  refine noRootR_cert z hz (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 /-- The discriminant of the weight-58 quartic. -/
 def Dval : ℤ :=
   3467902326314543866526735027947816341671398307 * 10 ^ 60
     + 400337559553178649250593229238005486977919896097380106240000
 
+/-- Axiom-free certificate (`HornerCert`): the discriminant is not a square mod 31. -/
+lemma nonsquare_cert : ∀ y : ℕ, y < 31 → (Dval - (y : ℤ) * (y : ℤ)) % 31 ≠ 0 := by
+  decide +kernel
+
 /-- The discriminant is not a square mod 31. -/
 lemma nonsquare : ∀ x : ZMod 31, ((Dval : ℤ) : ZMod 31) ≠ x * x := by
-  decide +kernel
+  intro x h1
+  obtain ⟨z, hz, rfl⟩ := HornerCert.exists_natCast_eq x
+  refine nonsquare_cert z hz (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 lemma hP : MaedaWeight58.P.map (Int.castRingHom ℚ)
     = X ^ 4 + C (217744560 : ℚ) * X ^ 3 + C (-411086477602603008 : ℚ) * X ^ 2
@@ -514,20 +604,38 @@ noncomputable def R : ℤ[X] :=
     + C (-17245355982718527061788448056907137024) * X
     + C (-99399080093060775942196205372106815846059351474628984832)
 
+/-- Axiom-free certificate: plain `ℤ` arithmetic over bounded `ℕ` (`HornerCert`). -/
+lemma noRootR_cert : ∀ y : ℕ, y < 53 → ((y : ℤ) ^ 3 + (6156169255669690368) * (y : ℤ) ^ 2 +
+      (-17245355982718527061788448056907137024) * (y : ℤ) +
+      (-99399080093060775942196205372106815846059351474628984832)) % 53 ≠ 0 := by
+  decide +kernel
+
 lemma noRootR : ∀ y : ZMod 53,
     y ^ 3 + (6156169255669690368 : ZMod 53) * y ^ 2
       + (-17245355982718527061788448056907137024 : ZMod 53) * y
       + (-99399080093060775942196205372106815846059351474628984832 : ZMod 53) ≠ 0 := by
-  decide +kernel
+  intro y h1
+  obtain ⟨z, hz, rfl⟩ := HornerCert.exists_natCast_eq y
+  refine noRootR_cert z hz (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 /-- The discriminant of the weight-62 quartic. -/
 def Dval : ℤ :=
   47733615108317839217727397393985521299829654908653475 * 10 ^ 60
     + 117858264773407979113238155503536661106523915981433077760000
 
+/-- Axiom-free certificate (`HornerCert`): the discriminant is not a square mod 29. -/
+lemma nonsquare_cert : ∀ y : ℕ, y < 29 → (Dval - (y : ℤ) * (y : ℤ)) % 29 ≠ 0 := by
+  decide +kernel
+
 /-- The discriminant is not a square mod 29. -/
 lemma nonsquare : ∀ x : ZMod 29, ((Dval : ℤ) : ZMod 29) ≠ x * x := by
-  decide +kernel
+  intro x h1
+  obtain ⟨z, hz, rfl⟩ := HornerCert.exists_natCast_eq x
+  refine nonsquare_cert z hz (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 lemma hP : MaedaWeight62.P.map (Int.castRingHom ℚ)
     = X ^ 4 + C (-1146312000 : ℚ) * X ^ 3 + C (-6156169255669690368 : ℚ) * X ^ 2

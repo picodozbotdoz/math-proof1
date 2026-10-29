@@ -1,4 +1,5 @@
 import MathProof.ModularForms.MaedaDim5
+import MathProof.ModularForms.MaedaCertC
 
 /-!
 # Maeda's conjecture for the level-one weights with `dim S_k = 5`
@@ -24,11 +25,18 @@ noncomputable def f1 : CuspForm 𝒮ℒ ((60 : ℕ) : ℤ) :=
 lemma c1 (n : ℕ) : (qExpansion 1 f1).coeff n = seqP 0 12 0 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L1 : seqPL 0 12 0 11 =
+lemma L1c : seqPLc 0 12 0 11 =
     [0, 1, 2856, 3758652,
      3018653248, 1651252143390, 650139077750112, 189799422216146456,
      41698318072212994560, 6925107939087424526037, 866141635540622367921840] := by
   decide +kernel
+
+lemma L1 : seqPL 0 12 0 11 =
+    [0, 1, 2856, 3758652,
+     3018653248, 1651252143390, 650139077750112, 189799422216146456,
+     41698318072212994560, 6925107939087424526037, 866141635540622367921840] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L1c
 
 lemma q1_1 : (qExpansion 1 f1).coeff 1 = (1 : ℂ) := by
   rw [c1, seqP_getD (N := 11) (by norm_num), L1]
@@ -69,11 +77,18 @@ noncomputable def f2 : CuspForm 𝒮ℒ ((60 : ℕ) : ℤ) :=
 lemma c2 (n : ℕ) : (qExpansion 1 f2).coeff n = seqP 1 9 0 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L2 : seqPL 1 9 0 11 =
+lemma L2c : seqPLc 1 9 0 11 =
     [0, 0, 1, 2112,
      1990440, 1100453120, 394370112060, 95438415252096,
      15731771189894720, 1734959081918062080, 121828014479762269470] := by
   decide +kernel
+
+lemma L2 : seqPL 1 9 0 11 =
+    [0, 0, 1, 2112,
+     1990440, 1100453120, 394370112060, 95438415252096,
+     15731771189894720, 1734959081918062080, 121828014479762269470] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L2c
 
 lemma q2_1 : (qExpansion 1 f2).coeff 1 = (0 : ℂ) := by
   rw [c2, seqP_getD (N := 11) (by norm_num), L2]
@@ -114,11 +129,18 @@ noncomputable def f3 : CuspForm 𝒮ℒ ((60 : ℕ) : ℤ) :=
 lemma c3 (n : ℕ) : (qExpansion 1 f3).coeff n = seqP 2 6 0 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L3 : seqPL 2 6 0 11 =
+lemma L3c : seqPLc 2 6 0 11 =
     [0, 0, 0, 1,
      1368, 775764, 232453632, 38421326826,
      3209853763008, 84270566144376, -2601592081238016] := by
   decide +kernel
+
+lemma L3 : seqPL 2 6 0 11 =
+    [0, 0, 0, 1,
+     1368, 775764, 232453632, 38421326826,
+     3209853763008, 84270566144376, -2601592081238016] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L3c
 
 lemma q3_1 : (qExpansion 1 f3).coeff 1 = (0 : ℂ) := by
   rw [c3, seqP_getD (N := 11) (by norm_num), L3]
@@ -159,11 +181,18 @@ noncomputable def f4 : CuspForm 𝒮ℒ ((60 : ℕ) : ℤ) :=
 lemma c4 (n : ℕ) : (qExpansion 1 f4).coeff n = seqP 3 3 0 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L4 : seqPL 3 3 0 11 =
+lemma L4c : seqPLc 3 3 0 11 =
     [0, 0, 0, 0,
      1, 624, 114624, 2824000,
      -523767000, 20266211232, -420667929856] := by
   decide +kernel
+
+lemma L4 : seqPL 3 3 0 11 =
+    [0, 0, 0, 0,
+     1, 624, 114624, 2824000,
+     -523767000, 20266211232, -420667929856] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L4c
 
 lemma q4_1 : (qExpansion 1 f4).coeff 1 = (0 : ℂ) := by
   rw [c4, seqP_getD (N := 11) (by norm_num), L4]
@@ -204,11 +233,18 @@ noncomputable def f5 : CuspForm 𝒮ℒ ((60 : ℕ) : ℤ) :=
 lemma c5 (n : ℕ) : (qExpansion 1 f5).coeff n = seqP 4 0 0 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L5 : seqPL 4 0 0 11 =
+lemma L5c : seqPLc 4 0 0 11 =
     [0, 0, 0, 0,
      0, 1, -120, 7020,
      -266560, 7379190, -158562144] := by
   decide +kernel
+
+lemma L5 : seqPL 4 0 0 11 =
+    [0, 0, 0, 0,
+     0, 1, -120, 7020,
+     -266560, 7379190, -158562144] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L5c
 
 lemma q5_1 : (qExpansion 1 f5).coeff 1 = (0 : ℂ) := by
   rw [c5, seqP_getD (N := 11) (by norm_num), L5]
@@ -357,15 +393,50 @@ def r1 : ZMod 83 := ((810634763334812972416233648439689216 : ℤ) : ZMod 83)
 /-- See `r4`. -/
 def r0 : ZMod 83 := ((263222216157060824115203098902237248565018624 : ℤ) : ZMod 83)
 
+lemma noRoot_cert : ∀ x : ℕ, x < 83 →
+    ((x : ℤ) ^ 5 + (449691864) * (x : ℤ) ^ 4 + (-2209450184054433792) * (x : ℤ) ^ 3 +
+      (-736010060393513697870348288) * (x : ℤ) ^ 2
+      + (810634763334812972416233648439689216) * (x : ℤ) +
+      (263222216157060824115203098902237248565018624)) % 83 ≠ 0 := by
+  decide +kernel
+
 lemma noRoot : ∀ x : ZMod 83,
     x ^ 5 + r4 * x ^ 4 + r3 * x ^ 3 + r2 * x ^ 2 + r1 * x + r0 ≠ 0 := by
+  intro x h1
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq x
+  simp only [r4, r3, r2, r1, r0] at h1
+  push_cast at h1
+  refine noRoot_cert y hy (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
+
+lemma noQuad_cert : ∀ u : ℕ, u < 83 → ∀ v : ℕ, v < 83 →
+    ¬ (((u : ℤ) * ((-736010060393513697870348288) - (v : ℤ) * ((449691864) - (u : ℤ)) - (u : ℤ) *
+      ((-2209450184054433792) - (v : ℤ) - (u : ℤ) * ((449691864) - (u : ℤ))))
+        + (v : ℤ) * ((-2209450184054433792) - (v : ℤ) - (u : ℤ) * ((449691864) - (u : ℤ))) -
+      (810634763334812972416233648439689216)) % 83 = 0
+      ∧ ((v : ℤ) * ((-736010060393513697870348288) - (v : ℤ) * ((449691864) - (u : ℤ)) - (u : ℤ) *
+      ((-2209450184054433792) - (v : ℤ) - (u : ℤ) * ((449691864) - (u : ℤ)))) -
+      (263222216157060824115203098902237248565018624)) % 83 = 0) := by
   decide +kernel
 
 lemma noQuad : ∀ u v : ZMod 83,
     ¬ (u * (r2 - v * (r4 - u) - u * (r3 - v - u * (r4 - u)))
         + v * (r3 - v - u * (r4 - u)) = r1
       ∧ v * (r2 - v * (r4 - u) - u * (r3 - v - u * (r4 - u))) = r0) := by
-  decide +kernel
+  rintro u v ⟨h1, h2⟩
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq u
+  obtain ⟨z, hz, rfl⟩ := HornerCert.exists_natCast_eq v
+  simp only [r4, r3, r2, r1] at h1
+  push_cast at h1
+  simp only [r4, r3, r2, r0] at h2
+  push_cast at h2
+  refine noQuad_cert y hy z hz
+    ⟨HornerCert.emod_eq_zero_of_cast ?_, HornerCert.emod_eq_zero_of_cast ?_⟩
+  · push_cast
+    linear_combination h1
+  · push_cast
+    linear_combination h2
 
 /-- **Maeda's conjecture in weight 60** (irreducibility): the characteristic
 polynomial of `T₂` on `S_60(SL(2, ℤ))` is irreducible over `ℚ` (irreducible mod 83). -/
@@ -388,11 +459,18 @@ noncomputable def f1 : CuspForm 𝒮ℒ ((64 : ℕ) : ℤ) :=
 lemma c1 (n : ℕ) : (qExpansion 1 f1).coeff n = seqP 0 13 0 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L1 : seqPL 0 13 0 11 =
+lemma L1c : seqPLc 0 13 0 11 =
     [0, 1, 3096, 4446252,
      3926905408, 2383866821070, 1052985191388192, 349419856793731256,
      88665629227071321600, 17347068984457085935077, 2619522800628262688592720] := by
   decide +kernel
+
+lemma L1 : seqPL 0 13 0 11 =
+    [0, 1, 3096, 4446252,
+     3926905408, 2383866821070, 1052985191388192, 349419856793731256,
+     88665629227071321600, 17347068984457085935077, 2619522800628262688592720] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L1c
 
 lemma q1_1 : (qExpansion 1 f1).coeff 1 = (1 : ℂ) := by
   rw [c1, seqP_getD (N := 11) (by norm_num), L1]
@@ -433,11 +511,18 @@ noncomputable def f2 : CuspForm 𝒮ℒ ((64 : ℕ) : ℤ) :=
 lemma c2 (n : ℕ) : (qExpansion 1 f2).coeff n = seqP 1 10 0 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L2 : seqPL 1 10 0 11 =
+lemma L2c : seqPLc 1 10 0 11 =
     [0, 0, 1, 2352,
      2499480, 1582727360, 662792421420, 192477633674976,
      39496260273849920, 5719400651847749760, 572847108823385807310] := by
   decide +kernel
+
+lemma L2 : seqPL 1 10 0 11 =
+    [0, 0, 1, 2352,
+     2499480, 1582727360, 662792421420, 192477633674976,
+     39496260273849920, 5719400651847749760, 572847108823385807310] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L2c
 
 lemma q2_1 : (qExpansion 1 f2).coeff 1 = (0 : ℂ) := by
   rw [c2, seqP_getD (N := 11) (by norm_num), L2]
@@ -478,11 +563,18 @@ noncomputable def f3 : CuspForm 𝒮ℒ ((64 : ℕ) : ℤ) :=
 lemma c3 (n : ℕ) : (qExpansion 1 f3).coeff n = seqP 2 7 0 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L3 : seqPL 2 7 0 11 =
+lemma L3c : seqPLc 2 7 0 11 =
     [0, 0, 0, 1,
      1608, 1106244, 421598592, 95895059226,
      12938309178048, 939201256431576, 24818915367335424] := by
   decide +kernel
+
+lemma L3 : seqPL 2 7 0 11 =
+    [0, 0, 0, 1,
+     1608, 1106244, 421598592, 95895059226,
+     12938309178048, 939201256431576, 24818915367335424] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L3c
 
 lemma q3_1 : (qExpansion 1 f3).coeff 1 = (0 : ℂ) := by
   rw [c3, seqP_getD (N := 11) (by norm_num), L3]
@@ -523,11 +615,18 @@ noncomputable def f4 : CuspForm 𝒮ℒ ((64 : ℕ) : ℤ) :=
 lemma c4 (n : ℕ) : (qExpansion 1 f4).coeff n = seqP 3 4 0 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L4 : seqPL 3 4 0 11 =
+lemma L4c : seqPLc 3 4 0 11 =
     [0, 0, 0, 0,
      1, 864, 266544, 31688320,
      405791640, -98556792768, 3332890468544] := by
   decide +kernel
+
+lemma L4 : seqPL 3 4 0 11 =
+    [0, 0, 0, 0,
+     1, 864, 266544, 31688320,
+     405791640, -98556792768, 3332890468544] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L4c
 
 lemma q4_1 : (qExpansion 1 f4).coeff 1 = (0 : ℂ) := by
   rw [c4, seqP_getD (N := 11) (by norm_num), L4]
@@ -568,11 +667,18 @@ noncomputable def f5 : CuspForm 𝒮ℒ ((64 : ℕ) : ℤ) :=
 lemma c5 (n : ℕ) : (qExpansion 1 f5).coeff n = seqP 4 1 0 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L5 : seqPL 4 1 0 11 =
+lemma L5c : seqPLc 4 1 0 11 =
     [0, 0, 0, 0,
      0, 1, 120, -19620,
      1165760, -42220890, 1081776096] := by
   decide +kernel
+
+lemma L5 : seqPL 4 1 0 11 =
+    [0, 0, 0, 0,
+     0, 1, 120, -19620,
+     1165760, -42220890, 1081776096] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L5c
 
 lemma q5_1 : (qExpansion 1 f5).coeff 1 = (0 : ℂ) := by
   rw [c5, seqP_getD (N := 11) (by norm_num), L5]
@@ -721,15 +827,50 @@ def r1 : ZMod 73 := ((93356730870958242939964792647614201856 : ℤ) : ZMod 73)
 /-- See `r4`. -/
 def r0 : ZMod 73 := ((59899702063757157544982491709928053576589901824 : ℤ) : ZMod 73)
 
+lemma noRoot_cert : ∀ x : ℕ, x < 73 →
+    ((x : ℤ) ^ 5 + (-507315096) * (x : ℤ) ^ 4 + (-26316207229657439232) * (x : ℤ) ^ 3 +
+      (7816999697067374824780726272) * (x : ℤ) ^ 2
+      + (93356730870958242939964792647614201856) * (x : ℤ) +
+      (59899702063757157544982491709928053576589901824)) % 73 ≠ 0 := by
+  decide +kernel
+
 lemma noRoot : ∀ x : ZMod 73,
     x ^ 5 + r4 * x ^ 4 + r3 * x ^ 3 + r2 * x ^ 2 + r1 * x + r0 ≠ 0 := by
+  intro x h1
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq x
+  simp only [r4, r3, r2, r1, r0] at h1
+  push_cast at h1
+  refine noRoot_cert y hy (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
+
+lemma noQuad_cert : ∀ u : ℕ, u < 73 → ∀ v : ℕ, v < 73 →
+    ¬ (((u : ℤ) * ((7816999697067374824780726272) - (v : ℤ) * ((-507315096) - (u : ℤ)) - (u : ℤ) *
+      ((-26316207229657439232) - (v : ℤ) - (u : ℤ) * ((-507315096) - (u : ℤ))))
+        + (v : ℤ) * ((-26316207229657439232) - (v : ℤ) - (u : ℤ) * ((-507315096) - (u : ℤ))) -
+      (93356730870958242939964792647614201856)) % 73 = 0
+      ∧ ((v : ℤ) * ((7816999697067374824780726272) - (v : ℤ) * ((-507315096) - (u : ℤ)) - (u : ℤ)
+      * ((-26316207229657439232) - (v : ℤ) - (u : ℤ) * ((-507315096) - (u : ℤ)))) -
+      (59899702063757157544982491709928053576589901824)) % 73 = 0) := by
   decide +kernel
 
 lemma noQuad : ∀ u v : ZMod 73,
     ¬ (u * (r2 - v * (r4 - u) - u * (r3 - v - u * (r4 - u)))
         + v * (r3 - v - u * (r4 - u)) = r1
       ∧ v * (r2 - v * (r4 - u) - u * (r3 - v - u * (r4 - u))) = r0) := by
-  decide +kernel
+  rintro u v ⟨h1, h2⟩
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq u
+  obtain ⟨z, hz, rfl⟩ := HornerCert.exists_natCast_eq v
+  simp only [r4, r3, r2, r1] at h1
+  push_cast at h1
+  simp only [r4, r3, r2, r0] at h2
+  push_cast at h2
+  refine noQuad_cert y hy z hz
+    ⟨HornerCert.emod_eq_zero_of_cast ?_, HornerCert.emod_eq_zero_of_cast ?_⟩
+  · push_cast
+    linear_combination h1
+  · push_cast
+    linear_combination h2
 
 /-- **Maeda's conjecture in weight 64** (irreducibility): the characteristic
 polynomial of `T₂` on `S_64(SL(2, ℤ))` is irreducible over `ℚ` (irreducible mod 73). -/
@@ -752,11 +893,18 @@ noncomputable def f1 : CuspForm 𝒮ℒ ((66 : ℕ) : ℤ) :=
 lemma c1 (n : ℕ) : (qExpansion 1 f1).coeff n = seqP 0 12 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L1 : seqPL 0 12 1 11 =
+lemma L1c : seqPLc 0 12 1 11 =
     [0, 1, 2352, 2302596,
      1076668672, 66985254150, -232761990374208, -165707527363458808,
      -64978382303927685120, -17328424302261983568627, -3341328926810119418239200] := by
   decide +kernel
+
+lemma L1 : seqPL 0 12 1 11 =
+    [0, 1, 2352, 2302596,
+     1076668672, 66985254150, -232761990374208, -165707527363458808,
+     -64978382303927685120, -17328424302261983568627, -3341328926810119418239200] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L1c
 
 lemma q1_1 : (qExpansion 1 f1).coeff 1 = (1 : ℂ) := by
   rw [c1, seqP_getD (N := 11) (by norm_num), L1]
@@ -797,11 +945,18 @@ noncomputable def f2 : CuspForm 𝒮ℒ ((66 : ℕ) : ℤ) :=
 lemma c2 (n : ℕ) : (qExpansion 1 f2).coeff n = seqP 1 9 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L2 : seqPL 1 9 1 11 =
+lemma L2c : seqPLc 1 9 1 11 =
     [0, 0, 1, 1608,
      909360, 62021600, -193623516540, -121872760564464,
      -39064746818471680, -7830272765877727680, -1026190649656189453050] := by
   decide +kernel
+
+lemma L2 : seqPL 1 9 1 11 =
+    [0, 0, 1, 1608,
+     909360, 62021600, -193623516540, -121872760564464,
+     -39064746818471680, -7830272765877727680, -1026190649656189453050] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L2c
 
 lemma q2_1 : (qExpansion 1 f2).coeff 1 = (0 : ℂ) := by
   rw [c2, seqP_getD (N := 11) (by norm_num), L2]
@@ -842,11 +997,18 @@ noncomputable def f3 : CuspForm 𝒮ℒ ((66 : ℕ) : ℤ) :=
 lemma c3 (n : ℕ) : (qExpansion 1 f3).coeff n = seqP 2 6 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L3 : seqPL 2 6 1 11 =
+lemma L3c : seqPLc 2 6 1 11 =
     [0, 0, 0, 1,
      864, 69660, -181406976, -91806574446,
      -20116794465792, -2201520886582392, -103310208629959680] := by
   decide +kernel
+
+lemma L3 : seqPL 2 6 1 11 =
+    [0, 0, 0, 1,
+     864, 69660, -181406976, -91806574446,
+     -20116794465792, -2201520886582392, -103310208629959680] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L3c
 
 lemma q3_1 : (qExpansion 1 f3).coeff 1 = (0 : ℂ) := by
   rw [c3, seqP_getD (N := 11) (by norm_num), L3]
@@ -887,11 +1049,18 @@ noncomputable def f4 : CuspForm 𝒮ℒ ((66 : ℕ) : ℤ) :=
 lemma c4 (n : ℕ) : (qExpansion 1 f4).coeff n = seqP 3 3 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L4 : seqPL 3 3 1 11 =
+lemma L4c : seqPLc 3 3 1 11 =
     [0, 0, 0, 0,
      1, 120, -216504, -65447840,
      -3930759120, 222846012432, -2332880457760] := by
   decide +kernel
+
+lemma L4 : seqPL 3 3 1 11 =
+    [0, 0, 0, 0,
+     1, 120, -216504, -65447840,
+     -3930759120, 222846012432, -2332880457760] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L4c
 
 lemma q4_1 : (qExpansion 1 f4).coeff 1 = (0 : ℂ) := by
   rw [c4, seqP_getD (N := 11) (by norm_num), L4]
@@ -932,11 +1101,18 @@ noncomputable def f5 : CuspForm 𝒮ℒ ((66 : ℕ) : ℤ) :=
 lemma c5 (n : ℕ) : (qExpansion 1 f5).coeff n = seqP 4 0 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L5 : seqPL 4 0 1 11 =
+lemma L5c : seqPLc 4 0 1 11 =
     [0, 0, 0, 0,
      0, 1, -624, 50868,
      -1931776, 39193182, -245187648] := by
   decide +kernel
+
+lemma L5 : seqPL 4 0 1 11 =
+    [0, 0, 0, 0,
+     0, 1, -624, 50868,
+     -1931776, 39193182, -245187648] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L5c
 
 lemma q5_1 : (qExpansion 1 f5).coeff 1 = (0 : ℂ) := by
   rw [c5, seqP_getD (N := 11) (by norm_num), L5]
@@ -1085,15 +1261,50 @@ def r1 : ZMod 79 := ((4888759358323485530147825225712235708416 : ℤ) : ZMod 79)
 /-- See `r4`. -/
 def r0 : ZMod 79 := ((6737365607750178848535412403321340119893376237568 : ℤ) : ZMod 79)
 
+lemma noRoot_cert : ∀ x : ℕ, x < 79 →
+    ((x : ℤ) ^ 5 + (3959709648) * (x : ℤ) ^ 4 + (-142850166119005483008) * (x : ℤ) ^ 3 +
+      (-339986038308627409973683421184) * (x : ℤ) ^ 2
+      + (4888759358323485530147825225712235708416) * (x : ℤ) +
+      (6737365607750178848535412403321340119893376237568)) % 79 ≠ 0 := by
+  decide +kernel
+
 lemma noRoot : ∀ x : ZMod 79,
     x ^ 5 + r4 * x ^ 4 + r3 * x ^ 3 + r2 * x ^ 2 + r1 * x + r0 ≠ 0 := by
+  intro x h1
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq x
+  simp only [r4, r3, r2, r1, r0] at h1
+  push_cast at h1
+  refine noRoot_cert y hy (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
+
+lemma noQuad_cert : ∀ u : ℕ, u < 79 → ∀ v : ℕ, v < 79 →
+    ¬ (((u : ℤ) * ((-339986038308627409973683421184) - (v : ℤ) * ((3959709648) - (u : ℤ)) - (u :
+      ℤ) * ((-142850166119005483008) - (v : ℤ) - (u : ℤ) * ((3959709648) - (u : ℤ))))
+        + (v : ℤ) * ((-142850166119005483008) - (v : ℤ) - (u : ℤ) * ((3959709648) - (u : ℤ))) -
+      (4888759358323485530147825225712235708416)) % 79 = 0
+      ∧ ((v : ℤ) * ((-339986038308627409973683421184) - (v : ℤ) * ((3959709648) - (u : ℤ)) - (u :
+      ℤ) * ((-142850166119005483008) - (v : ℤ) - (u : ℤ) * ((3959709648) - (u : ℤ)))) -
+      (6737365607750178848535412403321340119893376237568)) % 79 = 0) := by
   decide +kernel
 
 lemma noQuad : ∀ u v : ZMod 79,
     ¬ (u * (r2 - v * (r4 - u) - u * (r3 - v - u * (r4 - u)))
         + v * (r3 - v - u * (r4 - u)) = r1
       ∧ v * (r2 - v * (r4 - u) - u * (r3 - v - u * (r4 - u))) = r0) := by
-  decide +kernel
+  rintro u v ⟨h1, h2⟩
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq u
+  obtain ⟨z, hz, rfl⟩ := HornerCert.exists_natCast_eq v
+  simp only [r4, r3, r2, r1] at h1
+  push_cast at h1
+  simp only [r4, r3, r2, r0] at h2
+  push_cast at h2
+  refine noQuad_cert y hy z hz
+    ⟨HornerCert.emod_eq_zero_of_cast ?_, HornerCert.emod_eq_zero_of_cast ?_⟩
+  · push_cast
+    linear_combination h1
+  · push_cast
+    linear_combination h2
 
 /-- **Maeda's conjecture in weight 66** (irreducibility): the characteristic
 polynomial of `T₂` on `S_66(SL(2, ℤ))` is irreducible over `ℚ` (irreducible mod 79). -/
@@ -1116,11 +1327,18 @@ noncomputable def f1 : CuspForm 𝒮ℒ ((68 : ℕ) : ℤ) :=
 lemma c1 (n : ℕ) : (qExpansion 1 f1).coeff n = seqP 0 14 0 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L1 : seqPL 0 14 0 11 =
+lemma L1c : seqPLc 0 14 0 11 =
     [0, 1, 3336, 5191452,
      5000699968, 3335948845950, 1633625277211872, 607311921856768856,
      174816931390027645440, 39388684834480281033717, 6976703738092643788489200] := by
   decide +kernel
+
+lemma L1 : seqPL 0 14 0 11 =
+    [0, 1, 3336, 5191452,
+     5000699968, 3335948845950, 1633625277211872, 607311921856768856,
+     174816931390027645440, 39388684834480281033717, 6976703738092643788489200] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L1c
 
 lemma q1_1 : (qExpansion 1 f1).coeff 1 = (1 : ℂ) := by
   rw [c1, seqP_getD (N := 11) (by norm_num), L1]
@@ -1161,11 +1379,18 @@ noncomputable def f2 : CuspForm 𝒮ℒ ((68 : ℕ) : ℤ) :=
 lemma c2 (n : ℕ) : (qExpansion 1 f2).coeff n = seqP 1 11 0 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L2 : seqPL 1 11 0 11 =
+lemma L2c : seqPLc 1 11 0 11 =
     [0, 0, 1, 2592,
      3066120, 2187689600, 1048061687580, 354983343656256,
      87133203776045120, 15618736576491575040, 2032120297292918932350] := by
   decide +kernel
+
+lemma L2 : seqPL 1 11 0 11 =
+    [0, 0, 1, 2592,
+     3066120, 2187689600, 1048061687580, 354983343656256,
+     87133203776045120, 15618736576491575040, 2032120297292918932350] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L2c
 
 lemma q2_1 : (qExpansion 1 f2).coeff 1 = (0 : ℂ) := by
   rw [c2, seqP_getD (N := 11) (by norm_num), L2]
@@ -1206,11 +1431,18 @@ noncomputable def f3 : CuspForm 𝒮ℒ ((68 : ℕ) : ℤ) :=
 lemma c3 (n : ℕ) : (qExpansion 1 f3).coeff n = seqP 2 8 0 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L3 : seqPL 2 8 0 11 =
+lemma L3c : seqPLc 2 8 0 11 =
     [0, 0, 0, 1,
      1848, 1494324, 690577152, 199479031626,
      36871238513088, 4254381359710776, 278825799490980864] := by
   decide +kernel
+
+lemma L3 : seqPL 2 8 0 11 =
+    [0, 0, 0, 1,
+     1848, 1494324, 690577152, 199479031626,
+     36871238513088, 4254381359710776, 278825799490980864] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L3c
 
 lemma q3_1 : (qExpansion 1 f3).coeff 1 = (0 : ℂ) := by
   rw [c3, seqP_getD (N := 11) (by norm_num), L3]
@@ -1251,11 +1483,18 @@ noncomputable def f4 : CuspForm 𝒮ℒ ((68 : ℕ) : ℤ) :=
 lemma c4 (n : ℕ) : (qExpansion 1 f4).coeff n = seqP 3 5 0 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L4 : seqPL 3 5 0 11 =
+lemma L4c : seqPLc 3 5 0 11 =
     [0, 0, 0, 0,
      1, 1104, 476064, 97531840,
      8592547080, 69086315232, -19226588304256] := by
   decide +kernel
+
+lemma L4 : seqPL 3 5 0 11 =
+    [0, 0, 0, 0,
+     1, 1104, 476064, 97531840,
+     8592547080, 69086315232, -19226588304256] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L4c
 
 lemma q4_1 : (qExpansion 1 f4).coeff 1 = (0 : ℂ) := by
   rw [c4, seqP_getD (N := 11) (by norm_num), L4]
@@ -1296,11 +1535,18 @@ noncomputable def f5 : CuspForm 𝒮ℒ ((68 : ℕ) : ℤ) :=
 lemma c5 (n : ℕ) : (qExpansion 1 f5).coeff n = seqP 4 2 0 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L5 : seqPL 4 2 0 11 =
+lemma L5c : seqPLc 4 2 0 11 =
     [0, 0, 0, 0,
      0, 1, 360, 11340,
      -3277120, 196006230, -6662909664] := by
   decide +kernel
+
+lemma L5 : seqPL 4 2 0 11 =
+    [0, 0, 0, 0,
+     0, 1, 360, 11340,
+     -3277120, 196006230, -6662909664] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L5c
 
 lemma q5_1 : (qExpansion 1 f5).coeff 1 = (0 : ℂ) := by
   rw [c5, seqP_getD (N := 11) (by norm_num), L5]
@@ -1449,15 +1695,50 @@ def r1 : ZMod 97 := ((50978026392314038029857853615859298205696 : ℤ) : ZMod 97
 /-- See `r4`. -/
 def r0 : ZMod 97 := ((-224135116306806567372209572838489759238644853374976 : ℤ) : ZMod 97)
 
+lemma noRoot_cert : ∀ x : ℕ, x < 97 →
+    ((x : ℤ) ^ 5 + (-5554901256) * (x : ℤ) ^ 4 + (-528742419683384143872) * (x : ℤ) ^ 3 +
+      (1360506199877236618906967212032) * (x : ℤ) ^ 2
+      + (50978026392314038029857853615859298205696) * (x : ℤ) +
+      (-224135116306806567372209572838489759238644853374976)) % 97 ≠ 0 := by
+  decide +kernel
+
 lemma noRoot : ∀ x : ZMod 97,
     x ^ 5 + r4 * x ^ 4 + r3 * x ^ 3 + r2 * x ^ 2 + r1 * x + r0 ≠ 0 := by
+  intro x h1
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq x
+  simp only [r4, r3, r2, r1, r0] at h1
+  push_cast at h1
+  refine noRoot_cert y hy (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
+
+lemma noQuad_cert : ∀ u : ℕ, u < 97 → ∀ v : ℕ, v < 97 →
+    ¬ (((u : ℤ) * ((1360506199877236618906967212032) - (v : ℤ) * ((-5554901256) - (u : ℤ)) - (u :
+      ℤ) * ((-528742419683384143872) - (v : ℤ) - (u : ℤ) * ((-5554901256) - (u : ℤ))))
+        + (v : ℤ) * ((-528742419683384143872) - (v : ℤ) - (u : ℤ) * ((-5554901256) - (u : ℤ))) -
+      (50978026392314038029857853615859298205696)) % 97 = 0
+      ∧ ((v : ℤ) * ((1360506199877236618906967212032) - (v : ℤ) * ((-5554901256) - (u : ℤ)) - (u :
+      ℤ) * ((-528742419683384143872) - (v : ℤ) - (u : ℤ) * ((-5554901256) - (u : ℤ)))) -
+      (-224135116306806567372209572838489759238644853374976)) % 97 = 0) := by
   decide +kernel
 
 lemma noQuad : ∀ u v : ZMod 97,
     ¬ (u * (r2 - v * (r4 - u) - u * (r3 - v - u * (r4 - u)))
         + v * (r3 - v - u * (r4 - u)) = r1
       ∧ v * (r2 - v * (r4 - u) - u * (r3 - v - u * (r4 - u))) = r0) := by
-  decide +kernel
+  rintro u v ⟨h1, h2⟩
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq u
+  obtain ⟨z, hz, rfl⟩ := HornerCert.exists_natCast_eq v
+  simp only [r4, r3, r2, r1] at h1
+  push_cast at h1
+  simp only [r4, r3, r2, r0] at h2
+  push_cast at h2
+  refine noQuad_cert y hy z hz
+    ⟨HornerCert.emod_eq_zero_of_cast ?_, HornerCert.emod_eq_zero_of_cast ?_⟩
+  · push_cast
+    linear_combination h1
+  · push_cast
+    linear_combination h2
 
 /-- **Maeda's conjecture in weight 68** (irreducibility): the characteristic
 polynomial of `T₂` on `S_68(SL(2, ℤ))` is irreducible over `ℚ` (irreducible mod 97). -/
@@ -1480,11 +1761,18 @@ noncomputable def f1 : CuspForm 𝒮ℒ ((70 : ℕ) : ℤ) :=
 lemma c1 (n : ℕ) : (qExpansion 1 f1).coeff n = seqP 0 13 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L1 : seqPL 0 13 1 11 =
+lemma L1c : seqPLc 0 13 1 11 =
     [0, 1, 2592, 2869236,
      1634378752, 330375165750, -214344410364288, -221418441278162008,
      -105250485696450232320, -33282727268605445023587, -7641621695612491634376000] := by
   decide +kernel
+
+lemma L1 : seqPL 0 13 1 11 =
+    [0, 1, 2592, 2869236,
+     1634378752, 330375165750, -214344410364288, -221418441278162008,
+     -105250485696450232320, -33282727268605445023587, -7641621695612491634376000] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L1c
 
 lemma q1_1 : (qExpansion 1 f1).coeff 1 = (1 : ℂ) := by
   rw [c1, seqP_getD (N := 11) (by norm_num), L1]
@@ -1525,11 +1813,18 @@ noncomputable def f2 : CuspForm 𝒮ℒ ((70 : ℕ) : ℤ) :=
 lemma c2 (n : ℕ) : (qExpansion 1 f2).coeff n = seqP 1 10 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L2 : seqPL 1 10 1 11 =
+lemma L2c : seqPLc 1 10 1 11 =
     [0, 0, 1, 1848,
      1297440, 283748000, -176763291660, -168202298776464,
      -68732003383843840, -17470357200946509120, -2990658341899081730250] := by
   decide +kernel
+
+lemma L2 : seqPL 1 10 1 11 =
+    [0, 0, 1, 1848,
+     1297440, 283748000, -176763291660, -168202298776464,
+     -68732003383843840, -17470357200946509120, -2990658341899081730250] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L2c
 
 lemma q2_1 : (qExpansion 1 f2).coeff 1 = (0 : ℂ) := by
   rw [c2, seqP_getD (N := 11) (by norm_num), L2]
@@ -1570,11 +1865,18 @@ noncomputable def f3 : CuspForm 𝒮ℒ ((70 : ℕ) : ℤ) :=
 lemma c3 (n : ℕ) : (qExpansion 1 f3).coeff n = seqP 2 7 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L3 : seqPL 2 7 1 11 =
+lemma L3c : seqPLc 2 7 1 11 =
     [0, 0, 0, 1,
      1104, 279180, -162815616, -135187959486,
      -42541728118272, -7229071567423512, -675747613727485440] := by
   decide +kernel
+
+lemma L3 : seqPL 2 7 1 11 =
+    [0, 0, 0, 1,
+     1104, 279180, -162815616, -135187959486,
+     -42541728118272, -7229071567423512, -675747613727485440] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L3c
 
 lemma q3_1 : (qExpansion 1 f3).coeff 1 = (0 : ℂ) := by
   rw [c3, seqP_getD (N := 11) (by norm_num), L3]
@@ -1615,11 +1917,18 @@ noncomputable def f4 : CuspForm 𝒮ℒ ((70 : ℕ) : ℤ) :=
 lemma c4 (n : ℕ) : (qExpansion 1 f4).coeff n = seqP 3 4 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L4 : seqPL 3 4 1 11 =
+lemma L4c : seqPLc 3 4 1 11 =
     [0, 0, 0, 0,
      1, 360, -185544, -117142880,
      -20105065440, -863356285008, 42216123881120] := by
   decide +kernel
+
+lemma L4 : seqPL 3 4 1 11 =
+    [0, 0, 0, 0,
+     1, 360, -185544, -117142880,
+     -20105065440, -863356285008, 42216123881120] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L4c
 
 lemma q4_1 : (qExpansion 1 f4).coeff 1 = (0 : ℂ) := by
   rw [c4, seqP_getD (N := 11) (by norm_num), L4]
@@ -1660,11 +1969,18 @@ noncomputable def f5 : CuspForm 𝒮ℒ ((70 : ℕ) : ℤ) :=
 lemma c5 (n : ℕ) : (qExpansion 1 f5).coeff n = seqP 4 1 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L5 : seqPL 4 1 1 11 =
+lemma L5c : seqPLc 4 1 1 11 =
     [0, 0, 0, 0,
      0, 1, -384, -96732,
      8935424, -318733938, 5319470592] := by
   decide +kernel
+
+lemma L5 : seqPL 4 1 1 11 =
+    [0, 0, 0, 0,
+     0, 1, -384, -96732,
+     8935424, -318733938, 5319470592] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L5c
 
 lemma q5_1 : (qExpansion 1 f5).coeff 1 = (0 : ℂ) := by
   rw [c5, seqP_getD (N := 11) (by norm_num), L5]
@@ -1813,15 +2129,50 @@ def r1 : ZMod 79 := ((613518461067953168654246762332094963122176 : ℤ) : ZMod 7
 /-- See `r4`. -/
 def r0 : ZMod 79 := ((4169744246282611427836654706819235757668276180615168 : ℤ) : ZMod 79)
 
+lemma noRoot_cert : ∀ x : ℕ, x < 79 →
+    ((x : ℤ) ^ 5 + (18005734368) * (x : ℤ) ^ 4 + (-1942747456996431618048) * (x : ℤ) ^ 3 +
+      (-14539211744046993293953166475264) * (x : ℤ) ^ 2
+      + (613518461067953168654246762332094963122176) * (x : ℤ) +
+      (4169744246282611427836654706819235757668276180615168)) % 79 ≠ 0 := by
+  decide +kernel
+
 lemma noRoot : ∀ x : ZMod 79,
     x ^ 5 + r4 * x ^ 4 + r3 * x ^ 3 + r2 * x ^ 2 + r1 * x + r0 ≠ 0 := by
+  intro x h1
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq x
+  simp only [r4, r3, r2, r1, r0] at h1
+  push_cast at h1
+  refine noRoot_cert y hy (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
+
+lemma noQuad_cert : ∀ u : ℕ, u < 79 → ∀ v : ℕ, v < 79 →
+    ¬ (((u : ℤ) * ((-14539211744046993293953166475264) - (v : ℤ) * ((18005734368) - (u : ℤ)) - (u
+      : ℤ) * ((-1942747456996431618048) - (v : ℤ) - (u : ℤ) * ((18005734368) - (u : ℤ))))
+        + (v : ℤ) * ((-1942747456996431618048) - (v : ℤ) - (u : ℤ) * ((18005734368) - (u : ℤ))) -
+      (613518461067953168654246762332094963122176)) % 79 = 0
+      ∧ ((v : ℤ) * ((-14539211744046993293953166475264) - (v : ℤ) * ((18005734368) - (u : ℤ)) - (u
+      : ℤ) * ((-1942747456996431618048) - (v : ℤ) - (u : ℤ) * ((18005734368) - (u : ℤ)))) -
+      (4169744246282611427836654706819235757668276180615168)) % 79 = 0) := by
   decide +kernel
 
 lemma noQuad : ∀ u v : ZMod 79,
     ¬ (u * (r2 - v * (r4 - u) - u * (r3 - v - u * (r4 - u)))
         + v * (r3 - v - u * (r4 - u)) = r1
       ∧ v * (r2 - v * (r4 - u) - u * (r3 - v - u * (r4 - u))) = r0) := by
-  decide +kernel
+  rintro u v ⟨h1, h2⟩
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq u
+  obtain ⟨z, hz, rfl⟩ := HornerCert.exists_natCast_eq v
+  simp only [r4, r3, r2, r1] at h1
+  push_cast at h1
+  simp only [r4, r3, r2, r0] at h2
+  push_cast at h2
+  refine noQuad_cert y hy z hz
+    ⟨HornerCert.emod_eq_zero_of_cast ?_, HornerCert.emod_eq_zero_of_cast ?_⟩
+  · push_cast
+    linear_combination h1
+  · push_cast
+    linear_combination h2
 
 /-- **Maeda's conjecture in weight 70** (irreducibility): the characteristic
 polynomial of `T₂` on `S_70(SL(2, ℤ))` is irreducible over `ℚ` (irreducible mod 79). -/
@@ -1844,11 +2195,18 @@ noncomputable def f1 : CuspForm 𝒮ℒ ((74 : ℕ) : ℤ) :=
 lemma c1 (n : ℕ) : (qExpansion 1 f1).coeff n = seqP 0 14 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L1 : seqPL 0 14 1 11 =
+lemma L1c : seqPLc 0 14 1 11 =
     [0, 1, 2832, 3493476,
      2328600832, 728841051750, -131504785771968, -272136456034900408,
      -158851646687243857920, -59022542225581715803347, -15858308966331960285444000] := by
   decide +kernel
+
+lemma L1 : seqPL 0 14 1 11 =
+    [0, 1, 2832, 3493476,
+     2328600832, 728841051750, -131504785771968, -272136456034900408,
+     -158851646687243857920, -59022542225581715803347, -15858308966331960285444000] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L1c
 
 lemma q1_1 : (qExpansion 1 f1).coeff 1 = (1 : ℂ) := by
   rw [c1, seqP_getD (N := 11) (by norm_num), L1]
@@ -1889,11 +2247,18 @@ noncomputable def f2 : CuspForm 𝒮ℒ ((74 : ℕ) : ℤ) :=
 lemma c2 (n : ℕ) : (qExpansion 1 f2).coeff n = seqP 1 11 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L2 : seqPL 1 11 1 11 =
+lemma L2c : seqPLc 1 11 1 11 =
     [0, 0, 1, 2088,
      1743120, 599132000, -105848865180, -210003841890864,
      -109480434226528000, -34330537817134752960, -7333138605116832932250] := by
   decide +kernel
+
+lemma L2 : seqPL 1 11 1 11 =
+    [0, 0, 1, 2088,
+     1743120, 599132000, -105848865180, -210003841890864,
+     -109480434226528000, -34330537817134752960, -7333138605116832932250] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L2c
 
 lemma q2_1 : (qExpansion 1 f2).coeff 1 = (0 : ℂ) := by
   rw [c2, seqP_getD (N := 11) (by norm_num), L2]
@@ -1934,11 +2299,18 @@ noncomputable def f3 : CuspForm 𝒮ℒ ((74 : ℕ) : ℤ) :=
 lemma c3 (n : ℕ) : (qExpansion 1 f3).coeff n = seqP 2 8 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L3 : seqPL 2 8 1 11 =
+lemma L3c : seqPLc 2 8 1 11 =
     [0, 0, 0, 1,
      1344, 546300, -93421056, -173653242126,
      -75336624663552, -17732181504559032, -2503526229752678400] := by
   decide +kernel
+
+lemma L3 : seqPL 2 8 1 11 =
+    [0, 0, 0, 1,
+     1344, 546300, -93421056, -173653242126,
+     -75336624663552, -17732181504559032, -2503526229752678400] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L3c
 
 lemma q3_1 : (qExpansion 1 f3).coeff 1 = (0 : ℂ) := by
   rw [c3, seqP_getD (N := 11) (by norm_num), L3]
@@ -1979,11 +2351,18 @@ noncomputable def f4 : CuspForm 𝒮ℒ ((74 : ℕ) : ℤ) :=
 lemma c4 (n : ℕ) : (qExpansion 1 f4).coeff n = seqP 3 5 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L4 : seqPL 3 5 1 11 =
+lemma L4c : seqPLc 3 5 1 11 =
     [0, 0, 0, 0,
      1, 600, -96984, -160889120,
      -48617694960, -5942841129648, -209206765808800] := by
   decide +kernel
+
+lemma L4 : seqPL 3 5 1 11 =
+    [0, 0, 0, 0,
+     1, 600, -96984, -160889120,
+     -48617694960, -5942841129648, -209206765808800] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L4c
 
 lemma q4_1 : (qExpansion 1 f4).coeff 1 = (0 : ℂ) := by
   rw [c4, seqP_getD (N := 11) (by norm_num), L4]
@@ -2024,11 +2403,18 @@ noncomputable def f5 : CuspForm 𝒮ℒ ((74 : ℕ) : ℤ) :=
 lemma c5 (n : ℕ) : (qExpansion 1 f5).coeff n = seqP 4 2 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
-lemma L5 : seqPL 4 2 1 11 =
+lemma L5c : seqPLc 4 2 1 11 =
     [0, 0, 0, 0,
      0, 1, -144, -186732,
      -15102976, 1614263742, -52532895168] := by
   decide +kernel
+
+lemma L5 : seqPL 4 2 1 11 =
+    [0, 0, 0, 0,
+     0, 1, -144, -186732,
+     -15102976, 1614263742, -52532895168] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L5c
 
 lemma q5_1 : (qExpansion 1 f5).coeff 1 = (0 : ℂ) := by
   rw [c5, seqP_getD (N := 11) (by norm_num), L5]
@@ -2177,15 +2563,50 @@ def r1 : ZMod 79 := ((11802708847432637761332792635527627366465536 : ℤ) : ZMod
 /-- See `r4`. -/
 def r0 : ZMod 79 := ((113628227457643966226006850359168010340399423074336768 : ℤ) : ZMod 79)
 
+lemma noRoot_cert : ∀ x : ℕ, x < 79 →
+    ((x : ℤ) ^ 5 + (92089333488) * (x : ℤ) ^ 4 + (-19817164982845968703488) * (x : ℤ) ^ 3 +
+      (-1377989142595747748686715833810944) * (x : ℤ) ^ 2
+      + (11802708847432637761332792635527627366465536) * (x : ℤ) +
+      (113628227457643966226006850359168010340399423074336768)) % 79 ≠ 0 := by
+  decide +kernel
+
 lemma noRoot : ∀ x : ZMod 79,
     x ^ 5 + r4 * x ^ 4 + r3 * x ^ 3 + r2 * x ^ 2 + r1 * x + r0 ≠ 0 := by
+  intro x h1
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq x
+  simp only [r4, r3, r2, r1, r0] at h1
+  push_cast at h1
+  refine noRoot_cert y hy (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
+
+lemma noQuad_cert : ∀ u : ℕ, u < 79 → ∀ v : ℕ, v < 79 →
+    ¬ (((u : ℤ) * ((-1377989142595747748686715833810944) - (v : ℤ) * ((92089333488) - (u : ℤ)) -
+      (u : ℤ) * ((-19817164982845968703488) - (v : ℤ) - (u : ℤ) * ((92089333488) - (u : ℤ))))
+        + (v : ℤ) * ((-19817164982845968703488) - (v : ℤ) - (u : ℤ) * ((92089333488) - (u : ℤ))) -
+      (11802708847432637761332792635527627366465536)) % 79 = 0
+      ∧ ((v : ℤ) * ((-1377989142595747748686715833810944) - (v : ℤ) * ((92089333488) - (u : ℤ)) -
+      (u : ℤ) * ((-19817164982845968703488) - (v : ℤ) - (u : ℤ) * ((92089333488) - (u : ℤ)))) -
+      (113628227457643966226006850359168010340399423074336768)) % 79 = 0) := by
   decide +kernel
 
 lemma noQuad : ∀ u v : ZMod 79,
     ¬ (u * (r2 - v * (r4 - u) - u * (r3 - v - u * (r4 - u)))
         + v * (r3 - v - u * (r4 - u)) = r1
       ∧ v * (r2 - v * (r4 - u) - u * (r3 - v - u * (r4 - u))) = r0) := by
-  decide +kernel
+  rintro u v ⟨h1, h2⟩
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq u
+  obtain ⟨z, hz, rfl⟩ := HornerCert.exists_natCast_eq v
+  simp only [r4, r3, r2, r1] at h1
+  push_cast at h1
+  simp only [r4, r3, r2, r0] at h2
+  push_cast at h2
+  refine noQuad_cert y hy z hz
+    ⟨HornerCert.emod_eq_zero_of_cast ?_, HornerCert.emod_eq_zero_of_cast ?_⟩
+  · push_cast
+    linear_combination h1
+  · push_cast
+    linear_combination h2
 
 /-- **Maeda's conjecture in weight 74** (irreducibility): the characteristic
 polynomial of `T₂` on `S_74(SL(2, ℤ))` is irreducible over `ℚ` (irreducible mod 79). -/

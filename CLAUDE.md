@@ -25,7 +25,10 @@ Heavy modules (`LehmerPacked`, `LehmerPow32`, `LehmerGrand`) carry their own
 
 Residue certificates ("no root / non-square mod ℓ") are stated over `ℕ`/`ℤ`
 via `HornerCert`, not over `ZMod` — a `ZMod`-quantified `decide` depends on
-`Classical.choice` and `Quot.sound`.
+`Classical.choice` and `Quot.sound`; likewise compute with `List` (not
+`Finset`/`ArithmeticFunction`) inside certificates (`MaedaCertC`).  19 older
+certificates in heavy-chain ancestors still violate the rule (deferred to the
+next approved chain rebuild; `research/research-log.md`).
 
 ## Memory alerts
 
@@ -60,7 +63,7 @@ A module is *heavy* if it (transitively) imports a large kernel decide:
 `LehmerPrimeGrand`, the `MaedaGalois5` identity chain (`IdBase … Identities`,
 `MaedaGalois5`, `MaedaGalois5Weights`; up to ~200 GiB per module) and
 `MaedaGalois5AxCheck`, and `AxCheck` (imports `LehmerMod`).  `Poly5`,
-`MaedaGalois5Defs` and `HornerCert` are light. Everything else is light.
+`MaedaGalois5Defs`, `HornerCert` and `MaedaCertC` are light. Everything else is light.
 
 When adding a module:
 - **light** → add it to all three of `defaultTargets` in `lakefile.toml`,

@@ -75,7 +75,8 @@ theorem rank_cuspForm_18 : Module.rank ℂ (CuspForm 𝒮ℒ ((18 : ℕ) : ℤ))
 
 /-! ### Small coefficients -/
 
-lemma sigma5_two : sigma 5 2 = 33 := by decide
+lemma sigma5_two : sigma 5 2 = 33 := by
+  simp [ArithmeticFunction.sigma_apply, Nat.prime_two.divisors]
 
 theorem a18_one : a18 1 = 1 := by
   simp [a18, Finset.Nat.antidiagonal_succ, dlt, e6, Ramanujan.tau_one]

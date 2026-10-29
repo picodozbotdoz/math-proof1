@@ -55,6 +55,28 @@ elab "#audit_decide_certs" : command => do
     logInfo m!"VIOLATION {m} {n}: {axs.toList}"
   logInfo m!"decide certificates: {sorted.size} audited, {bad.size} depend on more than propext"
 
+/-- A dependency path from `n` to the axiom `ax`: at each step, the first
+referenced constant that still depends on `ax`.  Shows *which* definition
+pulls an axiom into a certificate. -/
+partial def axiomPath (ax n : Name) (fuel : Nat := 60) : CommandElabM (List Name) := do
+  if n == ax || fuel == 0 then return [n]
+  let env ← getEnv
+  let some ci := env.find? n | return [n]
+  let used := ci.type.getUsedConstants ++
+    ((ci.value? (allowOpaque := true)).map (·.getUsedConstants)).getD #[]
+  for c in used do
+    if c == n then continue
+    if (← collectAxioms c).contains ax then
+      return n :: (← axiomPath ax c (fuel - 1))
+  return [n]
+
+/-- `#axiom_path ax n`: print the path from `n` to the axiom `ax`. -/
+elab "#axiom_path " ax:ident n:ident : command => do
+  let some c := (← getEnv).find? n.getId |>.map (·.name)
+    | throwError "unknown constant {n.getId}"
+  let path ← axiomPath ax.getId c
+  logInfo m!"{" → ".intercalate (path.map toString)}"
+
 end AxCheckDecide
 
 #audit_decide_certs

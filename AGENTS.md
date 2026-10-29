@@ -264,9 +264,14 @@ surface the limitation to the user instead of creating workarounds on Modal.
   `∀ y : ℕ, y < ℓ → hornerZ cs y % ℓ ≠ 0` (no axioms), never as
   `∀ x : ZMod ℓ, …` (`decide` then depends on `Classical.choice` and
   `Quot.sound`).
+- `MathProof/ModularForms/MaedaCertC.lean` (light) — `seqPLc`, the Maeda
+  coefficient lists without `Finset`/`ArithmeticFunction`/`Ramanujan.tau`
+  (`sigmaL`, `convLc`, `dCc`), and `seqPLc_eq` back to `seqPL`; the `L{j}c`
+  certificates of `MaedaDim{4,5}Weights` are about it.
 - `MathProof/AxCheckDecide.lean` (opt-in audit, imports the light root) —
   `#audit_decide_certs`: finds every `decide` certificate in the light library
-  and reports those depending on more than `propext`.
+  and reports those depending on more than `propext`; `#axiom_path ax n`
+  prints the chain of constants that pulls axiom `ax` into `n`.
 - `MathProof.lean` — root import file for the *light* modules. The heavy
   kernel-decide modules (`LehmerMod`, `LehmerPacked`) and `AxCheck` are
   deliberately **not** imported there — the root must stay cheap for
@@ -291,6 +296,15 @@ surface the limitation to the user instead of creating workarounds on Modal.
   compile to well-founded recursion (`Acc.rec`), which the kernel cannot reduce,
   breaking every `decide`. Keep list functions structurally recursive; verify
   `decide` still works after touching them.
+- **Editing an import ancestor of `MaedaGalois5Defs` rebuilds the heavy
+  chain** (≈ 2 h, up to 202 GiB): lake's traces are input-based, so a change
+  to `Tau/Basic`, `Lehmer`, `Bridge`, `Weight12`, `Congruence691`,
+  `HeckeLevelOne`, `Mordell`, `LehmerWeight16`, `EigenLevelOne`,
+  `MaedaLevelOne`, `MaedaDim4`, `MaedaDim5`, `MaedaSmallWeights`,
+  `MaedaGalois` (or their imports) invalidates `IdBase … Identities` even when
+  the `.olean`s come out identical.  Put new infrastructure in a new module
+  (as `HornerCert`, `MaedaCertC`), and batch unavoidable ancestor edits with
+  an approved chain rebuild.
 - Lakefile options: `relaxedAutoImplicit = false`, `linter.mathlibStandardSet = true`,
   Mathlib-style copyright headers disabled. No `autoImplicit` tricks.
 - `decide` / `norm_num [bernoulli]` time out on Mathlib's well-founded Bernoulli

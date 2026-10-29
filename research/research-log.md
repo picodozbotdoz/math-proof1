@@ -1266,14 +1266,42 @@ axioms of every Iteration 18 certificate:
   `maeda_galois60 … 74`: the standard three axioms (allowed for these).
 
 **Project-wide audit.**  `MathProof/AxCheckDecide.lean` (`#audit_decide_certs`,
-opt-in) walks every `decide` certificate of the light library: **116 audited,
-all 116 depend on `[propext, Classical.choice, Quot.sound]`** — the
-propext-only rule of CLAUDE.md was never met by the light library's
-`decide` facts.  By module: `MaedaDim5Weights` 42, `MaedaDim4Weights` 36,
-`MaedaGalois4` 12, `MaedaSmallWeights` 11, `MaedaGalois` 6, `LehmerWeight*`
-7 (`sigma_k 2` values through `ArithmeticFunction`/`Finset`), `MaedaWeight24`
-1, `Tau.Lehmer` 1 (`deltaCoeffs_128_nonvanishing`).  Mostly `ZMod`-stated
-residue scans (same fix as above, via `tools/gen_maeda.py`); open follow-up.
+opt-in) walks every `decide` certificate of the light library; `#axiom_path ax
+n` prints the dependency path that pulls an axiom in.  First run: **116
+audited, all 116 depend on `[propext, Classical.choice, Quot.sound]`** — the
+propext-only rule of CLAUDE.md had never been met by the light library's
+`decide` facts.  The traced causes:
+
+* `∀ x : ZMod ℓ` decided through `Fintype.decidableForallFintype` (Finset /
+  Multiset: `Classical.choice`), and `ZMod`'s ring instance (`funext` →
+  `Quot.sound`);
+* `seqPL` built from `Finset.sum` / `Finset.range` and
+  `ArithmeticFunction.sigma` (`Finset.Ico`, `LocallyFiniteOrder`);
+* `Ramanujan.allNonzeroLt` uses `!=` on `ℤ`, i.e. `Int.instLinearOrderPackage`.
+
+**Fixed (97):** `MaedaCertC` (new, light) — `seqPLc`, the same coefficient
+lists from `List` sums, trial-division `sigmaL` and `tauTable`, with
+`seqPLc_eq` (via `sigmaL_eq`, `convLc_eq`); `tools/gen_maeda.py` (dims 4–5)
+now emits `L{j}c : seqPLc … = […]` (decided) and derives `L{j}`, and for
+`noRoot` / `noQuad` an `ℤ`-over-bounded-`ℕ` certificate `*_cert` with the
+`ZMod` statement derived by `HornerCert.exists_natCast_eq` +
+`emod_eq_zero_of_cast` + `push_cast; linear_combination` (downstream proofs
+unchanged).  Same hand-written pattern in `MaedaGalois4` (12) and
+`MaedaWeight24` (1); the `σ_k(2)` values in `LehmerWeight18–26` (6) are now
+`simp` facts (`Nat.Prime.divisors`), not `decide` certificates.  Re-audit:
+**110 certificates, 91 propext-clean, 19 remaining.**
+
+**Deferred (19), needs a heavy-chain rebuild:** `MaedaSmallWeights` (11),
+`MaedaGalois` (6), `LehmerWeight16` (1), `Tau.Lehmer` (1).  These modules are
+transitive imports of `MaedaGalois5Defs`, and lake's traces are input-based:
+editing any of them rebuilds `IdBase → IdE4 → IdE5 → IdE6 → Identities`
+(≈ 2 h, peaks to 202 GiB — measured: a `MaedaLevelOne` edit made `IdBase`
+rebuild).  `gen_maeda.py` still regenerates `MaedaSmallWeights`
+byte-identically; switch dims 2–3 to the certificate pattern together with
+the next approved chain rebuild (improvements P1-2 / P2-1).  After this
+change the heavy side was re-validated from the cache: E4–E6 and
+`Identities` replayed, `IdBase` (212 s) and `MaedaGalois5Weights` rebuilt,
+all Iteration 18 certificates still axiom-free.
 
 **Memory-alert tooling** (policy: any build ≥ 64 GiB is investigated,
 AGENTS.md "Memory alerts", `research/memory-alerts.md`): `lean_check.py` now

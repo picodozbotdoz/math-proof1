@@ -1,4 +1,5 @@
 import MathProof.ModularForms.LehmerWeight16
+import MathProof.ModularForms.HornerCert
 import Mathlib.Algebra.Polynomial.SpecificDegree
 import Mathlib.Algebra.Polynomial.Eval.Irreducible
 import Mathlib.RingTheory.Polynomial.GaussLemma
@@ -260,9 +261,21 @@ theorem charpoly_heckeT2 : heckeT2.charpoly = P24.map (Int.castRingHom ℂ) := b
 
 lemma P24_monic : P24.Monic := by unfold P24; monicity!
 
+/-- Axiom-free certificate for `no_root_mod23`: plain `ℤ` arithmetic over
+bounded `ℕ` (`HornerCert`; a `ZMod`-stated `decide` depends on
+`Classical.choice` and `Quot.sound`). -/
+lemma no_root_mod23_cert : ∀ y : ℕ, y < 23 →
+    ((y : ℤ) ^ 2 - 1080 * (y : ℤ) - 20468736) % 23 ≠ 0 := by
+  decide +kernel
+
 /-- `X² − 1080 X − 20468736` has no root modulo 23 (its discriminant
 `576 · 144169` is a non-residue mod 23). -/
-lemma no_root_mod23 : ∀ x : ZMod 23, x ^ 2 - 1080 * x - 20468736 ≠ 0 := by decide
+lemma no_root_mod23 : ∀ x : ZMod 23, x ^ 2 - 1080 * x - 20468736 ≠ 0 := by
+  intro x h1
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq x
+  refine no_root_mod23_cert y hy (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 /-- **Maeda's conjecture in weight 24**: the characteristic polynomial of `T₂`
 on `S₂₄(SL(2, ℤ))` is irreducible over `ℚ`. -/

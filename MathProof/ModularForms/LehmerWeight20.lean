@@ -90,7 +90,8 @@ theorem rank_cuspForm_20 : Module.rank ℂ (CuspForm 𝒮ℒ ((20 : ℕ) : ℤ))
 
 /-! ### Small coefficients -/
 
-lemma sigma3_two : sigma 3 2 = 9 := by decide
+lemma sigma3_two : sigma 3 2 = 9 := by
+  simp [ArithmeticFunction.sigma_apply, Nat.prime_two.divisors]
 
 theorem a20_one : a20 1 = 1 := by
   simp [a20, g20, Finset.Nat.antidiagonal_succ, dlt, e4, Ramanujan.tau_one]

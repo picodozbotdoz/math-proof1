@@ -40,6 +40,7 @@ defaultTargets = [
   "MathProof.ModularForms.Poly5",
   "MathProof.ModularForms.MaedaGalois5Defs",
   "MathProof.ModularForms.HornerCert",
+  "MathProof.ModularForms.MaedaCertC",
 ]
 
 [leanOptions]

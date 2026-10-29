@@ -1,4 +1,5 @@
 import Mathlib.Data.Int.ModEq
+import Mathlib.Data.ZMod.Basic
 import Mathlib.Tactic.Ring
 
 /-!
@@ -16,6 +17,13 @@ So a residue certificate is stated as
 into "no integer root" by `no_root_of_cert` — a separate, non-computational
 lemma, which may use the standard axioms.  A non-square certificate for `D`
 is the special case `cs = [D, 0, -1]` (`D - y²`).
+
+For a certificate about a polynomial expression in several `ZMod ℓ`
+variables, state it over bounded `ℕ` with `ℤ` arithmetic and `% ℓ`
+(`decide +kernel`, no axioms), then derive the `ZMod` statement:
+`exists_natCast_eq` writes each variable as a cast `(y : ZMod ℓ)`,
+`emod_eq_zero_of_cast` turns `((E : ℤ) : ZMod ℓ) = 0` into `E % ℓ = 0`, and
+`push_cast; linear_combination h` matches the two sides.
 -/
 
 namespace HornerCert
@@ -56,5 +64,13 @@ lemma ne_sq_of_cert {D : ℤ} {q : ℕ} (hq : 0 < q)
   simp only [hornerZ]
   rw [hD]
   ring
+
+/-- Every element of `ZMod q` is the cast of a natural number `< q`. -/
+lemma exists_natCast_eq {q : ℕ} [NeZero q] (x : ZMod q) : ∃ y : ℕ, y < q ∧ (y : ZMod q) = x :=
+  ⟨x.val, x.val_lt, ZMod.natCast_zmod_val x⟩
+
+/-- An integer that vanishes in `ZMod q` is `0` mod `q`. -/
+lemma emod_eq_zero_of_cast {q : ℕ} {E : ℤ} (h : (E : ZMod q) = 0) : E % q = 0 :=
+  Int.emod_eq_zero_of_dvd ((ZMod.intCast_zmod_eq_zero_iff_dvd E q).mp h)
 
 end HornerCert
