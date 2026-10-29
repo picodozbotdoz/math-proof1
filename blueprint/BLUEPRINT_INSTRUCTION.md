@@ -5,4 +5,6 @@ To achieve this, your ideal setup has three main characteristics:
 2. **Focus on Authoring:** You want an environment where you can freely write definitions, theorems, and proofs to test out ideas as quickly as possible.
 3. **Retained Interactive Feedback:** Even without a full build, you still want the Lean Language Server (LSP) running in your editor (like VS Code or Neovim) to provide real-time typechecking (elaboration), error highlighting, and lightweight linting. This gives you the immediate feedback loop needed to know if your ideas are logically sound.
 
+Before big build: Python-first, generator lint, batched fixes.
+
 Essentially, you want to use Lean purely as an **interactive scratchpad and logic explorer**, leveraging the editor's real-time diagnostics without the burden of treating it like a production software project.
