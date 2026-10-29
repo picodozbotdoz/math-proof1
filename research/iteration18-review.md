@@ -722,3 +722,300 @@ one big one" rule applies before the kernel is ever involved.
 4. Keep `MaedaGalois5`-style files out of `defaultTargets` until the heavy
    identities are verified; the light group-theory + criterion layer
    (everything except the two rings) is CI-cheap and was reviewed first.
+
+---
+
+# Part IV — the closing session: identity chain, criterion port, weight certificates
+
+*Lessons from the session that turned the Part I–III material into commit
+`3362d60`: the five-module identity chain (`IdBase → IdE4 → IdE5 → IdE6 →
+Identities`), the first successful compile of the `S₅` criterion
+(`MaedaGalois5.lean`), the generated weight instances
+(`MaedaGalois5Weights.lean`) and the `lean_check.py` build cache.  Every
+error class below is quoted from the session's build logs; each fix is
+what actually landed in the committed file.*
+
+## 26. Corrections to Parts I–III (verified against the committed code)
+
+Several earlier notes were written mid-campaign and turned out wrong or
+superseded.  In each case the committed file is the evidence.
+
+| earlier claim | what is actually true in this Mathlib / repo |
+|---|---|
+| §5: "there is no `Fin.prod_univ_six`" | **It exists**: `resolvent_eval_theta` opens with `rw [Fin.prod_univ_six]` and compiles.  The castSucc chain is not needed. |
+| §5 / §17: "no `Subgroup.index_ne_zero`; hand-roll `N = ⊤` with `Fintype.bijective_of_injective_and_card`" | `Fintype.bijective_of_injective_and_card` is unknown, but you don't need it.  Mathlib has **`Subgroup.index_ne_zero_of_finite`** and **`Subgroup.eq_top_of_card_eq N hcard`**, and both hand-rolled wrappers were deleted. |
+| §19: "`set_option a v in set_option b w in decl` does not parse" | It parses.  `MaedaGalois5IdE6.theta_e6` is `set_option maxRecDepth 100000 in set_option maxHeartbeats 512000000 in theorem …`.  The real culprit was a **docstring between** the two `set_option … in` lines, or before the first one. |
+| §3: "drive `if` with `rw [if_pos h]` / `rw [if_neg h]`" | `if_pos`/`if_neg` are deprecated (§11).  The committed `Poly5` uses **`simp only [h, ↓reduceIte]`**, which also closes the `¬h` branch without naming the lemma. |
+| §2: "splicer `tools/split_gal5.py`" | Deleted.  `tools/gen_poly5.py` writes the whole module chain directly, splitting on `@@CUT:…@@` markers. |
+| §24: build cache "keyed by local git HEAD", saved after success | Superseded by one **rolling** `/cache/buildcache/latest.tar.gz`, saved after **every** run, including failed ones (see §33). |
+| §17: Sylow congruence "used directly as `… % p = 1`" | For the normalizer version, `Sylow.card_normalizer_modEq_card (p := 5) (n := 1) hzc` has type `… ≡ … [MOD 5 ^ (1 + 1)]`.  It typechecks **as a term** against `Nat.card ↥N % 25 = Nat.card ↥H % 25`, because `Nat.ModEq` is `%`-equality and `5 ^ (1+1)` whnf-reduces to `25`.  State the target in the `% 25` form so that `omega` can use it. |
+
+## 27. Kernel-certificate failures, and which knob fixes each
+
+The first full `Identities` build (4225 s) failed with six errors.  Each
+error class needs a *different* fix, so read the message before raising any
+limit:
+
+| message | real cause | fix |
+|---|---|---|
+| `(kernel) deep recursion detected` on `e5dec`/`e6dec` | (a) `List` `DecidableEq` uses one native stack frame per element (Part I §2); (b) **forcing `pMul p q` uses stack proportional to `len p`**.  The generator put the 2,445-term partial product on the left. | `pBeq` + `eq_of_pBeq`, and **`balanced_mul` always puts the smaller factor on the left**.  e5/e6 then had 25- and 218-term left factors (e4, which had passed, already had 218).  Raising `maxRecDepth` does not help: this is the kernel's native stack, not the elaborator's counter. |
+| `(deterministic) timeout at «synthesize pending MVars», maximum number of heartbeats (200000)` on `e5lhs_eval` | Elaborating a ~100-factor product statement at the default budget. | A per-declaration `set_option maxHeartbeats N in`.  The generator now emits one for every `*_eval` / `theta_eK` lemma. |
+| `failed to synthesize HPow K ?m.5128 ?m.7508 … maximum recursion depth has been reached` (×100, then `maxErrors`) on `theta_e6` | **Not a type-class problem.**  The 140-term, deeply right-nested statement exhausts the *elaborator's* `maxRecDepth` while unifying `binop%` trees; instance synthesis is simply where it ran out. | `set_option maxRecDepth 100000 in` on that one theorem, and only for k = 6, so the cached E4/E5 modules stay byte-identical (§33). |
+| `Tactic decide proved that the proposition DLHS2 = dRHS is false` | **A math bug in the generator.**  It compared Δ = ∏(xᵢ − xⱼ) with the discriminant instead of Δ². | `theorem ddec : pMul DLHS2 DLHS2 = dRHS`.  This message is the best one in the catalog: it is definitive and costs nothing to read.  Never raise a limit in response to it. |
+| `No goals to be solved` after `simp only […]` in `e1lhs_eval` | The `simp` set closed the k = 1 goal by itself. | The generator omits the trailing `ring` for k = 1 (or emits `try ring`, Part I §4). |
+| `unexpected token 'end'; expected ']'` | Python string-building dropped a `]`. | The disc step became `simp only [disc5]; ring`.  Paren-balance-check generated text (§6). |
+| ``rewrite failed: pattern (pMul ?p ?q).PEval ?x`` in the disc assembly | `rw [PEval_pMul]` in the wrong direction: the goal already had `PEval a x * PEval a x`. | `rw [h1, ← PEval_pMul]`.  When a hom lemma "does not fire", check the direction before the shape. |
+
+**Rule.**  *Kernel* deep recursion means restructuring the data or
+algorithm.  *Elaborator* recursion means `maxRecDepth`.  Heartbeats means
+budget.  "decide proved … is false" means the math or the generator is wrong.
+The four look alike in a 2,000-line log; classify each one before fixing anything.
+
+## 28. Type classes and computability: the weight-certificate redesign
+
+* **`decide` cannot evaluate anything built from `Polynomial`.**  The first
+  `MaedaGalois5Weights` defined the resolvent certificate as `R := resolvent5
+  a b c d e` and decided `∀ y : ZMod 41, (R.map …).eval y ≠ 0`.  Result:
+  `failed to compile definition, consider marking it as 'noncomputable'
+  because it depends on 'resolvent5'`, then `Tactic decide failed to
+  reduce`.  The working shape has three parts:
+  ```lean
+  noncomputable def R : ℤ[X] := X ^ 6 + C (…) * X ^ 5 + … + C (…) * X ^ 0
+  lemma hRint : resolvent5 … = R := by unfold resolvent5 R; norm_num
+  lemma R_monic : R.Monic := by unfold R; monicity!
+  def Rmod (y : ZMod 41) : ZMod 41 := y ^ 6 + ((… : ℤ) : ZMod 41) * y ^ 5 + …
+  lemma noRootR : ∀ y : ZMod 41, Rmod y ≠ 0 := by decide +kernel
+  lemma R_eval_cast (n : ℤ) : ((R.eval n : ℤ) : ZMod 41) = Rmod n := by simp [R, Rmod]
+  ```
+  The parts are an explicit noncomputable `ℤ[X]` (the proof world), a
+  computable mirror function over `ZMod ℓ` (the kernel world), and a
+  `simp` bridge.  This is Part II §10's "two worlds, one bridge", applied to
+  a single certificate.  It is the same pattern the discriminant certificate
+  (`Dval` + `nonsquare`) already used; copy the working sibling's shape
+  before inventing a new one.
+* **200-digit `ℤ` literals cast into `ZMod 41` are cheap for `decide
+  +kernel`**: the kernel's GMP-accelerated `Nat`/`Int` literals reduce `%`
+  natively.  You don't need to pre-reduce the literals in the generator.
+* **`attribute [local instance]` does not travel.**  `MaedaGalois5.lean`
+  declares `attribute [local instance] Polynomial.Gal.splits_ℚ_ℂ`.  The
+  Weights file, which imports it, failed with `failed to synthesize instance
+  of type class Fact (Splits …)` at every `Gal.galActionHom … ℂ`.  Each file
+  that mentions `galActionHom p ℂ` must re-declare the local instance.  The
+  generator header now emits it.
+* **Integer → rational root transport** (`exists_integer_of_is_root_of_monic`
+  wants `aeval r R = 0` over `ℤ[X]`, while the hypothesis is over `ℚ[X]`):
+  `rw [← aeval_map_algebraMap ℚ, algebraMap_int_eq, ← hR]`.  The cast lemma
+  `aeval (m : ℚ) R = ((R.eval m : ℤ) : ℚ)` goes through
+  `induction R using Polynomial.induction_on'` with `| add … => simp [ihp,
+  ihq]` / `| monomial … => simp`.  Then `rw [hn, algebraMap_int_eq,
+  eq_intCast, hE n] at hr'; exact_mod_cast hr'`.  Get the direction of `hn`
+  from `obtain ⟨n, hn, -⟩` right first (`algebraMap ℤ ℚ n = r`).
+* **Subtype vs `Set`**: `set s := p.rootSet K` must be typed as `Set K`
+  where the API expects it.  `{w // w ∈ s}` and `↥(p.rootSet K)` are
+  different *syntactic* types for `rw`, even though they are defeq.  Name the
+  `Fintype.equivFinOfCardEq` result once (`ι : ↥s ≃ Fin 5`) and go through
+  `congrArg Subtype.val (Equiv.symm_apply_apply ι ⟨z, hz⟩)` rather than
+  rewriting under the coercion.
+
+## 29. Mathlib API (pinned v4.36.0-rc1): this session's lookup table
+
+Each entry was grepped in `.lake/packages/mathlib`.  The local checkout
+matches the manifest revision, so reading the source *before* the next
+Modal round trip is free and exact.
+
+| tried | error | what compiles |
+|---|---|---|
+| `Multiset.count_eq_zero_of_not_mem` | unknown constant | `Multiset.count_eq_zero_of_notMem` (Mathlib-wide `not_mem` → `notMem` rename) |
+| `Multiset.mem_roots'.mp` | unknown constant | `Polynomial.mem_roots'` (`.mp` gives `p ≠ 0 ∧ IsRoot p a`) |
+| `MonoidHom.mem_range_self` | unknown constant | `MonoidHom.mem_range.mpr ⟨g, rfl⟩` |
+| `galActionHom_injective` | unknown identifier | `Gal.galActionHom_injective p ℂ` (namespace `Polynomial.Gal`) |
+| `card_rootSet_eq_natDegree (S := K) …` | invalid argument name `S` (hint: `F`, `K`) | positional: `card_rootSet_eq_natDegree hsep (IsAlgClosed.splits _)`.  When the error suggests parameter names, use them or drop the name. |
+| `AlgEquiv.commutes g r` to push `g` through a root equation | type mismatch: lands in `p.SplittingField`, not `K` | `Polynomial.aeval_algHom_apply : aeval (g y) p = g (aeval y p)`, then `rw [Polynomial.aeval_algHom_apply, hxi, map_zero]` |
+| ext for Galois automorphisms | (hand-rolled `AlgEquiv.ext` over roots) | `Polynomial.Gal.ext p fun z hz => …` (agree on the roots of `p`) |
+| `Subgroup.mem_top` as a proof | "argument `Subgroup.mem_top` has type `∀ x, x ∈ ⊤`" | apply it: `Subgroup.mem_top x` |
+| `card_le_of_le le_top` for `|N| ≤ |H|` | `Nat.card {x // x ∈ ⊤}` vs `Nat.card ↥H` mismatch | `Subgroup.card_le_card_group N` |
+| `(IsGalois.mem_bot_iff_fixed t).mpr fun σ _ => …` | binder count mismatch | the statement is `∀ f, f t = t` (no membership binder): `fun σ => hfixt σ` |
+| `Nat.card ↥(zpowers c)` | — | `Nat.card_zpowers : Nat.card (zpowers c) = orderOf c` |
+| bijection from injection plus `Nat.card` | — | `Nat.bijective_iff_injective_and_card` |
+| ℤ ↔ ℚ root transport | — | `aeval_map_algebraMap`, `algebraMap_int_eq`, `eq_intCast`, `exists_integer_of_is_root_of_monic`, `Rat.isSquare_intCast_iff` |
+| `perm_no_index_three_four rfl (Or.inr …)` | `don't know how to synthesize implicit argument H` (and `a`, `b` of `Or.inr`) | named implicit plus a concrete card proof: `perm_no_index_three_four (H := MonoidHom.range ρ) (Fintype.card_fin 5) (Or.inr ?_)`.  `rfl` leaves the `Fintype` instance as a metavariable, and everything downstream fails to unify. |
+
+**Meta-lesson.**  Across Parts III and IV, the most common failure was not
+a missing lemma but a **rename** (`not_mem` → `notMem`), a **namespace
+move** (`Multiset.` → `Polynomial.`, top-level → `Gal.`) or a **binder
+change** (implicit ↔ explicit, a dropped membership binder).  Before
+writing `Foo.bar`, run `grep -rn "theorem bar\|lemma bar" .lake/packages/mathlib/Mathlib`.
+It takes seconds; a Modal round trip takes 3–15 minutes.
+
+## 30. Tactics: what failed here, and the replacement that compiled
+
+* **`rw` motive errors when the rewritten term occurs inside a type.**
+  `N := normalizer (zpowers (c : ↥H))` has `H` in its *type*, so `rw [h] at
+  hmod` (with `h : Nat.card H = 10`) failed with `motive is not type correct:
+  fun _a ↦ _a ≤ Nat.card ↥N`.  You don't need the rewrite.  `rcases hH with
+  h | h <;> omega` feeds `h` to `omega` as a linear fact.  The same motive
+  error recurred for `rw [← hco5]` in `c ^ 5 = 1` with `Perm (Fin 5)` in
+  scope (§18's numeral abstraction) and for `cycPerm j ^ _a`.  **When `rw`
+  reports a motive error, pass the equation to `omega`/`linarith`/`congrArg`
+  instead of rewriting.**
+* **Conjugation identities: rewrite `sq`, then `group`.**
+  `σ * (c * c) * σ⁻¹ = (σ * c * σ⁻¹) ^ 2 := by rw [sq]; group`.  The
+  original proof rewrote with `pow_one` / `c ^ 2` patterns that did not
+  occur ("did not find `c ^ 1` in `σ * (c * c) * σ⁻¹ = c ^ 2`").  `group`
+  normalizes free-group words including `⁻¹`, but expose the `^` as products
+  first.  Then do the case split on `k % 5` with explicit `(c ^ a) ^ 2 = c ^
+  b` lemmas (`rw [← pow_mul, show 3 * 2 = 5 + 1 from rfl, pow_succ, hc5,
+  one_mul]`).
+* **`rfl` cannot see through a symbolic `Fin` index.**  `htv : t =
+  ThetaVals x j` by `rfl` failed ("not definitionally equal") because `j` is
+  a variable.  Split it off into a lemma that *cases first*:
+  ```lean
+  lemma thetaVals_cyc … (j : Fin 6) : ThetaVals x j = theta x ⇑(cycPerm j) * … := by
+    fin_cases j <;>
+    · change theta x _ * theta x _ = _
+      congr 2; funext i; fin_cases i <;> rfl
+  ```
+  The 5-cycle power independence (`T ^ n` for `n = 1..4`) is a separate
+  `theta_pair_pow` proved by `interval_cases n`.
+* **`interval_cases v` generates exactly the cases in `[lo, hi]`; count the
+  bullets.**  With `0 < v` and `v ≤ 12` there are 12 cases (`v = 1 … 12`).
+  An extra leading `· omega` (written for a nonexistent `v = 0` case) shifted
+  every bullet by one, producing "No goals", "omega could not prove the goal"
+  and type mismatches in *every* case.  One misalignment looked like a dozen
+  independent bugs.
+* **`linear_combination h` as the transport from a certified identity.**
+  `resolvent_eval_theta` reduces to `sextic_vieta` (six coefficient
+  hypotheses), each closed by `linear_combination theta_eK x`.  That is a
+  single `ring` check of `goal − h = 0`.  Degree-24 normal forms needed
+  `maxHeartbeats 400000000` on that one theorem.
+* **`obtain rfl : c5 = -(…) := by rw [h1, neg_neg]` turns hypotheses into
+  substitutions.**  In `sextic_vieta`, eliminating every coefficient variable
+  by `obtain rfl` before `simp only [map_add, map_mul, map_neg]; ring` leaves
+  a pure identity.  `ring` cannot *use* hypotheses; `subst`/`obtain rfl` and
+  `linear_combination` are how you feed them in.
+* **Error signatures that mean "under-applied term":**
+  * ``rcases failed: `x✝ : c ≠ 1 → ∃ j m, …` is not an inductive datatype``:
+    the lemma (`cycles_complete κ hκ5`) still needed the `hκ1` argument.
+  * `Function expected at h1 c, but this term has type c ∈ zpowers c ↔ …`:
+    `Subgroup.mem_normalizer_iff` yields an `Iff`; use `(h1 c).mp`.
+  * `Function expected at ↑m + 1 : ℕ`: `cycPerm j ^ (↑m + 1) i` parsed the
+    index `i` as an argument of the exponent.  Write `(cycPerm j ^ (m + 1)) i`
+    (also `Equiv.ext hm` to go from pointwise equality to `κ = …`).
+* **Term-mode replacements need `exact` inside `by`.**  Swapping a tactic
+  proof for a Mathlib term (`Subgroup.eq_top_of_card_eq N hNcard`) inside a
+  tactic block gave `unknown tactic`.  Use `exact <term>`, or move the term to
+  the `:=` position.
+* **Mechanical lint fixes must respect the syntactic position.**  A regex
+  turning `show` into `change` (linter: "use `change`") also hit a *term-mode*
+  `show T from e` and produced `unexpected token 'from'; Unknown identifier
+  change`.  Only tactic-position `show` may become `change`.
+
+## 31. Variables and naming: shadowing against the main statement's binders
+
+The criterion's statement binds the quintic's coefficients `a b c d e : ℚ`.
+The original proof also used `c` for the 5-cycle and `e` for the root
+enumeration `Equiv`, which gave errors far from the cause:
+
+* `Application type mismatch: The argument c : Perm (Fin 5) … expected ℚ`
+  inside `resolvent5 a b c d e`.
+* Goals displaying `a b c d e✝ : ℚ`.  **The `✝` (inaccessible) suffix on a
+  statement binder is the telltale** that a later local of the same name
+  shadowed it.
+
+Fix: the 5-cycle became `κ`, the enumeration `ι`.  **Convention:** in a
+file whose headline statement binds `a … e` (or `x`, `p`), keep proof-local
+group elements and equivalences in Greek (`σ κ ρ ι`) and never reuse a
+statement binder.  The same applies to generator output: the Weights
+generator emits `n` / `hn` / `hr'` only inside fresh `have` scopes.
+
+Also: **`set N := <big term> with hNdef`** gave the normalizer an atom-sized
+name, so `omega` and `Subgroup.card_le_card_group N` saw `Nat.card ↥N`
+instead of a 3-line expression, and the coercion `(zpowers (c : ↥H) :
+Set ↥H)` was elaborated exactly once instead of in each hypothesis.
+
+## 32. Lint and options
+
+* The `maxHeartbeats` justification comment belongs **on the line after**
+  `set_option maxHeartbeats N in`, before the docstring.  The linter accepts
+  that position, and the parser is happy because a line comment is not a
+  docstring.
+* Scope every budget per declaration.  A file-level `set_option
+  maxHeartbeats` leaks into every tactic, and the linter flags it.
+  Deleting a wrapper lemma also deleted the `set_option … in` line in front
+  of its *neighbour* (`perm_order_5_normal_of_card` then timed out).  When
+  you delete a declaration, check what the preceding line was attached to.
+* `haveI` → `have` and `show` → `change` (tactic position only) are
+  mechanical.  Also remove unused `simp` arguments and an unnecessary `<;>`
+  (the linter names each).  Generated files with 200-digit literals take
+  `set_option linter.style.longLine false` in the header, with a comment
+  saying why.
+* Style warnings remain in the generated `Id*` modules and in
+  `MaedaGalois5Defs`.  Fixing them means regenerating and rebuilding the
+  whole heavy chain (about 2 h, 200 GiB), so they are deferred.  Lint
+  generated output **before** the first heavy build, when it is free.
+
+## 33. Build infrastructure: what made the iteration loop affordable
+
+* **Rolling build cache (`lean_check.py`)**: one
+  `/cache/buildcache/latest.tar.gz` holds `.lake/build`.
+  * It is restored before `lake build` and saved after *every* run.  Lake
+    only records a module once it compiles, and its traces re-hash sources
+    and imports, so restoring the cache of a failed run is safe.
+  * The tarball is written with `tar -I "gzip -1"` to a temp file, then
+    `os.replace`d, so a concurrent run never reads a half-written file.
+    `Volume.commit()` follows.
+  * Measured: a second identical run rebuilds **0** MathProof modules (62 s
+    vs 198 s).
+  * The earlier per-HEAD draft had never actually run: every logged run set
+    `LEAN_CHECK_NO_CACHE=1`.  Check the logs to see whether a feature was
+    ever exercised.
+* **Staged chain + cache = resumable proofs.**
+  * Run one `lean_check` per heavy module (`Defs → IdBase → IdE4 → IdE5 →
+    IdE6 → Identities → MaedaGalois5 → Weights`).  Stage times: 461 / 209 /
+    2343 / 1498 / 2207 / 170 s, then under a minute each.  Peak RSS was 202
+    GiB (E4), well above the 128 GiB request, because Modal memory is soft.
+  * Fixing E6 then reused the cached E4/E5 (≈ 65 min saved per round).
+  * **This only works if the generator emits unchanged modules
+    byte-identically.**  That is why the E6-only `maxRecDepth` was made
+    conditional on `k == 6` instead of being emitted everywhere.
+* **Account migration without recomputation.**  When the doz workspace ran
+  out of credits mid-E6, the cache tarball was copied to a new `lean-cache`
+  volume in the xyz account.  Creating that volume was explicitly approved
+  by the user, as the AGENTS.md policy requires.  The first xyz run
+  restored it and rebuilt nothing.  Policy discipline: a `kill` the
+  permission classifier blocked was not worked around.  It went to the user
+  as a command to run.
+* **Inherited never-compiled code is the biggest hidden cost.**
+  `MaedaGalois5.lean` arrived having never compiled.  It called
+  `resolvent_eval_theta`, which was **never defined**, and that `Unknown
+  identifier` sat among ~40 API-drift errors.  Before porting an inherited
+  file:
+  * grep every referenced project lemma for its definition;
+  * check the generated certificate data is in the repo (`s5_certs.json`
+    had lived in `/tmp/maeda5`; it is now under `research/`, and
+    regeneration is byte-identical);
+  * compile the light parts first.
+  The criterion layer, once the identities were cached, iterated at about
+  3 min / 7 GiB per round.
+* **Batch fixes per round** (Part III §24, re-confirmed): the criterion went
+  from ~40 errors to green in six rounds.  Each round fixed every error whose
+  cause was understood, read from the pinned Mathlib source.
+
+## 34. Carry-forwards from Part IV
+
+1. Error triage table (§27) before touching any limit: kernel stack →
+   restructure; elaborator recursion → `maxRecDepth`; heartbeats → budget;
+   "decide proved … false" → math or generator bug.
+2. Every certificate over a noncomputable structure gets the three-piece
+   shape: explicit noncomputable object, computable `ZMod ℓ` mirror, `simp`
+   bridge (§28).
+3. Generators: put the smaller operand on the left of every kernel-evaluated
+   product; emit per-declaration budgets; keep unchanged modules
+   byte-identical so the staged cache keeps paying.
+4. Reserve Greek names for proof-local objects in files whose statements
+   bind Latin coefficients (§31).
+5. The `MaedaGalois5Weights` module docstring still says `R` is "defined as
+   `resolvent5` applied to the coefficients".  Since the redesign, `R` is an
+   explicit integer polynomial and `hRint` links it to `resolvent5`.  Fix
+   this in `tools/gen_galois5.py` at the next regeneration (a light module,
+   so the fix is cheap).
