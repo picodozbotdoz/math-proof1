@@ -29,3 +29,15 @@ Roadmap: ModularForms
 2. Decide license/attribution wording (math-proof1 licence vs Apache-2.0) and the `Authors` header.
 3. `scope`/`reuse` risk: roadmap does not list "integer τ" explicitly; may need roadmap hook.
 4. Possibly reduce: public `etaPoly` + stability lemmas could be private.
+
+---
+# Wave 2 PR draft (NOT submitted) — Ramanujan's weight-12 identity
+
+Branch `tauceti/wave2-e12-identity` (from `main`, independent of Wave 1), file
+`TauCeti/NumberTheory/ModularForms/LevelOne/Weight12Identity.lean` (~150 lines), unpushed.
+Content: `E₁₂ := E (k = 12)`, `E₁₂_qExpansion_coeff` (coefficient `(65520/691) σ₁₁(n)`), `E₁₂_rel`:
+`691 • E₁₂ = 441 • E₄³ + 250 • E₆²` via Mathlib's `sturm_bound_levelOne_nat`; `bernoulli_twelve` by `decide +kernel`
+(the 100-line `bernoulli'` recurrence chain of math-proof1 is not needed).  Linters clean, no `set_option`, axioms
+`propext, Classical.choice, Quot.sound`.
+Possible overlap check before submit: Mathlib's own PRs on `E₁₂`/Bernoulli evaluations (none in the local master `312e0b7a8e`).
+Roadmap: ModularForms (weak fit — Eisenstein congruence example; may hit `scope`).
