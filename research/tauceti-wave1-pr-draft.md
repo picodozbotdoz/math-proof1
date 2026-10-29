@@ -52,3 +52,15 @@ Content: `ramanujanTau_modEq_sigma : ramanujanTau n ≡ σ₁₁ n [ZMOD 691]` (
 (Wave 2, which now also exports the power-series form of the identity) and TauCeti's existing
 `qExpansion_discriminant_eq_E₄_cube_sub_E₆_sq`.  Uses `norm_num` for `Prime 691` (no `set_option`).
 Roadmap: ModularForms.
+
+---
+# Wave 4 PR drafts (NOT submitted) — Lehmer reduction and sieve
+
+Branch `tauceti/wave4-lehmer` (stack: wave1 → wave3(wave2) → 3 commits).  Real PR order, each standalone on `main`:
+1. `LevelOne/TauMultiplicative.lean` (needs W1): `ramanujanTau_one`, `_mul_of_coprime` (Mordell), `_prime_pow_add_two`,
+   `_ne_zero_of_prime_pows` — derived from `discriminantEigenform` (no Hecke code ported).  Roadmap: ModularForms (Δ at level one, Prop 5.8.5).
+2. `LevelOne/LehmerReduction.lean`: `ramanujanTau_prime_pow_ne_zero` (Lehmer 1947), `ramanujanTau_ne_zero_of_prime_factors`,
+   `LehmerConjecture`, `lehmerConjecture_iff_primes`.  **Not on the roadmap**: expect `scope` block unless a human adds a hook.
+3. `LevelOne/LehmerSieve691.lean` (needs W3 + 2): sieve `691 ∤ σ₁₁ n → τ n ≠ 0`, `prime_dvd_sigma_iff`,
+   `ramanujanTau_prime_ne_zero_of_mod`, all-exponent sieve, root-of-unity classification, `τ(65537^a) ≠ 0`.  Off-roadmap too.
+Header/licence/authorship: human decision (see Wave 1 notes).
