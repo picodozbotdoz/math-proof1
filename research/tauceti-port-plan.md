@@ -106,7 +106,7 @@ Record the reason; revisit only if a cheaper certificate is found.
 - [-] C1 `Tau/LehmerMod` (512, 5 set_option, `native_decide` grep hit — verify it is only a comment)
 - [-] C2 `Tau/LehmerPacked` (65536; ≈63 GiB; 11 set_option)
 - [-] C3 `Tau/PowChain`, `LehmerPow32`, `LehmerPrimePower`, `LehmerGrand`, `LehmerPrimeGrand` (143 GiB class)
-- [-] C4 `MaedaGalois5Defs` · `IdBase` · `IdE4` · `IdE5` · `IdE6` · `Identities` · `MaedaGalois5` · `Weights` · `AxCheck` (≈33 min chain, ≤35 GiB, ≈58 k lines)
+- [-] C4 `MaedaGalois5Defs` · `MaedaGalois5IdBase` · `MaedaGalois5IdE4` · `MaedaGalois5IdE5` · `MaedaGalois5IdE6` · `MaedaGalois5Identities` · `MaedaGalois5` · `MaedaGalois5Weights` · `MaedaGalois5AxCheck` (≈33 min chain, ≤35 GiB, ≈58 k lines)
 Open question for later: can any C item be rephrased so default heartbeats suffice (e.g. smaller bound, sharper certificate)? Track under P2.2.
 
 #### Tier D — infra, stays local
