@@ -125,7 +125,7 @@ New readers should treat Part IV §26 plus this table as the errata.
   measured peak per stage.
 - *Owner decision*: **yes**.  Larger requests cost more credits per run.
 
-**P0-4. Close the proof-standard audit gap for Iteration 18.**
+**P0-4. Close the proof-standard audit gap for Iteration 18.** — **DONE 2026-10-29**: the twelve residue certificates now depend on no axioms (`HornerCert`); the project-wide audit (`AxCheckDecide`) found 116 older violations, see `research/research-log.md`.
 - *What*: only the six `maeda_galois*` theorems have `#print axioms`.  The
   computational certificates have none: `e1dec … e6dec`, `ddec`, `noRootR`,
   `nonsquare`.  CLAUDE.md requires computational theorems to depend on

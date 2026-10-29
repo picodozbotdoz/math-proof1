@@ -1241,3 +1241,44 @@ volume (saved even after a failed build), so the chain is paid for once.
   the Galois group beyond `S₅`, a criterion via Frobenius cycle types
   (irreducible + transposition + `(n−1)`-cycle), which needs Dedekind's
   theorem — not in Mathlib.
+
+### Axiom audit of the certificates (follow-up, 2026-10-29)
+
+`MathProof/ModularForms/MaedaGalois5AxCheck.lean` (heavy: imports the chain;
+~48 s / 6 GiB on Modal with the chain cached, nothing rebuilt) prints the
+axioms of every Iteration 18 certificate:
+
+* `e1dec … e6dec`, `ddec` (the `Poly5` kernel certificates): `[propext]`.
+* `Weight{60,…,74}.nonsquare`, `.noRootR`: first audited at
+  `[propext, Classical.choice, Quot.sound]` — they were stated over `ZMod ℓ`.
+  A local probe pinned the cause: `∀ x : ZMod 37, …` by `decide` → all three
+  axioms; over `Fin 37` → `[propext]`; over bounded `ℕ` with `ℤ` arithmetic →
+  none; merely evaluating a `ZMod` function → `[propext, Quot.sound]`.
+  **Fixed**: new light module `HornerCert` (`hornerZ`, structural Horner over
+  `ℤ`; `no_root_of_cert`, `ne_sq_of_cert` transport the certificate to "no
+  integer root / not a square").  `tools/gen_galois5.py` now emits
+  `nonsquare : ∀ y : ℕ, y < q → hornerZ [Dlit, 0, -1] y % q ≠ 0` (with
+  `Dval_eq : Dval = Dlit`) and `noRootR : ∀ y : ℕ, y < ℓ → hornerZ Rcs y % ℓ
+  ≠ 0` (with `R_eval_eq`).  All twelve now **depend on no axioms**; the six
+  `maeda_galois*` theorems are unchanged (standard three).  `Weights` rebuilt
+  in 13 s, zero warnings.
+* `theta_e6`, `resolvent_eval_theta`, `galActionHom_bijective_of_quintic`,
+  `maeda_galois60 … 74`: the standard three axioms (allowed for these).
+
+**Project-wide audit.**  `MathProof/AxCheckDecide.lean` (`#audit_decide_certs`,
+opt-in) walks every `decide` certificate of the light library: **116 audited,
+all 116 depend on `[propext, Classical.choice, Quot.sound]`** — the
+propext-only rule of CLAUDE.md was never met by the light library's
+`decide` facts.  By module: `MaedaDim5Weights` 42, `MaedaDim4Weights` 36,
+`MaedaGalois4` 12, `MaedaSmallWeights` 11, `MaedaGalois` 6, `LehmerWeight*`
+7 (`sigma_k 2` values through `ArithmeticFunction`/`Finset`), `MaedaWeight24`
+1, `Tau.Lehmer` 1 (`deltaCoeffs_128_nonvanishing`).  Mostly `ZMod`-stated
+residue scans (same fix as above, via `tools/gen_maeda.py`); open follow-up.
+
+**Memory-alert tooling** (policy: any build ≥ 64 GiB is investigated,
+AGENTS.md "Memory alerts", `research/memory-alerts.md`): `lean_check.py` now
+prints per-module peak RSS (`[memory]`), raises `[memory-alert]` at 64 GiB,
+and `LEAN_CHECK_PROFILE=<Module>` attributes memory to declarations (marks
+before every top-level command, RSS bucketed between them).  Validation on
+`MaedaGalois5Identities` (19.5 GiB peak): `ddec`'s kernel decide accounts for
++14.6 GiB of growth (116 s); `delta2_identity` for 100 s at +0.5 GiB.

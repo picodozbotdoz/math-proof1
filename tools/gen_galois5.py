@@ -3,11 +3,13 @@
 instances for the dim-5 weights (60, 64, 66, 68, 70, 74), from the certificate
 data in research/s5_certs.json (research/s5-certificates.py).
 
-Everything numeric is re-checked by Lean (decide +kernel): the integers here
-are only certificates.  The discriminant `Dval` and the resolvent `R` are
-DEFINED as `disc5`/`resolvent5` applied to the integer coefficients, so the
-transport lemmas (`disc5_map`, `resolvent5_map`) close definitionally and no
-big-integer kernel evaluation is ever needed.
+Everything numeric is re-checked by Lean: the integers here are only
+certificates.  `Dval` is DEFINED as `disc5` of the integer coefficients and
+`Dval_eq` re-derives the literal `Dlit`; `R` is the resolvent with explicit
+integer coefficients and `hRint` re-derives it from `resolvent5`.  The residue
+certificates (`nonsquare`, `noRootR`) are stated over plain `ℤ` / bounded `ℕ`
+(`HornerCert.hornerZ`) so that they depend on no axioms; `ZMod`-stated
+certificates would pull in `Classical.choice` and `Quot.sound`.
 """
 import json
 
@@ -41,13 +43,14 @@ for k in WEIGHTS:
     # sanity: the certificate really has no root mod l
     L = int(l)
     assert all((y**6 + sum(cc * y**(5 - i) for i, cc in enumerate(Rc))) % L for y in range(L)), k
+    D, Q = int(v["disc"]), int(q)
+    assert all((D - y * y) % Q for y in range(Q)), k
+    Rcs = list(reversed(Rc)) + [1]  # constant term first, for hornerZ
     def rpoly():
         terms = ["X ^ 6"] + [f"C ({fmt_int(cc)}) * X ^ {5 - i}" for i, cc in enumerate(Rc)]
         return "\n    + ".join(terms)
-    def rmod():
-        terms = ["y ^ 6"] + [f"(({fmt_int(cc)} : ℤ) : ZMod {l}) * y ^ {5 - i}"
-                             for i, cc in enumerate(Rc)]
-        return "\n    + ".join(terms)
+    def rcs():
+        return "[" + ",\n    ".join(fmt_int(cc) for cc in Rcs) + "]"
     ints = ", ".join(fmt_int(z) for z in (a, b, c, d, e))
     # wrap the disc5/resolvent5 application lines
     zs = [fmt_int(z) for z in (a, b, c, d, e)]
@@ -71,8 +74,14 @@ is `MaedaWeight{k}.P`, proved irreducible in `MaedaDim5Weights.lean`). -/
 def Dval : ℤ :=
   disc5 {app_lines("")}
 
-/-- The discriminant is not a square mod {q}. -/
-lemma nonsquare : ∀ x : ZMod {q}, ((Dval : ℤ) : ZMod {q}) ≠ x * x := by
+/-- The discriminant as an explicit integer (`Dval_eq` re-derives it). -/
+def Dlit : ℤ := {D}
+
+lemma Dval_eq : Dval = Dlit := by decide +kernel
+
+/-- The discriminant is not a square mod {q}: `Dlit − y²` has no root mod {q}
+(plain `ℤ` arithmetic, no axioms). -/
+lemma nonsquare : ∀ y : ℕ, y < {q} → hornerZ [Dlit, 0, -1] y % {q} ≠ 0 := by
   decide +kernel
 
 /-- The `F₂₀` resolvent of the weight-{k} quintic, with its integer coefficients
@@ -88,16 +97,18 @@ lemma R_monic : R.Monic := by
   unfold R
   monicity!
 
-/-- `R` reduced mod {l}, as a computable function (`Polynomial` is not). -/
-def Rmod (y : ZMod {l}) : ZMod {l} :=
-  {rmod()}
+/-- The coefficients of `R`, constant term first (`Polynomial` is not
+computable; `R_eval_eq` links the two). -/
+def Rcs : List ℤ :=
+  {rcs()}
 
-/-- The resolvent has no root mod {l}. -/
-lemma noRootR : ∀ y : ZMod {l}, Rmod y ≠ 0 := by
+/-- The resolvent has no root mod {l} (plain `ℤ` arithmetic, no axioms). -/
+lemma noRootR : ∀ y : ℕ, y < {l} → hornerZ Rcs y % {l} ≠ 0 := by
   decide +kernel
 
-lemma R_eval_cast (n : ℤ) : (((R : ℤ[X]).eval n : ℤ) : ZMod {l}) = Rmod (n : ZMod {l}) := by
-  simp [R, Rmod]
+lemma R_eval_eq (n : ℤ) : (R : ℤ[X]).eval n = hornerZ Rcs n := by
+  simp only [R, Rcs, hornerZ, eval_add, eval_mul, eval_pow, eval_C, eval_X]
+  ring
 
 lemma hP : MaedaWeight{k}.P.map (Int.castRingHom ℚ)
     = X ^ 5 + C ({fmt_int(a)} : ℚ) * X ^ 4 + C ({fmt_int(b)} : ℚ) * X ^ 3
@@ -125,9 +136,7 @@ theorem maeda_galois{k} :
       disc5_map (Int.castRingHom ℚ) _ _ _ _ _
     rw [hD, Rat.isSquare_intCast_iff] at hs
     obtain ⟨n, hn⟩ := hs
-    have h := congrArg (fun z : ℤ => (z : ZMod {q})) hn
-    push_cast at h
-    exact nonsquare n h
+    exact ne_sq_of_cert (by norm_num) nonsquare n (Dval_eq.symm.trans hn)
   · -- no rational root: the integral root theorem reduces to `noRootR`
     rintro r hr
     have hr' : aeval r (R : ℤ[X]) = 0 := by
@@ -143,8 +152,7 @@ theorem maeda_galois{k} :
     have h3 : ((R : ℤ[X]).eval n : ℤ) = 0 := by
       rw [hn, algebraMap_int_eq, eq_intCast, hE n] at hr'
       exact_mod_cast hr'
-    refine noRootR (n : ZMod {l}) ?_
-    rw [← R_eval_cast, h3, Int.cast_zero]
+    exact no_root_of_cert (by norm_num) noRootR n (by rw [← R_eval_eq]; exact h3)
 
 end Weight{k}
 """
@@ -152,6 +160,7 @@ end Weight{k}
 
 header = """import MathProof.ModularForms.MaedaGalois5
 import MathProof.ModularForms.MaedaDim5Weights
+import MathProof.ModularForms.HornerCert
 
 /-!
 # Maeda's conjecture in full for dimension 5: Galois group `S₅`
@@ -163,11 +172,13 @@ polynomial `P` of `T₂` irreducible.  Here we prove its Galois group is all of
 `disc5` of `P` is a non-square (non-residue mod a small prime) and the `F₂₀`
 resolvent `resolvent5` has no root mod a small prime, hence no rational root
 (integral root theorem).  The integers in this file are only certificates —
-Lean re-checks everything: `Dval` and `R` are *defined* as `disc5`/`resolvent5`
-applied to the coefficients, so the transport lemmas close definitionally.
+Lean re-checks everything: `Dval_eq` re-derives the discriminant literal from
+`disc5`, `hRint` the resolvent coefficients from `resolvent5`.  The residue
+certificates are stated over `ℤ` / bounded `ℕ` (`HornerCert`), so they depend
+on no axioms (`MaedaGalois5AxCheck`).
 -/
 
-open Polynomial
+open Polynomial HornerCert
 
 attribute [local instance] Polynomial.Gal.splits_ℚ_ℂ
 

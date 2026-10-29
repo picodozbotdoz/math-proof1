@@ -17,10 +17,20 @@ three axioms. Audit with:
 
 ```bash
 tools/modal_run.sh --target MathProof.AxCheck   # Modal account: see AGENTS.md (xyz)
+tools/modal_run.sh --target MathProof.AxCheckDecide   # every light `decide` certificate
 ```
 
 Heavy modules (`LehmerPacked`, `LehmerPow32`, `LehmerGrand`) carry their own
 `#print axioms` lines at the end of the file instead.
+
+Residue certificates ("no root / non-square mod ℓ") are stated over `ℕ`/`ℤ`
+via `HornerCert`, not over `ZMod` — a `ZMod`-quantified `decide` depends on
+`Classical.choice` and `Quot.sound`.
+
+## Memory alerts
+
+Any build reaching 64 GiB RSS must be investigated (policy, tooling and
+workflow: AGENTS.md "Memory alerts"; log: `research/memory-alerts.md`).
 
 ## How the pieces fit together
 
@@ -49,7 +59,8 @@ A module is *heavy* if it (transitively) imports a large kernel decide:
 `LehmerMod`, `LehmerPacked`, `LehmerPow32`, `LehmerPrimePower`, `LehmerGrand`,
 `LehmerPrimeGrand`, the `MaedaGalois5` identity chain (`IdBase … Identities`,
 `MaedaGalois5`, `MaedaGalois5Weights`; up to ~200 GiB per module) and
-`AxCheck` (imports `LehmerMod`).  `Poly5` and `MaedaGalois5Defs` are light. Everything else is light.
+`MaedaGalois5AxCheck`, and `AxCheck` (imports `LehmerMod`).  `Poly5`,
+`MaedaGalois5Defs` and `HornerCert` are light. Everything else is light.
 
 When adding a module:
 - **light** → add it to all three of `defaultTargets` in `lakefile.toml`,

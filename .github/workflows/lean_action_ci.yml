@@ -59,6 +59,7 @@ jobs:
             MathProof.ModularForms.MaedaDim5Weights
             MathProof.ModularForms.Poly5
             MathProof.ModularForms.MaedaGalois5Defs
+            MathProof.ModularForms.HornerCert
       # GitHub Pages is not enabled on this repository, so the docgen deploy
       # step always fails today; keep it non-fatal until Pages is switched on
       # (Settings -> Pages -> Source: GitHub Actions), then drop this flag.
