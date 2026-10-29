@@ -82,9 +82,17 @@ theorem charpoly_T2 : T2.charpoly = P.map (Int.castRingHom ℂ) := by
   simp [P, Matrix.trace_fin_two, Matrix.det_fin_two, map_ofNat]
   ring
 
+lemma noRoot_raw_cert : ∀ x : ℕ, x < 29 →
+    ((x : ℤ) ^ 2 + (8280) * (x : ℤ) + (-195250176)) % 29 ≠ 0 := by
+  decide +kernel
+
 lemma noRoot_raw : ∀ x : ZMod 29,
     x ^ 2 + (8280) * x + (-195250176) ≠ 0 := by
-  decide
+  intro x h1
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq x
+  refine noRoot_raw_cert y hy (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 /-- **Maeda's conjecture in weight 28**: the characteristic polynomial of `T₂`
 on `S_28(SL(2, ℤ))` is irreducible over `ℚ` (no root mod 29). -/
@@ -165,9 +173,17 @@ theorem charpoly_T2 : T2.charpoly = P.map (Int.castRingHom ℂ) := by
   simp [P, Matrix.trace_fin_two, Matrix.det_fin_two, map_ofNat]
   ring
 
+lemma noRoot_raw_cert : ∀ x : ℕ, x < 29 →
+    ((x : ℤ) ^ 2 + (-8640) * (x : ℤ) + (-454569984)) % 29 ≠ 0 := by
+  decide +kernel
+
 lemma noRoot_raw : ∀ x : ZMod 29,
     x ^ 2 + (-8640) * x + (-454569984) ≠ 0 := by
-  decide
+  intro x h1
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq x
+  refine noRoot_raw_cert y hy (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 /-- **Maeda's conjecture in weight 30**: the characteristic polynomial of `T₂`
 on `S_30(SL(2, ℤ))` is irreducible over `ℚ` (no root mod 29). -/
@@ -248,9 +264,17 @@ theorem charpoly_T2 : T2.charpoly = P.map (Int.castRingHom ℂ) := by
   simp [P, Matrix.trace_fin_two, Matrix.det_fin_two, map_ofNat]
   ring
 
+lemma noRoot_raw_cert : ∀ x : ℕ, x < 29 →
+    ((x : ℤ) ^ 2 + (-39960) * (x : ℤ) + (-2235350016)) % 29 ≠ 0 := by
+  decide +kernel
+
 lemma noRoot_raw : ∀ x : ZMod 29,
     x ^ 2 + (-39960) * x + (-2235350016) ≠ 0 := by
-  decide
+  intro x h1
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq x
+  refine noRoot_raw_cert y hy (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 /-- **Maeda's conjecture in weight 32**: the characteristic polynomial of `T₂`
 on `S_32(SL(2, ℤ))` is irreducible over `ℚ` (no root mod 29). -/
@@ -331,9 +355,17 @@ theorem charpoly_T2 : T2.charpoly = P.map (Int.castRingHom ℂ) := by
   simp [P, Matrix.trace_fin_two, Matrix.det_fin_two, map_ofNat]
   ring
 
+lemma noRoot_raw_cert : ∀ x : ℕ, x < 31 →
+    ((x : ℤ) ^ 2 + (121680) * (x : ℤ) + (-8513040384)) % 31 ≠ 0 := by
+  decide +kernel
+
 lemma noRoot_raw : ∀ x : ZMod 31,
     x ^ 2 + (121680) * x + (-8513040384) ≠ 0 := by
-  decide
+  intro x h1
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq x
+  refine noRoot_raw_cert y hy (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 /-- **Maeda's conjecture in weight 34**: the characteristic polynomial of `T₂`
 on `S_34(SL(2, ℤ))` is irreducible over `ℚ` (no root mod 31). -/
@@ -414,9 +446,17 @@ theorem charpoly_T2 : T2.charpoly = P.map (Int.castRingHom ℂ) := by
   simp [P, Matrix.trace_fin_two, Matrix.det_fin_two, map_ofNat]
   ring
 
+lemma noRoot_raw_cert : ∀ x : ℕ, x < 41 →
+    ((x : ℤ) ^ 2 + (194400) * (x : ℤ) + (-137403408384)) % 41 ≠ 0 := by
+  decide +kernel
+
 lemma noRoot_raw : ∀ x : ZMod 41,
     x ^ 2 + (194400) * x + (-137403408384) ≠ 0 := by
-  decide
+  intro x h1
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq x
+  refine noRoot_raw_cert y hy (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 /-- **Maeda's conjecture in weight 38**: the characteristic polynomial of `T₂`
 on `S_38(SL(2, ℤ))` is irreducible over `ℚ` (no root mod 41). -/
@@ -546,9 +586,18 @@ theorem charpoly_T2 : T2.charpoly = P.map (Int.castRingHom ℂ) := by
   simp [P, Matrix.det_fin_three, map_ofNat]
   ring
 
+lemma noRoot_raw_cert : ∀ x : ℕ, x < 37 →
+    ((x : ℤ) ^ 3 + (-139656) * (x : ℤ) ^ 2 + (-59208339456) * (x : ℤ) + (-1467625047588864)) % 37
+      ≠ 0 := by
+  decide +kernel
+
 lemma noRoot_raw : ∀ x : ZMod 37,
     x ^ 3 + (-139656) * x ^ 2 + (-59208339456) * x + (-1467625047588864) ≠ 0 := by
-  decide
+  intro x h1
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq x
+  refine noRoot_raw_cert y hy (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 /-- **Maeda's conjecture in weight 36**: the characteristic polynomial of `T₂`
 on `S_36(SL(2, ℤ))` is irreducible over `ℚ` (no root mod 37). -/
@@ -678,9 +727,18 @@ theorem charpoly_T2 : T2.charpoly = P.map (Int.castRingHom ℂ) := by
   simp [P, Matrix.det_fin_three, map_ofNat]
   ring
 
+lemma noRoot_raw_cert : ∀ x : ℕ, x < 37 →
+    ((x : ℤ) ^ 3 + (-548856) * (x : ℤ) ^ 2 + (-810051757056) * (x : ℤ) + (213542160549543936)) %
+      37 ≠ 0 := by
+  decide +kernel
+
 lemma noRoot_raw : ∀ x : ZMod 37,
     x ^ 3 + (-548856) * x ^ 2 + (-810051757056) * x + (213542160549543936) ≠ 0 := by
-  decide
+  intro x h1
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq x
+  refine noRoot_raw_cert y hy (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 /-- **Maeda's conjecture in weight 40**: the characteristic polynomial of `T₂`
 on `S_40(SL(2, ℤ))` is irreducible over `ℚ` (no root mod 37). -/
@@ -810,9 +868,18 @@ theorem charpoly_T2 : T2.charpoly = P.map (Int.castRingHom ℂ) := by
   simp [P, Matrix.det_fin_three, map_ofNat]
   ring
 
+lemma noRoot_raw_cert : ∀ x : ℕ, x < 41 →
+    ((x : ℤ) ^ 3 + (344688) * (x : ℤ) ^ 2 + (-6374982426624) * (x : ℤ) + (-520435526440845312)) %
+      41 ≠ 0 := by
+  decide +kernel
+
 lemma noRoot_raw : ∀ x : ZMod 41,
     x ^ 3 + (344688) * x ^ 2 + (-6374982426624) * x + (-520435526440845312) ≠ 0 := by
-  decide
+  intro x h1
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq x
+  refine noRoot_raw_cert y hy (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 /-- **Maeda's conjecture in weight 42**: the characteristic polynomial of `T₂`
 on `S_42(SL(2, ℤ))` is irreducible over `ℚ` (no root mod 41). -/
@@ -942,9 +1009,18 @@ theorem charpoly_T2 : T2.charpoly = P.map (Int.castRingHom ℂ) := by
   simp [P, Matrix.det_fin_three, map_ofNat]
   ring
 
+lemma noRoot_raw_cert : ∀ x : ℕ, x < 61 →
+    ((x : ℤ) ^ 3 + (2209944) * (x : ℤ) ^ 2 + (-15663522502656) * (x : ℤ) +
+      (-19976984434430705664)) % 61 ≠ 0 := by
+  decide +kernel
+
 lemma noRoot_raw : ∀ x : ZMod 61,
     x ^ 3 + (2209944) * x ^ 2 + (-15663522502656) * x + (-19976984434430705664) ≠ 0 := by
-  decide
+  intro x h1
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq x
+  refine noRoot_raw_cert y hy (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 /-- **Maeda's conjecture in weight 44**: the characteristic polynomial of `T₂`
 on `S_44(SL(2, ℤ))` is irreducible over `ℚ` (no root mod 61). -/
@@ -1074,9 +1150,18 @@ theorem charpoly_T2 : T2.charpoly = P.map (Int.castRingHom ℂ) := by
   simp [P, Matrix.det_fin_three, map_ofNat]
   ring
 
+lemma noRoot_raw_cert : ∀ x : ℕ, x < 53 →
+    ((x : ℤ) ^ 3 + (-3814272) * (x : ℤ) ^ 2 + (-44544640241664) * (x : ℤ) +
+      (135250282417024401408)) % 53 ≠ 0 := by
+  decide +kernel
+
 lemma noRoot_raw : ∀ x : ZMod 53,
     x ^ 3 + (-3814272) * x ^ 2 + (-44544640241664) * x + (135250282417024401408) ≠ 0 := by
-  decide
+  intro x h1
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq x
+  refine noRoot_raw_cert y hy (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 /-- **Maeda's conjecture in weight 46**: the characteristic polynomial of `T₂`
 on `S_46(SL(2, ℤ))` is irreducible over `ℚ` (no root mod 53). -/
@@ -1206,9 +1291,18 @@ theorem charpoly_T2 : T2.charpoly = P.map (Int.castRingHom ℂ) := by
   simp [P, Matrix.det_fin_three, map_ofNat]
   ring
 
+lemma noRoot_raw_cert : ∀ x : ℕ, x < 53 →
+    ((x : ℤ) ^ 3 + (24225168) * (x : ℤ) ^ 2 + (-566746931810304) * (x : ℤ) +
+      (-13634883228742736412672)) % 53 ≠ 0 := by
+  decide +kernel
+
 lemma noRoot_raw : ∀ x : ZMod 53,
     x ^ 3 + (24225168) * x ^ 2 + (-566746931810304) * x + (-13634883228742736412672) ≠ 0 := by
-  decide
+  intro x h1
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq x
+  refine noRoot_raw_cert y hy (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 /-- **Maeda's conjecture in weight 50**: the characteristic polynomial of `T₂`
 on `S_50(SL(2, ℤ))` is irreducible over `ℚ` (no root mod 53). -/

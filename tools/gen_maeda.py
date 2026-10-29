@@ -173,11 +173,11 @@ theorem charpoly_T2 : T2.charpoly = P.map (Int.castRingHom ℂ) := by
   ring
 """)
     l=ell[0]
-    out.append(f"""lemma noRoot_raw : ∀ x : ZMod {l},
-    {rawpoly(cp)} ≠ 0 := by
-  decide
-
-/-- **Maeda's conjecture in weight {k}**: the characteristic polynomial of `T₂`
+    import re as _re
+    zexpr = _re.sub(r"\bx\b", "(x : ℤ)", rawpoly(cp))
+    out.append(zcert("noRoot_raw", l, ["x"], f"∀ x : ZMod {l},\n    {rawpoly(cp)} ≠ 0",
+                     [zexpr], []))
+    out.append(f"""/-- **Maeda's conjecture in weight {k}**: the characteristic polynomial of `T₂`
 on `S_{k}(SL(2, ℤ))` is irreducible over `ℚ` (no root mod {l}). -/
 theorem maeda : Irreducible (P.map (Int.castRingHom ℚ)) := by
   have : Fact (Nat.Prime {l}) := ⟨by norm_num⟩
@@ -252,7 +252,7 @@ def zcert(name, l, vars_, zmod_stmt, int_conds, rdefs):
         used = [r for r in rdefs if _re.search(rf"\b{r}\b", side)]
         if used:
             lines.append(f"  simp only [{', '.join(used)}] at {h}")
-        lines.append(f"  push_cast at {h}")
+            lines.append(f"  push_cast at {h}")
     args = " ".join(f"{y} h{y}" for y in ys[:len(vars_)])
     if len(int_conds) == 1:
         lines.append(f"  refine {name}_cert {args} (HornerCert.emod_eq_zero_of_cast ?_)")

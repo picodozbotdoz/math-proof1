@@ -9,18 +9,20 @@
 # Never run two heavy stages concurrently: both restore the same cache
 # tarball and the later save replaces the earlier one.
 #
-# Memory requests (MiB) are what the Iteration 18 build ran with.  Modal's
-# limit is soft: measured peaks were IdE4 202 GiB, IdE5 137 GiB, IdE6 172 GiB,
-# Identities 23 GiB, MaedaGalois5 / Weights ~7 GiB (research/research-log.md).
+# Memory requests (MiB).  Modal's limit is soft.  Since the recurrence +
+# checkpoint rewrite of tools/gen_poly5.py (research/poly5-memory-study) every
+# kernel `decide` in the chain is budgeted to ≈ 0.5–0.9 M modelled list
+# operations (≈ 15–25 GiB at the measured ≈ 27 GiB per M ops); before it the
+# peaks were IdE4 202 GiB, IdE5 137 GiB, IdE6 172 GiB.  Measured after it
+# (2026-10-29): IdBase 8.1, IdE4 13.5, IdE5 22.0, IdE6 34.7, Identities
+# 17.6, MaedaGalois5 6.6, Weights 6.3 GiB; ≈ 33 min for the whole chain.
 # LEAN_CHECK_MEMORY_MIB overrides every stage; logs go to $STAGE_LOG_DIR.
-set -uo pipefail
-
 STAGES=(
-  "MaedaGalois5Defs 131072"
-  "MaedaGalois5IdBase 131072"
-  "MaedaGalois5IdE4 131072"
-  "MaedaGalois5IdE5 131072"
-  "MaedaGalois5IdE6 131072"
+  "MaedaGalois5Defs 32768"
+  "MaedaGalois5IdBase 49152"
+  "MaedaGalois5IdE4 49152"
+  "MaedaGalois5IdE5 49152"
+  "MaedaGalois5IdE6 49152"
   "MaedaGalois5Identities 32768"
   "MaedaGalois5 32768"
   "MaedaGalois5Weights 32768"

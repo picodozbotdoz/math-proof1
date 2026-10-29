@@ -75,7 +75,8 @@ theorem rank_cuspForm_16 : Module.rank ℂ (CuspForm 𝒮ℒ ((16 : ℕ) : ℤ))
 
 /-! ### Small coefficients -/
 
-lemma sigma3_two : sigma 3 2 = 9 := by decide
+lemma sigma3_two : sigma 3 2 = 9 := by
+  simp [ArithmeticFunction.sigma_apply, Nat.prime_two.divisors]
 
 theorem a16_one : a16 1 = 1 := by
   simp [a16, Finset.Nat.antidiagonal_succ, dlt, e4, Ramanujan.tau_one]

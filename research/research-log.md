@@ -1291,17 +1291,40 @@ unchanged).  Same hand-written pattern in `MaedaGalois4` (12) and
 `simp` facts (`Nat.Prime.divisors`), not `decide` certificates.  Re-audit:
 **110 certificates, 91 propext-clean, 19 remaining.**
 
-**Deferred (19), needs a heavy-chain rebuild:** `MaedaSmallWeights` (11),
-`MaedaGalois` (6), `LehmerWeight16` (1), `Tau.Lehmer` (1).  These modules are
-transitive imports of `MaedaGalois5Defs`, and lake's traces are input-based:
-editing any of them rebuilds `IdBase → IdE4 → IdE5 → IdE6 → Identities`
-(≈ 2 h, peaks to 202 GiB — measured: a `MaedaLevelOne` edit made `IdBase`
-rebuild).  `gen_maeda.py` still regenerates `MaedaSmallWeights`
-byte-identically; switch dims 2–3 to the certificate pattern together with
-the next approved chain rebuild (improvements P1-2 / P2-1).  After this
-change the heavy side was re-validated from the cache: E4–E6 and
-`Identities` replayed, `IdBase` (212 s) and `MaedaGalois5Weights` rebuilt,
-all Iteration 18 certificates still axiom-free.
+**The 19 heavy-chain ancestors** (`MaedaSmallWeights` 11, `MaedaGalois` 6,
+`LehmerWeight16` 1, `Tau.Lehmer` 1) were first deferred — they are
+transitive imports of `MaedaGalois5Defs`, and lake's traces are input-based,
+so editing them rebuilds the identity chain (measured: a `MaedaLevelOne`
+edit made `IdBase` rebuild) — and then fixed together with the chain rebuild
+below: `gen_maeda.py` dims 2–3 emit `noRoot_raw_cert`, `MaedaGalois` gets
+`nonsquare{k}_cert`, `σ₃(2)` by `simp`, and `Ramanujan.allNonzeroLt` tests
+with `Int.decEq` explicitly.  **Final audit: 109 light-library `decide`
+certificates, 0 depending on more than `propext`.**
+
+### Identity chain rebuilt for memory (2026-10-29)
+
+Investigation and design: `research/poly5-memory-study/README.md`.  Kernel
+`decide` memory ≈ 27 GiB per million `Poly5` list operations within one
+declaration; the old chain computed e_k(Θ) as C(6,k) brute-force products.
+`tools/gen_poly5.py` now (1) computes e_k by the recurrence
+`E_{j,k} = E_{j−1,k} + Θ_j·E_{j−1,k−1}` with every node a literal certified by
+its own `decide`, (2) checkpoints the Horner side into literals at ≈ 0.5 M
+modelled operations, (3) keeps `e{k}dec` / `ddec` as derived theorems (so
+`MaedaGalois5`/`Weights` are unchanged), and (4) emits lint-clean code (the
+P2-1 debt; `MaedaGalois5Defs` lint fixed by hand: scoped budgets, `omit`,
+`have`, `change`).  Measured with `tools/stage_chain.sh`:
+
+| module | before | after |
+|---|---|---|
+| `IdBase` | 24.5 GiB, 209 s | **8.1 GiB, 93 s** |
+| `IdE4` | 202 GiB, 2343 s | **13.5 GiB, 207 s** |
+| `IdE5` | 137 GiB, 1498 s | **22.0 GiB, 434 s** |
+| `IdE6` | 172 GiB, 2207 s | **34.7 GiB, 977 s** |
+| `Identities` | 23 GiB, 170 s | 17.6 GiB, 273 s |
+| `MaedaGalois5` / `Weights` | ≈ 7 GiB | 6.6 / 6.3 GiB |
+
+Whole chain ≈ 33 min instead of ≈ 2 h; every module below the 64 GiB alert
+threshold (largest 34.7 GiB vs 202).
 
 **Memory-alert tooling** (policy: any build ≥ 64 GiB is investigated,
 AGENTS.md "Memory alerts", `research/memory-alerts.md`): `lean_check.py` now

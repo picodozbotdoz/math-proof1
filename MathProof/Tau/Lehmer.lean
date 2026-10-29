@@ -33,10 +33,13 @@ Lehmer's conjecture, Ramanujan tau function, non-vanishing
 
 namespace Ramanujan
 
-/-- Check that all entries of a list at indices `< N` are nonzero. -/
+/-- Check that all entries of a list at indices `< N` are nonzero.  The test
+uses `Int.decEq` explicitly: `!=` on `ℤ` resolves through
+`Int.instLinearOrderPackage`, which drags `Classical.choice` into the
+certificate below (the proof standard asks `propext` only). -/
 def allNonzeroLt : ℕ → List ℤ → Bool
   | 0, _ => true
-  | d + 1, l => (l.getD d 0 != 0) && allNonzeroLt d l
+  | d + 1, l => !(@decide (l.getD d 0 = 0) (Int.decEq _ _)) && allNonzeroLt d l
 
 theorem allNonzeroLt_eq_true_iff {N : ℕ} {l : List ℤ} :
     allNonzeroLt N l = true ↔ ∀ i < N, l.getD i 0 ≠ 0 := by

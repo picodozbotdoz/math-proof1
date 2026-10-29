@@ -26,9 +26,9 @@ Heavy modules (`LehmerPacked`, `LehmerPow32`, `LehmerGrand`) carry their own
 Residue certificates ("no root / non-square mod ℓ") are stated over `ℕ`/`ℤ`
 via `HornerCert`, not over `ZMod` — a `ZMod`-quantified `decide` depends on
 `Classical.choice` and `Quot.sound`; likewise compute with `List` (not
-`Finset`/`ArithmeticFunction`) inside certificates (`MaedaCertC`).  19 older
-certificates in heavy-chain ancestors still violate the rule (deferred to the
-next approved chain rebuild; `research/research-log.md`).
+`Finset`/`ArithmeticFunction`) inside certificates (`MaedaCertC`).  Audit:
+`MathProof.AxCheckDecide` (light library, all clean) and
+`MaedaGalois5AxCheck` (heavy chain).
 
 ## Memory alerts
 
@@ -61,7 +61,7 @@ The results form a pipeline that crosses files:
 A module is *heavy* if it (transitively) imports a large kernel decide:
 `LehmerMod`, `LehmerPacked`, `LehmerPow32`, `LehmerPrimePower`, `LehmerGrand`,
 `LehmerPrimeGrand`, the `MaedaGalois5` identity chain (`IdBase … Identities`,
-`MaedaGalois5`, `MaedaGalois5Weights`; up to ~200 GiB per module) and
+`MaedaGalois5`, `MaedaGalois5Weights`; 8–35 GiB per module) and
 `MaedaGalois5AxCheck`, and `AxCheck` (imports `LehmerMod`).  `Poly5`,
 `MaedaGalois5Defs`, `HornerCert` and `MaedaCertC` are light. Everything else is light.
 

@@ -73,12 +73,22 @@ theorem galActionHom_bijective_of_cubic {b c d : ℚ}
 
 /-! ### Weight 36 -/
 
+/-- Axiom-free certificate (`HornerCert`, plain `ℤ` arithmetic over bounded `ℕ`):
+`606037485049196709344808901017600` is not a square mod 29. -/
+lemma nonsquare36_cert : ∀ y : ℕ, y < 29 →
+    (606037485049196709344808901017600 - (y : ℤ) * (y : ℤ)) % 29 ≠ 0 := by
+  decide +kernel
+
 /-- The discriminant of the weight-36 cubic,
 `606037485049196709344808901017600`,
 is not a square mod 29. -/
 lemma nonsquare36 : ∀ x : ZMod 29,
     (606037485049196709344808901017600 : ZMod 29) ≠ x * x := by
-  decide
+  intro x h1
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq x
+  refine nonsquare36_cert y hy (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 /-- **Maeda's conjecture in weight 36, in full**: the Galois group of the
 characteristic polynomial of `T₂` on `S_36` acts on its three roots as `S₃`. -/
@@ -102,12 +112,22 @@ theorem maeda_galois36 :
 
 /-! ### Weight 40 -/
 
+/-- Axiom-free certificate (`HornerCert`, plain `ℤ` arithmetic over bounded `ℕ`):
+`2942804749388599757494744709175705600` is not a square mod 41. -/
+lemma nonsquare40_cert : ∀ y : ℕ, y < 41 →
+    (2942804749388599757494744709175705600 - (y : ℤ) * (y : ℤ)) % 41 ≠ 0 := by
+  decide +kernel
+
 /-- The discriminant of the weight-40 cubic,
 `2942804749388599757494744709175705600`,
 is not a square mod 41. -/
 lemma nonsquare40 : ∀ x : ZMod 41,
     (2942804749388599757494744709175705600 : ZMod 41) ≠ x * x := by
-  decide
+  intro x h1
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq x
+  refine nonsquare40_cert y hy (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 /-- **Maeda's conjecture in weight 40, in full**: the Galois group of the
 characteristic polynomial of `T₂` on `S_40` acts on its three roots as `S₃`. -/
@@ -131,12 +151,22 @@ theorem maeda_galois40 :
 
 /-! ### Weight 42 -/
 
+/-- Axiom-free certificate (`HornerCert`, plain `ℤ` arithmetic over bounded `ℕ`):
+`1054512765852281785358885792805971558400` is not a square mod 43. -/
+lemma nonsquare42_cert : ∀ y : ℕ, y < 43 →
+    (1054512765852281785358885792805971558400 - (y : ℤ) * (y : ℤ)) % 43 ≠ 0 := by
+  decide +kernel
+
 /-- The discriminant of the weight-42 cubic,
 `1054512765852281785358885792805971558400`,
 is not a square mod 43. -/
 lemma nonsquare42 : ∀ x : ZMod 43,
     (1054512765852281785358885792805971558400 : ZMod 43) ≠ x * x := by
-  decide
+  intro x h1
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq x
+  refine nonsquare42_cert y hy (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 /-- **Maeda's conjecture in weight 42, in full**: the Galois group of the
 characteristic polynomial of `T₂` on `S_42` acts on its three roots as `S₃`. -/
@@ -160,12 +190,22 @@ theorem maeda_galois42 :
 
 /-! ### Weight 44 -/
 
+/-- Axiom-free certificate (`HornerCert`, plain `ℤ` arithmetic over bounded `ℕ`):
+`19104694120990804233835415658184468070400` is not a square mod 41. -/
+lemma nonsquare44_cert : ∀ y : ℕ, y < 41 →
+    (19104694120990804233835415658184468070400 - (y : ℤ) * (y : ℤ)) % 41 ≠ 0 := by
+  decide +kernel
+
 /-- The discriminant of the weight-44 cubic,
 `19104694120990804233835415658184468070400`,
 is not a square mod 41. -/
 lemma nonsquare44 : ∀ x : ZMod 41,
     (19104694120990804233835415658184468070400 : ZMod 41) ≠ x * x := by
-  decide
+  intro x h1
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq x
+  refine nonsquare44_cert y hy (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 /-- **Maeda's conjecture in weight 44, in full**: the Galois group of the
 characteristic polynomial of `T₂` on `S_44` acts on its three roots as `S₃`. -/
@@ -189,12 +229,22 @@ theorem maeda_galois44 :
 
 /-! ### Weight 46 -/
 
+/-- Axiom-free certificate (`HornerCert`, plain `ℤ` arithmetic over bounded `ℕ`):
+`332169986114217137585368052148622432665600` is not a square mod 23. -/
+lemma nonsquare46_cert : ∀ y : ℕ, y < 23 →
+    (332169986114217137585368052148622432665600 - (y : ℤ) * (y : ℤ)) % 23 ≠ 0 := by
+  decide +kernel
+
 /-- The discriminant of the weight-46 cubic,
 `332169986114217137585368052148622432665600`,
 is not a square mod 23. -/
 lemma nonsquare46 : ∀ x : ZMod 23,
     (332169986114217137585368052148622432665600 : ZMod 23) ≠ x * x := by
-  decide
+  intro x h1
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq x
+  refine nonsquare46_cert y hy (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 /-- **Maeda's conjecture in weight 46, in full**: the Galois group of the
 characteristic polynomial of `T₂` on `S_46` acts on its three roots as `S₃`. -/
@@ -218,12 +268,22 @@ theorem maeda_galois46 :
 
 /-! ### Weight 50 -/
 
+/-- Axiom-free certificate (`HornerCert`, plain `ℤ` arithmetic over bounded `ℕ`):
+`42077422585405140357700605017762782248960000` is not a square mod 41. -/
+lemma nonsquare50_cert : ∀ y : ℕ, y < 41 →
+    (42077422585405140357700605017762782248960000 - (y : ℤ) * (y : ℤ)) % 41 ≠ 0 := by
+  decide +kernel
+
 /-- The discriminant of the weight-50 cubic,
 `42077422585405140357700605017762782248960000`,
 is not a square mod 41. -/
 lemma nonsquare50 : ∀ x : ZMod 41,
     (42077422585405140357700605017762782248960000 : ZMod 41) ≠ x * x := by
-  decide
+  intro x h1
+  obtain ⟨y, hy, rfl⟩ := HornerCert.exists_natCast_eq x
+  refine nonsquare50_cert y hy (HornerCert.emod_eq_zero_of_cast ?_)
+  push_cast
+  linear_combination h1
 
 /-- **Maeda's conjecture in weight 50, in full**: the Galois group of the
 characteristic polynomial of `T₂` on `S_50` acts on its three roots as `S₃`. -/

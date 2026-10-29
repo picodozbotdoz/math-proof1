@@ -10,6 +10,14 @@ Method (the LehmerPacked methodology applied to multivariate identities):
     homomorphism lemmas transport it to every commutative ring.
   * The composed (coefficient) side uses a multivariate Horner scheme over
     va..ve — ~100x cheaper in kernel reductions than term-by-term expansion.
+  * Memory (research/poly5-memory-study): the kernel keeps every intermediate
+    term of a `decide` until the declaration ends, ~27 GiB per million list
+    operations.  So (1) e_k(Θ) is computed by the recurrence
+    E_{j,k} = E_{j-1,k} + Θ_j · E_{j-1,k-1} (not C(6,k) products), (2) every
+    recurrence node is a literal certified by its own one-step `decide`, and
+    (3) the Horner side is checkpointed into literals whenever the modelled
+    work since the last checkpoint exceeds BUDGET.  Each declaration then
+    stays far below the 64 GiB memory-alert threshold.
 
 Run with no arguments: verifies identities, then (re)writes the module chain
 MaedaGalois5IdBase -> IdE4 -> IdE5 -> IdE6 -> MaedaGalois5Identities.
@@ -160,6 +168,53 @@ def poly_lit(p, name):
     rows.append(cur.rstrip().rstrip(','))
     return f"def {name} : Poly5 :=\n  [" + "\n  ".join(rows) + "]"
 
+CHUNK = 64
+BUDGET = 500_000          # modelled kernel list operations per declaration
+def mono_term(m, c):
+    return f"({mono_lit(m)}, {c})"
+
+def chunked_lit(name, p):
+    """`def name` as a balanced `++` tree of 64-term literal chunks (a single
+    huge list literal is slow to elaborate)."""
+    items = [mono_term(m, c) for m, c in sorted(p.items())]
+    if not items:
+        return [f"def {name} : Poly5 := []"]
+    out, names = [], []
+    for i in range(0, len(items), CHUNK):
+        cn = f"{name}_c{i // CHUNK}"; names.append(cn)
+        ch = items[i:i + CHUNK]
+        rows = [", ".join(ch[r:r + 2]) for r in range(0, len(ch), 2)]
+        out.append(f"def {cn} : Poly5 :=\n  [" + ",\n   ".join(rows) + "]")
+    def tree(ns):
+        if len(ns) == 1: return ns[0]
+        h = len(ns) // 2
+        return f"({tree(ns[:h])} ++ {tree(ns[h:])})"
+    if len(names) == 1:
+        out.append(f"def {name} : Poly5 := {names[0]}")
+    else:
+        out.append(f"def {name} : Poly5 :=\n  " + wrap(tree(names), '  ', 96))
+    return out
+
+def hb_for(work):
+    """Kernel heartbeat budget for a `decide` of the modelled work."""
+    return max(8_000_000, 60 * work)
+
+def mul_work(a, b):
+    """Modelled list operations of `pMul a b` (`a` supplies the scaled copies,
+    merged one at a time into the growing result)."""
+    acc = {}; w = 0
+    for m, c in reversed(sorted(a.items())):
+        sc = {tuple(x + y for x, y in zip(m, m2)): c * c2 for m2, c2 in b.items()}
+        w += len(b) + len(sc) + len(acc)
+        acc = padd(sc, acc)
+    return w
+
+def decide_thm(name, lhs, rhs, work, doc=None):
+    d = f"/-- {doc} -/\n" if doc else ""
+    return (f"set_option maxHeartbeats {hb_for(work)} in\n"
+            f"-- kernel `decide` of ≈ {max(1, work // 1000)}k modelled list operations\n"
+            f"{d}theorem {name} : {lhs} = {rhs} := eq_of_pBeq (by decide +kernel)")
+
 def balanced_mul(names, polys):
     """Balanced product text.  Each `pMul` gets its SMALLER operand on the
     left: the kernel's native stack depth when forcing `pMul p q` grows with
@@ -249,10 +304,15 @@ for j in range(6):
   simp [PEval, mEval, L{nm}]
   ring""")
 for var in 'abcde':
+    # `simp` alone closes the negated ones (`va`, `vc`, `ve`)
+    tail = "" if var in "ace" else "\n  ring"
     P.append(f"""lemma {LITS[var]}_eval {{K : Type*}} [CommRing K] (x : Fin 5 → K) :
     PEval {LITS[var]} x = {FNS[var]} x := by
-  simp [PEval, mEval, {LITS[var]}, {FNS[var]}]
-  try ring""")
+  simp [PEval, mEval, {LITS[var]}, {FNS[var]}]{tail}""")
+P.append("""/-- The constant polynomial `1` (base of the e_k recurrence). -/
+def EOne : Poly5 := [(Mon.one, 1)]""")
+P.append("""lemma EOne_eval {K : Type*} [CommRing K] (x : Fin 5 → K) : PEval EOne x = 1 := by
+  simp [PEval, mEval, EOne, Mon.one]""")
 
 # --- theta products
 for j in range(6):
@@ -269,13 +329,31 @@ for j in range(6):
 # ------------- Horner emitter -------------
 def horner(var_idx, terms, tag):
     """terms: list of (coeff:int, pw:dict-with-vars-≥var_idx).  Returns
-    (lean_expr_of_chain, K-eval-text, emitted_lines)."""
+    (root_name, K-eval-text, emitted_lines, root_poly, root_work).  A node
+    whose modelled work since the last checkpoint exceeds BUDGET becomes a
+    literal certified by its own `decide` (`{name}_ck`), so no single
+    declaration evaluates the whole chain."""
     E = []
+    def node(nm, expr, poly, work, eval_stmt, eval_rw):
+        """emit node `nm := expr`, checkpointed if `work` is over BUDGET;
+        returns (name, effective work for the parent)"""
+        if work > BUDGET:
+            E.append(f"def {nm}c : Poly5 := {expr}")
+            E.extend(chunked_lit(nm, poly))
+            E.append(decide_thm(f"{nm}_ck", f"{nm}c", nm, work + len(poly)))
+            E.append(f"""lemma {nm}_eval {{K : Type*}} [CommRing K] (x : Fin 5 → K) :
+    {eval_stmt} := by
+  rw [← {nm}_ck, {eval_rw.replace('@@', nm + 'c')}""")
+            return len(poly)
+        E.append(f"def {nm} : Poly5 := {expr}")
+        E.append(f"""lemma {nm}_eval {{K : Type*}} [CommRing K] (x : Fin 5 → K) :
+    {eval_stmt} := by
+  rw [{eval_rw.replace('@@', nm)}""")
+        return work
     def rec(vi, tms, tg):
-        # strip zero terms
         tms = [(c, pw) for c, pw in tms if c != 0]
         if not tms:
-            return '[]', '0', E
+            return '[]', '0', {}, 0
         if vi == 5:
             assert all(not any(pw.values()) for _, pw in tms)
             c = sum(cc for cc, _ in tms)
@@ -284,7 +362,7 @@ def horner(var_idx, terms, tag):
             E.append(f"""lemma {nm}_eval {{K : Type*}} [CommRing K] (x : Fin 5 → K) :
     PEval {nm} x = ({c} : K) := by
   simp [PEval, mEval, {nm}, Mon.one]""")
-            return nm, f'({c} : K)', E
+            return nm, f'({c} : K)', ({(0,0,0,0,0): c} if c else {}), 1
         var = 'abcde'[vi]
         by_deg = {}
         for c, pw in tms:
@@ -294,31 +372,35 @@ def horner(var_idx, terms, tag):
         maxd = max(by_deg)
         children = {}
         for d in sorted(by_deg):
-            nm, txt, _ = rec(vi+1, by_deg[d], f'{tg}H{d}')
-            children[d] = (nm, txt)
-        cur_nm, cur_txt = children[maxd]
+            children[d] = rec(vi+1, by_deg[d], f'{tg}H{d}')
+        cur_nm, cur_txt, cur_p, cur_w = children[maxd]
+        LSP = SYMS[var]
         for d in range(maxd-1, -1, -1):
+            nm = f'{tg}N{d}'
+            prod = pmul(LSP, cur_p)
+            w = cur_w + mul_work(LSP, cur_p)
             if d in children:
-                cnm, ctxt = children[d]
-                nm = f'{tg}N{d}'
-                E.append(f"def {nm} : Poly5 := pAdd {cnm} (pMul {LITS[var]} {cur_nm})")
-                E.append(f"""lemma {nm}_eval {{K : Type*}} [CommRing K] (x : Fin 5 → K) :
-    PEval {nm} x = ({ctxt}) + ({FNS[var]} x) * ({cur_txt}) := by
-  rw [show PEval {nm} x = PEval {cnm} x + PEval {LITS[var]} x * PEval {cur_nm} x from by
-      simp only [{nm}, PEval_pAdd, PEval_pMul],
+                cnm, ctxt, cp, cw = children[d]
+                poly = padd(cp, prod)
+                w += cw + len(cp) + len(prod)
+                txt = f'({ctxt}) + ({FNS[var]} x) * ({cur_txt})'
+                eff = node(nm, f"pAdd {cnm} (pMul {LITS[var]} {cur_nm})", poly, w,
+                    f"PEval {nm} x = {txt}",
+                    f"""show PEval @@ x = PEval {cnm} x + PEval {LITS[var]} x * PEval {cur_nm} x from by
+      simp only [@@, PEval_pAdd, PEval_pMul],
     {cnm}_eval, {LITS[var]}_eval, {cur_nm}_eval]""")
-                cur_nm, cur_txt = nm, f'({ctxt}) + ({FNS[var]} x) * ({cur_txt})'
             else:
-                nm = f'{tg}N{d}'
-                E.append(f"def {nm} : Poly5 := pMul {LITS[var]} {cur_nm}")
-                E.append(f"""lemma {nm}_eval {{K : Type*}} [CommRing K] (x : Fin 5 → K) :
-    PEval {nm} x = ({FNS[var]} x) * ({cur_txt}) := by
-  rw [show PEval {nm} x = PEval {LITS[var]} x * PEval {cur_nm} x from by
-      simp only [{nm}, PEval_pMul],
+                poly = prod
+                txt = f'({FNS[var]} x) * ({cur_txt})'
+                eff = node(nm, f"pMul {LITS[var]} {cur_nm}", poly, w,
+                    f"PEval {nm} x = {txt}",
+                    f"""show PEval @@ x = PEval {LITS[var]} x * PEval {cur_nm} x from by
+      simp only [@@, PEval_pMul],
     {LITS[var]}_eval, {cur_nm}_eval]""")
-                cur_nm, cur_txt = nm, f'({FNS[var]} x) * ({cur_txt})'
-        return cur_nm, cur_txt, E
-    return rec(var_idx, terms, tag)
+            cur_nm, cur_txt, cur_p, cur_w = nm, txt, poly, eff
+        return cur_nm, cur_txt, cur_p, cur_w
+    nm, txt, poly, w = rec(var_idx, terms, tag)
+    return nm, txt, E, poly, w
 
 def chunks_to_terms(chunks):
     tms = []
@@ -331,53 +413,90 @@ def chunks_to_terms(chunks):
 HB = {1: 8000000, 2: 32000000, 3: 64000000, 4: 128000000, 5: 256000000, 6: 512000000}
 THETA_TEXT = {j: f'(theta x ![{",".join(map(str, cyc[j]))}]) * (theta x ![{",".join(map(str, pent[j]))}])' for j in range(6)}
 
+# e_k(Θ_0 … Θ_5) by the recurrence E[j][k] = E[j-1][k] + Θ_j · E[j-1][k-1]
+# (E[·][0] = 1, E[j][k] = 0 for k > j + 1).  Column k is emitted with e_k, so
+# each module only adds one column on top of the literals of the previous.
+EV = {}
+def E_nm(j, k):
+    return "EOne" if k == 0 else f"E{j}_{k}"
+def E_val(j, k):
+    return ONE if k == 0 else EV[(j, k)]
+
 for k in range(1, 7):
     if k >= 4:
         P.append(f'@@CUT:E{k}@@')
     K = f'e{k}'
     combs = list(itertools.combinations(range(6), k))
-    for idx, comb in enumerate(combs):
-        P.append(f"def {K}T{idx} : Poly5 := {balanced_mul([f'Theta{j}' for j in comb], [THETAS[j] for j in comb])}")
-    if len(combs) == 1:
-        P.append(f"def {K}LHS : Poly5 := {K}T0")
-        lhs_defs = [f'{K}LHS', f'{K}T0']
-    else:
-        P.append(f"def {K}A1 : Poly5 := pAdd {K}T0 {K}T1")
-        for idx in range(2, len(combs)):
-            P.append(f"def {K}A{idx} : Poly5 := pAdd {K}A{idx-1} {K}T{idx}")
-        P.append(f"def {K}LHS : Poly5 := {K}A{len(combs)-1}")
-        lhs_defs = [f'{K}LHS'] + [f'{K}A{i}' for i in range(len(combs)-1, 0, -1)] \
-            + [f'{K}T{i}' for i in range(len(combs)-1, -1, -1)]
+    for j in range(k - 1, 6):
+        below = (j - 1, k - 1) if j >= 1 else (0, 0)
+        bnm = E_nm(*below) if k > 1 else "EOne"
+        bval = E_val(*below) if k > 1 else ONE
+        prod = pmul(THETAS[j], bval)
+        work = mul_work(THETAS[j], bval) + len(bval) + 40   # + Θ_j = LCyc · LPent
+        if j == k - 1:
+            expr = f"pMul Theta{j} {bnm}"
+            val = prod
+            evtxt = f"{THETA_TEXT[j]} * PEval {bnm} x"
+        else:
+            prev = EV[(j - 1, k)]
+            expr = f"pAdd E{j-1}_{k} (pMul Theta{j} {bnm})"
+            val = padd(prev, prod)
+            work += len(prev) + len(prev) + len(prod)
+            evtxt = f"PEval E{j-1}_{k} x + {THETA_TEXT[j]} * PEval {bnm} x"
+        EV[(j, k)] = val
+        nm = f"E{j}_{k}"
+        P.append(f"def {nm}c : Poly5 := {expr}")
+        P.extend(chunked_lit(nm, val))
+        P.append(decide_thm(f"{nm}_ck", f"{nm}c", nm, work + len(val)))
+        P.append(f"""lemma {nm}_eval {{K : Type*}} [CommRing K] (x : Fin 5 → K) :
+    PEval {nm} x = {evtxt} := by
+  rw [← {nm}_ck]
+  simp only [{nm}c, {'PEval_pAdd, ' if j > k - 1 else ''}PEval_pMul, Theta{j}_eval]""")
+    assert EV[(5, k)] == eK(k)
+    P.append(f"def {K}LHS : Poly5 := E5_{k}")
     sgn = (-1) ** k
-    horner_nm, horner_txt, _ = horner(0, [(sgn * c, pw) for c, pw in chunks_to_terms(RES_TERMS[6-k])], f'{K}R')
-    P.extend(_)
+    horner_nm, horner_txt, lines, rpoly, rwork = horner(
+        0, [(sgn * c, pw) for c, pw in chunks_to_terms(RES_TERMS[6-k])], f'{K}R')
+    assert rpoly == EV[(5, k)]
+    P.extend(lines)
     P.append(f"def {K}RHS : Poly5 := {horner_nm}")
-    P.append(f"""set_option maxHeartbeats {HB[k]} in
-/-- Kernel certificate: the two canonical chains for the `X^{6-k}`-coefficient
-of the `F₂₀` resolvent (as polynomials in `x 0, …, x 4`) agree. -/
-theorem {K}dec : {K}LHS = {K}RHS := eq_of_pBeq (by decide +kernel)""")
+    P.append(decide_thm(f"{K}rhs_dec", f"{K}RHS", f"E5_{k}", rwork + len(rpoly)))
+    P.append(f"""/-- Kernel certificate: the two canonical chains for the `X^{6-k}`-coefficient
+of the `F₂₀` resolvent (as polynomials in `x 0, …, x 4`) agree.  Both are
+literals certified step by step: `E5_{k}` (the e_{k} recurrence, `E·_·_ck`) and
+the Horner chain (`{K}rhs_dec`). -/
+theorem {K}dec : {K}LHS = {K}RHS := {K}rhs_dec.symm""")
+    # eval lemmas reachable from E5_k
+    reach, stack = [], [(5, k)]
+    while stack:
+        n = stack.pop()
+        if n in reach or n[1] == 0: continue
+        reach.append(n)
+        if n[0] > n[1] - 1: stack.append((n[0] - 1, n[1]))
+        if n[0] >= 1: stack.append((n[0] - 1, n[1] - 1))
+    uses_one = any(nn[1] == 1 for nn in reach)
     lhs_sum = ' + '.join(' * '.join(THETA_TEXT[j] for j in comb) for comb in combs)
+    simps = [f"{K}LHS"] + [f"E{a}_{b}_eval" for a, b in sorted(reach, reverse=True)] \
+        + (["EOne_eval"] if uses_one else [])
     P.append(f"""set_option maxHeartbeats {HB[k]} in
+-- `ring` over the 12 `theta` atoms (degree {2*k}) after unfolding the recurrence
 lemma {K}lhs_eval {{K : Type*}} [CommRing K] (x : Fin 5 → K) :
-    PEval {K}LHS x = {wrap(lhs_sum)} := by
-  simp only [{', '.join(lhs_defs + [f'Theta{j}_eval' for j in range(6)])},
-    PEval_pAdd, PEval_pMul]""" + ("\n  ring" if k > 1 else ""))
+    PEval {K}LHS x = {lhs_sum} := by
+  simp only [{', '.join(simps)}]
+  ring""")
     sign = '-' if k % 2 == 1 else ''
     P.append(f"""lemma {K}rhs_eval {{K : Type*}} [CommRing K] (x : Fin 5 → K) :
-    PEval {K}RHS x = {horner_txt} := {K}Rroot_eval x""")
+    PEval {K}RHS x = {horner_txt} := {horner_nm}_eval x""")
     # the flat 140-term e₆ statement exceeds the default elaboration depth
     rec = "set_option maxRecDepth 100000 in\n" if k == 6 else ""
     P.append(f"""{rec}set_option maxHeartbeats {HB[k]} in
+-- `ring` matches the Horner form with the flat coefficient of `resolvent5`
 theorem theta_e{k} {{K : Type*}} [CommRing K] (x : Fin 5 → K) :
-    {wrap(lhs_sum)} = {sign}({wrap(flat_expr(RES_TERMS[6-k]))}) := by
-  calc {wrap(lhs_sum)} = PEval {K}LHS x := ({K}lhs_eval x).symm
+    {lhs_sum} = {sign}({flat_expr(RES_TERMS[6-k])}) := by
+  calc {lhs_sum} = PEval {K}LHS x := ({K}lhs_eval x).symm
     _ = PEval {K}RHS x := by rw [{K}dec]
     _ = {horner_txt} := {K}rhs_eval x
-    _ = {sign}({wrap(flat_expr(RES_TERMS[6-k]))}) := by ring""")
-
-# fix: the Horner root eval lemma name — horner returns (nm, txt, E) where the
-# root's eval lemma is named {nm}_eval except for '[]'; patch {K}rhs_eval.
-# (Handled below by rewriting the placeholder references.)
+    _ = {sign}({flat_expr(RES_TERMS[6-k])}) := by ring""")
 
 # ------------- delta2 -------------
 P.append('@@CUT:Disc@@')
@@ -388,13 +507,17 @@ for i, j in difs:
 D_POLYS = [{tuple(1 if t == i else 0 for t in range(5)): 1,
             tuple(1 if t == j else 0 for t in range(5)): -1} for i, j in difs]
 P.append(f"def DLHS2 : Poly5 := {balanced_mul([f'D{i}{j}' for i, j in difs], D_POLYS)}")
-horner_nm, horner_txt, _ = horner(0, chunks_to_terms(DISC_CHUNKS), 'dR')
-P.extend(_)
+horner_nm, horner_txt, lines, dpoly, dwork = horner(0, chunks_to_terms(DISC_CHUNKS), 'dR')
+assert dpoly == DELTA2
+P.extend(lines)
 P.append(f"def dRHS : Poly5 := {horner_nm}")
-P.append(f"""set_option maxHeartbeats 128000000 in
-/-- Kernel certificate: the two canonical chains for the quintic
-discriminant agree. -/
-theorem ddec : pMul DLHS2 DLHS2 = dRHS := eq_of_pBeq (by decide +kernel)""")
+P.extend(chunked_lit("DLit", DELTA2))
+vw = sum(len(p) for p in D_POLYS) * 64          # the 10 small factors: negligible
+P.append(decide_thm("dlhs_dec", "pMul DLHS2 DLHS2", "DLit", vw + mul_work(VAND, VAND) + len(DELTA2)))
+P.append(decide_thm("drhs_dec", "dRHS", "DLit", dwork + len(DELTA2)))
+P.append("""/-- Kernel certificate: the two canonical chains for the quintic
+discriminant agree (each side against the literal `DLit`). -/
+theorem ddec : pMul DLHS2 DLHS2 = dRHS := dlhs_dec.trans drhs_dec.symm""")
 for i, j in difs:
     P.append(f"""lemma D{i}{j}_eval {{K : Type*}} [CommRing K] (x : Fin 5 → K) :
     PEval D{i}{j} x = x {i} - x {j} := by
@@ -406,8 +529,9 @@ P.append(f"""lemma dlhs_eval {{K : Type*}} [CommRing K] (x : Fin 5 → K) :
   simp only [DLHS2, {', '.join(f'D{i}{j}_eval' for i, j in difs)}, PEval_pMul]
   ring""")
 P.append(f"""lemma drhs_eval {{K : Type*}} [CommRing K] (x : Fin 5 → K) :
-    PEval dRHS x = {horner_txt} := dRroot_eval x""")
+    PEval dRHS x = {horner_txt} := {horner_nm}_eval x""")
 P.append(f"""set_option maxHeartbeats 32000000 in
+-- `ring` matches the Vandermonde square and the Horner form with `disc5`
 theorem delta2_identity {{K : Type*}} [Field K] (x : Fin 5 → K) :
     ({vand_txt}) ^ 2 = disc5 (va x) (vb x) (vc x) (vd x) (ve x) := by
   have h1 : ({vand_txt}) ^ 2 = PEval DLHS2 x * PEval DLHS2 x := by
@@ -422,17 +546,25 @@ theorem delta2_identity {{K : Type*}} [Field K] (x : Fin 5 → K) :
 
 section = '\n\n'.join(P)
 
-# fix rhs_eval root references
-root_names = {}
-for k in range(1, 7):
-    nm, _, _ = horner(0, chunks_to_terms(RES_TERMS[6-k]), f'e{k}R')
-    root_names[f'e{k}'] = nm
-dnm, _, _ = horner(0, chunks_to_terms(DISC_CHUNKS), 'dR')
-root_names['d'] = dnm
-section = section.replace(':= e{k}Rroot_eval x', '')  # no-op safeguard
-for k in range(1, 7):
-    section = section.replace(f':= e{k}Rroot_eval x', f':= {root_names[f"e{k}"]}_eval x')
-section = section.replace(':= dRroot_eval x', f':= {root_names["d"]}_eval x')
+def wrap_long(text, width=100):
+    """Wrap code lines over `width` at spaces (continuation indented 4 more);
+    comment lines are left alone (the emitter keeps them short)."""
+    out = []
+    for line in text.split('\n'):
+        if len(line) <= width or line.lstrip().startswith('--'):
+            out.append(line); continue
+        ind = line[:len(line) - len(line.lstrip())]
+        cont = ind + '    '
+        cur = ''
+        for w in line.lstrip().split(' '):
+            if cur and len(cur) + 1 + len(w) > width:
+                out.append(cur); cur = cont + w
+            else:
+                cur = (cur + ' ' + w) if cur else ind + w
+        out.append(cur)
+    return '\n'.join(out)
+
+section = wrap_long(section)
 
 # ------------- write the module chain -------------
 # One module per heavy identity, each importing the previous one: lake builds
@@ -454,7 +586,9 @@ for (mod, prev, what), body in zip(CHAIN, bodies):
         imports += 'import MathProof.ModularForms.Poly5\n'
     text = f"""{imports}
 /-!
-# Kernel-verified `F₂₀`-resolvent identities (dim-5 Maeda): {what}
+# Kernel-verified `F₂₀`-resolvent identities (dim-5 Maeda)
+
+Contents: {what}.
 
 Generated by `tools/gen_poly5.py` — regenerate, don't hand-edit.  Part of the
 chain `MaedaGalois5IdBase → IdE4 → IdE5 → IdE6 → MaedaGalois5Identities`

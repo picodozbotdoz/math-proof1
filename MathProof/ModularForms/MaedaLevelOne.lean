@@ -1,4 +1,5 @@
 import MathProof.ModularForms.LehmerWeight16
+import MathProof.ModularForms.HornerCert
 import Mathlib.Algebra.Polynomial.SpecificDegree
 import Mathlib.Algebra.Polynomial.Eval.Irreducible
 import Mathlib.RingTheory.Polynomial.GaussLemma

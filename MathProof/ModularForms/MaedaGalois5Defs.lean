@@ -2,8 +2,6 @@ import MathProof.ModularForms.MaedaDim5
 import MathProof.ModularForms.MaedaGalois
 import Mathlib.GroupTheory.SpecificGroups.Alternating.Simple
 
--- heavy polynomial normalizations below need generous budgets
-set_option maxHeartbeats 8000000
 set_option maxRecDepth 8000
 
 /-!
@@ -33,9 +31,11 @@ variable {α : Type*} [Fintype α] [DecidableEq α]
 
 local notation "SG" => Equiv.Perm α
 
+omit [DecidableEq α] in
 lemma nontrivial_of_card_five (hα : Fintype.card α = 5) : Nontrivial α := by
   rw [← Fintype.one_lt_card_iff_nontrivial, hα]; norm_num
 
+omit [DecidableEq α] in
 /-- `S₅` has 120 elements. -/
 lemma card_perm_five (hα : Fintype.card α = 5) : Nat.card SG = 120 := by
   rw [Nat.card_perm, Nat.card_eq_fintype_card, hα]; norm_num
@@ -43,25 +43,27 @@ lemma card_perm_five (hα : Fintype.card α = 5) : Nat.card SG = 120 := by
 /-- `A₅` (on five letters) has 60 elements. -/
 lemma card_alternating_five (hα : Fintype.card α = 5) :
     Nat.card (alternatingGroup α) = 60 := by
-  haveI : Nontrivial α := nontrivial_of_card_five hα
+  have : Nontrivial α := nontrivial_of_card_five hα
   have h := two_mul_nat_card_alternatingGroup (α := α)
   rw [card_perm_five hα] at h
   omega
 
+set_option maxHeartbeats 8000000 in
+-- the sign/`A₅` case analysis runs several large `omega`/`simp` steps
 /-- A normal subgroup of `S₅` is `⊤`, `A₅`, or tiny (at most two elements). -/
 theorem perm_normal_cases (hα : Fintype.card α = 5) {N : Subgroup SG} (hN : N.Normal) :
     N = ⊤ ∨ N = alternatingGroup α ∨ Nat.card N ≤ 2 := by
-  haveI hA5n : (alternatingGroup α).Normal := alternatingGroup.normal
+  have hA5n : (alternatingGroup α).Normal := alternatingGroup.normal
   have hA5s : IsSimpleGroup (alternatingGroup α) :=
     alternatingGroup.isSimpleGroup (by rw [Nat.card_eq_fintype_card, hα])
   have hMA : (N.subgroupOf (alternatingGroup α)).Normal := by
     constructor
     intro g hg a
     refine Subgroup.mem_subgroupOf.mpr ?_
-    show ((a * g * a⁻¹ : ↥(alternatingGroup α)) : SG) ∈ N
+    change ((a * g * a⁻¹ : ↥(alternatingGroup α)) : SG) ∈ N
     have hco : ((a * g * a⁻¹ : ↥(alternatingGroup α)) : SG)
         = (a : SG) * (g : SG) * (a : SG)⁻¹ := by
-      push_cast; ring
+      push_cast; ring_nf
     rw [hco]
     exact hN.conj_mem _ (Subgroup.mem_subgroupOf.mp hg) _
   rcases hA5s.eq_bot_or_eq_top_of_normal (N.subgroupOf (alternatingGroup α)) with hb | ht
@@ -123,9 +125,13 @@ theorem perm_normal_cases (hα : Fintype.card α = 5) {N : Subgroup SG} (hN : N.
       refine (Subgroup.eq_of_le_of_card_ge hle ?_).symm
       rw [card_alternating_five hα, hN]
 
+set_option maxHeartbeats 8000000 in
+-- normal-core index arithmetic over the three `perm_normal_cases` branches
+omit [DecidableEq α] in
 /-- `S₅` has no subgroups of index 3 or 4. -/
 theorem perm_no_index_three_four (hα : Fintype.card α = 5) {H : Subgroup SG}
     (hH : H.index = 3 ∨ H.index = 4) : False := by
+  classical
   have hdvd : H.normalCore.index ∣ Nat.factorial H.index :=
     Subgroup.index_normalCore_dvd_factorial_index H
   have hncle : H.normalCore ≤ H := H.normalCore_le
@@ -142,7 +148,7 @@ theorem perm_no_index_three_four (hα : Fintype.card α = 5) {H : Subgroup SG}
       exact Subgroup.card_le_of_le hncle
     rcases hH with h | h <;> rw [h] at hcardH <;> omega
   · -- `|normalCore| ≤ 2` but its index is `≥ 60` and divides `3!` or `4!`
-    haveI : Nonempty ↥H.normalCore := ⟨1, H.normalCore.one_mem⟩
+    have : Nonempty ↥H.normalCore := ⟨1, H.normalCore.one_mem⟩
     have hpos : 0 < Nat.card H.normalCore := Nat.card_pos
     have hidx : H.normalCore.index * Nat.card H.normalCore = 120 := by
       rw [Subgroup.index_mul_card, card_perm_five hα]
@@ -154,6 +160,8 @@ theorem perm_no_index_three_four (hα : Fintype.card α = 5) {H : Subgroup SG}
     all_goals have hle := Nat.le_of_dvd (by omega) hdvd
     all_goals omega
 
+set_option maxHeartbeats 8000000 in
+-- index-2 subgroups are normal; the simplicity case split is costly
 /-- `A₅` has no subgroup of index 2. -/
 theorem alternating_no_index_two (hα : Fintype.card α = 5)
     {A : Subgroup (alternatingGroup α)} (hA : A.index = 2) : False := by
@@ -185,6 +193,8 @@ section Resolvent
 
 /-! ### The `F₂₀` resolvent of a quintic -/
 
+set_option maxHeartbeats 8000000 in
+-- elaborating the 59-term discriminant polynomial
 /-- The discriminant of `X⁵ + aX⁴ + bX³ + cX² + dX + e` (as a polynomial in the
 coefficients; `delta2_identity` proves it equals `∏_{i<j} (xᵢ - xⱼ)²`). -/
 def disc5 {R : Type*} [CommRing R] (a b c d e : R) : R :=
@@ -208,6 +218,8 @@ def disc5 {R : Type*} [CommRing R] (a b c d e : R) : R :=
   + 2000 * a ^ 2 * c * e ^ 3 + 256 * d ^ 5 - 1600 * c * d ^ 3 * e + 2250 * c ^ 2 * d * e ^ 2
   + 2000 * b * d ^ 2 * e ^ 2 - 3750 * b * c * e ^ 3 - 2500 * a * d * e ^ 3 + 3125 * e ^ 4
 
+set_option maxHeartbeats 8000000 in
+-- elaborating the sextic with its six large coefficient blocks
 /-- The `F₂₀` sextic resolvent of `X⁵ + aX⁴ + bX³ + cX² + dX + e`: the monic
 sextic whose roots are the six values `θ(c) * θ(c²)` (`c` a 5-cycle, `θ(c) =
 ∑ᵥ xᵢ x_{c v}` — one per 5-cycle subgroup).  `resolvent_eval_theta` proves each
@@ -224,7 +236,8 @@ noncomputable def resolvent5 {R : Type*} [CommRing R] (a b c d e : R) : R[X] :=
   + 2 * c ^ 4 + 3 * b * c ^ 2 * d - 32 * b ^ 2 * d ^ 2 + 15 * b ^ 2 * c * e
   - 128 * a * c * d ^ 2 + 80 * a * c ^ 2 * e + 170 * a * b * d * e + 50 * a ^ 2 * e ^ 2
   + 140 * d ^ 3 - 200 * c * d * e - 125 * b * e ^ 2) * X ^ 3
-    + C (  a ^ 4 * c ^ 4 + 6 * a ^ 4 * b * c ^ 2 * d + a ^ 4 * b ^ 2 * d ^ 2 - 4 * a ^ 4 * b ^ 2 * c * e
+    + C (  a ^ 4 * c ^ 4 + 6 * a ^ 4 * b * c ^ 2 * d + a ^ 4 * b ^ 2 * d ^ 2
+  - 4 * a ^ 4 * b ^ 2 * c * e
   - 4 * a ^ 5 * c * d ^ 2 - 8 * a ^ 5 * c ^ 2 * e - 8 * a ^ 5 * b * d * e + 16 * a ^ 6 * e ^ 2
   + 6 * a ^ 2 * b * c ^ 4 - 18 * a ^ 2 * b ^ 2 * c ^ 2 * d - 6 * a ^ 2 * b ^ 3 * d ^ 2
   + 18 * a ^ 2 * b ^ 3 * c * e - 22 * a ^ 3 * c ^ 3 * d - 10 * a ^ 3 * b * c * d ^ 2
@@ -238,7 +251,8 @@ noncomputable def resolvent5 {R : Type*} [CommRing R] (a b c d e : R) : R[X] :=
   + 150 * a * c ^ 2 * d * e + 550 * a * b * d ^ 2 * e - 500 * a * b * c * e ^ 2
   + 250 * a ^ 2 * d * e ^ 2 + 175 * d ^ 4 - 500 * c * d ^ 2 * e + 625 * c ^ 2 * e ^ 2
   - 625 * b * d * e ^ 2) * X ^ 2
-    + C (  -2 * a ^ 5 * b * c ^ 3 * d - 2 * a ^ 5 * b ^ 2 * c * d ^ 2 + 2 * a ^ 5 * b ^ 2 * c ^ 2 * e
+    + C (  -2 * a ^ 5 * b * c ^ 3 * d - 2 * a ^ 5 * b ^ 2 * c * d ^ 2
+  + 2 * a ^ 5 * b ^ 2 * c ^ 2 * e
   + 2 * a ^ 5 * b ^ 3 * d * e + 2 * a ^ 6 * c ^ 2 * d ^ 2 + 2 * a ^ 6 * b * d ^ 3
   + 8 * a ^ 6 * b * c * d * e - 8 * a ^ 6 * b ^ 2 * e ^ 2 - 8 * a ^ 7 * d ^ 2 * e
   - 2 * a ^ 3 * b * c ^ 5 + 3 * a ^ 3 * b ^ 2 * c ^ 3 * d + 13 * a ^ 3 * b ^ 3 * c * d ^ 2
@@ -368,6 +382,8 @@ noncomputable def ThetaVals {K : Type*} [CommRing K] (x : Fin 5 → K) :
   theta x ![4, 3, 0, 2, 1] * theta x ![1, 2, 4, 0, 3],
   theta x ![4, 3, 1, 0, 2] * theta x ![2, 0, 3, 4, 1]]
 
+set_option maxHeartbeats 8000000 in
+-- five-variable `ring` normalizations of the expanded quintic
 /-- **Vieta for quintics.** -/
 lemma vieta5 {K : Type*} [Field K] {x : Fin 5 → K} {a b c d e : K}
     (h : (X - C (x 0)) * (X - C (x 1)) * (X - C (x 2)) * (X - C (x 3)) * (X - C (x 4))

@@ -185,7 +185,7 @@ New readers should treat Part IV §26 plus this table as the errata.
   the heavy leaf.
 - *Owner decision*: **yes**, it needs a heavy chain rebuild.
 
-**P1-3. Find out where the chain's memory goes before scaling up.**
+**P1-3. Find out where the chain's memory goes before scaling up.** — **DONE 2026-10-29**: kernel `decide` work (≈ 27 GiB per M list ops); recurrence + checkpoints rolled out, chain peak 202 → 34.7 GiB (`research/poly5-memory-study/`).
 - *What*: E4 (2,545 terms) peaked at 202 GiB but E6 (10,780 terms) at
   172 GiB (measured).  So peak memory does not follow certificate size; the
   `*_eval` / `theta_eK` elaboration (`simp` + `ring` over Horner text) is the
@@ -247,7 +247,7 @@ New readers should treat Part IV §26 plus this table as the errata.
 
 ### P2 — hygiene, docs and lint debt
 
-**P2-1. Style-lint debt in the generated `Id*` modules and `MaedaGalois5Defs`.**
+**P2-1. Style-lint debt in the generated `Id*` modules and `MaedaGalois5Defs`.** — **DONE 2026-10-29** with the chain rebuild.
 - *What*: fix in `tools/gen_poly5.py` (long lines, heartbeat comments) and in
   Defs.
 - *Why*: §32, research-log "What remains".  Any Defs edit rebuilds the chain
