@@ -22,6 +22,7 @@ Iteration 19's mathematical route before building tooling") and
 | `iteration19-maeda-generic/BLUEPRINT.md` | **the Iteration 19 plan**: modules, the Rabin-theorem proof plan, `charpoly_dimN` design, generator, budget, risks |
 | `dedekind-frobenius/BLUEPRINT.md` | trajectory 2: Dedekind–Frobenius cycle types + Jordan — the Mathlib gap blocking Gal = Sₙ beyond dim 5, staged delivery plan, census data already in hand |
 | `lean/FrobeniusInterfaceSketch.lean` | cycle 2: **parity finish proved** (`Aₙ ≤ G` + odd ⟹ `G = ⊤`), the Jordan composition proved modulo the `JordanFor` interface, and the `FrobHasCycleType` Dedekind interface over `Gal` — all elaborating clean; validated API names in the blueprint §6 |
+| `hecke-algebra-upgrade/BLUEPRINT.md` + `lean/MinpolyCharpolySketch.lean` | cycle 3: the `Tₙ ∈ ℚ[T₂]` upgrade plan (six-step architecture over `AdjoinRoot f` / `Module.AEval`); step 1 **proved** (irreducible charpoly = minpoly), key API validated (`LinearMap.charpoly`, `eq_of_monic_of_associated`, `AdjoinRoot.instField`) |
 
 Outcome: Iteration 19 is de-risked and much cheaper than the scaling study
 assumed (its "main new engineering" is now a Mathlib tactic call); the one
@@ -42,3 +43,6 @@ theory that Dedekind/Jordan will plug into.
 4. **Lehmer axis** (`maeda-scaling-study.md` §4 step 5): the 131072 packed
    attempt (slot width 96 / sparse η-packing / ≥192 GiB Modal) or a coverage
    quantification of the current verified set below 2³².
+5. **Dedekind stage 3 survey** (`dedekind-frobenius/BLUEPRINT.md` §6.1):
+   NumberTheory/PAdic inventory for the cheapest decomposition-group route;
+   the Frobenius interface is ready for it (cycle 2).
