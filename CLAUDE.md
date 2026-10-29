@@ -47,7 +47,9 @@ The results form a pipeline that crosses files:
 
 A module is *heavy* if it (transitively) imports a large kernel decide:
 `LehmerMod`, `LehmerPacked`, `LehmerPow32`, `LehmerPrimePower`, `LehmerGrand`,
-`LehmerPrimeGrand` and `AxCheck` (imports `LehmerMod`). Everything else is light.
+`LehmerPrimeGrand`, the `MaedaGalois5` identity chain (`IdBase … Identities`,
+`MaedaGalois5`, `MaedaGalois5Weights`; up to ~200 GiB per module) and
+`AxCheck` (imports `LehmerMod`).  `Poly5` and `MaedaGalois5Defs` are light. Everything else is light.
 
 When adding a module:
 - **light** → add it to all three of `defaultTargets` in `lakefile.toml`,

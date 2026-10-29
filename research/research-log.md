@@ -1152,3 +1152,92 @@ warnings, 14.9 GiB peak (light module, in CI).
 * Dims 6+ (Iteration 19, the generic engine): `Fin n`-structural
   `charpoly_dimN`, reflected Bareiss + interpolation, Rabin certificates — the
   study's route to `k ≤ 314` (`dim S_k ≤ 25`).
+
+## Iteration 18 — Maeda's conjecture in full for dimension 5: Galois group `S₅`
+
+**Status: complete (heavy, Modal — not in CI).  2026-10-29.**
+
+### The problem
+
+Iteration 17 proved the `T₂` characteristic polynomial irreducible for the six
+weights with `dim S_k = 5` (`k = 60, 64, 66, 68, 70, 74`).  Maeda's conjecture
+also asserts the full symmetric Galois group.  Mathlib has no quintic Galois
+criterion, and the textbook one (Cayley's `F₂₀` sextic resolvent) rests on
+polynomial identities of degree up to 24 in the five roots — far beyond `ring`
+(measured: 323 GiB OOM monolithic; per-coefficient `ring` OOMs from `e₃` on).
+
+### What this iteration contributes
+
+**The criterion** (`MaedaGalois5.lean`, `galActionHom_bijective_of_quintic`): an
+irreducible monic quintic over `ℚ` with non-square discriminant `disc5` and a
+sextic resolvent `resolvent5` without rational root has Galois group `S₅`.
+Proof by degree counting on `G = Gal ↪ S₅` (`ρ`, injective via `Gal.ext`):
+
+* `5 ∣ |G|` (root of the irreducible quintic), `2 ∣ |G|` (`ℚ(δ)`, `δ² = disc5`
+  non-square) — so `|G| ∈ {10, 20, 30, 40, 60, 120}`;
+* `60`: `ρ(G) = A₅` (index 2), but `ℚ(δ)` fixes an index-2 subgroup containing
+  all squares, and 3-cycles are squares of squares and generate `A₅`;
+* `30, 40`: `S₅` has no subgroup of index 4 or 3 (`perm_no_index_three_four`,
+  Iteration 18 part 1: normal core + `A₅` simple);
+* `10, 20`: the Sylow normalizer congruence makes the 5-Sylow `⟨c⟩` normal
+  (`perm_order_5_normal_of_card`), so every Galois element normalizes `⟨c⟩` and
+  fixes the pentagon-pentagram product `θ(c)·θ(c²)` (`gal_fixes_theta`) — a
+  rational number, and a root of the resolvent (`resolvent_eval_theta`):
+  contradiction with `hres`.
+
+**The identities** (`Poly5.lean` + the generated chain `MaedaGalois5IdBase →
+IdE4 → IdE5 → IdE6 → MaedaGalois5Identities`, `tools/gen_poly5.py`): the six
+resolvent coefficients `e₁ … e₆` of the products `θ_j` (35 … 10 780 monomials in
+`x₀ … x₄`) and `δ² = disc5` (2 961 monomials) are certified by `decide +kernel`
+on canonical sparse-polynomial lists (the `LehmerPacked` methodology, now
+multivariate) and transported to every commutative ring by `PEval`
+homomorphism lemmas; the coefficient side is a Horner scheme over `va … ve`.
+`sextic_vieta` + `linear_combination theta_eₖ` turn them into
+`resolvent_eval_theta`.  Two kernel lessons, now in the `Poly5` docs:
+
+* `List`'s `DecidableEq` recurses non-tail (one kernel frame per element):
+  "deep recursion" past a few thousand terms.  `pBeq` (`decide (t = t') &&
+  pBeq ts ts'`) is tail-recursive in the kernel's whnf loop — constant stack;
+* the kernel stack while forcing `pMul p q` grows with `len p`: the generator
+  puts the smaller factor on the left (2445-term left factors fail, 218 pass).
+
+**The instances** (`MaedaGalois5Weights.lean`, `tools/gen_galois5.py` from
+`research/s5_certs.json`): `maeda_galois60 … maeda_galois74`.  The resolvent is
+an explicit integer polynomial `R` (coefficients re-derived from `resolvent5`
+by `norm_num`, `hRint`); its reduction `Rmod` is a computable function, so
+`noRootR` is a plain `decide +kernel`; a rational root would be integral
+(monic) and hence a root mod `ℓ`.
+
+### Results
+
+**Maeda's conjecture — irreducibility and full symmetric Galois group — is
+formally verified for all 24 level-one weights with `2 ≤ dim S_k ≤ 5`**
+(`k = 24 … 74`, `k ≠ 26`): `S₂, S₃, S₄` (Iterations 14–16) and now `S₅`.
+
+| k  | disc non-residue mod | resolvent rootless mod |
+|----|----------------------|------------------------|
+| 60 | 37 | 41 |
+| 64 | 29 | 31 |
+| 66 | 29 | 29 |
+| 68 | 23 | 23 |
+| 70 | 41 | 41 |
+| 74 | 41 | 37 |
+
+All six depend only on `[propext, Classical.choice, Quot.sound]` (in-file
+`#print axioms`).  Modal build (lake, per module): `Defs` 461 s, `IdBase`
+209 s, `IdE4` 2343 s / 202 GiB peak, `IdE5` 1498 s / 137 GiB, `IdE6` 2207 s /
+172 GiB, `Identities` 170 s / 23 GiB, `MaedaGalois5` and `Weights` < 1 min /
+7 GiB.  `lean_check.py` now keeps a rolling build cache on the `lean-cache`
+volume (saved even after a failed build), so the chain is paid for once.
+
+### What remains / next steps
+
+* Style lint in the generated identity modules (long lines, uncommented
+  heartbeat bumps) and in `MaedaGalois5Defs` — fixing them means regenerating
+  and rebuilding the chain (~2 h, ~200 GiB), so batch it with the next change
+  that touches them.
+* Dims 6+ (Iteration 19, the generic engine): `Fin n`-structural
+  `charpoly_dimN`, reflected Bareiss + interpolation, Rabin certificates; for
+  the Galois group beyond `S₅`, a criterion via Frobenius cycle types
+  (irreducible + transposition + `(n−1)`-cycle), which needs Dedekind's
+  theorem — not in Mathlib.

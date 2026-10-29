@@ -89,13 +89,17 @@ computation:
 Maeda's conjecture (open) says the characteristic polynomial of the Hecke
 operator `T₂` on `S_k(SL(2, ℤ))` is irreducible over `ℚ` (with full symmetric
 Galois group).  It is now **formally verified, from the Hecke operator itself,
-for every level-one weight with `dim S_k ≤ 4`** — `k = 24, 28, 30, 32, 34,
-38` (dim 2), `36, 40, 42, 44, 46, 50` (dim 3) and `48, 52, 54, 56, 58, 62` (dim 4)
+for every level-one weight with `2 ≤ dim S_k ≤ 5`** — `k = 24, 28, 30, 32, 34,
+38` (dim 2), `36, 40, 42, 44, 46, 50` (dim 3), `48, 52, 54, 56, 58, 62` (dim 4)
+and `60, 64, 66, 68, 70, 74` (dim 5)
 (`MaedaWeightK.charpoly_T2`, `MaedaWeightK.maeda`), **including the full
-symmetric Galois group** (`S₃` for the cubic weights, `S₄` for the quartic
-ones: `MaedaGalois.maeda_galoisK`), **and its irreducibility half for the six
-dimension-5 weights `k = 60, 64, 66, 68, 70, 74`** (quintic certificate: no
-root and no quadratic factor mod a small prime).  E.g. on `S₂₄`, `T₂` has characteristic polynomial
+symmetric Galois group** (`S₃`, `S₄` and `S₅` for the cubic, quartic and
+quintic weights: `MaedaGalois.maeda_galoisK`).  The quintic `S₅` criterion
+(`galActionHom_bijective_of_quintic`: non-square discriminant + rootless `F₂₀`
+sextic resolvent) rests on degree-24 polynomial identities in the five roots
+that are out of reach for `ring`; they are certified instead by the kernel on
+canonical sparse polynomials (`Poly5.lean`, `MaedaGalois5Id*.lean`; heavy,
+built on Modal).  E.g. on `S₂₄`, `T₂` has characteristic polynomial
 `X² − 1080 X − 20468736`, irreducible (Hecke field `ℚ(√144169)`).  The
 weight-generic machinery (`MaedaLevelOne.lean`) reads the matrix of `T₂` off
 kernel-computed q-coefficients of the basis `Δ^i E₄^a E₆^b`.
@@ -184,7 +188,8 @@ MathProof/Tau/Bridge.lean       # (qExpansion Δ).coeff n = τ(n)
 MathProof/ModularForms/Weight12.lean       # 691 • E₁₂ = 441 • E₄³ + 250 • E₆²
 MathProof/ModularForms/EigenLevelOne.lean  # Mordell + Lehmer for any rank-one S_k
 MathProof/ModularForms/LehmerWeight*.lean  # weights 16–26: congruences, sieves, initial segments
-MathProof/ModularForms/Maeda*.lean         # Maeda's conjecture: dim S_k ≤ 4 full (Galois), dim 5 irreducibility (24–74)
+MathProof/ModularForms/Maeda*.lean         # Maeda's conjecture in full (Galois S₂…S₅) for 2 ≤ dim S_k ≤ 5 (24–74)
+MathProof/ModularForms/Poly5.lean          # kernel-checkable sparse polynomials in 5 variables
 MathProof/ModularForms/Congruence691.lean  # τ(n) ≡ σ₁₁(n) mod 691
 research/research-log.md        # the research loop log
 docs/                           # GitHub Pages root: project landing page + interactive Langlands page

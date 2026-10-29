@@ -8,10 +8,12 @@ Architecture (v2 — fixes the slow-volume failure mode):
   * At runtime we shallow-clone the repo, overlay local working-copy files
     (so iterations need no git push), symlink the warm packages into
     .lake/packages, and `lake build` the target directly.
-  * No Modal volume in the hot path: writing thousands of tiny .olean files
-    to a network volume stalls at ~40 MB / 11 min (measured); local disk does
-    the same in seconds.  MathProof's own modules recompile from scratch each
-    run (~1 min) — cheap next to any volume-based caching.
+  * Project-module cache (opt-out: LEAN_CHECK_NO_CACHE=1): every run (even a
+    failed one) saves .lake/build as ONE rolling tarball on the existing
+    lean-cache volume; later runs restore it onto local disk and lake only
+    rebuilds modules whose sources (or overlays) actually changed.  A single
+    sequential volume read/write per run — the thousands-of-tiny-writes stall
+    never happens.
 
 Usage:
     /home/doz/dozenv/bin/modal run lean_check.py \\
@@ -166,6 +168,7 @@ _CHECK_MEMORY_MIB = int(os.environ.get("LEAN_CHECK_MEMORY_MIB", "32768"))
     cpu=2.0,
     memory=_CHECK_MEMORY_MIB,
     timeout=2 * 60 * 60,
+    volumes={"/cache": modal.Volume.from_name("lean-cache")},
 )
 def check(files: dict, target: str, repo_url: str = "https://github.com/picodozbotdoz/math-proof1.git"):
     import os
@@ -204,12 +207,57 @@ def check(files: dict, target: str, repo_url: str = "https://github.com/picodozb
             link.symlink_to(d)
     print(f"warm packages: {sorted(d.name for d in warm.iterdir() if d.is_dir())}")
 
+    # Project-module cache: ONE rolling tarball of .lake/build on the existing
+    # lean-cache volume.  Lake re-validates every restored module against its
+    # hash trace (source + imports), so a restore is always safe: modules
+    # whose sources (or overlays) changed rebuild, everything else is
+    # skipped.  A single sequential volume read/write per run — the
+    # thousands-of-tiny-writes stall never happens.
+    cache_dir = pathlib.Path("/cache/buildcache")
+    latest = cache_dir / "latest.tar.gz"
+    use_cache = os.environ.get("LEAN_CHECK_NO_CACHE", "") != "1"
+    if use_cache:
+        try:
+            if latest.exists():
+                t1 = time.time()
+                r = subprocess.run(["tar", "xzf", str(latest), "-C", str(repo)])
+                print(f"[cache] restored {latest.name} ({latest.stat().st_size // 2**20} MiB) "
+                      f"in {time.time() - t1:.0f}s rc={r.returncode}")
+            else:
+                print("[cache] empty")
+        except Exception as e:
+            print(f"[cache] restore failed (non-fatal): {e}")
+
     os.chdir(repo)
     cmd = ["lake", "build"]
     if target:
         cmd.append(target)
     print(f"$ {' '.join(cmd)}")
     rc = run_monitored(cmd)
+
+    # Save the build tree even when the build FAILED: lake only writes a
+    # module's trace after it elaborates successfully, so every artifact in
+    # the tree is valid, and an hour-long heavy module that built before a
+    # later failure must not be paid for again.  Written under a temp name
+    # and renamed, so a concurrent run never restores a partial tarball (last
+    # writer wins; a run that loses only rebuilds what it is missing).
+    if use_cache:
+        try:
+            cache_dir.mkdir(parents=True, exist_ok=True)
+            tmp = cache_dir / f".latest.{os.getpid()}.{int(time.time())}.tmp"
+            t1 = time.time()
+            subprocess.run(
+                ["tar", "-I", "gzip -1", "-cf", str(tmp), "-C", str(repo), ".lake/build"],
+                check=True)
+            os.replace(tmp, latest)
+            for old in cache_dir.glob("*.tar.gz"):  # per-HEAD tarballs (v1 scheme)
+                if old != latest:
+                    old.unlink()
+            modal.Volume.from_name("lean-cache").commit()
+            print(f"[cache] saved {latest.name} ({latest.stat().st_size // 2**20} MiB) "
+                  f"in {time.time() - t1:.0f}s")
+        except Exception as e:
+            print(f"[cache] save failed (non-fatal): {e}")
 
     print(f"elapsed: {time.time() - t0:.0f}s")
     if rc != 0:

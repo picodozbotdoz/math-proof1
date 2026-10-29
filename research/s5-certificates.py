@@ -8,11 +8,11 @@ For each weight k in {60,64,66,68,70,74} with charpoly
   * R_k(Y) = resolvent5(a..e; Y), the F20 sextic (integer coefficients);
   * a small prime l with R_k having no root mod l (certifies no rational root).
 Everything re-verified against the symmetric-function data in
-/tmp/maeda5/s5_resolvent.json (itself exact-verified at random points).
+research/s5_resolvent.json (itself exact-verified at random points).
 """
 import json
 
-data = json.load(open("/tmp/maeda5/s5_resolvent.json"))
+data = json.load(open("research/s5_resolvent.json"))
 
 def items(key):
     return {m: c for m, c in data[key].items()}
@@ -80,8 +80,8 @@ for k, (a, b, c, d, e) in CPS.items():
     print(f"k={k}: disc non-residue mod {q};  R no-root mod {l};  "
           f"R coeffs (digits): {[len(str(abs(x))) for x in R]}")
 
-json.dump(out, open("/tmp/maeda5/s5_certs.json", "w"), indent=1)
-print("saved /tmp/maeda5/s5_certs.json")
+json.dump(out, open("research/s5_certs.json", "w"), indent=1)
+print("saved research/s5_certs.json")
 
 # cross-check: disc equals the Sylvester discriminant of the quintic (independent)
 def sylv_disc(cp, p):

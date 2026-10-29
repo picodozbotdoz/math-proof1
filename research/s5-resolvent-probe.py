@@ -248,9 +248,9 @@ print(f"  disc: {len(DISC)} monomials")
 out = {"cycles": [list(c) for c in cycs],
        "ej_theta": {str(j): {"".join(map(str, m)): c for m, c in EJ[j].items()} for j in EJ},
        "disc": {"".join(map(str, m)): c for m, c in DISC.items()}}
-with open("/tmp/maeda5/s5_resolvent.json", "w") as f:
+with open("research/s5_resolvent.json", "w") as f:
     json.dump(out, f)
-print("saved /tmp/maeda5/s5_resolvent.json")
+print("saved research/s5_resolvent.json")
 
 # pretty-print the E_j in e-variables with e_i = (sigma_i of the x's), and in
 # terms of (a,b,c,d,e) via e1=-a, e2=b, e3=-c, e4=d, e5=-e.
