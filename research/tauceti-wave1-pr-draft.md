@@ -41,3 +41,14 @@ Content: `E₁₂ := E (k = 12)`, `E₁₂_qExpansion_coeff` (coefficient `(6552
 `propext, Classical.choice, Quot.sound`.
 Possible overlap check before submit: Mathlib's own PRs on `E₁₂`/Bernoulli evaluations (none in the local master `312e0b7a8e`).
 Roadmap: ModularForms (weak fit — Eisenstein congruence example; may hit `scope`).
+
+---
+# Wave 3 PR draft (NOT submitted) — Ramanujan's congruence
+
+Branch `tauceti/wave3-tau-congruence-691` (merge of Wave 1 + Wave 2 + commit), file
+`TauCeti/NumberTheory/ModularForms/LevelOne/CongruenceMod691.lean`.  **Cannot be opened until Waves 1 and 2 are merged
+into TauCeti `main`** (stacked PRs are forbidden); then rebase onto `main` and open standalone.
+Content: `ramanujanTau_modEq_sigma : ramanujanTau n ≡ σ₁₁ n [ZMOD 691]` (n ≥ 1) from `E₁₂_qExpansion_rel`
+(Wave 2, which now also exports the power-series form of the identity) and TauCeti's existing
+`qExpansion_discriminant_eq_E₄_cube_sub_E₆_sq`.  Uses `norm_num` for `Prime 691` (no `set_option`).
+Roadmap: ModularForms.

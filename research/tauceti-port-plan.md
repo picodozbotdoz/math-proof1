@@ -73,7 +73,7 @@ Status key: `[ ]` todo · `[~]` in progress · `[x]` merged · `[-]` stays local
 | [~] | A2 | `Tau/Basic` (algebraic τ, list arithmetic) | 460 | Mathlib/TauCeti have Δ and `qExpansion Δ`, but **no integer-valued τ / no product-expansion coefficients** → still new | | |
 | [~] | A3 | `Tau/Bridge` (qExpansion Δ = τ) | 516 | 2 set_option; Mathlib has only `discriminant_qExpansion_coeff_one`; coefficient-level bridge is new. Check vs `LevelOne/DiscriminantEigenform` | |
 | [~] | A4 | `ModularForms/Weight12` (691•E₁₂ identity, Sturm) | 231 | 1 set_option; Bernoulli evaluations. NOT in TauCeti/Mathlib (no 691, no E₁₂ identity); TauCeti has `Sturm bound` + `LevelOne/GradedRing` (Δ=(E₄³−E₆²)/1728) to reuse | |
-| [ ] | A5 | `ModularForms/Congruence691` | 299 | 1 set_option; needs A4 | |
+| [~] | A5 | `ModularForms/Congruence691` | 299 | 1 set_option; needs A4 | |
 | [-] | A6 | `ModularForms/HeckeLevelOne` (T_p from scratch) | 938 | **REDUNDANT**: TauCeti already has Hecke operators at all levels (`ModularForms/HeckeSlash/*`, `Eigenform`, `Newforms/*`). Only salvage = a level-one cross-check, not a PR | |
 | [-] | A7 | `Tau/Mordell` (multiplicativity, prime-power recursion) | 239 | **REDUNDANT**: `LevelOne/DiscriminantEigenform.lean` already has coprime multiplicativity of Δ coeffs + prime-power recurrence + `T₂Δ` | |
 | [-] | A8 | `ModularForms/EigenLevelOne` (weight-generic rank-one eigenforms) | 270 | **REDUNDANT** with `Eigenform`/`Newforms/Coefficient` (generic-level); drop unless it has a unique statement | |
@@ -172,3 +172,4 @@ LehmerPrimeReduction, LehmerUnbounded, CongruenceSmall, BernoulliHigh, LehmerWei
 - 2026-10-30 P1.7 done; wrote `research/tauceti-port-report.md` (have / covered upstream / not covered / PR waves / risks). Stopped before downloads and outward actions; awaiting H1–H3.
 - 2026-10-30 H2 granted. Cache fetched (7.3 GB). A2+A3 merged into ONE module `LevelOne/DiscriminantTau.lean`, built clean (linters, no set_option, axioms std) on local branch `tauceti/wave1-tau-bridge` (unpushed). PR draft: `research/tauceti-wave1-pr-draft.md`. Awaiting H3 before any submission.
 - 2026-10-30 Wave 2 (A4): `LevelOne/Weight12Identity.lean` on local branch `tauceti/wave2-e12-identity` (based on `main`, independent of Wave 1 — no stacking). Builds clean; `bernoulli 12` by `decide +kernel`, no set_option; axioms std. Unpushed. Next: A5 (needs Wave 1 + 2 merged for a non-stacked PR; local draft allowed).
+- 2026-10-30 Wave 3 (A5): `LevelOne/CongruenceMod691.lean` on local branch `tauceti/wave3-tau-congruence-691` (= wave1 + wave2 merged + 1 commit). Builds clean, axioms std (see draft). Also added public `E₁₂_qExpansion_rel` to the Wave 2 file. Real PR order: W1 and W2 independently, then W3 after both merge. Unpushed.
