@@ -46,12 +46,12 @@ Per TauCeti `AGENTS.md`.  An item is "ready" only if all hold:
 ## 2. Phases
 
 ### Phase 1 — Go / no-go (no code)
-- [ ] P1.1 Read TauCeti README "Coordinating work: intentions and claims" + TauCetiReview rubrics; note deltas here
+- [x] P1.1 Read TauCeti README "Coordinating work: intentions and claims" + TauCetiReview rubrics; note deltas here
 - [ ] P1.2 **HUMAN** Zulip "Getting started: roadmaps": ask whether level-one modular forms / Hecke / Δ-bridge belongs and under which roadmap
 - [ ] P1.3 **HUMAN** Roadmap hook: existing item, or human-authored roadmap PR in TauCetiRoadmap (milestones: Hecke `T_p`, Mordell, eigenforms, Δ bridge)
 - [ ] P1.4 **HUMAN** `[Intention]` issue in leanprover-community/project-intentions (90-day expiry; renew before lapse)
-- [ ] P1.5 Clone TauCeti to `~/zcode-workdir/tauceti`; install `tauceti-review` (TauCetiWorker via `uv`); confirm toolchain = ours
-- [ ] P1.6 Mathlib overlap survey: for each candidate (below) diff against Mathlib `master` `NumberTheory/ModularForms` (Δ, Eisenstein, Hecke, q-expansion); record "already upstream / partial / new" in the table
+- [x] P1.5 Clone TauCeti to `~/zcode-workdir/tauceti`; install `tauceti-review` (TauCetiWorker via `uv`); confirm toolchain = ours
+- [x] P1.6 Mathlib overlap survey: for each candidate (below) diff against Mathlib `master` `NumberTheory/ModularForms` (Δ, Eisenstein, Hecke, q-expansion); record "already upstream / partial / new" in the table
 - **Decision gate:** if P1.2/P1.3 are negative → only `Roadmap: none` improvements are possible; stop Phases 3+ and mark everything `[-]`.
 
 ### Phase 2 — Local pre-port hygiene (in *this* repo, benefits both)
@@ -70,15 +70,15 @@ Status key: `[ ]` todo · `[~]` in progress · `[x]` merged · `[-]` stays local
 | st | id | module | lines | blockers / notes | PR |
 |----|----|--------|-------|------------------|----|
 | [ ] | A1 | `ModularForms/HornerCert` | 76 | 2 set_option; ℕ/ℤ Horner residue certificates — maybe too niche; check usefulness first | |
-| [ ] | A2 | `Tau/Basic` (algebraic τ, list arithmetic) | 460 | check vs Mathlib `ModularForm.Delta`/`ArithmeticFunction`; may be dropped if Mathlib has τ | |
-| [ ] | A3 | `Tau/Bridge` (qExpansion Δ = τ) | 516 | 2 set_option; needs A2 or Mathlib τ | |
-| [ ] | A4 | `ModularForms/Weight12` (691•E₁₂ identity, Sturm) | 231 | 1 set_option; Bernoulli evaluations | |
+| [ ] | A2 | `Tau/Basic` (algebraic τ, list arithmetic) | 460 | Mathlib/TauCeti have Δ and `qExpansion Δ`, but **no integer-valued τ / no product-expansion coefficients** → still new | | |
+| [ ] | A3 | `Tau/Bridge` (qExpansion Δ = τ) | 516 | 2 set_option; Mathlib has only `discriminant_qExpansion_coeff_one`; coefficient-level bridge is new. Check vs `LevelOne/DiscriminantEigenform` | |
+| [ ] | A4 | `ModularForms/Weight12` (691•E₁₂ identity, Sturm) | 231 | 1 set_option; Bernoulli evaluations. NOT in TauCeti/Mathlib (no 691, no E₁₂ identity); TauCeti has `Sturm bound` + `LevelOne/GradedRing` (Δ=(E₄³−E₆²)/1728) to reuse | |
 | [ ] | A5 | `ModularForms/Congruence691` | 299 | 1 set_option; needs A4 | |
-| [ ] | A6 | `ModularForms/HeckeLevelOne` (T_p from scratch) | 938 | split into ≥2 PRs (definition+invariance / q-coefficient formula); check Mathlib Hecke overlap | |
-| [ ] | A7 | `Tau/Mordell` (multiplicativity, prime-power recursion) | 239 | needs A6, A3 | |
-| [ ] | A8 | `ModularForms/EigenLevelOne` (weight-generic rank-one eigenforms) | 270 | needs A6/A7 | |
-| [ ] | A9 | `Tau/LehmerPrimeReduction` (τp≠0 ⇒ τ(p^a)≠0; reduction to primes) | 223 | needs A7 | |
-| [ ] | A10 | `Tau/LehmerUnbounded` | 79 | needs A7/A9 | |
+| [-] | A6 | `ModularForms/HeckeLevelOne` (T_p from scratch) | 938 | **REDUNDANT**: TauCeti already has Hecke operators at all levels (`ModularForms/HeckeSlash/*`, `Eigenform`, `Newforms/*`). Only salvage = a level-one cross-check, not a PR | |
+| [-] | A7 | `Tau/Mordell` (multiplicativity, prime-power recursion) | 239 | **REDUNDANT**: `LevelOne/DiscriminantEigenform.lean` already has coprime multiplicativity of Δ coeffs + prime-power recurrence + `T₂Δ` | |
+| [-] | A8 | `ModularForms/EigenLevelOne` (weight-generic rank-one eigenforms) | 270 | **REDUNDANT** with `Eigenform`/`Newforms/Coefficient` (generic-level); drop unless it has a unique statement | |
+| [ ] | A9 | `Tau/LehmerPrimeReduction` (τp≠0 ⇒ τ(p^a)≠0; reduction to primes) | 223 | re-base on `discriminantEigenform` in TauCeti (A7 dropped) | |
+| [ ] | A10 | `Tau/LehmerUnbounded` | 79 | re-base on `discriminantEigenform`; needs A9 | |
 | [ ] | A11 | `Tau/LehmerSieve691` (mod-691 sieve) | 205 | 4 set_option; needs A5 | |
 | [ ] | A12 | `ModularForms/BernoulliHigh` (B₁₃…B₂₆) | 624 | check vs Mathlib Bernoulli evaluations; decide-on-WF warning in AGENTS.md | |
 | [ ] | A13 | `Tau/CongruenceSmall` (mod 2, 3 gaps) | 214 | needs A2/A3 | |
@@ -127,6 +127,23 @@ Open question for later: can any C item be rephrased so default heartbeats suffi
 - [ ] P5.2 Update `README.md`, `docs/index.html`, `research/research-log.md` with upstream locations
 - [ ] P5.3 Renew/close the project-intentions issue (`done`)
 
+## 3. Phase 1 findings (2026-10-29)
+
+Clones: TauCeti `~/zcode-workdir/tauceti` (`821b7239`, toolchain `v4.36.0-rc1`), roadmap `~/zcode-workdir/tauceti-roadmap`.
+Local Mathlib `~/zcode-workdir/encore-mathlib/repo/mathlib4` (`312e0b7a8e`, toolchain **rc2**, files use the `module`/`public import` system → expect port edits).
+- **Roadmap exists**: `TauCetiRoadmap/ModularForms` ("Hecke theory, newforms, and L-functions"; suggested home `TauCeti/NumberTheory/ModularForms/`). So modular forms IS in scope — the gate question is only *which pieces are still new*. Its README lists the Δ level-one example (τ(2)=−24, Prop 5.8.5) but explicitly does not claim Lehmer nonvanishing; Lehmer/Maeda/691 are not roadmap targets.
+- **Already in TauCeti** (46 files under ModularForms + `HeckeRing`): Hecke operators at general level (`HeckeSlash/*`), `Eigenform`, `Newforms/*`, `SturmBound`, `LevelOne/DiscriminantEigenform` (Δ eigenform, coprime multiplicativity `discriminant_qExpansion_coeff_mul`, prime-power recurrence, `T₂Δ`), `LevelOne/GradedRing`, `LevelOne/QExpansion` (private `bernoulli_four/six`). ⇒ **HeckeLevelOne, Mordell, EigenLevelOne are redundant (A6–A8 dropped).**
+- **Already in Mathlib** (local `master`): Δ (`Discriminant.lean`, `discriminant_eq_q_prod`, `discriminant_qExpansion_coeff_one`), level-one dimension formula + `S_12` rank 1, E_k q-expansions, Ramanujan derivative formulas, `HeckeRing/Defs`. **Not** in Mathlib: Hecke operators on forms, integer τ, 691, Bernoulli B₁₂.. evaluations, Sturm for forms.
+- **Still genuinely new** (candidates): integer-valued `τ` + Δ q-product coefficient bridge (A2/A3), E₁₂ identity & `τ ≡ σ₁₁ [691]` (A4/A5), Lehmer prime-reduction, mod-691 sieve (A9–A11), `BernoulliHigh` (A12), `LehmerWeight*`, Maeda (Tier B).
+- **Mathlib-version risk**: Mathlib is already on `rc2` + `module` files; TauCeti lags (`rc1`) but tracks master. Port against TauCeti's pinned Mathlib, not this repo's.
+- **Coordination**: TauCeti README: register intentions via `leanprover-community/project-intentions`; workers read that board. Details in `TauCetiRoadmap` README "Coordinating work: intentions and claims" (read it in P1.7). Reviewing: `uvx --from git+https://github.com/TauCetiProject/TauCetiReview tauceti-review <PR>` (needs own Claude/Codex/Kiro login; `--conf ./tauceti.toml`). Rubrics in TauCetiReview `rubrics/`.
+- `tauceti-review` NOT installed (runs remote code; run via `uvx` only when a PR exists).
+- PRs: `Roadmap: ModularForms` line, no PRs/issues in the roadmap repo from agents.
+
+New Phase 1 items:
+- [ ] P1.7 Read `tauceti-roadmap/README.md#coordinating-work-intentions-and-claims`, `tauceti/COORDINATION.md` §1–5, `TauCetiReview/rubrics/README.md`; record rules here
+- [ ] P1.8 Ask on Zulip (HUMAN, P1.2) with the narrowed pitch: "integer τ + Δ coefficient bridge, 691 congruence, Lehmer reductions on top of existing `discriminantEigenform`" — and whether Lehmer/Maeda results fit the ModularForms roadmap or need a new roadmap (P1.3)
+
 ## 4. Coverage check (run before ticking P5.1; also after any new module is added)
 ```bash
 cd <repo>; for f in $(find MathProof -name '*.lean' | sed 's|MathProof/||;s|\.lean$||;s|.*/||' | sort); do
@@ -144,3 +161,4 @@ LehmerPrimeReduction, LehmerUnbounded, CongruenceSmall, BernoulliHigh, LehmerWei
 
 ## 6. Progress journal (append-only)
 - 2026-10-29 plan created; audit script `tools/tauceti_audit.sh` added. No item started.
+- 2026-10-29 Phase 1: P1.1/P1.5/P1.6 done (see §3). Dropped A6–A8 as redundant with TauCeti. Next: P1.7, then HUMAN P1.2–P1.4.
