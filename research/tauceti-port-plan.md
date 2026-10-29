@@ -70,8 +70,8 @@ Status key: `[ ]` todo · `[~]` in progress · `[x]` merged · `[-]` stays local
 | st | id | module | lines | blockers / notes | PR |
 |----|----|--------|-------|------------------|----|
 | [ ] | A1 | `ModularForms/HornerCert` | 76 | 2 set_option; ℕ/ℤ Horner residue certificates — maybe too niche; check usefulness first | |
-| [ ] | A2 | `Tau/Basic` (algebraic τ, list arithmetic) | 460 | Mathlib/TauCeti have Δ and `qExpansion Δ`, but **no integer-valued τ / no product-expansion coefficients** → still new | | |
-| [ ] | A3 | `Tau/Bridge` (qExpansion Δ = τ) | 516 | 2 set_option; Mathlib has only `discriminant_qExpansion_coeff_one`; coefficient-level bridge is new. Check vs `LevelOne/DiscriminantEigenform` | |
+| [~] | A2 | `Tau/Basic` (algebraic τ, list arithmetic) | 460 | Mathlib/TauCeti have Δ and `qExpansion Δ`, but **no integer-valued τ / no product-expansion coefficients** → still new | | |
+| [~] | A3 | `Tau/Bridge` (qExpansion Δ = τ) | 516 | 2 set_option; Mathlib has only `discriminant_qExpansion_coeff_one`; coefficient-level bridge is new. Check vs `LevelOne/DiscriminantEigenform` | |
 | [ ] | A4 | `ModularForms/Weight12` (691•E₁₂ identity, Sturm) | 231 | 1 set_option; Bernoulli evaluations. NOT in TauCeti/Mathlib (no 691, no E₁₂ identity); TauCeti has `Sturm bound` + `LevelOne/GradedRing` (Δ=(E₄³−E₆²)/1728) to reuse | |
 | [ ] | A5 | `ModularForms/Congruence691` | 299 | 1 set_option; needs A4 | |
 | [-] | A6 | `ModularForms/HeckeLevelOne` (T_p from scratch) | 938 | **REDUNDANT**: TauCeti already has Hecke operators at all levels (`ModularForms/HeckeSlash/*`, `Eigenform`, `Newforms/*`). Only salvage = a level-one cross-check, not a PR | |
@@ -147,7 +147,7 @@ New Phase 1 items:
 ### Blockers needing the human (autonomous run stops here, 2026-10-30)
 Full analysis, tables and wave plan: [`tauceti-port-report.md`](tauceti-port-report.md).
 - [ ] H1 Review the report; confirm dropping A6–A8 (HeckeLevelOne/Mordell/EigenLevelOne) from the upstream plan
-- [ ] H2 Approve `lake exe cache get` (~7 GB) in `~/zcode-workdir/tauceti` — needed to compile any port (Modal cannot target TauCeti; new plumbing is forbidden)
+- [x] H2 Approve `lake exe cache get` (~7 GB) in `~/zcode-workdir/tauceti` — needed to compile any port (Modal cannot target TauCeti; new plumbing is forbidden)
 - [ ] H3 Phase 1 HUMAN steps (P1.2–P1.4): Zulip, roadmap hook, `[Intention]` + `claim` (scope rubric can block Lehmer/Maeda/691 without a roadmap hook)
 - Phase 3 Wave 1 (τ + Δ coefficient bridge, A2/A3) is next once H2 is granted; do NOT start Waves 4+ before H3.
 
@@ -170,3 +170,4 @@ LehmerPrimeReduction, LehmerUnbounded, CongruenceSmall, BernoulliHigh, LehmerWei
 - 2026-10-29 plan created; audit script `tools/tauceti_audit.sh` added. No item started.
 - 2026-10-29 Phase 1: P1.1/P1.5/P1.6 done (see §3). Dropped A6–A8 as redundant with TauCeti. Next: P1.7, then HUMAN P1.2–P1.4.
 - 2026-10-30 P1.7 done; wrote `research/tauceti-port-report.md` (have / covered upstream / not covered / PR waves / risks). Stopped before downloads and outward actions; awaiting H1–H3.
+- 2026-10-30 H2 granted. Cache fetched (7.3 GB). A2+A3 merged into ONE module `LevelOne/DiscriminantTau.lean`, built clean (linters, no set_option, axioms std) on local branch `tauceti/wave1-tau-bridge` (unpushed). PR draft: `research/tauceti-wave1-pr-draft.md`. Awaiting H3 before any submission.
