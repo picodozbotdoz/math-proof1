@@ -141,8 +141,15 @@ Local Mathlib `~/zcode-workdir/encore-mathlib/repo/mathlib4` (`312e0b7a8e`, tool
 - PRs: `Roadmap: ModularForms` line, no PRs/issues in the roadmap repo from agents.
 
 New Phase 1 items:
-- [ ] P1.7 Read `tauceti-roadmap/README.md#coordinating-work-intentions-and-claims`, `tauceti/COORDINATION.md` §1–5, `TauCetiReview/rubrics/README.md`; record rules here
+- [x] P1.7 Read `tauceti-roadmap/README.md#coordinating-work-intentions-and-claims`, `tauceti/COORDINATION.md` §1–5, `TauCetiReview/rubrics/README.md`; record rules here
 - [ ] P1.8 Ask on Zulip (HUMAN, P1.2) with the narrowed pitch: "integer τ + Δ coefficient bridge, 691 congruence, Lehmer reductions on top of existing `discriminantEigenform`" — and whether Lehmer/Maeda results fit the ModularForms roadmap or need a new roadmap (P1.3)
+
+### Blockers needing the human (autonomous run stops here, 2026-10-30)
+Full analysis, tables and wave plan: [`tauceti-port-report.md`](tauceti-port-report.md).
+- [ ] H1 Review the report; confirm dropping A6–A8 (HeckeLevelOne/Mordell/EigenLevelOne) from the upstream plan
+- [ ] H2 Approve `lake exe cache get` (~7 GB) in `~/zcode-workdir/tauceti` — needed to compile any port (Modal cannot target TauCeti; new plumbing is forbidden)
+- [ ] H3 Phase 1 HUMAN steps (P1.2–P1.4): Zulip, roadmap hook, `[Intention]` + `claim` (scope rubric can block Lehmer/Maeda/691 without a roadmap hook)
+- Phase 3 Wave 1 (τ + Δ coefficient bridge, A2/A3) is next once H2 is granted; do NOT start Waves 4+ before H3.
 
 ## 4. Coverage check (run before ticking P5.1; also after any new module is added)
 ```bash
@@ -162,3 +169,4 @@ LehmerPrimeReduction, LehmerUnbounded, CongruenceSmall, BernoulliHigh, LehmerWei
 ## 6. Progress journal (append-only)
 - 2026-10-29 plan created; audit script `tools/tauceti_audit.sh` added. No item started.
 - 2026-10-29 Phase 1: P1.1/P1.5/P1.6 done (see §3). Dropped A6–A8 as redundant with TauCeti. Next: P1.7, then HUMAN P1.2–P1.4.
+- 2026-10-30 P1.7 done; wrote `research/tauceti-port-report.md` (have / covered upstream / not covered / PR waves / risks). Stopped before downloads and outward actions; awaiting H1–H3.
