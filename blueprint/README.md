@@ -21,11 +21,13 @@ Iteration 19's mathematical route before building tooling") and
 | `lean/RabinCertSketch.lean` | elaborated reflected mod-ℓ polynomial engine (structural + fuel), toy and real k=72 Rabin condition kernel-decided, `[propext]` only |
 | `iteration19-maeda-generic/BLUEPRINT.md` | **the Iteration 19 plan**: modules, the Rabin-theorem proof plan, `charpoly_dimN` design, generator, budget, risks |
 | `dedekind-frobenius/BLUEPRINT.md` | trajectory 2: Dedekind–Frobenius cycle types + Jordan — the Mathlib gap blocking Gal = Sₙ beyond dim 5, staged delivery plan, census data already in hand |
+| `lean/FrobeniusInterfaceSketch.lean` | cycle 2: **parity finish proved** (`Aₙ ≤ G` + odd ⟹ `G = ⊤`), the Jordan composition proved modulo the `JordanFor` interface, and the `FrobHasCycleType` Dedekind interface over `Gal` — all elaborating clean; validated API names in the blueprint §6 |
 
 Outcome: Iteration 19 is de-risked and much cheaper than the scaling study
 assumed (its "main new engineering" is now a Mathlib tactic call); the one
 new math lemma (Rabin's test, the needed direction) has a written proof plan
-and validated reflection layer.
+and validated reflection layer.  Cycle 2 landed the Sₙ-criterion group
+theory that Dedekind/Jordan will plug into.
 
 ## Next-cycle candidates (pick up in order of impact)
 

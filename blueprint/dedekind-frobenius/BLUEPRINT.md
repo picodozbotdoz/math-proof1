@@ -107,7 +107,31 @@ root-lifting).  Each step is classical; the packaging decision (how much
 * Replaces the per-degree resolvent arms race (sextic F₂₀ resolvent at S₅,
   then nothing) with one dimension-generic theorem.
 
-## 6. Next concrete actions (for a future Task AA cycle)
+## 6. Cycle-2 validation (2026-10-29, Task AA): stages 1–2 elaborated
+
+`blueprint/lean/FrobeniusInterfaceSketch.lean` (elaborates clean, zero
+warnings, at the pin):
+
+* **`eq_top_of_sup_alternating_of_odd` — proved** (the parity finish:
+  `Aₙ ≤ G` + one odd element ⟹ `G = ⊤`; the odd-element fact is what a
+  `disc`-non-square or a Frobenius transposition supplies).
+* **`eq_top_of_transitive_of_jordan_of_odd` — proved** modulo the `JordanFor`
+  hypothesis: transitivity + a p-cycle (`cycleType = {p} + 1·…·1`,
+  `p ≤ n − 3`) + odd element ⟹ `G = ⊤`.  Jordan is the remaining
+  group-theory work (stage 4).
+* **`FrobHasCycleType` — the Dedekind interface**, stated over `q.Gal` with
+  `galActionHom q ℂ σ` and `Equiv.Perm.cycleType` (conjugation-invariant by
+  `cycleType_conj`, so root-ordering-independent).
+
+Exact API names validated (the round-trip savers): `Subgroup.eq_top_iff'`
+(the unprimed name does not exist here), `Equiv.Perm.mem_alternatingGroup`,
+`Equiv.Perm.sign_mul` / `sign_inv`, `Int.units_eq_one_or` (the `ℤˣ` case
+split), `inv_mul_cancel` with `⁻¹` syntax (no `symm_mul_cancel` lemmas at
+the pin), `attribute [local instance] Polynomial.Gal.splits_ℚ_ℂ` from
+`Mathlib.Analysis.Complex.Polynomial.Basic` (the project's own idiom,
+`MaedaGalois.lean:26`).
+
+## 7. Next concrete actions (for a future Task AA cycle)
 
 1. Survey `Mathlib/NumberTheory/` (ramification, `Ideal.over`, `Ideal.nm`,
    `adjoinPowerBasis`) + `Analysis/PAdic` for the cheapest route to
