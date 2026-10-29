@@ -267,3 +267,228 @@ The final architecture (files `Poly5.lean`, `MaedaGalois5Id*.lean`, generator
   normalizer congruence) in `MaedaGalois5Defs.lean` is written for
   `Fintype.card α = 5` but most proofs only use 5 through cardinal
   arithmetic; check what generalizes to n = 6/7 before re-deriving.
+
+---
+
+# Part II — review of the τ / Lehmer / Weight-12 kernel-computation session
+
+Source: the working session that produced `MathProof/Tau/Basic.lean`
+(Ramanujan τ + verified list arithmetic), `MathProof/Tau/Lehmer.lean`
+(kernel-verified nonvanishing to 128) and `MathProof/ModularForms/Weight12.lean`
+(`691 • E₁₂ = 441 • E₄³ + 250 • E₆²` via the Sturm bound).  Part I's theme was
+*certificate scale*; this session's theme is *kernel reducibility and API
+reconnaissance*: every failure below was a `decide`/`rfl` that could not
+evaluate, a name that does not exist in this Mathlib, or a definition that
+compiled into something the kernel cannot unfold.
+
+## 9. Definitions: structural recursion is a kernel contract (the `Acc.rec` trap)
+
+* **Multi-pattern recursion on *different* arguments compiles to well-founded
+  recursion, silently.**  `psub` was first written with four patterns —
+  `psub [] (b :: bs) = (-b) :: psub [] bs` (recursing on arg 2) alongside
+  `psub (a :: as) [] = a :: psub as []` (recursing on arg 1).  No structural
+  decrease exists on a single argument, so the equation compiler emitted
+  `Acc.rec`.  `#eval` still produced the *correct* values (the compiler
+  evaluates fine); every `decide`/`rfl` failed with the signature
+
+  > `reduction got stuck at match (deltaCoeffs 1).getD 0 0, 1 with | Int.ofNat a, Int.ofNat b => match decEq a b …`
+
+  That message is *the* Acc.rec symptom: a wrong value would also get stuck,
+  so the failure mode is silent — correct math, broken kernel.
+* **Diagnostics that pinpoint it, in order of cost:** `#print psub` (body
+  starts with `Acc.rec`), `example : psub [1] [0] = [1] := by rfl` (fails),
+  `#reduce psub [1] [0]` (prints the explosion).  Bisection over subterms
+  (`shiftBy` ok → `pneg` ok → `psub` stuck) found the culprit in minutes.
+* **Fix: recurse structurally on exactly one argument.**  The asymmetric
+  case moved into a helper — `pneg : List ℤ → List ℤ` (negation, structural)
+  — so `psub [] l => pneg l` no longer recurses on `l`.  Every list function
+  in the τ pipeline (`padd`, `pscale`, `pshift`, `pmul`, `psub`, `shiftBy`,
+  `pow24`) is now structural; this is the rule AGENTS.md records as
+  "Kernel-reducibility is the central engineering constraint".
+  Part I's `pBeq` lesson (tail-recursive `Bool` scan) is the same contract at
+  larger scale; here it bites even at 3-element lists.
+* **Probe every kernel-target function immediately after defining it.**  The
+  trap was caught only after ~600 lines of proofs depended on `psub`.  A
+  two-line probe — `example : psub [1] [0] = [1] := by rfl` — belongs in the
+  same edit that writes the `def`.  (Keep the probes out of the committed
+  file, or in a comment.)
+
+## 10. Type classes: the computable / noncomputable boundary
+
+* `ℤ[X]` (`Polynomial`) carries **noncomputable** `Zero`/`Semiring`/`CommRing`
+  instances in this Mathlib; any `def` that even mentions polynomial
+  arithmetic fails with "failed to compile definition, consider marking it as
+  'noncomputable' because it depends on 'instZero' / 'commRing' / 'semiring'".
+  Same for `ModularForm.E` and everything built on it (`tauOf`, `tau`, `E₁₂`).
+* **Keep two worlds and one bridge.**  All *computation* lives in `List ℤ`
+  (`Pbuild`, `pow24`, `deltaCoeffs` — computable, kernel-reducible); all
+  *mathematical meaning* lives in `ℤ[X]` / `ModularForm` (noncomputable,
+  proof-only).  The bridge is a single pair: `L2P : List ℤ → ℤ[X]` (itself
+  `noncomputable`) with `coeff_L2P : (L2P l).coeff i = l.getD i 0`, plus
+  congruence lemmas (`coeff_mul_congr`, `coeff_pow_congr`) that transport
+  prefix-coefficient agreement through `*` and `^`.  After the bridge, each
+  τ value theorem is `change tauOf k = v; rw [tauOf_eq_getD …]; decide`.
+* Prefer **stdlib `List` operations when they exist**: the custom `ptrunc`
+  became plain `List.take` and the custom index theorems became `getD_take`
+  — stdlib comes with the simp lemmas (`List.getD_cons_succ/zero`,
+  `List.getD_nil`, `List.take_succ_cons`) and kernel-reduces fine.  Hand-roll
+  only what stdlib lacks (`pmul`, `psub`, `shiftBy`).
+* `let`-chains inside a `def` (`pow24` as five squarings) are kernel-friendly
+  and keep the squaring structure explicit for the soundness proof.
+
+## 11. Mathlib API reconnaissance (v4.36.0-rc1): names checked the hard way
+
+Everything below was tried, failed, and re-looked-up; reuse the right column.
+
+| wanted (stale/imagined) | actual in this Mathlib |
+|---|---|
+| `Polynomial.coeff_mul'` | `Polynomial.coeff_mul` — antidiagonal: `(p*q).coeff n = ∑ x ∈ Finset.antidiagonal n, p.coeff x.1 * q.coeff x.2` |
+| `Polynomial.coeff_X_mul_succ` | `Polynomial.coeff_X_mul : (X * p).coeff (n+1) = p.coeff n` |
+| `p * X^n` coeff lemmas | `Polynomial.coeff_mul_X_pow' : (p * X^n).coeff d = if n ≤ d then p.coeff (d-n) else 0` |
+| `Nat.antidiagonal` | `Finset.antidiagonal`; for `norm_num` expansions: `Finset.Nat.antidiagonal_succ` (the form Mathlib's own `GradedRing.lean` uses) |
+| `List.take_succ` (deprecated) | `List.take_add_one`; cons-shape: `List.take_succ_cons : take (i+1) (a::as) = a :: take i as` |
+| `if_pos`/`if_neg` | deprecated for `ite_eq_left`/`ite_eq_right` (still work; rewrite fine) |
+| old `Finset.sum_eq_single` | takes the non-membership side condition as a second explicit argument |
+| `bernoulli 12` by `decide` | dies (deep recursion); `norm_num [bernoulli, bernoulli']` under `maxRecDepth 8000` + raised heartbeats |
+
+* **Reconnaissance workflow that pays for itself:** a scratch file run
+  directly against the built packages —
+  `LEAN_PATH=$(ls -d .lake/packages/*/.lake/build/lib/lean | tr '\n' ':').lake/build/lib/lean lean /tmp/probe.lean`
+  — gives `#check`/`#eval`/tactic experiments in seconds, no `lake build`.
+  `#check` every name a proof will lean on *before* writing the proof.
+* **Read Mathlib's own proofs first.**  `LevelOne/GradedRing.lean` already
+  solves the exact Weight-12 shape (`E₄³ − E₆²` as a weight-12 form): the
+  `ModularForm.mcast (by decide)` weight cast, `.pow`, `qExpansion_pow`,
+  `FunLike.coe_sub`, `coe_mcast`, and `Finset.Nat.antidiagonal_succ` inside
+  `norm_num` all came from mirroring that file instead of inventing lemmas.
+  The search path that finds such files: `grep -rn <theorem> Mathlib/` for
+  an external usage, then read its source.
+
+## 12. `omega`/`subst`/`match`: the arithmetic-tactic boundary
+
+* **`omega` treats `List.getD` and `length` applications as opaque atoms.**
+  It cannot see `(a :: as).getD (i+1) 0 = as.getD i 0` or
+  `length (a::as) = length as + 1`; the error prints them as atoms
+  (`where b := (a :: as).getD 0 0`).  Order matters: `simp only
+  [List.getD_cons_succ, …]` *first* to expose the `ℕ` arithmetic, then
+  `omega`/`split_ifs`.  Inside `getD` statements, subtract-index rewrites
+  come before `omega`: `rw [show i + 1 - (m + 1) = i - m from by omega]`.
+* **`subst` refuses non-variable equalities** (`h : b.2 = 0`,
+  `b : ℕ × ℕ` — "invalid equality proof").  Route through
+  `Prod.ext_iff` + `omega`, or restate the hypothesis about components
+  before `subst`.
+* **`match i with | 0 => … | i+1 => …` beats `cases i`** inside cons-case
+  proofs: the match gives clean successor contexts without
+  `Nat.succ_eq_add_one` cleanup, and pairs naturally with
+  `induction l generalizing i`.
+* Impossible index cases close by **contradiction to `omega`**: after
+  `rcases d with _ | d`, the branch with `hi : i + 1 < 0 + 1` but `i + 1 ≥ 1`
+  is one `omega`.
+
+## 13. Tactics: what worked, what misfired
+
+* **`simp only` with *named, fully applied* proof terms.**  Rewrite rules
+  like `ModularForm.qExpansion_mul one_pos one_mem_strictPeriods_SL` fire
+  syntactically; passing the raw lemma name relies on elaboration guessing
+  the same instance arguments later.  Same trick for the Eisenstein
+  hypotheses: define `def hk12 : 3 ≤ 12 := by norm_num` and `def hk12even :
+  Even 12` once, use them in *every* statement — ad-hoc `by norm_num`
+  creates distinct proof terms that block `rw`/`change` matches.
+* **`rw` cannot unfold a `def`.**  `rw [etaPoly]` fails (not an equation).
+  Bridge with an explicit rfl-equation: `rw [show Pbuild (d+1) 0 =
+  List.take (d+1) [1] from rfl, h0]`, or use `simp [defName]` /
+  `simp only [defName, lemmaA, lemmaB]`.
+* **Eta-expansion when passing induction hypotheses to congruence lemmas:**
+  "Application type mismatch … expected ∀ j_1 ≤ j" — wrap: `(fun n hn ↦ ih n
+  (le_trans hn hj))` instead of `ih` bare.
+* **Bool-vs-Prop bridging in `decide`-feeding predicates:** the goal
+  `(l.getD i 0 != 0) = true` is not `l.getD i 0 ≠ 0` by `exact`; drive with
+  `Bool.and_eq_true` in `simp only`, close residue with `simpa`.  (Same
+  family as Part I's `eq_of_pBeq`: keep the Bool world and convert at the
+  edge.)
+* **`change`, not goal-altering `show`.**  The style linter flags `show` that
+  changes the goal ("Please use `change` instead"); `change tauOf 0 = 1` is
+  also self-documenting for computation theorems.
+* **`try ring` for generated/mixed-depth tails** (Part I's lesson, re-earned
+  here): some `simp only` sets close fully, leaving `ring` with "no goals".
+* Unused-simp-argument warnings ("This simp argument is unused: ih") are real
+  diagnostics — they usually mean an earlier simp lemma consumed the term and
+  the intended one never fired.
+* Dead ends happen: one interim version had a `linear_combination` placeholder
+  with `sorry` (caught by grep before commit).  Never commit a proof sketch;
+  `grep -c sorry` is part of the pre-commit check (CI enforces it too).
+
+## 14. `set_option`, docstrings, and the style linter
+
+* **Order is `set_option … in` *before* the docstring.**
+  `/-- doc -/ set_option maxHeartbeats … in theorem` fails with the confusing
+  "unexpected token 'set_option'; expected 'lemma'" — the docstring glues to
+  nothing.  Working form:
+  ```lean
+  set_option maxRecDepth 100000 -- kernel evaluation depth for the checks below
+  set_option maxHeartbeats 4000000 in
+  -- reason: `decide` below evaluates 128 coefficients inside the kernel
+  /-- docstring -/
+  theorem …
+  ```
+* **`linter.mathlibStandardSet` *requires* a comment explaining any
+  `maxHeartbeats` raise** ("Please, add a comment explaining the need for
+  modifying the maxHeartbeats limit").  Budget one comment per raise.
+* `decide` on the nonvanishing check needed `maxRecDepth 10000` already at
+  N=64 ("maximum recursion depth has been reached") and
+  `maxHeartbeats 4000000` at N=256.  A bare `set_option X v` (no `in`) scopes
+  to the rest of the file — fine for a leaf module, avoid in library files.
+
+## 15. Weight-12 / Sturm-bound idioms (Weight12.lean)
+
+* **Modular forms of different weights are different types.**  `E₄.pow 3 :
+  ModularForm 𝒮ℒ (4*3)`; view at weight 12 via `ModularForm.mcast (by decide)`.
+  Define the linear combination once (`combo`) plus one bridge lemma
+  (`combo_qExpansion_eq`) through `FunLike.coe_sub`, `coe_mcast`,
+  `qExpansion_sub/smul/pow`; then the coefficient lemmas are pure
+  `PowerSeries` arithmetic and close by `norm_num` (with
+  `Finset.Nat.antidiagonal_succ`).
+* **Sturm-bound application pattern:**
+  `PowerSeries.nat_le_order _ 2 (fun i hi ↦ coeff_i)` → `lt_of_lt_of_le
+  (by norm_num)` → `ModularForm.sturm_bound_levelOne_nat (k := 12) h` →
+  `rw [sub_sub] at h0; exact eq_of_sub_eq_zero h0`.  The Sturm bound at
+  weight `k` is `k/12`; coefficients `0..k/12` vanishing ⇒ form is zero.
+* **Eisenstein coefficients are already in Mathlib:**
+  `EisensteinSeries.E_qExpansion_coeff : (qExpansion 1 (E hk)).coeff m =
+  if m = 0 then 1 else -(2k/B_k) * σ_{k-1}(m)` — no need to re-derive ζ/B
+  plumbing.  Only `bernoulli 12` needs evaluating (`norm_num` + limits, §11).
+* **Notation scopes:** `𝒮ℒ` needs `open scoped MatrixGroups`; `qExpansion`
+  resolves under `open UpperHalfPlane ModularForm`.  Missing opens surface as
+  "Unknown identifier `𝒮ℒ` / `qExpansion` … not possible to treat as
+  implicitly bound variable" (because `relaxedAutoImplicit = false` — the
+  lakefile option doing its job).
+* **Product coefficient 1:** with `Finset.antidiagonal 1 = {(0,1),(1,0)}` by
+  `decide`, `(A*B).coeff 1 = A.coeff 0 * B.coeff 1 + A.coeff 1 * B.coeff 0`
+  is a two-line helper (`coeff_mul_one`); coefficient 0 is
+  `A.coeff 0 * B.coeff 0` by `simp [PowerSeries.coeff_mul]`.
+
+## 16. Kernel-cost budgeting and process
+
+* Measured `decide` costs for the τ nonvanishing check (this machine, idle):
+  N=64 ≈ 9 s (needs `maxRecDepth 10000`); N=128 ≈ 34 s — the shipped,
+  CI-safe bound; N=256 ≈ 2 CPU-min standalone but > 5 GB RSS, and under a
+  concurrently loaded 8 GB desktop it swap-thrashes (4 % CPU, TIME frozen,
+  hours of wall clock).  **Ship the bound that builds reliably in CI, not
+  the largest bound that ever verified once** — and record the larger
+  verification in a comment (done: "The kernel computation for 256
+  coefficients was verified locally but is kept out of the build").
+* Thrash signature for kill-decisions: RSS grows past physical RAM, CPU % in
+  single digits, accumulated CPU TIME barely advancing between `ps` polls.
+  Kill early; re-run serialized later.  Never run two heavy `lean`
+  processes concurrently on this machine.
+* **`#eval` first, `decide` second.**  `#eval deltaCoeffs 20` (compiler,
+  milliseconds) confirmed all τ values against OEIS A000594 *before* any
+  kernel work; the `decide` failures were then provably plumbing, not math.
+  The generator-verify pattern of Part I (`Python first`) in Lean-native
+  form.
+* Background `lake build` + `TaskOutput` polling works; check progress with
+  `ps aux | grep <module>.lean` (RSS / CPU-TIME) rather than tailing logs the
+  build only writes at the end.
+* Commit granularity: the definition module (τ + 21 values) and the
+  nonvanishing bound were separate commits (`b060851`, `8b4e954`) so a
+  broken heavy `decide` never blocks the light history.
