@@ -1361,3 +1361,43 @@ MaedaGalois5, Id-chain) with measured justifications
 (`research/refactor-i18-tauceti/README.md` §4).  Heavy chain rebuilt end-to-end
 via `stage_chain.sh` after the ancestor edits; `AxCheck`/`AxCheckDecide`
 re-run on Modal; full details and verification matrix in the README above.
+
+## Blueprint implementation wave (2026-10-31, same branch follow-on)
+
+Per operator instruction, the three `dev/blueprint` items were implemented on
+`impl/blueprint/*` branches (worktrees outside the main tree), each
+Modal-verified (linters on) and pushed:
+
+* **`impl/blueprint/iteration19-maeda-generic`** (`3de75de`) — the Iteration 19
+  engines: `CharpolyEngine.charpoly_of_eval_eq` (certified `eval_det`
+  interpolation) and `RabinCert.lean` (769 lines) with **`irreducible_of_rabin`
+  fully proved** — the blueprint's "one new mathematical lemma" turned out to
+  need only assembly, since
+  `Irreducible.natDegree_dvd_iff_dvd_X_pow_card_pow_sub_X` (± converse)
+  already exists at the pin.  Reflected `List ℤ` engine (structural/fuelled
+  only) + transport + `irreducible_of_rabin_cert`/`_int` packaging; k=72
+  smoke decides [propext]-only.  Generated dim-6..10 weight files are the
+  follow-up (exact per-weight call list in the agent report /
+  `research/blueprint-impl-wave.md`).
+* **`impl/blueprint/hecke-algebra-upgrade`** (`5c56cbe`) —
+  `HeckeAlgebraQT2.lean`: `minpoly = charpoly` from irreducibility plus the
+  Maeda-statement upgrade `exists_aeval_of_commute_of_irreducible_charpoly`
+  (generic over endomorphisms), proved via T₂-cyclicity (Bézout) instead of
+  the blueprint's `Module (AdjoinRoot f)` descent.  `HeckeCommute.lean`
+  (general `T_m`) is the open prerequisite for feeding it the level-one
+  commutation input.
+* **`impl/blueprint/dedekind-frobenius`** (`f54534a`) — `MaedaPermCriterion.lean`
+  (stages 1–2): parity finish, `JordanFor` hypothesis interface,
+  `FrobHasCycleType` Dedekind interface.  **Mathematical correction**: the
+  blueprint's "transitive + transposition + p-cycle (p ≤ n−3) ⟹ Sₙ" variant is
+  false (`S₃ ≀ S₂ ⊂ S₆`, order 72 < 360); the correct forms need primitivity
+  (Wielandt) or a (n−1)-cycle — documented in the docstrings and the blueprint
+  needs the same fix.  Bonus: the pin already has partial Jordan content
+  (`GroupTheory/GroupAction/Jordan.lean`).
+
+Process lesson (recorded in the wave doc): an agent that API-greps against a
+Mathlib checkout of a *different ref* (master@rc2 vs the pinned rc1) produces
+code that fails the real build — the pinned source lives at
+`.lake/packages/mathlib` and is the only valid grep target; local
+`lake env lean <file>` reproduces lake semantics exactly and beats Modal
+round trips for this class of error.
