@@ -1,5 +1,6 @@
 import MathProof.ModularForms.Congruence691
 import MathProof.Tau.LehmerUnbounded
+import Mathlib.NumberTheory.LucasLehmer
 
 /-!
 # The mod-691 Lehmer sieve — nonvanishing for unbounded primes
@@ -62,11 +63,10 @@ private lemma sigma_prime (hp : p.Prime) : sigma 11 p = 1 + p ^ 11 := by
     sigma_apply_prime_pow hp, Finset.sum_range_succ, Finset.sum_range_one]
   simp
 
-set_option maxRecDepth 200000
 /-- The kernel-decided finite fact: the only residue `x < 691` with
 `x ^ 11 ≡ −1 [MOD 691]` is `x = 690`. -/
 private theorem bad_residues :
-    ∀ x ∈ Finset.range 691, (1 + x ^ 11) % 691 = 0 ↔ x = 690 := by decide
+    ∀ x ∈ Finset.range 691, (1 + x ^ 11) % 691 = 0 ↔ x = 690 := by decide +kernel
 
 /-- **The only escape class for primes**: for `p` prime, `691 ∣ σ₁₁ p` holds
 exactly for `p ≡ −1 [MOD 691]`. -/
@@ -107,13 +107,11 @@ theorem tau_ne_zero_of_sigma_prime_pows {n : ℕ} (hn : 0 < n)
 
 /-! ### Showcase: powers of two past 2³², and primes past the wall -/
 
-set_option maxRecDepth 400000
-set_option exponentiation.threshold 4096
 /-- Kernel-decided: the geometric sums `σ₁₁ (2 ^ a) = Σ_{j ≤ a} 2^{11j}` are
 nonzero mod 691 for every `a ≤ 64`. -/
 private theorem two_pow_sigma_nonzero :
     ∀ a ∈ Finset.range 65, (∑ j ∈ Finset.range (a + 1), (2 : ℕ) ^ (j * 11)) % 691 ≠ 0 := by
-  decide
+  decide +kernel
 
 /-- **Powers of two to `2 ^ 64`**: `τ (2 ^ a) ≠ 0` for every `a ≤ 64` — the
 index `2 ^ 64` is `2 ^ 32` beyond the Iteration-9 chain bound, and the prime
@@ -132,11 +130,19 @@ theorem tau_two_pow_ne_zero_sieve {a : ℕ} (ha : a ≤ 64) :
 theorem tau_of_65537_ne_zero : tau 65537 ≠ 0 :=
   tau_prime_ne_zero_of_mod (by norm_num) (by norm_num)
 
-set_option maxRecDepth 200000
+/-- `2147483647 = 2³¹ − 1` is prime, by the Lucas–Lehmer test: the short
+verified computation `LucasLehmerTest 31` replaces a trial-division
+certificate whose kernel evaluation exceeded the default recursion depth. -/
+private theorem prime_2147483647 : Nat.Prime 2147483647 := by
+  have ht : LucasLehmerTest 31 := by norm_num
+  have h := lucas_lehmer_sufficiency 31 (by norm_num) ht
+  have hme : mersenne 31 = 2147483647 := by decide
+  rwa [hme] at h
+
 /-- The Mersenne prime `2³¹ − 1`: `τ 2147483647 ≠ 0` (`2147483647 % 691 =
 66 ≠ 690`). -/
 theorem tau_of_2147483647_ne_zero : tau 2147483647 ≠ 0 :=
-  tau_prime_ne_zero_of_mod (by norm_num) (by norm_num)
+  tau_prime_ne_zero_of_mod prime_2147483647 (by norm_num)
 
 
 /-! ### The root-of-unity classification of bad prime-power classes -/

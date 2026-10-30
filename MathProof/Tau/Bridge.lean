@@ -20,8 +20,6 @@ products (`Ramanujan.etaPow24_stable`), a coefficient bound
 geometrically on a small disc, and uniqueness of power-series representations.
 -/
 
-set_option maxRecDepth 10000
-
 namespace Ramanujan
 
 open Polynomial UpperHalfPlane ModularForm Filter Topology
@@ -152,9 +150,6 @@ theorem pnorm_one_sub_X (m : ℕ) (hm : 1 ≤ m) : pnorm (1 - (X ^ m : ℤ[X])) 
   rw [Finset.sum_congr rfl hc]
   simp [Finset.sum_add_distrib]
 
-set_option maxHeartbeats 2000000 in
--- reason: the succ-step proof chains `pnorm_mul_le` (a large `Finset.sum_le_sum`)
--- with `Nat.pow` arithmetic and trips the default 200000 budget
 /-- The coefficients of the truncated η-powers are exponentially bounded. -/
 theorem pnorm_etaPow24_le (M : ℕ) : pnorm ((etaPoly M) ^ 24) ≤ 2 ^ (24 * M) := by
   induction M with

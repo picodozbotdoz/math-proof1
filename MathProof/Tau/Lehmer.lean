@@ -59,15 +59,13 @@ theorem allNonzeroLt_eq_true_iff {N : ℕ} {l : List ℤ} :
         refine ⟨?_, ih.mpr fun i hi ↦ h i (Nat.lt_succ_of_lt hi)⟩
         simpa using h N (Nat.lt_succ_self N)
 
-set_option maxRecDepth 100000 -- kernel evaluation depth for the checks below
-set_option maxHeartbeats 4000000 in
--- reason: `decide` below evaluates 128 coefficients inside the kernel
 /-- **Verified non-vanishing of `τ` up to 128.** Every coefficient `τ n` for
-`1 ≤ n ≤ 128` is nonzero.  This is checked by Lean's kernel via `decide`,
-evaluating the verified list `deltaCoeffs 128`; no external computation is
-trusted. -/
+`1 ≤ n ≤ 128` is nonzero.  This is checked by Lean's kernel via
+`decide +kernel` (the kernel alone evaluates the verified list
+`deltaCoeffs 128`; the elaborator-side re-evaluation of plain `decide`
+exceeds the default recursion depth); no external computation is trusted. -/
 theorem deltaCoeffs_128_nonvanishing : allNonzeroLt 128 (deltaCoeffs 128) = true := by
-  decide
+  decide +kernel
 
 /-- **Lehmer's conjecture** (1947): the Ramanujan tau function never vanishes. -/
 def LehmerConjecture : Prop := ∀ n : ℕ, 1 ≤ n → tau n ≠ 0

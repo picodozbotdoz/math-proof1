@@ -277,8 +277,7 @@ theorem tau_modEq_sigma (n : ℕ) (hn : 1 ≤ n) :
     rw [hrw2]
     exact dvd_sub (dvd_mul_right _ _) hsub
   have hprime : Prime (691 : ℤ) :=
-    Nat.prime_iff_prime_int.mp (by
-      set_option maxRecDepth 100000 in decide)
+    Nat.prime_iff_prime_int.mp (by norm_num)
   have h125 : ¬((691 : ℤ) ∣ 125) := by decide
   rcases hprime.dvd_mul.mp hsub2 with h | h
   · exact absurd h h125

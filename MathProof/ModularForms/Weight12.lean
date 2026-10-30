@@ -207,8 +207,6 @@ theorem combo_coeff_one : (qExpansion 1 combo).coeff 1 = 0 := by
     E12_qExpansion_coeff_one, E12_coeff_zero,
     -PowerSeries.coeff_zero_eq_constantCoeff]
 
-set_option maxHeartbeats 800000 in
--- reason: the statement involves weight-cast coercions with heavy defeq checks
 /-- **Ramanujan's weight-12 identity**: `691 • E₁₂ = 441 • E₄³ + 250 • E₆²` in
 `M₁₂(SL(2, ℤ))`, proved via the Sturm bound: the difference `combo` has
 q-expansion coefficients `0` and `1` equal to zero, and the Sturm bound at

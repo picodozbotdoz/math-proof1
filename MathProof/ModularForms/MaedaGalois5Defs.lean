@@ -2,8 +2,6 @@ import MathProof.ModularForms.MaedaDim5
 import MathProof.ModularForms.MaedaGalois
 import Mathlib.GroupTheory.SpecificGroups.Alternating.Simple
 
-set_option maxRecDepth 8000
-
 /-!
 # Subgroup structure of `S₅`, and Galois group `S₅` for the dim-5 weights
 
@@ -48,8 +46,6 @@ lemma card_alternating_five (hα : Fintype.card α = 5) :
   rw [card_perm_five hα] at h
   omega
 
-set_option maxHeartbeats 8000000 in
--- the sign/`A₅` case analysis runs several large `omega`/`simp` steps
 /-- A normal subgroup of `S₅` is `⊤`, `A₅`, or tiny (at most two elements). -/
 theorem perm_normal_cases (hα : Fintype.card α = 5) {N : Subgroup SG} (hN : N.Normal) :
     N = ⊤ ∨ N = alternatingGroup α ∨ Nat.card N ≤ 2 := by
@@ -125,8 +121,6 @@ theorem perm_normal_cases (hα : Fintype.card α = 5) {N : Subgroup SG} (hN : N.
       refine (Subgroup.eq_of_le_of_card_ge hle ?_).symm
       rw [card_alternating_five hα, hN]
 
-set_option maxHeartbeats 8000000 in
--- normal-core index arithmetic over the three `perm_normal_cases` branches
 omit [DecidableEq α] in
 /-- `S₅` has no subgroups of index 3 or 4. -/
 theorem perm_no_index_three_four (hα : Fintype.card α = 5) {H : Subgroup SG}
@@ -160,8 +154,6 @@ theorem perm_no_index_three_four (hα : Fintype.card α = 5) {H : Subgroup SG}
     all_goals have hle := Nat.le_of_dvd (by omega) hdvd
     all_goals omega
 
-set_option maxHeartbeats 8000000 in
--- index-2 subgroups are normal; the simplicity case split is costly
 /-- `A₅` has no subgroup of index 2. -/
 theorem alternating_no_index_two (hα : Fintype.card α = 5)
     {A : Subgroup (alternatingGroup α)} (hA : A.index = 2) : False := by
@@ -193,8 +185,6 @@ section Resolvent
 
 /-! ### The `F₂₀` resolvent of a quintic -/
 
-set_option maxHeartbeats 8000000 in
--- elaborating the 59-term discriminant polynomial
 /-- The discriminant of `X⁵ + aX⁴ + bX³ + cX² + dX + e` (as a polynomial in the
 coefficients; `delta2_identity` proves it equals `∏_{i<j} (xᵢ - xⱼ)²`). -/
 def disc5 {R : Type*} [CommRing R] (a b c d e : R) : R :=
@@ -218,8 +208,165 @@ def disc5 {R : Type*} [CommRing R] (a b c d e : R) : R :=
   + 2000 * a ^ 2 * c * e ^ 3 + 256 * d ^ 5 - 1600 * c * d ^ 3 * e + 2250 * c ^ 2 * d * e ^ 2
   + 2000 * b * d ^ 2 * e ^ 2 - 3750 * b * c * e ^ 3 - 2500 * a * d * e ^ 3 + 3125 * e ^ 4
 
-set_option maxHeartbeats 8000000 in
--- elaborating the sextic with its six large coefficient blocks
+/-- Summand `0` of the coefficient of `X ^ 5` in `resolvent5` -/
+private noncomputable def r5c5 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+    -4 * a * c + 10 * d
+
+/-- Summand `0` of the coefficient of `X ^ 4` in `resolvent5` -/
+private noncomputable def r5c4 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+    6 * a ^ 2 * c ^ 2 + 2 * a ^ 2 * b * d - 8 * a ^ 3 * e + 2 * b * c ^ 2 - 6 * b ^ 2 * d - 34
+    * a * c * d + 30 * a * b * e + 55 * d ^ 2 - 50 * c * e
+
+/-- Summand `0` of the coefficient of `X ^ 3` in `resolvent5` -/
+private noncomputable def r5c3 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+    -4 * a ^ 3 * c ^ 3 - 6 * a ^ 3 * b * c * d + 2 * a ^ 3 * b ^ 2 * e + 2 * a ^ 4 * d ^ 2 +
+    16 * a ^ 4 * c * e - 6 * a * b * c ^ 3 + 19 * a * b ^ 2 * c * d - 9 * a * b ^ 3 * e + 42 *
+    a ^ 2 * c ^ 2 * d + 3 * a ^ 2 * b * d ^ 2 - 54 * a ^ 2 * b * c * e - 52 * a ^ 3 * d * e +
+    2 * c ^ 4 + 3 * b * c ^ 2 * d - 32 * b ^ 2 * d ^ 2 + 15 * b ^ 2 * c * e - 128 * a * c * d
+    ^ 2 + 80 * a * c ^ 2 * e + 170 * a * b * d * e + 50 * a ^ 2 * e ^ 2 + 140 * d ^ 3 - 200 *
+    c * d * e - 125 * b * e ^ 2
+
+/-- Summand `0` of the coefficient of `X ^ 2` in `resolvent5` -/
+private noncomputable def r5c2p0 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+    a ^ 4 * c ^ 4 + 6 * a ^ 4 * b * c ^ 2 * d + a ^ 4 * b ^ 2 * d ^ 2 - 4 * a ^ 4 * b ^ 2 * c
+    * e - 4 * a ^ 5 * c * d ^ 2 - 8 * a ^ 5 * c ^ 2 * e - 8 * a ^ 5 * b * d * e + 16 * a ^ 6 *
+    e ^ 2 + 6 * a ^ 2 * b * c ^ 4 - 18 * a ^ 2 * b ^ 2 * c ^ 2 * d - 6 * a ^ 2 * b ^ 3 * d ^ 2
+    + 18 * a ^ 2 * b ^ 3 * c * e - 22 * a ^ 3 * c ^ 3 * d - 10 * a ^ 3 * b * c * d ^ 2 + 10 *
+    a ^ 3 * b * c ^ 2 * e + 64 * a ^ 3 * b ^ 2 * d * e + 10 * a ^ 4 * d ^ 3 + 80 * a ^ 4 * c *
+    d * e - 120 * a ^ 4 * b * e ^ 2 + b ^ 2 * c ^ 4 - 6 * b ^ 3 * c ^ 2 * d + 9 * b ^ 4 * d ^
+    2 - 4 * a * c ^ 5 - 10 * a * b * c ^ 3 * d + 81 * a * b ^ 2 * c * d ^ 2 - 135 * a * b ^ 3
+    * d * e + 95 * a ^ 2 * c ^ 2 * d ^ 2 - 10 * a ^ 2 * c ^ 3 * e - 5 * a ^ 2 * b * d ^ 3 -
+    270 * a ^ 2 * b * c * d * e + 225 * a ^ 2 * b ^ 2 * e ^ 2 - 180 * a ^ 3 * d ^ 2 * e + 100
+    * a ^ 3 * c * e ^ 2 + 10 * c ^ 4 * d - 5 * b * c ^ 2 * d ^ 2 - 50 * b * c ^ 3 * e - 100 *
+    b ^ 2 * d ^ 3 + 225 * b ^ 2 * c * d * e
+
+/-- Summand `1` of the coefficient of `X ^ 2` in `resolvent5` -/
+private noncomputable def r5c2p1 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+    - 180 * a * c * d ^ 3 + 150 * a * c ^ 2 * d * e + 550 * a * b * d ^ 2 * e - 500 * a * b *
+    c * e ^ 2 + 250 * a ^ 2 * d * e ^ 2 + 175 * d ^ 4 - 500 * c * d ^ 2 * e + 625 * c ^ 2 * e
+    ^ 2 - 625 * b * d * e ^ 2
+
+/-- The coefficient of `X ^ 2` in `resolvent5` (see that def). -/
+private noncomputable def r5c2 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+    r5c2p0 a b c d e
+    + r5c2p1 a b c d e
+
+/-- Summand `0` of the coefficient of `X ^ 1` in `resolvent5` -/
+private noncomputable def r5c1p0 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+    -2 * a ^ 5 * b * c ^ 3 * d - 2 * a ^ 5 * b ^ 2 * c * d ^ 2 + 2 * a ^ 5 * b ^ 2 * c ^ 2 * e
+    + 2 * a ^ 5 * b ^ 3 * d * e + 2 * a ^ 6 * c ^ 2 * d ^ 2 + 2 * a ^ 6 * b * d ^ 3 + 8 * a ^
+    6 * b * c * d * e - 8 * a ^ 6 * b ^ 2 * e ^ 2 - 8 * a ^ 7 * d ^ 2 * e - 2 * a ^ 3 * b * c
+    ^ 5 + 3 * a ^ 3 * b ^ 2 * c ^ 3 * d + 13 * a ^ 3 * b ^ 3 * c * d ^ 2 - 7 * a ^ 3 * b ^ 3 *
+    c ^ 2 * e - 15 * a ^ 3 * b ^ 4 * d * e + 4 * a ^ 4 * c ^ 4 * d + 13 * a ^ 4 * b * c ^ 2 *
+    d ^ 2 + 14 * a ^ 4 * b * c ^ 3 * e - 13 * a ^ 4 * b ^ 2 * d ^ 3 - 66 * a ^ 4 * b ^ 2 * c *
+    d * e + 66 * a ^ 4 * b ^ 3 * e ^ 2 - 14 * a ^ 5 * c * d ^ 3 - 28 * a ^ 5 * c ^ 2 * d * e +
+    46 * a ^ 5 * b * d ^ 2 * e - 24 * a ^ 5 * b * c * e ^ 2 + 48 * a ^ 6 * d * e ^ 2 - 2 * a *
+    b ^ 2 * c ^ 5 + 13 * a * b ^ 3 * c ^ 3 * d - 21 * a * b ^ 4 * c * d ^ 2 - 9 * a * b ^ 4 *
+    c ^ 2 * e + 27 * a * b ^ 5 * d * e + 2 * a ^ 2 * c ^ 6 + 13 * a ^ 2 * b * c ^ 4 * d - 76 *
+    a ^ 2 * b ^ 2 * c ^ 2 * d ^ 2
+
+/-- Summand `1` of the coefficient of `X ^ 1` in `resolvent5` -/
+private noncomputable def r5c1p1 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+    - 13 * a ^ 2 * b ^ 2 * c ^ 3 * e + 15 * a ^ 2 * b ^ 3 * d ^ 3 + 183 * a ^ 2 * b ^ 3 * c *
+    d * e - 162 * a ^ 2 * b ^ 4 * e ^ 2 - 30 * a ^ 3 * c ^ 3 * d ^ 2 - 12 * a ^ 3 * c ^ 4 * e
+    + 39 * a ^ 3 * b * c * d ^ 3 + 4 * a ^ 3 * b * c ^ 2 * d * e - 17 * a ^ 3 * b ^ 2 * d ^ 2
+    * e + 124 * a ^ 3 * b ^ 2 * c * e ^ 2 + 3 * a ^ 4 * d ^ 4 + 170 * a ^ 4 * c * d ^ 2 * e +
+    2 * a ^ 4 * c ^ 2 * e ^ 2 - 402 * a ^ 4 * b * d * e ^ 2 + 56 * a ^ 5 * e ^ 3 + 2 * b * c ^
+    6 - 13 * b ^ 2 * c ^ 4 * d + 15 * b ^ 3 * c ^ 2 * d ^ 2 + 31 * b ^ 3 * c ^ 3 * e + 22 * b
+    ^ 4 * d ^ 3 - 117 * b ^ 4 * c * d * e + 108 * b ^ 5 * e ^ 2 - 14 * a * c ^ 5 * d + 39 * a
+    * b * c ^ 3 * d ^ 2 - 12 * a * b * c ^ 4 * e + 33 * a * b ^ 2 * c * d ^ 3 + 51 * a * b ^ 2
+    * c ^ 2 * d * e - 201 * a * b ^ 3 * d ^ 2 * e - 180 * a * b ^ 3 * c * e ^ 2 + 30 * a ^ 2 *
+    c ^ 2 * d ^ 3 + 114 * a ^ 2 * c ^ 3 * d * e + 29 * a ^ 2 * b * d ^ 4 - 541 * a ^ 2 * b * c
+    * d ^ 2 * e + 35 * a ^ 2 * b * c ^ 2 * e ^ 2
+
+/-- Summand `2` of the coefficient of `X ^ 1` in `resolvent5` -/
+private noncomputable def r5c1p2 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+    1045 * a ^ 2 * b ^ 2 * d * e ^ 2 - 176 * a ^ 3 * d ^ 3 * e - 90 * a ^ 3 * c * d * e ^ 2 -
+    350 * a ^ 3 * b * e ^ 3 + 3 * c ^ 4 * d ^ 2 + 58 * c ^ 5 * e + 29 * b * c ^ 2 * d ^ 3 -
+    405 * b * c ^ 3 * d * e - 128 * b ^ 2 * d ^ 4 + 685 * b ^ 2 * c * d ^ 2 * e + 325 * b ^ 2
+    * c ^ 2 * e ^ 2 - 525 * b ^ 3 * d * e ^ 2 - 92 * a * c * d ^ 4 + 320 * a * c ^ 2 * d ^ 2 *
+    e - 400 * a * c ^ 3 * e ^ 2 + 310 * a * b * d ^ 3 * e - 925 * a * b * c * d * e ^ 2 + 375
+    * a * b ^ 2 * e ^ 3 + 700 * a ^ 2 * d ^ 2 * e ^ 2 + 750 * a ^ 2 * c * e ^ 3 + 106 * d ^ 5
+    - 600 * c * d ^ 3 * e + 1000 * c ^ 2 * d * e ^ 2 + 125 * b * d ^ 2 * e ^ 2 - 625 * b * c *
+    e ^ 3 - 2500 * a * d * e ^ 3 + 3125 * e ^ 4
+
+/-- The coefficient of `X ^ 1` in `resolvent5` (see that def). -/
+private noncomputable def r5c1 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+    r5c1p0 a b c d e
+    + r5c1p1 a b c d e
+    + r5c1p2 a b c d e
+
+/-- Summand `0` of the coefficient of `X ^ 0` in `resolvent5` -/
+private noncomputable def r5c0p0 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+    a ^ 6 * b ^ 2 * c ^ 2 * d ^ 2 - 2 * a ^ 6 * b ^ 3 * c * d * e + a ^ 6 * b ^ 4 * e ^ 2 - 2
+    * a ^ 7 * b * c * d ^ 3 + 2 * a ^ 7 * b ^ 2 * d ^ 2 * e + a ^ 8 * d ^ 4 + 2 * a ^ 4 * b ^
+    2 * c ^ 4 * d - 7 * a ^ 4 * b ^ 3 * c ^ 2 * d ^ 2 - 2 * a ^ 4 * b ^ 3 * c ^ 3 * e + 16 * a
+    ^ 4 * b ^ 4 * c * d * e - 9 * a ^ 4 * b ^ 5 * e ^ 2 - 6 * a ^ 5 * b * c ^ 3 * d ^ 2 + 14 *
+    a ^ 5 * b ^ 2 * c * d ^ 3 - 2 * a ^ 5 * b ^ 2 * c ^ 2 * d * e - 16 * a ^ 5 * b ^ 3 * d ^ 2
+    * e + 6 * a ^ 5 * b ^ 3 * c * e ^ 2 + 4 * a ^ 6 * c ^ 2 * d ^ 3 - 7 * a ^ 6 * b * d ^ 4 +
+    18 * a ^ 6 * b * c * d ^ 2 * e - 12 * a ^ 6 * b ^ 2 * d * e ^ 2 - 12 * a ^ 7 * d ^ 3 * e +
+    a ^ 2 * b ^ 2 * c ^ 6 - 7 * a ^ 2 * b ^ 3 * c ^ 4 * d + 12 * a ^ 2 * b ^ 4 * c ^ 2 * d ^ 2
+    + 10 * a ^ 2 * b ^ 4 * c ^ 3 * e + a ^ 2 * b ^ 5 * d ^ 3 - 36 * a ^ 2 * b ^ 5 * c * d * e
+    + 27 * a ^ 2 * b ^ 6 * e ^ 2 - 6 * a ^ 3 * b * c ^ 5 * d + 29 * a ^ 3 * b ^ 2 * c ^ 3 * d
+    ^ 2 - 8 * a ^ 3 * b ^ 2 * c ^ 4 * e
+
+/-- Summand `1` of the coefficient of `X ^ 0` in `resolvent5` -/
+private noncomputable def r5c0p1 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+    - 27 * a ^ 3 * b ^ 3 * c * d ^ 3 + a ^ 3 * b ^ 3 * c ^ 2 * d * e + 31 * a ^ 3 * b ^ 4 * d
+    ^ 2 * e - 48 * a ^ 3 * b ^ 4 * c * e ^ 2 + 6 * a ^ 4 * c ^ 4 * d ^ 2 - 23 * a ^ 4 * b * c
+    ^ 2 * d ^ 3 + 44 * a ^ 4 * b * c ^ 3 * d * e + 17 * a ^ 4 * b ^ 2 * d ^ 4 - 102 * a ^ 4 *
+    b ^ 2 * c * d ^ 2 * e + 21 * a ^ 4 * b ^ 2 * c ^ 2 * e ^ 2 + 122 * a ^ 4 * b ^ 3 * d * e ^
+    2 + 2 * a ^ 5 * c * d ^ 4 - 44 * a ^ 5 * c ^ 2 * d ^ 2 * e + 62 * a ^ 5 * b * d ^ 3 * e -
+    86 * a ^ 5 * b * c * d * e ^ 2 - 14 * a ^ 5 * b ^ 2 * e ^ 3 + 86 * a ^ 6 * d ^ 2 * e ^ 2 +
+    b ^ 5 * c ^ 2 * d ^ 2 - 4 * b ^ 5 * c ^ 3 * e - 4 * b ^ 6 * d ^ 3 + 18 * b ^ 6 * c * d * e
+    - 27 * b ^ 7 * e ^ 2 - 2 * a * b * c ^ 7 + 14 * a * b ^ 2 * c ^ 5 * d - 27 * a * b ^ 3 * c
+    ^ 3 * d ^ 2 - 6 * a * b ^ 3 * c ^ 4 * e + 13 * a * b ^ 4 * c * d ^ 3 - 5 * a * b ^ 4 * c ^
+    2 * d * e + 3 * a * b ^ 5 * d ^ 2 * e + 90 * a * b ^ 5 * c * e ^ 2 + 4 * a ^ 2 * c ^ 6 * d
+    - 23 * a ^ 2 * b * c ^ 4 * d ^ 2
+
+/-- Summand `2` of the coefficient of `X ^ 0` in `resolvent5` -/
+private noncomputable def r5c0p2 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+    26 * a ^ 2 * b * c ^ 5 * e + 29 * a ^ 2 * b ^ 2 * c ^ 2 * d ^ 3 - 87 * a ^ 2 * b ^ 2 * c ^
+    3 * d * e - 29 * a ^ 2 * b ^ 3 * d ^ 4 + 189 * a ^ 2 * b ^ 3 * c * d ^ 2 * e - 5 * a ^ 2 *
+    b ^ 3 * c ^ 2 * e ^ 2 - 345 * a ^ 2 * b ^ 4 * d * e ^ 2 + 4 * a ^ 3 * c ^ 3 * d ^ 3 - 52 *
+    a ^ 3 * c ^ 4 * d * e + 3 * a ^ 3 * b * c * d ^ 4 + 108 * a ^ 3 * b * c ^ 2 * d ^ 2 * e -
+    110 * a ^ 3 * b * c ^ 3 * e ^ 2 - 59 * a ^ 3 * b ^ 2 * d ^ 3 * e + 280 * a ^ 3 * b ^ 2 * c
+    * d * e ^ 2 + 50 * a ^ 3 * b ^ 3 * e ^ 3 - 10 * a ^ 4 * d ^ 5 + 38 * a ^ 4 * c * d ^ 3 * e
+    + 220 * a ^ 4 * c ^ 2 * d * e ^ 2 - 420 * a ^ 4 * b * d ^ 2 * e ^ 2 + 150 * a ^ 4 * b * c
+    * e ^ 3 - 300 * a ^ 5 * d * e ^ 3 + c ^ 8 - 7 * b * c ^ 6 * d + 17 * b ^ 2 * c ^ 4 * d ^ 2
+    - 12 * b ^ 2 * c ^ 5 * e - 29 * b ^ 3 * c ^ 2 * d ^ 3 + 105 * b ^ 3 * c ^ 3 * d * e + 33 *
+    b ^ 4 * d ^ 4 - 155 * b ^ 4 * c * d ^ 2 * e - 150 * b ^ 4 * c ^ 2 * e ^ 2 + 225 * b ^ 5 *
+    d * e ^ 2 + 2 * a * c ^ 5 * d ^ 2
+
+/-- Summand `3` of the coefficient of `X ^ 0` in `resolvent5` -/
+private noncomputable def r5c0p3 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+    - 20 * a * c ^ 6 * e + 3 * a * b * c ^ 3 * d ^ 3 + 40 * a * b * c ^ 4 * d * e + 11 * a * b
+    ^ 2 * c * d ^ 4 - 115 * a * b ^ 2 * c ^ 2 * d ^ 2 * e + 200 * a * b ^ 2 * c ^ 3 * e ^ 2 -
+    15 * a * b ^ 3 * d ^ 3 * e - 19 * a ^ 2 * c ^ 2 * d ^ 4 + 80 * a ^ 2 * c ^ 3 * d ^ 2 * e +
+    150 * a ^ 2 * c ^ 4 * e ^ 2 + 35 * a ^ 2 * b * d ^ 5 - 185 * a ^ 2 * b * c * d ^ 3 * e -
+    475 * a ^ 2 * b * c ^ 2 * d * e ^ 2 + 500 * a ^ 2 * b ^ 2 * d ^ 2 * e ^ 2 - 500 * a ^ 2 *
+    b ^ 2 * c * e ^ 3 + 60 * a ^ 3 * d ^ 4 * e - 250 * a ^ 3 * c * d ^ 2 * e ^ 2 - 500 * a ^ 3
+    * c ^ 2 * e ^ 3 + 1250 * a ^ 3 * b * d * e ^ 3 + 625 * a ^ 4 * e ^ 4 - 10 * c ^ 4 * d ^ 3
+    + 50 * c ^ 5 * d * e + 35 * b * c ^ 2 * d ^ 4 - 175 * b * c ^ 3 * d ^ 2 * e - 125 * b * c
+    ^ 4 * e ^ 2 - 54 * b ^ 2 * d ^ 5 + 275 * b ^ 2 * c * d ^ 3 * e + 250 * b ^ 2 * c ^ 2 * d *
+    e ^ 2 - 375 * b ^ 3 * d ^ 2 * e ^ 2 - 10 * a * c * d ^ 5 + 150 * a * c ^ 2 * d ^ 3 * e -
+    500 * a * c ^ 3 * d * e ^ 2 - 100 * a * b * d ^ 4 * e
+
+/-- Summand `4` of the coefficient of `X ^ 0` in `resolvent5` -/
+private noncomputable def r5c0p4 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+    375 * a * b * c * d ^ 2 * e ^ 2 + 1250 * a * b * c ^ 2 * e ^ 3 - 625 * a * b ^ 2 * d * e ^
+    3 - 250 * a ^ 2 * d ^ 3 * e ^ 2 + 1250 * a ^ 2 * c * d * e ^ 3 - 3125 * a ^ 2 * b * e ^ 4
+    + 25 * d ^ 6 - 250 * c * d ^ 4 * e + 625 * c ^ 2 * d ^ 2 * e ^ 2 + 625 * b * d ^ 3 * e ^ 2
+    - 3125 * b * c * d * e ^ 3 + 3125 * b ^ 2 * e ^ 4
+
+/-- The coefficient of `X ^ 0` in `resolvent5` (see that def). -/
+private noncomputable def r5c0 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+    r5c0p0 a b c d e
+    + r5c0p1 a b c d e
+    + r5c0p2 a b c d e
+    + r5c0p3 a b c d e
+    + r5c0p4 a b c d e
+
 /-- The `F₂₀` sextic resolvent of `X⁵ + aX⁴ + bX³ + cX² + dX + e`: the monic
 sextic whose roots are the six values `θ(c) * θ(c²)` (`c` a 5-cycle, `θ(c) =
 ∑ᵥ xᵢ x_{c v}` — one per 5-cycle subgroup).  `resolvent_eval_theta` proves each
@@ -227,112 +374,12 @@ pentagon product is a root.  A rational root certifies the Galois group fixes a
 pentagon structure, i.e. lies in `F₂₀`. -/
 noncomputable def resolvent5 {R : Type*} [CommRing R] (a b c d e : R) : R[X] :=
   X ^ 6
-    + C (  -4 * a * c + 10 * d) * X ^ 5
-    + C (  6 * a ^ 2 * c ^ 2 + 2 * a ^ 2 * b * d - 8 * a ^ 3 * e + 2 * b * c ^ 2 - 6 * b ^ 2 * d
-  - 34 * a * c * d + 30 * a * b * e + 55 * d ^ 2 - 50 * c * e) * X ^ 4
-    + C (  -4 * a ^ 3 * c ^ 3 - 6 * a ^ 3 * b * c * d + 2 * a ^ 3 * b ^ 2 * e + 2 * a ^ 4 * d ^ 2
-  + 16 * a ^ 4 * c * e - 6 * a * b * c ^ 3 + 19 * a * b ^ 2 * c * d - 9 * a * b ^ 3 * e
-  + 42 * a ^ 2 * c ^ 2 * d + 3 * a ^ 2 * b * d ^ 2 - 54 * a ^ 2 * b * c * e - 52 * a ^ 3 * d * e
-  + 2 * c ^ 4 + 3 * b * c ^ 2 * d - 32 * b ^ 2 * d ^ 2 + 15 * b ^ 2 * c * e
-  - 128 * a * c * d ^ 2 + 80 * a * c ^ 2 * e + 170 * a * b * d * e + 50 * a ^ 2 * e ^ 2
-  + 140 * d ^ 3 - 200 * c * d * e - 125 * b * e ^ 2) * X ^ 3
-    + C (  a ^ 4 * c ^ 4 + 6 * a ^ 4 * b * c ^ 2 * d + a ^ 4 * b ^ 2 * d ^ 2
-  - 4 * a ^ 4 * b ^ 2 * c * e
-  - 4 * a ^ 5 * c * d ^ 2 - 8 * a ^ 5 * c ^ 2 * e - 8 * a ^ 5 * b * d * e + 16 * a ^ 6 * e ^ 2
-  + 6 * a ^ 2 * b * c ^ 4 - 18 * a ^ 2 * b ^ 2 * c ^ 2 * d - 6 * a ^ 2 * b ^ 3 * d ^ 2
-  + 18 * a ^ 2 * b ^ 3 * c * e - 22 * a ^ 3 * c ^ 3 * d - 10 * a ^ 3 * b * c * d ^ 2
-  + 10 * a ^ 3 * b * c ^ 2 * e + 64 * a ^ 3 * b ^ 2 * d * e + 10 * a ^ 4 * d ^ 3
-  + 80 * a ^ 4 * c * d * e - 120 * a ^ 4 * b * e ^ 2 + b ^ 2 * c ^ 4 - 6 * b ^ 3 * c ^ 2 * d
-  + 9 * b ^ 4 * d ^ 2 - 4 * a * c ^ 5 - 10 * a * b * c ^ 3 * d + 81 * a * b ^ 2 * c * d ^ 2
-  - 135 * a * b ^ 3 * d * e + 95 * a ^ 2 * c ^ 2 * d ^ 2 - 10 * a ^ 2 * c ^ 3 * e
-  - 5 * a ^ 2 * b * d ^ 3 - 270 * a ^ 2 * b * c * d * e + 225 * a ^ 2 * b ^ 2 * e ^ 2
-  - 180 * a ^ 3 * d ^ 2 * e + 100 * a ^ 3 * c * e ^ 2 + 10 * c ^ 4 * d - 5 * b * c ^ 2 * d ^ 2
-  - 50 * b * c ^ 3 * e - 100 * b ^ 2 * d ^ 3 + 225 * b ^ 2 * c * d * e - 180 * a * c * d ^ 3
-  + 150 * a * c ^ 2 * d * e + 550 * a * b * d ^ 2 * e - 500 * a * b * c * e ^ 2
-  + 250 * a ^ 2 * d * e ^ 2 + 175 * d ^ 4 - 500 * c * d ^ 2 * e + 625 * c ^ 2 * e ^ 2
-  - 625 * b * d * e ^ 2) * X ^ 2
-    + C (  -2 * a ^ 5 * b * c ^ 3 * d - 2 * a ^ 5 * b ^ 2 * c * d ^ 2
-  + 2 * a ^ 5 * b ^ 2 * c ^ 2 * e
-  + 2 * a ^ 5 * b ^ 3 * d * e + 2 * a ^ 6 * c ^ 2 * d ^ 2 + 2 * a ^ 6 * b * d ^ 3
-  + 8 * a ^ 6 * b * c * d * e - 8 * a ^ 6 * b ^ 2 * e ^ 2 - 8 * a ^ 7 * d ^ 2 * e
-  - 2 * a ^ 3 * b * c ^ 5 + 3 * a ^ 3 * b ^ 2 * c ^ 3 * d + 13 * a ^ 3 * b ^ 3 * c * d ^ 2
-  - 7 * a ^ 3 * b ^ 3 * c ^ 2 * e - 15 * a ^ 3 * b ^ 4 * d * e + 4 * a ^ 4 * c ^ 4 * d
-  + 13 * a ^ 4 * b * c ^ 2 * d ^ 2 + 14 * a ^ 4 * b * c ^ 3 * e - 13 * a ^ 4 * b ^ 2 * d ^ 3
-  - 66 * a ^ 4 * b ^ 2 * c * d * e + 66 * a ^ 4 * b ^ 3 * e ^ 2 - 14 * a ^ 5 * c * d ^ 3
-  - 28 * a ^ 5 * c ^ 2 * d * e + 46 * a ^ 5 * b * d ^ 2 * e - 24 * a ^ 5 * b * c * e ^ 2
-  + 48 * a ^ 6 * d * e ^ 2 - 2 * a * b ^ 2 * c ^ 5 + 13 * a * b ^ 3 * c ^ 3 * d
-  - 21 * a * b ^ 4 * c * d ^ 2 - 9 * a * b ^ 4 * c ^ 2 * e + 27 * a * b ^ 5 * d * e
-  + 2 * a ^ 2 * c ^ 6 + 13 * a ^ 2 * b * c ^ 4 * d - 76 * a ^ 2 * b ^ 2 * c ^ 2 * d ^ 2
-  - 13 * a ^ 2 * b ^ 2 * c ^ 3 * e + 15 * a ^ 2 * b ^ 3 * d ^ 3
-  + 183 * a ^ 2 * b ^ 3 * c * d * e - 162 * a ^ 2 * b ^ 4 * e ^ 2 - 30 * a ^ 3 * c ^ 3 * d ^ 2
-  - 12 * a ^ 3 * c ^ 4 * e + 39 * a ^ 3 * b * c * d ^ 3 + 4 * a ^ 3 * b * c ^ 2 * d * e
-  - 17 * a ^ 3 * b ^ 2 * d ^ 2 * e + 124 * a ^ 3 * b ^ 2 * c * e ^ 2 + 3 * a ^ 4 * d ^ 4
-  + 170 * a ^ 4 * c * d ^ 2 * e + 2 * a ^ 4 * c ^ 2 * e ^ 2 - 402 * a ^ 4 * b * d * e ^ 2
-  + 56 * a ^ 5 * e ^ 3 + 2 * b * c ^ 6 - 13 * b ^ 2 * c ^ 4 * d + 15 * b ^ 3 * c ^ 2 * d ^ 2
-  + 31 * b ^ 3 * c ^ 3 * e + 22 * b ^ 4 * d ^ 3 - 117 * b ^ 4 * c * d * e + 108 * b ^ 5 * e ^ 2
-  - 14 * a * c ^ 5 * d + 39 * a * b * c ^ 3 * d ^ 2 - 12 * a * b * c ^ 4 * e
-  + 33 * a * b ^ 2 * c * d ^ 3 + 51 * a * b ^ 2 * c ^ 2 * d * e - 201 * a * b ^ 3 * d ^ 2 * e
-  - 180 * a * b ^ 3 * c * e ^ 2 + 30 * a ^ 2 * c ^ 2 * d ^ 3 + 114 * a ^ 2 * c ^ 3 * d * e
-  + 29 * a ^ 2 * b * d ^ 4 - 541 * a ^ 2 * b * c * d ^ 2 * e + 35 * a ^ 2 * b * c ^ 2 * e ^ 2
-  + 1045 * a ^ 2 * b ^ 2 * d * e ^ 2 - 176 * a ^ 3 * d ^ 3 * e - 90 * a ^ 3 * c * d * e ^ 2
-  - 350 * a ^ 3 * b * e ^ 3 + 3 * c ^ 4 * d ^ 2 + 58 * c ^ 5 * e + 29 * b * c ^ 2 * d ^ 3
-  - 405 * b * c ^ 3 * d * e - 128 * b ^ 2 * d ^ 4 + 685 * b ^ 2 * c * d ^ 2 * e
-  + 325 * b ^ 2 * c ^ 2 * e ^ 2 - 525 * b ^ 3 * d * e ^ 2 - 92 * a * c * d ^ 4
-  + 320 * a * c ^ 2 * d ^ 2 * e - 400 * a * c ^ 3 * e ^ 2 + 310 * a * b * d ^ 3 * e
-  - 925 * a * b * c * d * e ^ 2 + 375 * a * b ^ 2 * e ^ 3 + 700 * a ^ 2 * d ^ 2 * e ^ 2
-  + 750 * a ^ 2 * c * e ^ 3 + 106 * d ^ 5 - 600 * c * d ^ 3 * e + 1000 * c ^ 2 * d * e ^ 2
-  + 125 * b * d ^ 2 * e ^ 2 - 625 * b * c * e ^ 3 - 2500 * a * d * e ^ 3 + 3125 * e ^ 4) * X ^ 1
-    + C (  a ^ 6 * b ^ 2 * c ^ 2 * d ^ 2 - 2 * a ^ 6 * b ^ 3 * c * d * e + a ^ 6 * b ^ 4 * e ^ 2
-  - 2 * a ^ 7 * b * c * d ^ 3 + 2 * a ^ 7 * b ^ 2 * d ^ 2 * e + a ^ 8 * d ^ 4
-  + 2 * a ^ 4 * b ^ 2 * c ^ 4 * d - 7 * a ^ 4 * b ^ 3 * c ^ 2 * d ^ 2
-  - 2 * a ^ 4 * b ^ 3 * c ^ 3 * e + 16 * a ^ 4 * b ^ 4 * c * d * e - 9 * a ^ 4 * b ^ 5 * e ^ 2
-  - 6 * a ^ 5 * b * c ^ 3 * d ^ 2 + 14 * a ^ 5 * b ^ 2 * c * d ^ 3
-  - 2 * a ^ 5 * b ^ 2 * c ^ 2 * d * e - 16 * a ^ 5 * b ^ 3 * d ^ 2 * e
-  + 6 * a ^ 5 * b ^ 3 * c * e ^ 2 + 4 * a ^ 6 * c ^ 2 * d ^ 3 - 7 * a ^ 6 * b * d ^ 4
-  + 18 * a ^ 6 * b * c * d ^ 2 * e - 12 * a ^ 6 * b ^ 2 * d * e ^ 2 - 12 * a ^ 7 * d ^ 3 * e
-  + a ^ 2 * b ^ 2 * c ^ 6 - 7 * a ^ 2 * b ^ 3 * c ^ 4 * d + 12 * a ^ 2 * b ^ 4 * c ^ 2 * d ^ 2
-  + 10 * a ^ 2 * b ^ 4 * c ^ 3 * e + a ^ 2 * b ^ 5 * d ^ 3 - 36 * a ^ 2 * b ^ 5 * c * d * e
-  + 27 * a ^ 2 * b ^ 6 * e ^ 2 - 6 * a ^ 3 * b * c ^ 5 * d + 29 * a ^ 3 * b ^ 2 * c ^ 3 * d ^ 2
-  - 8 * a ^ 3 * b ^ 2 * c ^ 4 * e - 27 * a ^ 3 * b ^ 3 * c * d ^ 3
-  + a ^ 3 * b ^ 3 * c ^ 2 * d * e + 31 * a ^ 3 * b ^ 4 * d ^ 2 * e
-  - 48 * a ^ 3 * b ^ 4 * c * e ^ 2 + 6 * a ^ 4 * c ^ 4 * d ^ 2 - 23 * a ^ 4 * b * c ^ 2 * d ^ 3
-  + 44 * a ^ 4 * b * c ^ 3 * d * e + 17 * a ^ 4 * b ^ 2 * d ^ 4
-  - 102 * a ^ 4 * b ^ 2 * c * d ^ 2 * e + 21 * a ^ 4 * b ^ 2 * c ^ 2 * e ^ 2
-  + 122 * a ^ 4 * b ^ 3 * d * e ^ 2 + 2 * a ^ 5 * c * d ^ 4 - 44 * a ^ 5 * c ^ 2 * d ^ 2 * e
-  + 62 * a ^ 5 * b * d ^ 3 * e - 86 * a ^ 5 * b * c * d * e ^ 2 - 14 * a ^ 5 * b ^ 2 * e ^ 3
-  + 86 * a ^ 6 * d ^ 2 * e ^ 2 + b ^ 5 * c ^ 2 * d ^ 2 - 4 * b ^ 5 * c ^ 3 * e
-  - 4 * b ^ 6 * d ^ 3 + 18 * b ^ 6 * c * d * e - 27 * b ^ 7 * e ^ 2 - 2 * a * b * c ^ 7
-  + 14 * a * b ^ 2 * c ^ 5 * d - 27 * a * b ^ 3 * c ^ 3 * d ^ 2 - 6 * a * b ^ 3 * c ^ 4 * e
-  + 13 * a * b ^ 4 * c * d ^ 3 - 5 * a * b ^ 4 * c ^ 2 * d * e + 3 * a * b ^ 5 * d ^ 2 * e
-  + 90 * a * b ^ 5 * c * e ^ 2 + 4 * a ^ 2 * c ^ 6 * d - 23 * a ^ 2 * b * c ^ 4 * d ^ 2
-  + 26 * a ^ 2 * b * c ^ 5 * e + 29 * a ^ 2 * b ^ 2 * c ^ 2 * d ^ 3
-  - 87 * a ^ 2 * b ^ 2 * c ^ 3 * d * e - 29 * a ^ 2 * b ^ 3 * d ^ 4
-  + 189 * a ^ 2 * b ^ 3 * c * d ^ 2 * e - 5 * a ^ 2 * b ^ 3 * c ^ 2 * e ^ 2
-  - 345 * a ^ 2 * b ^ 4 * d * e ^ 2 + 4 * a ^ 3 * c ^ 3 * d ^ 3 - 52 * a ^ 3 * c ^ 4 * d * e
-  + 3 * a ^ 3 * b * c * d ^ 4 + 108 * a ^ 3 * b * c ^ 2 * d ^ 2 * e
-  - 110 * a ^ 3 * b * c ^ 3 * e ^ 2 - 59 * a ^ 3 * b ^ 2 * d ^ 3 * e
-  + 280 * a ^ 3 * b ^ 2 * c * d * e ^ 2 + 50 * a ^ 3 * b ^ 3 * e ^ 3 - 10 * a ^ 4 * d ^ 5
-  + 38 * a ^ 4 * c * d ^ 3 * e + 220 * a ^ 4 * c ^ 2 * d * e ^ 2
-  - 420 * a ^ 4 * b * d ^ 2 * e ^ 2 + 150 * a ^ 4 * b * c * e ^ 3 - 300 * a ^ 5 * d * e ^ 3
-  + c ^ 8 - 7 * b * c ^ 6 * d + 17 * b ^ 2 * c ^ 4 * d ^ 2 - 12 * b ^ 2 * c ^ 5 * e
-  - 29 * b ^ 3 * c ^ 2 * d ^ 3 + 105 * b ^ 3 * c ^ 3 * d * e + 33 * b ^ 4 * d ^ 4
-  - 155 * b ^ 4 * c * d ^ 2 * e - 150 * b ^ 4 * c ^ 2 * e ^ 2 + 225 * b ^ 5 * d * e ^ 2
-  + 2 * a * c ^ 5 * d ^ 2 - 20 * a * c ^ 6 * e + 3 * a * b * c ^ 3 * d ^ 3
-  + 40 * a * b * c ^ 4 * d * e + 11 * a * b ^ 2 * c * d ^ 4
-  - 115 * a * b ^ 2 * c ^ 2 * d ^ 2 * e + 200 * a * b ^ 2 * c ^ 3 * e ^ 2
-  - 15 * a * b ^ 3 * d ^ 3 * e - 19 * a ^ 2 * c ^ 2 * d ^ 4 + 80 * a ^ 2 * c ^ 3 * d ^ 2 * e
-  + 150 * a ^ 2 * c ^ 4 * e ^ 2 + 35 * a ^ 2 * b * d ^ 5 - 185 * a ^ 2 * b * c * d ^ 3 * e
-  - 475 * a ^ 2 * b * c ^ 2 * d * e ^ 2 + 500 * a ^ 2 * b ^ 2 * d ^ 2 * e ^ 2
-  - 500 * a ^ 2 * b ^ 2 * c * e ^ 3 + 60 * a ^ 3 * d ^ 4 * e - 250 * a ^ 3 * c * d ^ 2 * e ^ 2
-  - 500 * a ^ 3 * c ^ 2 * e ^ 3 + 1250 * a ^ 3 * b * d * e ^ 3 + 625 * a ^ 4 * e ^ 4
-  - 10 * c ^ 4 * d ^ 3 + 50 * c ^ 5 * d * e + 35 * b * c ^ 2 * d ^ 4
-  - 175 * b * c ^ 3 * d ^ 2 * e - 125 * b * c ^ 4 * e ^ 2 - 54 * b ^ 2 * d ^ 5
-  + 275 * b ^ 2 * c * d ^ 3 * e + 250 * b ^ 2 * c ^ 2 * d * e ^ 2 - 375 * b ^ 3 * d ^ 2 * e ^ 2
-  - 10 * a * c * d ^ 5 + 150 * a * c ^ 2 * d ^ 3 * e - 500 * a * c ^ 3 * d * e ^ 2
-  - 100 * a * b * d ^ 4 * e + 375 * a * b * c * d ^ 2 * e ^ 2 + 1250 * a * b * c ^ 2 * e ^ 3
-  - 625 * a * b ^ 2 * d * e ^ 3 - 250 * a ^ 2 * d ^ 3 * e ^ 2 + 1250 * a ^ 2 * c * d * e ^ 3
-  - 3125 * a ^ 2 * b * e ^ 4 + 25 * d ^ 6 - 250 * c * d ^ 4 * e + 625 * c ^ 2 * d ^ 2 * e ^ 2
-  + 625 * b * d ^ 3 * e ^ 2 - 3125 * b * c * d * e ^ 3 + 3125 * b ^ 2 * e ^ 4) * X ^ 0
+    + C (r5c5 a b c d e) * X ^ 5
+    + C (r5c4 a b c d e) * X ^ 4
+    + C (r5c3 a b c d e) * X ^ 3
+    + C (r5c2 a b c d e) * X ^ 2
+    + C (r5c1 a b c d e) * X ^ 1
+    + C (r5c0 a b c d e) * X ^ 0
 
 /-- The Vieta coefficient functions of five quantities `x 0, …, x 4`. -/
 noncomputable def va {K : Type*} [CommRing K] (x : Fin 5 → K) : K :=
@@ -382,8 +429,6 @@ noncomputable def ThetaVals {K : Type*} [CommRing K] (x : Fin 5 → K) :
   theta x ![4, 3, 0, 2, 1] * theta x ![1, 2, 4, 0, 3],
   theta x ![4, 3, 1, 0, 2] * theta x ![2, 0, 3, 4, 1]]
 
-set_option maxHeartbeats 8000000 in
--- five-variable `ring` normalizations of the expanded quintic
 /-- **Vieta for quintics.** -/
 lemma vieta5 {K : Type*} [Field K] {x : Fin 5 → K} {a b c d e : K}
     (h : (X - C (x 0)) * (X - C (x 1)) * (X - C (x 2)) * (X - C (x 3)) * (X - C (x 4))
