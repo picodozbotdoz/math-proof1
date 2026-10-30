@@ -37,36 +37,22 @@ open Polynomial
 
 namespace HeckeAlgebra
 
-variable {K V : Type*} [Field K] [AddCommGroup V] [Module K V] [FiniteDimensional K V]
+/-! ### Steps 2–4: evaluation of polynomials at a vector, and the Bézout step
 
-/-! ### Step 1: an irreducible characteristic polynomial is the minimal polynomial -/
+Auxiliary material: it needs neither `FiniteDimensional K V` nor more than a field
+structure, so it lives in its own section with a minimal variable context (no unused
+section variables are pulled into the private declarations). -/
 
-/-- If the characteristic polynomial of `T` is irreducible (and `V ≠ 0`), it already is
-the minimal polynomial. -/
-theorem minpoly_eq_charpoly_of_irreducible_charpoly {T : V →ₗ[K] V} [Nontrivial V]
-    (h : Irreducible (LinearMap.charpoly T)) : minpoly K T = LinearMap.charpoly T := by
-  have hmon : (minpoly K T).Monic := minpoly.monic (LinearMap.isIntegral T)
-  obtain ⟨F, hF⟩ := LinearMap.minpoly_dvd_charpoly T
-  rcases h.isUnit_or_isUnit hF with hu | hu
-  · exfalso
-    rcases Polynomial.isUnit_iff.mp hu with ⟨c, -, hC⟩
-    have hc1 : c = 1 := by
-      have : (C c).Monic := by rw [hC]; exact hmon
-      simpa [Monic, Polynomial.leadingCoeff_C] using this
-    have hz : Polynomial.aeval T (minpoly K T) = 0 := minpoly.aeval K T
-    rw [← hC, hc1] at hz
-    simp at hz
-  · obtain ⟨u, rfl⟩ : ∃ u : K[X]ˣ, (u : K[X]) = F := ⟨hu.unit, hu.unit_spec⟩
-    exact eq_of_monic_of_associated hmon (LinearMap.charpoly_monic T) ⟨u, hF.symm⟩
+section Aux
 
-/-! ### Steps 2–4: every nonzero vector is cyclic -/
+variable {K V : Type*} [Field K] [AddCommGroup V] [Module K V]
 
 /-- Evaluation of polynomials at `T`, applied to a fixed vector `v`:
 `p ↦ (Polynomial.aeval T p) v`. -/
 private noncomputable def evalAeval (T : V →ₗ[K] V) (v : V) : K[X] →ₗ[K] V where
   toFun p := Polynomial.aeval T p v
   map_add' p q := by rw [map_add, LinearMap.add_apply]
-  map_smul' c p := by rw [map_smul, LinearMap.smul_apply]
+  map_smul' c p := by rw [RingHom.id_apply, map_smul, LinearMap.smul_apply]
 
 @[simp]
 private lemma evalAeval_apply (T : V →ₗ[K] V) (v : V) (p : K[X]) :
@@ -88,16 +74,40 @@ private theorem eq_zero_of_degree_lt_of_ker_eval (T : V →ₗ[K] V) (f : K[X]) 
     apply hv
     have hfev : (Polynomial.aeval T f) v = 0 := by rw [hfe, LinearMap.zero_apply]
     have h1 : Polynomial.aeval T (a * f + b * r) v = v := by
-      rw [hab, map_one, LinearMap.one_apply]
+      rw [hab, map_one, one_apply_eq_self]
     have h2 : Polynomial.aeval T (a * f + b * r) v = 0 := by
-      simp only [map_add, LinearMap.add_apply, map_mul, Module.End.mul_apply]
+      simp only [map_add, LinearMap.add_apply, map_mul, mul_apply_eq_comp]
       rw [hfev, map_zero, hr, map_zero, add_zero]
     exact h1.symm.trans h2
   · refine absurd hdeg (not_lt.2 ?_)
     rw [degree_eq_natDegree hmonic.ne_zero, degree_eq_natDegree h0]
     exact WithBot.coe_le_coe.mpr (hmonic.natDegree_le_of_dvd h0 hdvd)
 
-/-! ### Steps 5–6: the upgrade theorem -/
+end Aux
+
+/-! ### Steps 1 and 5–6: the upgrade theorem -/
+
+section Main
+
+variable {K V : Type*} [Field K] [AddCommGroup V] [Module K V] [FiniteDimensional K V]
+
+/-- If the characteristic polynomial of `T` is irreducible (and `V ≠ 0`), it already is
+the minimal polynomial. -/
+theorem minpoly_eq_charpoly_of_irreducible_charpoly {T : V →ₗ[K] V} [Nontrivial V]
+    (h : Irreducible (LinearMap.charpoly T)) : minpoly K T = LinearMap.charpoly T := by
+  have hmon : (minpoly K T).Monic := minpoly.monic (LinearMap.isIntegral T)
+  obtain ⟨F, hF⟩ := LinearMap.minpoly_dvd_charpoly T
+  rcases h.isUnit_or_isUnit hF with hu | hu
+  · exfalso
+    rcases Polynomial.isUnit_iff.mp hu with ⟨c, -, hC⟩
+    have hc1 : c = 1 := by
+      have : (C c).Monic := by rw [hC]; exact hmon
+      simpa [Monic, Polynomial.leadingCoeff_C] using this
+    have hz : Polynomial.aeval T (minpoly K T) = 0 := minpoly.aeval K T
+    rw [← hC, hc1] at hz
+    simp at hz
+  · obtain ⟨u, rfl⟩ : ∃ u : K[X]ˣ, (u : K[X]) = F := ⟨hu.unit, hu.unit_spec⟩
+    exact eq_of_monic_of_associated hmon (LinearMap.charpoly_monic T) ⟨u, hF.symm⟩
 
 /-- **The upgrade theorem (algebra half).**  If `T₂` has irreducible characteristic
 polynomial (and `V ≠ 0`), then every endomorphism commuting with `T₂` is a polynomial
@@ -114,7 +124,7 @@ theorem exists_aeval_of_commute_of_irreducible_charpoly {T2 : V →ₗ[K] V} [No
   have hfe : Polynomial.aeval T2 (LinearMap.charpoly T2) = 0 := by
     rw [← hmp]
     exact minpoly.aeval K T2
-  obtain ⟨v₀, hv₀⟩ := Nontrivial.exists_ne (0 : V)
+  obtain ⟨v₀, hv₀⟩ := exists_ne (0 : V)
   -- Steps 2–4: `v₀` is a cyclic vector for `T₂`.
   have key : ∀ r : K[X], Polynomial.aeval T2 r v₀ = 0 →
       r.degree < (LinearMap.charpoly T2).degree → r = 0 :=
@@ -174,7 +184,7 @@ theorem exists_aeval_of_commute_of_irreducible_charpoly {T2 : V →ₗ[K] V} [No
       exact (Algebra.commute_algebraMap_right a Tn).mul_right (hpow n)
   have hswap : ∀ p : K[X], Tn (Polynomial.aeval T2 p v₀) = Polynomial.aeval T2 p (Tn v₀) := by
     intro p
-    rw [← Module.End.mul_apply, (hTnaev p).eq, Module.End.mul_apply]
+    rw [← mul_apply_eq_comp, (hTnaev p).eq, mul_apply_eq_comp]
   -- Step 6: finish.
   have hmulcomm : ∀ p q : K[X], Polynomial.aeval T2 p * Polynomial.aeval T2 q
       = Polynomial.aeval T2 q * Polynomial.aeval T2 p := by
@@ -199,11 +209,13 @@ theorem exists_aeval_of_commute_of_irreducible_charpoly {T2 : V →ₗ[K] V} [No
     rw [hq₀']
   have h3 : Polynomial.aeval T2 p (Polynomial.aeval T2 q₀ v₀)
       = Polynomial.aeval T2 q₀ (Polynomial.aeval T2 p v₀) := by
-    rw [← Module.End.mul_apply, hmulcomm p q₀, Module.End.mul_apply]
+    rw [← mul_apply_eq_comp, hmulcomm p q₀, mul_apply_eq_comp]
   calc Tn w = Tn (Polynomial.aeval T2 p v₀) := by rw [hp]
     _ = Polynomial.aeval T2 p (Tn v₀) := hswap p
     _ = Polynomial.aeval T2 p (Polynomial.aeval T2 q₀ v₀) := h2
     _ = Polynomial.aeval T2 q₀ (Polynomial.aeval T2 p v₀) := h3
     _ = Polynomial.aeval T2 q₀ w := by rw [hp]
+
+end Main
 
 end HeckeAlgebra
