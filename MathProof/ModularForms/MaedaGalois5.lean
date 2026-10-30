@@ -322,6 +322,8 @@ theorem resolvent_eval_theta {K : Type*} [Field K] (x : Fin 5 → K) (j : Fin 6)
       (theta x ![4,3,0,2,1] * theta x ![1,2,4,0,3])
       (theta x ![4,3,1,0,2] * theta x ![2,0,3,4,1])
       _ _ _ _ _ _ ?_ ?_ ?_ ?_ ?_ ?_
+    all_goals simp only [r5c5, r5c4, r5c3, r5c2, r5c2p0, r5c2p1, r5c1, r5c1p0,
+      r5c1p1, r5c1p2, r5c0, r5c0p0, r5c0p1, r5c0p2, r5c0p3, r5c0p4]
     · linear_combination theta_e1 x
     · linear_combination theta_e2 x
     · linear_combination theta_e3 x

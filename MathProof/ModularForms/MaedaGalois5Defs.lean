@@ -209,16 +209,16 @@ def disc5 {R : Type*} [CommRing R] (a b c d e : R) : R :=
   + 2000 * b * d ^ 2 * e ^ 2 - 3750 * b * c * e ^ 3 - 2500 * a * d * e ^ 3 + 3125 * e ^ 4
 
 /-- Summand `0` of the coefficient of `X ^ 5` in `resolvent5` -/
-private noncomputable def r5c5 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+noncomputable def r5c5 {R : Type*} [CommRing R] (a b c d e : R) : R :=
     -4 * a * c + 10 * d
 
 /-- Summand `0` of the coefficient of `X ^ 4` in `resolvent5` -/
-private noncomputable def r5c4 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+noncomputable def r5c4 {R : Type*} [CommRing R] (a b c d e : R) : R :=
     6 * a ^ 2 * c ^ 2 + 2 * a ^ 2 * b * d - 8 * a ^ 3 * e + 2 * b * c ^ 2 - 6 * b ^ 2 * d - 34
     * a * c * d + 30 * a * b * e + 55 * d ^ 2 - 50 * c * e
 
 /-- Summand `0` of the coefficient of `X ^ 3` in `resolvent5` -/
-private noncomputable def r5c3 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+noncomputable def r5c3 {R : Type*} [CommRing R] (a b c d e : R) : R :=
     -4 * a ^ 3 * c ^ 3 - 6 * a ^ 3 * b * c * d + 2 * a ^ 3 * b ^ 2 * e + 2 * a ^ 4 * d ^ 2 +
     16 * a ^ 4 * c * e - 6 * a * b * c ^ 3 + 19 * a * b ^ 2 * c * d - 9 * a * b ^ 3 * e + 42 *
     a ^ 2 * c ^ 2 * d + 3 * a ^ 2 * b * d ^ 2 - 54 * a ^ 2 * b * c * e - 52 * a ^ 3 * d * e +
@@ -227,7 +227,7 @@ private noncomputable def r5c3 {R : Type*} [CommRing R] (a b c d e : R) : R :=
     c * d * e - 125 * b * e ^ 2
 
 /-- Summand `0` of the coefficient of `X ^ 2` in `resolvent5` -/
-private noncomputable def r5c2p0 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+noncomputable def r5c2p0 {R : Type*} [CommRing R] (a b c d e : R) : R :=
     a ^ 4 * c ^ 4 + 6 * a ^ 4 * b * c ^ 2 * d + a ^ 4 * b ^ 2 * d ^ 2 - 4 * a ^ 4 * b ^ 2 * c
     * e - 4 * a ^ 5 * c * d ^ 2 - 8 * a ^ 5 * c ^ 2 * e - 8 * a ^ 5 * b * d * e + 16 * a ^ 6 *
     e ^ 2 + 6 * a ^ 2 * b * c ^ 4 - 18 * a ^ 2 * b ^ 2 * c ^ 2 * d - 6 * a ^ 2 * b ^ 3 * d ^ 2
@@ -241,18 +241,18 @@ private noncomputable def r5c2p0 {R : Type*} [CommRing R] (a b c d e : R) : R :=
     b ^ 2 * d ^ 3 + 225 * b ^ 2 * c * d * e
 
 /-- Summand `1` of the coefficient of `X ^ 2` in `resolvent5` -/
-private noncomputable def r5c2p1 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+noncomputable def r5c2p1 {R : Type*} [CommRing R] (a b c d e : R) : R :=
     - 180 * a * c * d ^ 3 + 150 * a * c ^ 2 * d * e + 550 * a * b * d ^ 2 * e - 500 * a * b *
     c * e ^ 2 + 250 * a ^ 2 * d * e ^ 2 + 175 * d ^ 4 - 500 * c * d ^ 2 * e + 625 * c ^ 2 * e
     ^ 2 - 625 * b * d * e ^ 2
 
 /-- The coefficient of `X ^ 2` in `resolvent5` (see that def). -/
-private noncomputable def r5c2 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+noncomputable def r5c2 {R : Type*} [CommRing R] (a b c d e : R) : R :=
     r5c2p0 a b c d e
     + r5c2p1 a b c d e
 
 /-- Summand `0` of the coefficient of `X ^ 1` in `resolvent5` -/
-private noncomputable def r5c1p0 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+noncomputable def r5c1p0 {R : Type*} [CommRing R] (a b c d e : R) : R :=
     -2 * a ^ 5 * b * c ^ 3 * d - 2 * a ^ 5 * b ^ 2 * c * d ^ 2 + 2 * a ^ 5 * b ^ 2 * c ^ 2 * e
     + 2 * a ^ 5 * b ^ 3 * d * e + 2 * a ^ 6 * c ^ 2 * d ^ 2 + 2 * a ^ 6 * b * d ^ 3 + 8 * a ^
     6 * b * c * d * e - 8 * a ^ 6 * b ^ 2 * e ^ 2 - 8 * a ^ 7 * d ^ 2 * e - 2 * a ^ 3 * b * c
@@ -266,7 +266,7 @@ private noncomputable def r5c1p0 {R : Type*} [CommRing R] (a b c d e : R) : R :=
     a ^ 2 * b ^ 2 * c ^ 2 * d ^ 2
 
 /-- Summand `1` of the coefficient of `X ^ 1` in `resolvent5` -/
-private noncomputable def r5c1p1 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+noncomputable def r5c1p1 {R : Type*} [CommRing R] (a b c d e : R) : R :=
     - 13 * a ^ 2 * b ^ 2 * c ^ 3 * e + 15 * a ^ 2 * b ^ 3 * d ^ 3 + 183 * a ^ 2 * b ^ 3 * c *
     d * e - 162 * a ^ 2 * b ^ 4 * e ^ 2 - 30 * a ^ 3 * c ^ 3 * d ^ 2 - 12 * a ^ 3 * c ^ 4 * e
     + 39 * a ^ 3 * b * c * d ^ 3 + 4 * a ^ 3 * b * c ^ 2 * d * e - 17 * a ^ 3 * b ^ 2 * d ^ 2
@@ -280,7 +280,7 @@ private noncomputable def r5c1p1 {R : Type*} [CommRing R] (a b c d e : R) : R :=
     * d ^ 2 * e + 35 * a ^ 2 * b * c ^ 2 * e ^ 2
 
 /-- Summand `2` of the coefficient of `X ^ 1` in `resolvent5` -/
-private noncomputable def r5c1p2 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+noncomputable def r5c1p2 {R : Type*} [CommRing R] (a b c d e : R) : R :=
     1045 * a ^ 2 * b ^ 2 * d * e ^ 2 - 176 * a ^ 3 * d ^ 3 * e - 90 * a ^ 3 * c * d * e ^ 2 -
     350 * a ^ 3 * b * e ^ 3 + 3 * c ^ 4 * d ^ 2 + 58 * c ^ 5 * e + 29 * b * c ^ 2 * d ^ 3 -
     405 * b * c ^ 3 * d * e - 128 * b ^ 2 * d ^ 4 + 685 * b ^ 2 * c * d ^ 2 * e + 325 * b ^ 2
@@ -291,13 +291,13 @@ private noncomputable def r5c1p2 {R : Type*} [CommRing R] (a b c d e : R) : R :=
     e ^ 3 - 2500 * a * d * e ^ 3 + 3125 * e ^ 4
 
 /-- The coefficient of `X ^ 1` in `resolvent5` (see that def). -/
-private noncomputable def r5c1 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+noncomputable def r5c1 {R : Type*} [CommRing R] (a b c d e : R) : R :=
     r5c1p0 a b c d e
     + r5c1p1 a b c d e
     + r5c1p2 a b c d e
 
 /-- Summand `0` of the coefficient of `X ^ 0` in `resolvent5` -/
-private noncomputable def r5c0p0 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+noncomputable def r5c0p0 {R : Type*} [CommRing R] (a b c d e : R) : R :=
     a ^ 6 * b ^ 2 * c ^ 2 * d ^ 2 - 2 * a ^ 6 * b ^ 3 * c * d * e + a ^ 6 * b ^ 4 * e ^ 2 - 2
     * a ^ 7 * b * c * d ^ 3 + 2 * a ^ 7 * b ^ 2 * d ^ 2 * e + a ^ 8 * d ^ 4 + 2 * a ^ 4 * b ^
     2 * c ^ 4 * d - 7 * a ^ 4 * b ^ 3 * c ^ 2 * d ^ 2 - 2 * a ^ 4 * b ^ 3 * c ^ 3 * e + 16 * a
@@ -311,7 +311,7 @@ private noncomputable def r5c0p0 {R : Type*} [CommRing R] (a b c d e : R) : R :=
     ^ 2 - 8 * a ^ 3 * b ^ 2 * c ^ 4 * e
 
 /-- Summand `1` of the coefficient of `X ^ 0` in `resolvent5` -/
-private noncomputable def r5c0p1 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+noncomputable def r5c0p1 {R : Type*} [CommRing R] (a b c d e : R) : R :=
     - 27 * a ^ 3 * b ^ 3 * c * d ^ 3 + a ^ 3 * b ^ 3 * c ^ 2 * d * e + 31 * a ^ 3 * b ^ 4 * d
     ^ 2 * e - 48 * a ^ 3 * b ^ 4 * c * e ^ 2 + 6 * a ^ 4 * c ^ 4 * d ^ 2 - 23 * a ^ 4 * b * c
     ^ 2 * d ^ 3 + 44 * a ^ 4 * b * c ^ 3 * d * e + 17 * a ^ 4 * b ^ 2 * d ^ 4 - 102 * a ^ 4 *
@@ -325,7 +325,7 @@ private noncomputable def r5c0p1 {R : Type*} [CommRing R] (a b c d e : R) : R :=
     - 23 * a ^ 2 * b * c ^ 4 * d ^ 2
 
 /-- Summand `2` of the coefficient of `X ^ 0` in `resolvent5` -/
-private noncomputable def r5c0p2 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+noncomputable def r5c0p2 {R : Type*} [CommRing R] (a b c d e : R) : R :=
     26 * a ^ 2 * b * c ^ 5 * e + 29 * a ^ 2 * b ^ 2 * c ^ 2 * d ^ 3 - 87 * a ^ 2 * b ^ 2 * c ^
     3 * d * e - 29 * a ^ 2 * b ^ 3 * d ^ 4 + 189 * a ^ 2 * b ^ 3 * c * d ^ 2 * e - 5 * a ^ 2 *
     b ^ 3 * c ^ 2 * e ^ 2 - 345 * a ^ 2 * b ^ 4 * d * e ^ 2 + 4 * a ^ 3 * c ^ 3 * d ^ 3 - 52 *
@@ -339,7 +339,7 @@ private noncomputable def r5c0p2 {R : Type*} [CommRing R] (a b c d e : R) : R :=
     d * e ^ 2 + 2 * a * c ^ 5 * d ^ 2
 
 /-- Summand `3` of the coefficient of `X ^ 0` in `resolvent5` -/
-private noncomputable def r5c0p3 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+noncomputable def r5c0p3 {R : Type*} [CommRing R] (a b c d e : R) : R :=
     - 20 * a * c ^ 6 * e + 3 * a * b * c ^ 3 * d ^ 3 + 40 * a * b * c ^ 4 * d * e + 11 * a * b
     ^ 2 * c * d ^ 4 - 115 * a * b ^ 2 * c ^ 2 * d ^ 2 * e + 200 * a * b ^ 2 * c ^ 3 * e ^ 2 -
     15 * a * b ^ 3 * d ^ 3 * e - 19 * a ^ 2 * c ^ 2 * d ^ 4 + 80 * a ^ 2 * c ^ 3 * d ^ 2 * e +
@@ -353,14 +353,14 @@ private noncomputable def r5c0p3 {R : Type*} [CommRing R] (a b c d e : R) : R :=
     500 * a * c ^ 3 * d * e ^ 2 - 100 * a * b * d ^ 4 * e
 
 /-- Summand `4` of the coefficient of `X ^ 0` in `resolvent5` -/
-private noncomputable def r5c0p4 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+noncomputable def r5c0p4 {R : Type*} [CommRing R] (a b c d e : R) : R :=
     375 * a * b * c * d ^ 2 * e ^ 2 + 1250 * a * b * c ^ 2 * e ^ 3 - 625 * a * b ^ 2 * d * e ^
     3 - 250 * a ^ 2 * d ^ 3 * e ^ 2 + 1250 * a ^ 2 * c * d * e ^ 3 - 3125 * a ^ 2 * b * e ^ 4
     + 25 * d ^ 6 - 250 * c * d ^ 4 * e + 625 * c ^ 2 * d ^ 2 * e ^ 2 + 625 * b * d ^ 3 * e ^ 2
     - 3125 * b * c * d * e ^ 3 + 3125 * b ^ 2 * e ^ 4
 
 /-- The coefficient of `X ^ 0` in `resolvent5` (see that def). -/
-private noncomputable def r5c0 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+noncomputable def r5c0 {R : Type*} [CommRing R] (a b c d e : R) : R :=
     r5c0p0 a b c d e
     + r5c0p1 a b c d e
     + r5c0p2 a b c d e
