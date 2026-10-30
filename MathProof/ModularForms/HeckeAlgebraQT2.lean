@@ -74,9 +74,9 @@ private theorem eq_zero_of_degree_lt_of_ker_eval (T : V →ₗ[K] V) (f : K[X]) 
     apply hv
     have hfev : (Polynomial.aeval T f) v = 0 := by rw [hfe, LinearMap.zero_apply]
     have h1 : Polynomial.aeval T (a * f + b * r) v = v := by
-      rw [hab, map_one, one_apply_eq_self]
+      rw [hab, map_one, Module.End.one_apply]
     have h2 : Polynomial.aeval T (a * f + b * r) v = 0 := by
-      simp only [map_add, LinearMap.add_apply, map_mul, mul_apply_eq_comp]
+      simp only [map_add, LinearMap.add_apply, map_mul, Module.End.mul_apply]
       rw [hfev, map_zero, hr, map_zero, add_zero]
     exact h1.symm.trans h2
   · refine absurd hdeg (not_lt.2 ?_)
@@ -146,7 +146,7 @@ theorem exists_aeval_of_commute_of_irreducible_charpoly {T2 : V →ₗ[K] V} [No
       (Polynomial.degreeLT K (LinearMap.charpoly T2).natDegree) =
       (LinearMap.charpoly T2).natDegree := by
     rw [LinearEquiv.finrank_eq (Polynomial.degreeLTEquiv K (LinearMap.charpoly T2).natDegree)]
-    exact Module.finrank_fin_fun
+    exact Module.finrank_fin_fun (R := K)
   have hfrange : Module.finrank K (LinearMap.range
       ((evalAeval T2 v₀).comp
         (Polynomial.degreeLT K (LinearMap.charpoly T2).natDegree).subtype)) =
@@ -184,7 +184,7 @@ theorem exists_aeval_of_commute_of_irreducible_charpoly {T2 : V →ₗ[K] V} [No
       exact (Algebra.commute_algebraMap_right a Tn).mul_right (hpow n)
   have hswap : ∀ p : K[X], Tn (Polynomial.aeval T2 p v₀) = Polynomial.aeval T2 p (Tn v₀) := by
     intro p
-    rw [← mul_apply_eq_comp, (hTnaev p).eq, mul_apply_eq_comp]
+    rw [← Module.End.mul_apply, (hTnaev p).eq, Module.End.mul_apply]
   -- Step 6: finish.
   have hmulcomm : ∀ p q : K[X], Polynomial.aeval T2 p * Polynomial.aeval T2 q
       = Polynomial.aeval T2 q * Polynomial.aeval T2 p := by
@@ -209,7 +209,7 @@ theorem exists_aeval_of_commute_of_irreducible_charpoly {T2 : V →ₗ[K] V} [No
     rw [hq₀']
   have h3 : Polynomial.aeval T2 p (Polynomial.aeval T2 q₀ v₀)
       = Polynomial.aeval T2 q₀ (Polynomial.aeval T2 p v₀) := by
-    rw [← mul_apply_eq_comp, hmulcomm p q₀, mul_apply_eq_comp]
+    rw [← Module.End.mul_apply, hmulcomm p q₀, Module.End.mul_apply]
   calc Tn w = Tn (Polynomial.aeval T2 p v₀) := by rw [hp]
     _ = Polynomial.aeval T2 p (Tn v₀) := hswap p
     _ = Polynomial.aeval T2 p (Polynomial.aeval T2 q₀ v₀) := h2
