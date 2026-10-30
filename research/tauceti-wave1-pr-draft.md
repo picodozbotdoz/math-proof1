@@ -75,3 +75,6 @@ Branch `tauceti/wave5-weights`.  PR order (each standalone on `main` after prere
 4. `LevelOne/RankOneLehmer.lean` (needs 2, 3).
 5. `LevelOne/LehmerWeight{16,18,20,22,26}.lean` — five PRs (or one per weight); need 1, 4, wave 3 (congruence helpers), wave 1/4 (τ).
 Roadmap fit: only (3) is plausibly on the ModularForms roadmap; the rest need a hook (H3).
+
+## Audit status (2026-10-30)
+Branches `pr01 … pr14` in the local TauCeti clone correspond one-to-one to the drafts above and all pass the Modal audit (build + linters, header, forbidden constructs, axioms). Open PRs strictly sequentially (no stacking).

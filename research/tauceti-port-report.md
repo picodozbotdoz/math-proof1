@@ -90,3 +90,7 @@ Wave 1–3 code must be rebuilt against TauCeti's Mathlib pin; the machine here 
 3. **Mathlib drift.** `rc2` + `module` files; our code uses the older style; ports are rewrites more than copies.
 4. **Local build.** OK to download the Mathlib cache (≈7 GB) into the TauCeti clone?
 5. **Keep math-proof1 frozen** while porting: ancestor edits retrigger the ≈33 min heavy chain.
+
+## 7. Audit of the PR branch chain (2026-10-30)
+
+Fourteen cumulative local branches `pr01 … pr14` in the TauCeti clone (Bernoulli values, weight-12 identity, τ bridge, mod-691, multiplicativity, Lehmer reduction, sieve, rank-one eigenform, rank-one Lehmer, weights 16/18/20/22/26). Each file passes, on Modal image `tauceti-check` (TauCeti `821b723`): build with all linters, header style, forbidden-construct greps, ≤1000 lines, standard axioms only. Open for you: `Authors:` placeholder, scope risk (see §4), and that TauCeti's own CI scripts were not run locally. Nothing pushed.

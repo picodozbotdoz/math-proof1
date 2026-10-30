@@ -133,6 +133,11 @@ decision by the human user. Agents may only *run* the existing scripts
 the resources listed above. If those seem insufficient for a task, stop and
 surface the limitation to the user instead of creating workarounds on Modal.
 
+**Exception (user-authorized 2026-10-30):** `lean_tauceti.py` (app `tauceti-check`,
+own image: TauCeti-pinned toolchain + Mathlib cache + prebuilt TauCeti modules;
+no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
+`tools/modal_tauceti.sh`.  Reuse it for TauCeti tasks; it grants nothing else.
+
 ## Layout
 
 - `MathProof/Tau/Basic.lean` — `Ramanujan.tau`: algebraic definition of τ
