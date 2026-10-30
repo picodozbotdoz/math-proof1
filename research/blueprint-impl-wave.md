@@ -9,8 +9,8 @@ TauCeti coding rules.  One git worktree per item (outside the main tree, so
 | branch | worktree | blueprint | status |
 |---|---|---|---|
 | `impl/blueprint/dedekind-frobenius` | `~/claude-workdir/wt-dedekind-frobenius` | `dedekind-frobenius/BLUEPRINT.md` §4 stages 1–2 | **committed `f54534a`**, `MaedaPermCriterion.lean` (118 lines) builds clean on Modal (linters on, audit-clean); registered in root/defaultTargets/CI |
-| `impl/blueprint/hecke-algebra-upgrade` | `~/claude-workdir/wt-hecke-algebra-upgrade` | `hecke-algebra-upgrade/BLUEPRINT.md` | agent in flight (resumed after a concurrency-limit stop) |
-| `impl/blueprint/iteration19-maeda-generic` | `~/claude-workdir/wt-iteration19-maeda-generic` | `iteration19-maeda-generic/BLUEPRINT.md` §2–3 (engines only; generated weight files later) | agent in flight |
+| `impl/blueprint/hecke-algebra-upgrade` | `~/claude-workdir/wt-hecke-algebra-upgrade` | `hecke-algebra-upgrade/BLUEPRINT.md` | committed `15699be`: `HeckeAlgebraQT2.lean` (210 lines) — `minpoly_eq_charpoly_of_irreducible_charpoly` + the deliverable `exists_aeval_of_commute_of_irreducible_charpoly` (generic over endomorphisms; proved via T₂-cyclicity/Bézout instead of the blueprint's Module-descent — simpler and instance-free).  `HeckeCommute.lean` = open TODO.  First Modal build failed (2 unknown constants + section-variable `include` semantics) → fix loop in flight |
+| `impl/blueprint/iteration19-maeda-generic` | `~/claude-workdir/wt-iteration19-maeda-generic` | `iteration19-maeda-generic/BLUEPRINT.md` §2–3 (engines only; generated weight files later) | committed `c37db53`: `CharpolyEngine.lean` (47 lines, `charpoly_of_eval_eq`) + `RabinCert.lean` (769 lines) — **`irreducible_of_rabin` fully proved** (blueprint's main risk void: `Irreducible.natDegree_dvd_iff_dvd_X_pow_card_pow_sub_X` + converse already at the pin, `FieldTheory/Finite/Extension.lean`); packaged `irreducible_of_rabin_cert` / `irreducible_of_rabin_int` for the generator; k=72 smoke decides [propext]-only.  Modal build OK exit 0; 12 `show`-tactic style warnings → fix loop in flight |
 
 ## Findings so far (dedekind-frobenius)
 
