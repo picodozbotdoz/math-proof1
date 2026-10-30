@@ -106,7 +106,7 @@ upstreamed as-is).
 | heavy chain rebuild `tools/stage_chain.sh` (Defs → Weights; verifies `r5c*` split, `resolvent5_map`/`resolvent_eval_theta` unfold lists, literal splits, linters on) | ✅ **ALL_OK** — all 8 stages (peaks: IdE4 13.5, IdE5 22.0, IdE6 34.7, Identities 17.4 GiB — unchanged from baselines; Weights 6.2 GiB) |
 | axiom audit on Modal | ✅ `MathProof.AxCheck`: all 15 headline theorems ⊆ {propext, Classical.choice, Quot.sound} (incl. the two new sieve showcases; `LehmerMod`'s 512 decide rebuilt inside the run).  ✅ `MathProof.AxCheckDecide`: light-root decide audit passes; surfaced 2 `unusedVariables` warnings in the generated `r5c5` (binders `b`,`e` mathematically unused) → fixed to `_b`/`_e` |
 | heavy Tau modules | `LehmerMod` rebuilt inside the `AxCheck` run (its ancestor `Tau.Lehmer` changed); `LehmerPacked`/`PowChain`/`LehmerPow32` import only unchanged modules (`Tau.Basic`) — lake traces leave them valid, no rebuild needed |
-| CI (`lean-action` + docgen on push) | pending push (chain rerun after the `_b`/`_e` binder fix in progress) |
+| CI (`lean-action` + docgen on push) | ✅ chain rerun after the `_b`/`_e` binder fix: **ALL_OK**, all 8 stages warning-free |
 
 ## 6. Post-edit rebuild obligations (input-based traces)
 
