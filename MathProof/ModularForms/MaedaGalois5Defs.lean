@@ -208,8 +208,9 @@ def disc5 {R : Type*} [CommRing R] (a b c d e : R) : R :=
   + 2000 * a ^ 2 * c * e ^ 3 + 256 * d ^ 5 - 1600 * c * d ^ 3 * e + 2250 * c ^ 2 * d * e ^ 2
   + 2000 * b * d ^ 2 * e ^ 2 - 3750 * b * c * e ^ 3 - 2500 * a * d * e ^ 3 + 3125 * e ^ 4
 
-/-- Summand `0` of the coefficient of `X ^ 5` in `resolvent5` -/
-noncomputable def r5c5 {R : Type*} [CommRing R] (a b c d e : R) : R :=
+/-- Summand `0` of the coefficient of `X ^ 5` in `resolvent5` (independent
+of `b` and `e`; the unused binders keep the uniform five-argument shape). -/
+noncomputable def r5c5 {R : Type*} [CommRing R] (a _b c d _e : R) : R :=
     -4 * a * c + 10 * d
 
 /-- Summand `0` of the coefficient of `X ^ 4` in `resolvent5` -/
