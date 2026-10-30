@@ -199,6 +199,8 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
 - `MathProof/Tau/LehmerSieve691.lean` (light) — the mod-691 sieve
   (`691 ∤ σ₁₁ n → τ n ≠ 0`): every prime `p ≢ −1 [MOD 691]` of arbitrary
   size has `τ p ≠ 0`; root-of-unity classification `prime_pow_dvd_sigma_iff`.
+  The finite scans are `decide +kernel`; the Mersenne prime `2³¹ − 1` is
+  certified by Mathlib's Lucas–Lehmer test, not trial division.
 - `MathProof/Tau/LehmerPrimePower.lean` (heavy, Modal) — iteration-8
   instantiation `tau_ne_zero_of_prime_pow_le_65536` +
   `tau_of_65519_mul_65521_ne_zero`.
@@ -255,7 +257,9 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   (`List`'s `DecidableEq` blows the kernel stack past a few thousand terms;
   `pMul`'s kernel stack grows with its *left* operand — keep it small).
   `MaedaGalois5Defs` (light) — `S₅` subgroup structure, `disc5`, the `F₂₀`
-  sextic `resolvent5`, `theta`;  heavy (Modal only, not in CI; 8–35 GiB per
+  sextic `resolvent5` (its coefficient blocks are split into the private
+  defs `r5c5 … r5c0p*` so each elaborates under the default heartbeat
+  budget), `theta`;  heavy (Modal only, not in CI; 8–35 GiB per
   module, ≈ 33 min for the chain — `tools/stage_chain.sh`):
   `MaedaGalois5IdBase → IdE4 → IdE5 → IdE6 → MaedaGalois5Identities` — the
   resolvent-coefficient and discriminant identities as `Poly5` kernel
@@ -331,3 +335,14 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   the package) must never pull the heavy kernel decides. When adding a
   module: light → add it to `defaultTargets`, `MathProof.lean`, and the CI
   list; heavy → add it to none of those, and build it explicitly on Modal.
+- **TauCeti coding rules** (`external-doc/TAU-CETI_Coding_Rules.md`) apply to
+  every light module since iteration 18b: no `set_option` at all (no
+  heartbeat/recdepth raises, no linter suppressions), no `#eval`/`meta`/
+  `unsafe`, no `native_decide`/`sorry`, Mathlib-level imports only.  Check
+  with `tools/tauceti_audit.sh` (comment-aware).  If a light `decide` trips
+  the default elaborator budget, first try `decide +kernel` (the elaborator's
+  re-evaluation is usually the hog) or `norm_num`; if an elaboration genuinely
+  needs more, split the declaration (cf. the `r5c*` coefficient defs in
+  `MaedaGalois5Defs`) instead of raising `maxHeartbeats`.  Only Tier C heavy
+  modules keep `set_option`, each with a measured reason
+  (`research/refactor-i18-tauceti/README.md`).

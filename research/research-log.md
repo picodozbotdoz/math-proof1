@@ -1333,3 +1333,31 @@ and `LEAN_CHECK_PROFILE=<Module>` attributes memory to declarations (marks
 before every top-level command, RSS bucketed between them).  Validation on
 `MaedaGalois5Identities` (19.5 GiB peak): `ddec`'s kernel decide accounts for
 +14.6 GiB of growth (116 s); `delta2_identity` for 100 s at +0.5 GiB.
+
+## Iteration 18b — TauCeti coding-rules compliance refactor (in-repo)
+
+Branch `dev/i18-refactor-tauCeti-rule`, commits `555491f` + `ebc69ca`
+(2026-10-30).  Goal: the light library complies with
+`external-doc/TAU-CETI_Coding_Rules.md` — **zero `set_option`** in every
+`defaultTargets` module, comment-aware mechanical audit, options in Tier C
+modules documented with measured reasons.
+
+Method per the "classify before raising a limit" lesson: strip the option,
+rebuild, read the actual error, then restructure.
+
+| fix | class of failure | resolution |
+|---|---|---|
+| `Tau/Lehmer` 128-decide | elaborator recursion depth | `decide +kernel` (~100 s kernel < 200 s budget) |
+| `Tau/Bridge` (2), `Weight12` (1) | none — **stale options** | delete |
+| `Congruence691` `Prime 691` | elaborator recdepth (instance whnf) | `by norm_num` |
+| `LehmerSieve691` residue + geom scans | elaborator recdepth; pow threshold | `decide +kernel` ×2 |
+| `LehmerSieve691` Mersenne prime | **kernel** deep recursion in trial-division cert | Mathlib Lucas–Lehmer (`LucasLehmerTest 31`) |
+| `MaedaGalois5Defs` `resolvent5` | genuine elaboration timeout (200k) | sextic split into 16 private defs `r5c*` (≤450 tokens each), identity numerically validated; `resolvent5_map` simp list extended |
+| `MaedaGalois5Weights` | `linter.style.longLine` | 156 literals split `(A * 10 ^ 55 + B)`, wrapped ≤ 99 chars |
+
+Result (comment-aware `tools/tauceti_audit.sh`): 0 `set_option` in all
+default targets; 65 remaining in the 9 Tier C modules (LehmerMod/Packed/Pow32,
+MaedaGalois5, Id-chain) with measured justifications
+(`research/refactor-i18-tauceti/README.md` §4).  Heavy chain rebuilt end-to-end
+via `stage_chain.sh` after the ancestor edits; `AxCheck`/`AxCheckDecide`
+re-run on Modal; full details and verification matrix in the README above.

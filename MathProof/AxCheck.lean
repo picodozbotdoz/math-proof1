@@ -37,3 +37,5 @@ files, printed whenever those modules are built on Modal:
 #print axioms Ramanujan.tau_ne_zero_of_not_dvd_sigma
 #print axioms Ramanujan.tau_prime_ne_zero_of_mod
 #print axioms Ramanujan.tau_two_pow_ne_zero_sieve
+#print axioms Ramanujan.tau_of_65537_ne_zero
+#print axioms Ramanujan.tau_of_2147483647_ne_zero
