@@ -249,16 +249,16 @@ theorem toPoly_zadd (l : ℕ) : ∀ p q : List ℤ,
   induction p with
   | nil =>
       intro q
-      show toPoly l (q.map fun x => x % l) = 0 + toPoly l q
+      change toPoly l (q.map fun x => x % l) = 0 + toPoly l q
       rw [toPoly_map_mod, zero_add]
   | cons a p' ih =>
       intro q
       cases q with
       | nil =>
-          show toPoly l ((a :: p').map fun x => x % l) = _
+          change toPoly l ((a :: p').map fun x => x % l) = _
           rw [toPoly_map_mod, toPoly_cons, toPoly_nil, add_zero]
       | cons b q' =>
-          show toPoly l ((a + b) % l :: zadd l p' q') = _
+          change toPoly l ((a + b) % l :: zadd l p' q') = _
           rw [toPoly_cons, toPoly_cons, toPoly_cons, ih, intCast_mod_cast, Int.cast_add,
             Polynomial.C_add]
           ring
@@ -269,7 +269,7 @@ theorem toPoly_map_smul (l : ℕ) (s : ℤ) : ∀ p : List ℤ,
   induction p with
   | nil => simp [toPoly]
   | cons x t ih =>
-      show toPoly l ((s * x % l) :: (t.map fun x => s * x % l)) = _
+      change toPoly l ((s * x % l) :: (t.map fun x => s * x % l)) = _
       rw [toPoly_cons, ih, toPoly_cons, intCast_mod_cast, Int.cast_mul, Polynomial.C_mul]
       ring
 
@@ -280,7 +280,7 @@ theorem toPoly_zpmul (l : ℕ) : ∀ p q : List ℤ,
   | nil => intro q; simp [zpmul, toPoly]
   | cons a p' ih =>
       intro q
-      show toPoly l (znorm l (zadd l (q.map fun x => a * x % l) (0 :: zpmul l p' q))) = _
+      change toPoly l (znorm l (zadd l (q.map fun x => a * x % l) (0 :: zpmul l p' q))) = _
       rw [toPoly_znorm, toPoly_zadd, toPoly_map_smul, toPoly_cons, ih, toPoly_cons]
       simp only [Int.cast_zero, Polynomial.C_0, zero_add]
       ring
@@ -324,12 +324,12 @@ theorem toPoly_zprem (l : ℕ) (f : List ℤ) : ∀ (F : ℕ) (a : List ℤ),
   induction F with
   | zero =>
       intro a
-      exact ⟨0, by show toPoly l a = 0 * toPoly l f + toPoly l a; rw [zero_mul, zero_add]⟩
+      exact ⟨0, by change toPoly l a = 0 * toPoly l f + toPoly l a; rw [zero_mul, zero_add]⟩
   | succ F ih =>
       intro a
       by_cases hlt : a.length < f.length
       · have hz : zprem l f (F + 1) a = znorm l a := by
-          show (if a.length < f.length then znorm l a
+          change (if a.length < f.length then znorm l a
             else
               zprem l f F
                 (znorm l (zadd l a
@@ -343,7 +343,7 @@ theorem toPoly_zprem (l : ℕ) (f : List ℤ) : ∀ (F : ℕ) (a : List ℤ),
               (znorm l (zadd l a
                 (List.replicate (a.length - f.length) 0 ++
                   f.map fun x => -(zlast a) * x % l))) := by
-          show (if a.length < f.length then znorm l a
+          change (if a.length < f.length then znorm l a
             else
               zprem l f F
                 (znorm l (zadd l a
@@ -384,7 +384,7 @@ theorem bval_append : ∀ p q : List Bool,
   | nil => intro q; simp [bval]
   | cons b t ih =>
       intro q
-      show bval (b :: (t ++ q)) = _
+      change bval (b :: (t ++ q)) = _
       rw [bval, ih, bval, List.length_append, pow_add]
       ring
 
@@ -410,7 +410,7 @@ theorem bval_bitsOf : ∀ F n : ℕ, n < 2 ^ F → bval (bitsOf F n) = n := by
             rcases Nat.mod_two_eq_zero_or_one (m + 1) with hm | hm
             · simp [hm]
             · simp [hm]
-          show bval (bitsOf F ((m + 1) / 2) ++ [decide ((m + 1) % 2 == 1)]) = m + 1
+          change bval (bitsOf F ((m + 1) / 2) ++ [decide ((m + 1) % 2 == 1)]) = m + 1
           rw [bval_append, bval_singleton, ih ((m + 1) / 2) hlt, hbit,
             List.length_singleton, pow_one]
           rw [Nat.mul_comm ((m + 1) / 2) 2]
@@ -517,7 +517,7 @@ theorem toPoly_zscale (l : ℕ) (s : ℤ) : ∀ q : List ℤ,
   induction q with
   | nil => simp [zscale, toPoly]
   | cons x t ih =>
-      show toPoly l ((x * s % l) :: zscale l s t) = _
+      change toPoly l ((x * s % l) :: zscale l s t) = _
       rw [toPoly_cons, ih, toPoly_cons, intCast_mod_cast, Int.cast_mul, Polynomial.C_mul]
       ring
 
@@ -608,7 +608,7 @@ theorem toPoly_zpxwsubX {l : ℕ} {f : List ℤ} {F e : ℕ} (hbits : e < 2 ^ F)
   obtain ⟨q1, hq1⟩ := toPoly_zprem l f (2 * f.length)
     (zadd l (zpxw l f (bitsOf F e) [1]) [0, (-1 : ℤ) % l])
   have hx : toPoly l [0, (-1 : ℤ) % l] = -X := by
-    show C ((0 : ℤ) : ZMod l)
+    change C ((0 : ℤ) : ZMod l)
       + X * (C (((-1 : ℤ) % l : ℤ) : ZMod l) + X * toPoly l ([] : List ℤ)) = -X
     simp only [Int.cast_zero, Polynomial.C_0, intCast_mod_cast, Int.cast_neg, Int.cast_one,
       toPoly_nil, Polynomial.C_neg, Polynomial.C_1, mul_zero, add_zero, zero_add, mul_neg,
@@ -633,10 +633,10 @@ theorem zspow_cast (l : ℕ) :
     ∀ e : ℕ, ∀ t : ℤ, ((zspow l e t : ℤ) : ZMod l) = (t : ZMod l) ^ e := by
   intro e
   induction e with
-  | zero => intro t; show ((1 : ℤ) : ZMod l) = (t : ZMod l) ^ 0; rw [Int.cast_one, pow_zero]
+  | zero => intro t; change ((1 : ℤ) : ZMod l) = (t : ZMod l) ^ 0; rw [Int.cast_one, pow_zero]
   | succ e ih =>
       intro t
-      show ((t * zspow l e t % l : ℤ) : ZMod l) = _
+      change ((t * zspow l e t % l : ℤ) : ZMod l) = _
       rw [intCast_mod_cast, Int.cast_mul, ih, pow_succ, mul_comm]
 
 private theorem natCard_ZMod {l : ℕ} [Fact l.Prime] : Nat.card (ZMod l) = l := by
