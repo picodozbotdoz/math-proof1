@@ -368,7 +368,8 @@ set_option maxHeartbeats 8000000 in
 with ring homomorphisms. -/
 lemma resolvent5_map {R S : Type*} [CommRing R] [CommRing S] (f : R →+* S) (a b c d e : R) :
     resolvent5 (f a) (f b) (f c) (f d) (f e) = (resolvent5 a b c d e).map f := by
-  simp only [resolvent5, r5c5, r5c4, r5c3, r5c2, r5c1, r5c0,
+  simp only [resolvent5, r5c5, r5c4, r5c3, r5c2, r5c2p0, r5c2p1,
+    r5c1, r5c1p0, r5c1p1, r5c1p2, r5c0, r5c0p0, r5c0p1, r5c0p2, r5c0p3, r5c0p4,
     Polynomial.map_add, Polynomial.map_mul, Polynomial.map_pow,
     Polynomial.map_X, Polynomial.map_C,
     map_add f, map_sub f, map_mul f, map_pow f, map_neg f, map_ofNat f]
