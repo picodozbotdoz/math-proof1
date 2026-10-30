@@ -40,6 +40,19 @@ were batched into one commit and one chain rebuild (AGENTS.md rule).
 | `Tau/LehmerSieve691` | 3 × `maxRecDepth` (200k/400k/200k), `exponentiation.threshold 4096` | (a) recdepth on the 691-entry residue scan; (b) recdepth + pow-threshold on the 65-entry geometric-sum scan; (c) **kernel** deep recursion in the `norm_num` trial-division primality certificate for 2147483647 | (a),(b) → **`decide +kernel`**; (c) → Mersenne prime now proved by **Mathlib's Lucas–Lehmer test** (`LucasLehmerTest 31` by `norm_num` + `lucas_lehmer_sufficiency`), a short verified computation in place of a deep certificate | local 64 s + Modal |
 | `ModularForms/MaedaGalois5Defs` | `maxRecDepth 8000` (file), 6 × `maxHeartbeats 8000000 in` | real: `resolvent5` sextic elaboration times out at 200k heartbeats ("synthesize pending MVars"); the five group-theory lemmas + `disc5` + `vieta5` pass at default | `resolvent5`'s six coefficient blocks split into **16 public defs** (`r5c5, r5c4, r5c3, r5c2p0/1, r5c1p0/1/2, r5c0p0..4`, ≤ 450 tokens each); `resolvent5` reassembled from them.  `MaedaGalois5.lean` unfolds the `r5c*` names wherever the *flat* form is needed: `resolvent5_map`'s simp list, and `resolvent_eval_theta` before its `linear_combination`s — the first chain run showed `sextic_vieta` unification otherwise leaves folded `r5cK` atoms that `ring` cannot relate to the `theta_e{1..6}` identities (and `private` defs are invisible downstream).  Split validated numerically against the original polynomial (5 random substitutions, Python) | Modal, default options; chain stages rebuilt (peaks unchanged: IdE4 13.5, IdE5 22.0, IdE6 34.7, Identities 17.4 GiB) |
 
+The first full chain run caught two defects in the initial split (fixed in
+`15a3811` + the follow-up commit): `private` defs are invisible downstream
+(`Unknown identifier` in `resolvent5_map`), and `sextic_vieta` unification
+assigns folded `r5cK`-applications to the `?cK` metavariables, which
+`linear_combination` cannot relate to the flat `theta_e{1..6}` identities —
+the fix is unfolding the `r5c*` names into the six goals before the
+`linear_combination`s.  A second catch: `resolvent5_map` must unfold the
+*rpart* defs too (the aggregates `r5c2/r5c1/r5c0` are sums of parts; without
+them the LHS keeps `f (r5c2p0 …)` while the mapped RHS has
+`r5c2p0 (f a) …`).  And in `MaedaGalois5Weights`, the per-weight `hRint`
+proofs needed the full `r5c*` unfold list added to their `unfold … ; norm_num`
+(norm_num does not unfold the coefficient defs on its own).
+
 Key lessons re-confirmed (cf. the seven lessons in the rules file):
 *classify the error before acting*.  Two of six option-sets were pure stale
 leftovers; two were elaborator-side and fell to `decide +kernel` (the
@@ -90,10 +103,10 @@ upstreamed as-is).
 | per-module local `lake build` (Lehmer, Bridge, Weight12, Congruence691, LehmerSieve691) | ✅ all, default options |
 | `MaedaGalois5Defs` on Modal (`lean_check`), default options | ✅ |
 | full light `lake build` (all `defaultTargets`), zero `set_option` | ✅ local, `Build completed successfully (8097 jobs)` |
-| heavy chain rebuild `tools/stage_chain.sh` (Defs → Weights; verifies `r5c*` split, `resolvent5_map` simp edit, literal splits, linters on) | Modal, in progress |
-| axiom audit (`MathProof.AxCheck`, `AxCheckDecide` on Modal) | pending |
-| heavy Tau modules (`LehmerMod` first; `LehmerPacked`/`LehmerPow32` after) | pending |
-| CI (`lean-action` + docgen on push) | pending push |
+| heavy chain rebuild `tools/stage_chain.sh` (Defs → Weights; verifies `r5c*` split, `resolvent5_map`/`resolvent_eval_theta` unfold lists, literal splits, linters on) | ✅ **ALL_OK** — all 8 stages (peaks: IdE4 13.5, IdE5 22.0, IdE6 34.7, Identities 17.4 GiB — unchanged from baselines; Weights 6.2 GiB) |
+| axiom audit on Modal | ✅ `MathProof.AxCheck`: all 15 headline theorems ⊆ {propext, Classical.choice, Quot.sound} (incl. the two new sieve showcases; `LehmerMod`'s 512 decide rebuilt inside the run).  ✅ `MathProof.AxCheckDecide`: light-root decide audit passes; surfaced 2 `unusedVariables` warnings in the generated `r5c5` (binders `b`,`e` mathematically unused) → fixed to `_b`/`_e` |
+| heavy Tau modules | `LehmerMod` rebuilt inside the `AxCheck` run (its ancestor `Tau.Lehmer` changed); `LehmerPacked`/`PowChain`/`LehmerPow32` import only unchanged modules (`Tau.Basic`) — lake traces leave them valid, no rebuild needed |
+| CI (`lean-action` + docgen on push) | pending push (chain rerun after the `_b`/`_e` binder fix in progress) |
 
 ## 6. Post-edit rebuild obligations (input-based traces)
 
