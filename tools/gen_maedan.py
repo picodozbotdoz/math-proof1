@@ -56,6 +56,12 @@ def prime_divisors(n):
     return msp.prime_divisors(n)
 
 
+def is_prime(m):
+    if m < 2:
+        return False
+    return all(m % d for d in range(2, int(m ** 0.5) + 1))
+
+
 def series(i0, a, b, N):
     """Coefficients 0..N of Delta^(i0+1) E4^a E6^b (probe series data)."""
     s = msp.series_mul(msp.pw(msp.D, i0 + 1),
@@ -94,6 +100,26 @@ def lean_int(x):
     return str(x)
 
 
+WIDTH = 98  # Modal's linter.style.longLine limit is 100; keep a margin
+
+
+def wrap_terms(terms, cont_indent, sep=" + "):
+    """Join terms with sep, breaking lines so every rendered line stays within
+    WIDTH.  The separator trails on continued lines (`a +\nb`), which parses
+    for + and ,; continuation lines are indented by cont_indent spaces."""
+    pad = " " * cont_indent
+    out, cur = [], ""
+    for t in terms:
+        piece = t + sep if t is not terms[-1] else t
+        budget = WIDTH if not out else WIDTH - cont_indent
+        if cur and len(cur) + len(piece.rstrip()) > budget:
+            out.append(cur.rstrip())
+            cur = ""
+        cur += piece
+    out.append(cur.rstrip())
+    return ("\n" + pad).join(out)
+
+
 def lean_list(xs, indent=0):
     body = ", ".join(lean_int(x) for x in xs)
     if len(body) <= 100 - 2 * indent:
@@ -111,36 +137,45 @@ def lean_list(xs, indent=0):
     return "[" + ("\n" + pad).join(lines) + "]"
 
 
-def matrix_literal(M, indent=6):
+def matrix_literal(M, indent=6, diag=None):
+    """`!![…]` literal, rows separated by `;`, entries wrapped so every line
+    stays within WIDTH (continuation lines aligned at `indent`).  With `diag`
+    a function of (i, j) the cell text is customized (`t - x` on the diagonal
+    for the symbolic `t·1 − M` matrices)."""
     pad = " " * indent
-    rows = []
-    for r in M:
-        rows.append(", ".join(lean_int(x) for x in r))
-    return "!![" + (";\n" + pad).join(rows) + "]"
+    lines, cur = [], ""
+    for ri, r in enumerate(M):
+        for j, x in enumerate(r):
+            cell = lean_int(x) if diag is None else diag(ri, j, x)
+            piece = cell + ("" if j == len(r) - 1 else ",")
+            if cur and len(pad) + len(cur) + len(piece.rstrip()) + 1 > WIDTH:
+                lines.append(cur.rstrip())
+                cur = ""
+            cur += piece + ("" if j == len(r) - 1 else " ")
+        cur += ";" if ri < len(M) - 1 else ""
+        lines.append(cur.rstrip())
+        cur = ""
+    return "!![" + ("\n" + pad).join(lines) + "]"
 
 
 def sym_matrix_literal(M, indent=6):
-    pad = " " * indent
-    rows = []
-    for i, r in enumerate(M):
-        cells = []
-        for j, x in enumerate(r):
-            cells.append(f"t - {x}" if i == j else f"({-x})")
-        rows.append(", ".join(cells))
-    return "!![" + (";\n" + pad).join(rows) + "]"
+    return matrix_literal(M, indent, diag=lambda i, j, x: f"t - {x}" if i == j else f"({-x})")
 
 
 def p_literal(cp, n):
     terms = []
     for i, c in enumerate(cp):
         if i == 0:
-            terms.append(f"(X : ℤ[X]) ^ {n}")
+            # leading term as C 1 * X^n: after mapping, both sides of hmap carry
+            # the identical atom C ((1 : ℤ) : ZMod ℓ) (ring_nf cannot equate
+            # `C ↑1` with the bare numeral 1)
+            terms.append(f"C (1) * (X : ℤ[X]) ^ {n}")
         elif i < n:
             terms.append(f"C ({c}) * (X : ℤ[X]) ^ {n - i}" if c >= 0
                          else f"- C ({-c}) * (X : ℤ[X]) ^ {n - i}")
         else:
             terms.append(f"C ({c})" if c >= 0 else f"- C ({-c})")
-    return " + ".join(terms)
+    return wrap_terms(terms, 6)
 
 
 def wrap_name(k):
@@ -341,39 +376,71 @@ def emit_weight(w):
         vals.append(v)
     for t, v in enumerate(vals):
         P(f"/-- `det (t·1 − M)` at `t = {t}`, by the certified Bareiss echelon decomposition. -/")
-        P(f"theorem det_{t} : (Matrix.scalar (Fin {n}) ({t} : ℤ) - M).det = {v} := by")
+        head = f"theorem det_{t} : (Matrix.scalar (Fin {n}) ({t} : ℤ) - M).det"
+        tail = f" = {v} := by"
+        if len(head) + len(tail) <= WIDTH:
+            P(head + tail)
+        else:
+            P(head)
+            P(f"    {tail}")
         P(f"  rw [scalar_sub_M]")
         P(f"  simp only [MT]")
         P(f"  eval_det")
         P("")
     for t, v in enumerate(vals):
-        P(f"theorem ev_{t} : P.eval ({t} : ℤ) = {v} := by")
-        P(f"  norm_num [P, {EVAL_LEMMAS}]")
+        head = f"theorem ev_{t} : P.eval ({t} : ℤ)"
+        tail = f" = {v} := by"
+        if len(head) + len(tail) <= WIDTH:
+            P(head + tail)
+        else:
+            P(head)
+            P(f"    {tail}")
+        P("  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,")
+        P("      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]")
         P("")
     P("/-- Assembly: the n+1 evaluation points, discharged per case. -/")
-    P("theorem hevals : ∀ i : Fin %d, P.eval ((i : ℕ) : ℤ)" % n)
+    P("theorem hevals : ∀ i : Fin %d, P.eval ((i : ℕ) : ℤ)" % (n + 1))
     P("      = (Matrix.scalar (Fin %d) ((i : ℕ) : ℤ) - M).det := by" % n)
     P("  intro i")
     P("  fin_cases i")
     for t in range(n + 1):
-        P(f"  · show P.eval ({t} : ℤ)")
+        P(f"  · change P.eval ({t} : ℤ)")
         P(f"      = (Matrix.scalar (Fin {n}) ({t} : ℤ) - M).det")
         P(f"    rw [ev_{t}, det_{t}]")
     P("")
+    # per-entry helper theorems: each is its own declaration, so the back-
+    # substitution unrolling gets a fresh heartbeat budget (all 36 entries in
+    # one declaration exhaust the default 200k; TauCeti forbids raising it)
+    for c in range(n):
+        for a in range(n):
+            P(f"theorem entry_{c}_{a} : coordN Atab (fun m => Xtab {a} m) {c}")
+            P(f"      = (({M[c][a]} : ℤ) : ℂ) := by")
+            if c == 0:
+                P("  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]")
+            else:
+                P("  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,")
+                P("      Finset.sum_range_zero]")
+            P("  norm_num [List.getD_cons_succ, List.getD_cons_zero]")
+            P("")
     P("/-- **The characteristic polynomial of `T₂` on this weight.** -/")
     P("theorem charpoly_T2 : T2.charpoly = P.map (Int.castRingHom ℂ) := by")
     P(f"  have hdim := finrank_eq")
     P(f"  have hn : 0 < {n} := by norm_num")
     P(f"  rw [charpoly_dimN hn hdim fb Atab Xtab hzero hone hA T2 hX,")
-    P("      ← charpoly_of_eval_eq M P P_natDegree hevals, ← Matrix.charpoly_map]")
+    P("      ← CharpolyEngine.charpoly_of_eval_eq M P P_natDegree hevals, ← Matrix.charpoly_map]")
     P("  congr 1")
     P("  ext j i")
     P("  fin_cases j <;> fin_cases i")
     for c in range(n):
         for a in range(n):
-            P(f"  · show coordN Atab (fun m => Xtab {a} m) {c} = (({M[c][a]} : ℤ) : ℂ)")
-            P("    simp only [coordN, coordsAux, Atab, Xtab]")
-            P("    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]")
+            head = f"  · change coordN Atab (fun m => Xtab {a} m) {c}"
+            tail = f" = (({M[c][a]} : ℤ) : ℂ)"
+            if len(head) + len(tail) <= WIDTH:
+                P(head + tail)
+            else:
+                P(head)
+                P(f"      {tail}")
+            P(f"    exact entry_{c}_{a}")
     P("")
 
     # --- Rabin certificates and the irreducibility theorem ---
@@ -401,14 +468,29 @@ def emit_weight(w):
     P(f"noncomputable def fr : List ℤ := {lean_list(fle, 2)}")
     P("")
     P("lemma hmap : P.map (Int.castRingHom (ZMod %d)) = RabinCert.toPoly %d fr := by" % (ell, ell))
-    P("  simp [P, RabinCert.toPoly, fr, map_ofNat]")
+    P("  simp only [P, RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr,")
+    P("      Polynomial.map_C, Polynomial.map_X, Polynomial.map_add, Polynomial.map_mul,")
+    P("      Polynomial.map_pow, Int.coe_castRingHom, ← Polynomial.C_neg]")
+    # per-coefficient kernel casts: c mod ell (the leading C 1 needs no rewrite)
+    rw_items = []
+    for c in cp[1:]:
+        head = f"show (({c} : ℤ) : ZMod {ell})"
+        tail = f" = ({c % ell} : ZMod {ell}) from by decide +kernel"
+        if 6 + len(head) + len(tail) <= WIDTH:
+            rw_items.append(head + tail)
+        elif 6 + len(head) <= WIDTH:
+            rw_items.append(head + "\n          " + tail)
+        else:  # the coefficient literal alone nearly fills the line: split the cast
+            rw_items.append(f"show (({c} : ℤ)\n          : ZMod {ell})" + tail)
+    P("  rw [" + ",\n      ".join(rw_items) + "]")
+    P("  ring_nf")
     P("")
     P("lemma hmon' : (RabinCert.toPoly %d fr).Monic := by" % ell)
-    P("  simp only [RabinCert.toPoly]")
+    P("  simp only [RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr, mul_zero, add_zero]")
     P("  monicity!")
     P("")
     P(f"lemma hnd : (RabinCert.toPoly {ell} fr).natDegree = {n} := by")
-    P("  simp only [RabinCert.toPoly]")
+    P("  simp only [RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr, mul_zero, add_zero]")
     P("  compute_degree!")
     P("")
     P(f"lemma hF : {ell} ^ {n} < 2 ^ {F} := by norm_num")
@@ -427,9 +509,17 @@ def emit_weight(w):
     P("  intro q hq hq2")
     P(f"  have hqb : q ≤ {n} := Nat.le_of_dvd (by norm_num) hq2")
     P("  interval_cases q")
-    for q, W in h2s:
-        P(f"  · exact h2_{q}")
-    P("  · exact absurd hq2 (by decide)")
+    # interval_cases yields the n+1 cases q = 0 .. n (primality/divisibility
+    # literals are NOT auto-closed); refute composites via hq, primes not
+    # dividing n via hq2 (q = 6 divides 6, so refute via primality there)
+    hq_qs = {q for q, _ in h2s}
+    for q in range(n + 1):
+        if q in hq_qs:
+            P(f"  · exact h2_{q}")
+        elif is_prime(q):
+            P("  · exact absurd hq2 (by decide)")
+        else:
+            P("  · exact absurd hq (by decide)")
     P("")
     P(f"/-- The second certificate prime (sanity decide, not used by `maeda`). -/")
     P(f"noncomputable def fr2 : List ℤ := {lean_list(fle2, 2)}")
@@ -440,8 +530,8 @@ def emit_weight(w):
     P("")
     P("/-- **Maeda's conjecture (irreducibility) in this weight.** -/")
     P("theorem maeda : Irreducible (P.map (Int.castRingHom ℚ)) :=")
-    P(f"  have : Fact ({ell}.Prime) := ⟨by norm_num⟩")
-    P(f"  RabinCert.irreducible_of_rabin_int P_monic hmap hmon' hnd (by norm_num) h1 h2")
+    P(f"  haveI : Fact (Nat.Prime {ell}) := ⟨by norm_num⟩")
+    P(f"  RabinCert.irreducible_of_rabin_int P_monic hmap hmon' hnd (by norm_num) hF h1 h2")
     P("")
     P(f"end {wname}")
     P("")

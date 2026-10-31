@@ -869,18 +869,24 @@ def M : Matrix (Fin 6) (Fin 6) ℤ :=
       !![3576, 1, 0, 0, 0, 0;
       2361183241441063680000, 3686784, 2088, 1, 0, 0;
       -6686870937316024320000000, 1569300480000, 1047300096, 740352, 600, 1;
-      5257014245625692160000000000, 2361354558898176000000, 84053458944000, 31486377984, -1024000, 8064;
-      -1009146538984734720000000000000, -3167692353699840000000000, 1265866113024000000, -27179089920000, 33594802176, 2949120;
-      11555266180939776000000000000000, 213986410758144000000000000, 3962711310336000000000, 73383542784000000, 1358954496000, 25165824]
+      5257014245625692160000000000, 2361354558898176000000, 84053458944000, 31486377984,
+      -1024000, 8064;
+      -1009146538984734720000000000000, -3167692353699840000000000, 1265866113024000000,
+      -27179089920000, 33594802176, 2949120;
+      11555266180939776000000000000000, 213986410758144000000000000, 3962711310336000000000,
+      73383542784000000, 1358954496000, 25165824]
 
 /-- The translated matrices `t·1 − M`, as an explicit literal (symbolic in `t`). -/
 def MT (t : ℤ) : Matrix (Fin 6) (Fin 6) ℤ :=
       !![t - 3576, (-1), (0), (0), (0), (0);
       (-2361183241441063680000), t - 3686784, (-2088), (-1), (0), (0);
       (6686870937316024320000000), (-1569300480000), t - 1047300096, (-740352), (-600), (-1);
-      (-5257014245625692160000000000), (-2361354558898176000000), (-84053458944000), t - 31486377984, (1024000), (-8064);
-      (1009146538984734720000000000000), (3167692353699840000000000), (-1265866113024000000), (27179089920000), t - 33594802176, (-2949120);
-      (-11555266180939776000000000000000), (-213986410758144000000000000), (-3962711310336000000000), (-73383542784000000), (-1358954496000), t - 25165824]
+      (-5257014245625692160000000000), (-2361354558898176000000), (-84053458944000),
+      t - 31486377984, (1024000), (-8064);
+      (1009146538984734720000000000000), (3167692353699840000000000), (-1265866113024000000),
+      (27179089920000), t - 33594802176, (-2949120);
+      (-11555266180939776000000000000000), (-213986410758144000000000000),
+      (-3962711310336000000000), (-73383542784000000), (-1358954496000), t - 25165824]
 
 /-- One-time symbolic bridge, reused by all determinant lemmas. -/
 theorem scalar_sub_M (t : ℤ) : Matrix.scalar (Fin 6) t - M = MT t := by
@@ -890,232 +896,445 @@ theorem scalar_sub_M (t : ℤ) : Matrix.scalar (Fin 6) t - M = MT t := by
 
 /-- The characteristic polynomial of `T₂` (descending literal). -/
 noncomputable def P : ℤ[X] :=
-  (X : ℤ[X]) ^ 6 + - C (66157336440) * (X : ℤ[X]) ^ 5 + - C (9002758724278005040128) * (X : ℤ[X]) ^ 4 + C (500728382584538732877523640647680) * (X : ℤ[X]) ^ 3 + C (19397273510102970423350650896766446839267328) * (X : ℤ[X]) ^ 2 + - C (841390377086653548715101191193731810412939033433866240) * (X : ℤ[X]) ^ 1 + C (4171558450151166049898984513691112295971825841981859595680743424)
+  C (1) * (X : ℤ[X]) ^ 6 + - C (66157336440) * (X : ℤ[X]) ^ 5 +
+      - C (9002758724278005040128) * (X : ℤ[X]) ^ 4 +
+      C (500728382584538732877523640647680) * (X : ℤ[X]) ^ 3 +
+      C (19397273510102970423350650896766446839267328) * (X : ℤ[X]) ^ 2 +
+      - C (841390377086653548715101191193731810412939033433866240) * (X : ℤ[X]) ^ 1 +
+      C (4171558450151166049898984513691112295971825841981859595680743424)
 
 theorem P_natDegree : P.natDegree = 6 := by unfold P; compute_degree!
 
 theorem P_monic : P.Monic := by unfold P; monicity!
 
 /-- `det (t·1 − M)` at `t = 0`, by the certified Bareiss echelon decomposition. -/
-theorem det_0 : (Matrix.scalar (Fin 6) (0 : ℤ) - M).det = 4171558450151166049898984513691112295971825841981859595680743424 := by
+theorem det_0 : (Matrix.scalar (Fin 6) (0 : ℤ) - M).det
+     = 4171558450151166049898984513691112295971825841981859595680743424 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 1`, by the certified Bareiss echelon decomposition. -/
-theorem det_1 : (Matrix.scalar (Fin 6) (1 : ℤ) - M).det = 4171558449309775672831728238486614803584020218439840188564415625 := by
+theorem det_1 : (Matrix.scalar (Fin 6) (1 : ℤ) - M).det
+     = 4171558449309775672831728238486614803584020218439840188564415625 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 2`, by the certified Bareiss echelon decomposition. -/
-theorem det_2 : (Matrix.scalar (Fin 6) (2 : ℤ) - M).det = 4171558448468385295803266510305327622338297090466476940179853632 := by
+theorem det_2 : (Matrix.scalar (Fin 6) (2 : ℤ) - M).det
+     = 4171558448468385295803266510305327622338297090466476940179853632 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 3`, by the certified Bareiss echelon decomposition. -/
-theorem det_3 : (Matrix.scalar (Fin 6) (3 : ℤ) - M).det = 4171558447626994918813599329150255122529839591144951060589033457 := by
+theorem det_3 : (Matrix.scalar (Fin 6) (3 : ℤ) - M).det
+     = 4171558447626994918813599329150255122529839591144951060589033457 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 4`, by the certified Bareiss echelon decomposition. -/
-theorem det_4 : (Matrix.scalar (Fin 6) (4 : ℤ) - M).det = 4171558446785604541862726695024401674453614787349045209972224000 := by
+theorem det_4 : (Matrix.scalar (Fin 6) (4 : ℤ) - M).det
+     = 4171558446785604541862726695024401674453614787349045209972224000 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 5`, by the certified Bareiss echelon decomposition. -/
-theorem det_5 : (Matrix.scalar (Fin 6) (5 : ℤ) - M).det = 4171558445944214164950648607930771648404373679743135559747616049 := by
+theorem det_5 : (Matrix.scalar (Fin 6) (5 : ℤ) - M).det
+     = 4171558445944214164950648607930771648404373679743135559747616049 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 6`, by the certified Bareiss echelon decomposition. -/
-theorem det_6 : (Matrix.scalar (Fin 6) (6 : ℤ) - M).det = 4171558445102823788077365067872369414676651202782183853690952000 := by
+theorem det_6 : (Matrix.scalar (Fin 6) (6 : ℤ) - M).det
+     = 4171558445102823788077365067872369414676651202782183853690952000 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
-theorem ev_0 : P.eval (0 : ℤ) = 4171558450151166049898984513691112295971825841981859595680743424 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_0 : P.eval (0 : ℤ)
+     = 4171558450151166049898984513691112295971825841981859595680743424 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_1 : P.eval (1 : ℤ) = 4171558449309775672831728238486614803584020218439840188564415625 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_1 : P.eval (1 : ℤ)
+     = 4171558449309775672831728238486614803584020218439840188564415625 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_2 : P.eval (2 : ℤ) = 4171558448468385295803266510305327622338297090466476940179853632 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_2 : P.eval (2 : ℤ)
+     = 4171558448468385295803266510305327622338297090466476940179853632 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_3 : P.eval (3 : ℤ) = 4171558447626994918813599329150255122529839591144951060589033457 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_3 : P.eval (3 : ℤ)
+     = 4171558447626994918813599329150255122529839591144951060589033457 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_4 : P.eval (4 : ℤ) = 4171558446785604541862726695024401674453614787349045209972224000 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_4 : P.eval (4 : ℤ)
+     = 4171558446785604541862726695024401674453614787349045209972224000 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_5 : P.eval (5 : ℤ) = 4171558445944214164950648607930771648404373679743135559747616049 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_5 : P.eval (5 : ℤ)
+     = 4171558445944214164950648607930771648404373679743135559747616049 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_6 : P.eval (6 : ℤ) = 4171558445102823788077365067872369414676651202782183853690952000 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_6 : P.eval (6 : ℤ)
+     = 4171558445102823788077365067872369414676651202782183853690952000 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
 /-- Assembly: the n+1 evaluation points, discharged per case. -/
-theorem hevals : ∀ i : Fin 6, P.eval ((i : ℕ) : ℤ)
+theorem hevals : ∀ i : Fin 7, P.eval ((i : ℕ) : ℤ)
       = (Matrix.scalar (Fin 6) ((i : ℕ) : ℤ) - M).det := by
   intro i
   fin_cases i
-  · show P.eval (0 : ℤ)
+  · change P.eval (0 : ℤ)
       = (Matrix.scalar (Fin 6) (0 : ℤ) - M).det
     rw [ev_0, det_0]
-  · show P.eval (1 : ℤ)
+  · change P.eval (1 : ℤ)
       = (Matrix.scalar (Fin 6) (1 : ℤ) - M).det
     rw [ev_1, det_1]
-  · show P.eval (2 : ℤ)
+  · change P.eval (2 : ℤ)
       = (Matrix.scalar (Fin 6) (2 : ℤ) - M).det
     rw [ev_2, det_2]
-  · show P.eval (3 : ℤ)
+  · change P.eval (3 : ℤ)
       = (Matrix.scalar (Fin 6) (3 : ℤ) - M).det
     rw [ev_3, det_3]
-  · show P.eval (4 : ℤ)
+  · change P.eval (4 : ℤ)
       = (Matrix.scalar (Fin 6) (4 : ℤ) - M).det
     rw [ev_4, det_4]
-  · show P.eval (5 : ℤ)
+  · change P.eval (5 : ℤ)
       = (Matrix.scalar (Fin 6) (5 : ℤ) - M).det
     rw [ev_5, det_5]
-  · show P.eval (6 : ℤ)
+  · change P.eval (6 : ℤ)
       = (Matrix.scalar (Fin 6) (6 : ℤ) - M).det
     rw [ev_6, det_6]
+
+theorem entry_0_0 : coordN Atab (fun m => Xtab 0 m) 0
+      = ((3576 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_1 : coordN Atab (fun m => Xtab 1 m) 0
+      = ((1 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_2 : coordN Atab (fun m => Xtab 2 m) 0
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_3 : coordN Atab (fun m => Xtab 3 m) 0
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_4 : coordN Atab (fun m => Xtab 4 m) 0
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_5 : coordN Atab (fun m => Xtab 5 m) 0
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_0 : coordN Atab (fun m => Xtab 0 m) 1
+      = ((2361183241441063680000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_1 : coordN Atab (fun m => Xtab 1 m) 1
+      = ((3686784 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_2 : coordN Atab (fun m => Xtab 2 m) 1
+      = ((2088 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_3 : coordN Atab (fun m => Xtab 3 m) 1
+      = ((1 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_4 : coordN Atab (fun m => Xtab 4 m) 1
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_5 : coordN Atab (fun m => Xtab 5 m) 1
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_0 : coordN Atab (fun m => Xtab 0 m) 2
+      = ((-6686870937316024320000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_1 : coordN Atab (fun m => Xtab 1 m) 2
+      = ((1569300480000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_2 : coordN Atab (fun m => Xtab 2 m) 2
+      = ((1047300096 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_3 : coordN Atab (fun m => Xtab 3 m) 2
+      = ((740352 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_4 : coordN Atab (fun m => Xtab 4 m) 2
+      = ((600 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_5 : coordN Atab (fun m => Xtab 5 m) 2
+      = ((1 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_0 : coordN Atab (fun m => Xtab 0 m) 3
+      = ((5257014245625692160000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_1 : coordN Atab (fun m => Xtab 1 m) 3
+      = ((2361354558898176000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_2 : coordN Atab (fun m => Xtab 2 m) 3
+      = ((84053458944000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_3 : coordN Atab (fun m => Xtab 3 m) 3
+      = ((31486377984 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_4 : coordN Atab (fun m => Xtab 4 m) 3
+      = ((-1024000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_5 : coordN Atab (fun m => Xtab 5 m) 3
+      = ((8064 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_0 : coordN Atab (fun m => Xtab 0 m) 4
+      = ((-1009146538984734720000000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_1 : coordN Atab (fun m => Xtab 1 m) 4
+      = ((-3167692353699840000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_2 : coordN Atab (fun m => Xtab 2 m) 4
+      = ((1265866113024000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_3 : coordN Atab (fun m => Xtab 3 m) 4
+      = ((-27179089920000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_4 : coordN Atab (fun m => Xtab 4 m) 4
+      = ((33594802176 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_5 : coordN Atab (fun m => Xtab 5 m) 4
+      = ((2949120 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_0 : coordN Atab (fun m => Xtab 0 m) 5
+      = ((11555266180939776000000000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_1 : coordN Atab (fun m => Xtab 1 m) 5
+      = ((213986410758144000000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_2 : coordN Atab (fun m => Xtab 2 m) 5
+      = ((3962711310336000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_3 : coordN Atab (fun m => Xtab 3 m) 5
+      = ((73383542784000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_4 : coordN Atab (fun m => Xtab 4 m) 5
+      = ((1358954496000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_5 : coordN Atab (fun m => Xtab 5 m) 5
+      = ((25165824 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 /-- **The characteristic polynomial of `T₂` on this weight.** -/
 theorem charpoly_T2 : T2.charpoly = P.map (Int.castRingHom ℂ) := by
   have hdim := finrank_eq
   have hn : 0 < 6 := by norm_num
   rw [charpoly_dimN hn hdim fb Atab Xtab hzero hone hA T2 hX,
-      ← charpoly_of_eval_eq M P P_natDegree hevals, ← Matrix.charpoly_map]
+      ← CharpolyEngine.charpoly_of_eval_eq M P P_natDegree hevals, ← Matrix.charpoly_map]
   congr 1
   ext j i
   fin_cases j <;> fin_cases i
-  · show coordN Atab (fun m => Xtab 0 m) 0 = ((3576 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 0 = ((1 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 0 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 0 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 0 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 0 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 1 = ((2361183241441063680000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 1 = ((3686784 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 1 = ((2088 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 1 = ((1 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 1 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 1 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 2 = ((-6686870937316024320000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 2 = ((1569300480000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 2 = ((1047300096 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 2 = ((740352 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 2 = ((600 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 2 = ((1 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 3 = ((5257014245625692160000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 3 = ((2361354558898176000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 3 = ((84053458944000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 3 = ((31486377984 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 3 = ((-1024000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 3 = ((8064 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 4 = ((-1009146538984734720000000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 4 = ((-3167692353699840000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 4 = ((1265866113024000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 4 = ((-27179089920000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 4 = ((33594802176 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 4 = ((2949120 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 5 = ((11555266180939776000000000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 5 = ((213986410758144000000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 5 = ((3962711310336000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 5 = ((73383542784000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 5 = ((1358954496000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 5 = ((25165824 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
+  · change coordN Atab (fun m => Xtab 0 m) 0 = ((3576 : ℤ) : ℂ)
+    exact entry_0_0
+  · change coordN Atab (fun m => Xtab 1 m) 0 = ((1 : ℤ) : ℂ)
+    exact entry_0_1
+  · change coordN Atab (fun m => Xtab 2 m) 0 = ((0 : ℤ) : ℂ)
+    exact entry_0_2
+  · change coordN Atab (fun m => Xtab 3 m) 0 = ((0 : ℤ) : ℂ)
+    exact entry_0_3
+  · change coordN Atab (fun m => Xtab 4 m) 0 = ((0 : ℤ) : ℂ)
+    exact entry_0_4
+  · change coordN Atab (fun m => Xtab 5 m) 0 = ((0 : ℤ) : ℂ)
+    exact entry_0_5
+  · change coordN Atab (fun m => Xtab 0 m) 1 = ((2361183241441063680000 : ℤ) : ℂ)
+    exact entry_1_0
+  · change coordN Atab (fun m => Xtab 1 m) 1 = ((3686784 : ℤ) : ℂ)
+    exact entry_1_1
+  · change coordN Atab (fun m => Xtab 2 m) 1 = ((2088 : ℤ) : ℂ)
+    exact entry_1_2
+  · change coordN Atab (fun m => Xtab 3 m) 1 = ((1 : ℤ) : ℂ)
+    exact entry_1_3
+  · change coordN Atab (fun m => Xtab 4 m) 1 = ((0 : ℤ) : ℂ)
+    exact entry_1_4
+  · change coordN Atab (fun m => Xtab 5 m) 1 = ((0 : ℤ) : ℂ)
+    exact entry_1_5
+  · change coordN Atab (fun m => Xtab 0 m) 2 = ((-6686870937316024320000000 : ℤ) : ℂ)
+    exact entry_2_0
+  · change coordN Atab (fun m => Xtab 1 m) 2 = ((1569300480000 : ℤ) : ℂ)
+    exact entry_2_1
+  · change coordN Atab (fun m => Xtab 2 m) 2 = ((1047300096 : ℤ) : ℂ)
+    exact entry_2_2
+  · change coordN Atab (fun m => Xtab 3 m) 2 = ((740352 : ℤ) : ℂ)
+    exact entry_2_3
+  · change coordN Atab (fun m => Xtab 4 m) 2 = ((600 : ℤ) : ℂ)
+    exact entry_2_4
+  · change coordN Atab (fun m => Xtab 5 m) 2 = ((1 : ℤ) : ℂ)
+    exact entry_2_5
+  · change coordN Atab (fun m => Xtab 0 m) 3 = ((5257014245625692160000000000 : ℤ) : ℂ)
+    exact entry_3_0
+  · change coordN Atab (fun m => Xtab 1 m) 3 = ((2361354558898176000000 : ℤ) : ℂ)
+    exact entry_3_1
+  · change coordN Atab (fun m => Xtab 2 m) 3 = ((84053458944000 : ℤ) : ℂ)
+    exact entry_3_2
+  · change coordN Atab (fun m => Xtab 3 m) 3 = ((31486377984 : ℤ) : ℂ)
+    exact entry_3_3
+  · change coordN Atab (fun m => Xtab 4 m) 3 = ((-1024000 : ℤ) : ℂ)
+    exact entry_3_4
+  · change coordN Atab (fun m => Xtab 5 m) 3 = ((8064 : ℤ) : ℂ)
+    exact entry_3_5
+  · change coordN Atab (fun m => Xtab 0 m) 4 = ((-1009146538984734720000000000000 : ℤ) : ℂ)
+    exact entry_4_0
+  · change coordN Atab (fun m => Xtab 1 m) 4 = ((-3167692353699840000000000 : ℤ) : ℂ)
+    exact entry_4_1
+  · change coordN Atab (fun m => Xtab 2 m) 4 = ((1265866113024000000 : ℤ) : ℂ)
+    exact entry_4_2
+  · change coordN Atab (fun m => Xtab 3 m) 4 = ((-27179089920000 : ℤ) : ℂ)
+    exact entry_4_3
+  · change coordN Atab (fun m => Xtab 4 m) 4 = ((33594802176 : ℤ) : ℂ)
+    exact entry_4_4
+  · change coordN Atab (fun m => Xtab 5 m) 4 = ((2949120 : ℤ) : ℂ)
+    exact entry_4_5
+  · change coordN Atab (fun m => Xtab 0 m) 5 = ((11555266180939776000000000000000 : ℤ) : ℂ)
+    exact entry_5_0
+  · change coordN Atab (fun m => Xtab 1 m) 5 = ((213986410758144000000000000 : ℤ) : ℂ)
+    exact entry_5_1
+  · change coordN Atab (fun m => Xtab 2 m) 5 = ((3962711310336000000000 : ℤ) : ℂ)
+    exact entry_5_2
+  · change coordN Atab (fun m => Xtab 3 m) 5 = ((73383542784000000 : ℤ) : ℂ)
+    exact entry_5_3
+  · change coordN Atab (fun m => Xtab 4 m) 5 = ((1358954496000 : ℤ) : ℂ)
+    exact entry_5_4
+  · change coordN Atab (fun m => Xtab 5 m) 5 = ((25165824 : ℤ) : ℂ)
+    exact entry_5_5
 
 /-- The characteristic polynomial mod the certificate prime (little-endian). -/
 noncomputable def fr : List ℤ := [90, 23, 4, 83, 94, 8, 1]
 
 lemma hmap : P.map (Int.castRingHom (ZMod 107)) = RabinCert.toPoly 107 fr := by
-  simp [P, RabinCert.toPoly, fr, map_ofNat]
+  simp only [P, RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr,
+      Polynomial.map_C, Polynomial.map_X, Polynomial.map_add, Polynomial.map_mul,
+      Polynomial.map_pow, Int.coe_castRingHom, ← Polynomial.C_neg]
+  rw [show ((-66157336440 : ℤ) : ZMod 107) = (8 : ZMod 107) from by decide +kernel,
+      show ((-9002758724278005040128 : ℤ) : ZMod 107) = (94 : ZMod 107) from by decide +kernel,
+      show ((500728382584538732877523640647680 : ℤ) : ZMod 107)
+           = (83 : ZMod 107) from by decide +kernel,
+      show ((19397273510102970423350650896766446839267328 : ℤ) : ZMod 107)
+           = (4 : ZMod 107) from by decide +kernel,
+      show ((-841390377086653548715101191193731810412939033433866240 : ℤ) : ZMod 107)
+           = (23 : ZMod 107) from by decide +kernel,
+      show ((4171558450151166049898984513691112295971825841981859595680743424 : ℤ) : ZMod 107)
+           = (90 : ZMod 107) from by decide +kernel]
+  ring_nf
 
 lemma hmon' : (RabinCert.toPoly 107 fr).Monic := by
-  simp only [RabinCert.toPoly]
+  simp only [RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr, mul_zero, add_zero]
   monicity!
 
 lemma hnd : (RabinCert.toPoly 107 fr).natDegree = 6 := by
-  simp only [RabinCert.toPoly]
+  simp only [RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr, mul_zero, add_zero]
   compute_degree!
 
 lemma hF : 107 ^ 6 < 2 ^ 41 := by norm_num
@@ -1137,9 +1356,13 @@ lemma h2 : ∀ q : ℕ, q.Prime → q ∣ 6 → ∃ w : ℕ,
   intro q hq hq2
   have hqb : q ≤ 6 := Nat.le_of_dvd (by norm_num) hq2
   interval_cases q
+  · exact absurd hq (by decide)
+  · exact absurd hq (by decide)
   · exact h2_2
   · exact h2_3
+  · exact absurd hq (by decide)
   · exact absurd hq2 (by decide)
+  · exact absurd hq (by decide)
 
 /-- The second certificate prime (sanity decide, not used by `maeda`). -/
 noncomputable def fr2 : List ℤ := [17, 122, 46, 178, 32, 130, 1]
@@ -1150,8 +1373,8 @@ lemma h1_2 : RabinCert.zpxw 241 fr2 (RabinCert.bitsOf 48 (241 ^ 6)) [1]
 
 /-- **Maeda's conjecture (irreducibility) in this weight.** -/
 theorem maeda : Irreducible (P.map (Int.castRingHom ℚ)) :=
-  have : Fact (107.Prime) := ⟨by norm_num⟩
-  RabinCert.irreducible_of_rabin_int P_monic hmap hmon' hnd (by norm_num) h1 h2
+  haveI : Fact (Nat.Prime 107) := ⟨by norm_num⟩
+  RabinCert.irreducible_of_rabin_int P_monic hmap hmon' hnd (by norm_num) hF h1 h2
 
 end MaedaWeight72
 /-! ### Weight 76 (dim 6) -/
@@ -2003,18 +2226,24 @@ def M : Matrix (Fin 6) (Fin 6) ℤ :=
       !![3816, 1, 0, 0, 0, 0;
       37778931862964847360000, 4368384, 2328, 1, 0, 0;
       -116056878679478034432000000, 2277310464000, 1516179456, 1064832, 840, 1;
-      105147532649583083520000000000, 37779251285458944000000, 173425950720000, 83569803264, 23552000, -24576;
-      -27346059009070202880000000000000, -59827034007797760000000000, 4540606709760000000, 517252055040000, -140057247744, -38830080;
-      935976560656121856000000000000000, 10271347716390912000000000000, 59440669655040000000000, -1320903770112000000, -69306679296000, -2113929216]
+      105147532649583083520000000000, 37779251285458944000000, 173425950720000, 83569803264,
+      23552000, -24576;
+      -27346059009070202880000000000000, -59827034007797760000000000, 4540606709760000000,
+      517252055040000, -140057247744, -38830080;
+      935976560656121856000000000000000, 10271347716390912000000000000, 59440669655040000000000,
+      -1320903770112000000, -69306679296000, -2113929216]
 
 /-- The translated matrices `t·1 − M`, as an explicit literal (symbolic in `t`). -/
 def MT (t : ℤ) : Matrix (Fin 6) (Fin 6) ℤ :=
       !![t - 3816, (-1), (0), (0), (0), (0);
       (-37778931862964847360000), t - 4368384, (-2328), (-1), (0), (0);
       (116056878679478034432000000), (-2277310464000), t - 1516179456, (-1064832), (-840), (-1);
-      (-105147532649583083520000000000), (-37779251285458944000000), (-173425950720000), t - 83569803264, (-23552000), (24576);
-      (27346059009070202880000000000000), (59827034007797760000000000), (-4540606709760000000), (-517252055040000), t - -140057247744, (38830080);
-      (-935976560656121856000000000000000), (-10271347716390912000000000000), (-59440669655040000000000), (1320903770112000000), (69306679296000), t - -2113929216]
+      (-105147532649583083520000000000), (-37779251285458944000000), (-173425950720000),
+      t - 83569803264, (-23552000), (24576);
+      (27346059009070202880000000000000), (59827034007797760000000000), (-4540606709760000000),
+      (-517252055040000), t - -140057247744, (38830080);
+      (-935976560656121856000000000000000), (-10271347716390912000000000000),
+      (-59440669655040000000000), (1320903770112000000), (69306679296000), t - -2113929216]
 
 /-- One-time symbolic bridge, reused by all determinant lemmas. -/
 theorem scalar_sub_M (t : ℤ) : Matrix.scalar (Fin 6) t - M = MT t := by
@@ -2024,232 +2253,445 @@ theorem scalar_sub_M (t : ℤ) : Matrix.scalar (Fin 6) t - M = MT t := by
 
 /-- The characteristic polynomial of `T₂` (descending literal). -/
 noncomputable def P : ℤ[X] :=
-  (X : ℤ[X]) ^ 6 + C (57080822040) * (X : ℤ[X]) ^ 5 + - C (198007918566571424544768) * (X : ℤ[X]) ^ 4 + - C (11405115067164354385292006554337280) * (X : ℤ[X]) ^ 3 + C (9757628454131691442128845013041495838774263808) * (X : ℤ[X]) ^ 2 + C (290013995562379500498435975003716024800114593761580810240) * (X : ℤ[X]) ^ 1 + - C (92217203874207784163935379997152082331434364841943058919508374716416)
+  C (1) * (X : ℤ[X]) ^ 6 + C (57080822040) * (X : ℤ[X]) ^ 5 +
+      - C (198007918566571424544768) * (X : ℤ[X]) ^ 4 +
+      - C (11405115067164354385292006554337280) * (X : ℤ[X]) ^ 3 +
+      C (9757628454131691442128845013041495838774263808) * (X : ℤ[X]) ^ 2 +
+      C (290013995562379500498435975003716024800114593761580810240) * (X : ℤ[X]) ^ 1 +
+      - C (92217203874207784163935379997152082331434364841943058919508374716416)
 
 theorem P_natDegree : P.natDegree = 6 := by unfold P; compute_degree!
 
 theorem P_monic : P.Monic := by unfold P; monicity!
 
 /-- `det (t·1 − M)` at `t = 0`, by the certified Bareiss echelon decomposition. -/
-theorem det_0 : (Matrix.scalar (Fin 6) (0 : ℤ) - M).det = -92217203874207784163935379997152082331434364841943058919508374716416 := by
+theorem det_0 : (Matrix.scalar (Fin 6) (0 : ℤ) - M).det
+     = -92217203874207784163935379997152082331434364841943058919508374716416 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 1`, by the certified Bareiss echelon decomposition. -/
-theorem det_1 : (Matrix.scalar (Fin 6) (1 : ℤ) - M).det = -92217203873917770168363242868199526070103587334492206688428917702375 := by
+theorem det_1 : (Matrix.scalar (Fin 6) (1 : ℤ) - M).det
+     = -92217203873917770168363242868199526070103587334492206688428917702375 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 2`, by the certified Bareiss echelon decomposition. -/
-theorem det_2 : (Matrix.scalar (Fin 6) (2 : ℤ) - M).det = -92217203873627756172771590482338774856578957895252443147998757149888 := by
+theorem det_2 : (Matrix.scalar (Fin 6) (2 : ℤ) - M).det
+     = -92217203873627756172771590482338774856578957895252443147998757149888 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 3`, by the certified Bareiss echelon decomposition. -/
-theorem det_3 : (Matrix.scalar (Fin 6) (3 : ℤ) - M).det = -92217203873337742177160422839569897121550886638635148438266379387743 := by
+theorem det_3 : (Matrix.scalar (Fin 6) (3 : ℤ) - M).det
+     = -92217203873337742177160422839569897121550886638635148438266379387743 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 4`, by the certified Bareiss echelon decomposition. -/
-theorem det_4 : (Matrix.scalar (Fin 6) (4 : ℤ) - M).det = -92217203873047728181529739939892961295709788431241748283295062528000 := by
+theorem det_4 : (Matrix.scalar (Fin 6) (4 : ℤ) - M).det
+     = -92217203873047728181529739939892961295709788431241748283295062528000 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 5`, by the certified Bareiss echelon decomposition. -/
-theorem det_5 : (Matrix.scalar (Fin 6) (5 : ℤ) - M).det = -92217203872757714185879541783308035809746082891863713984313177819391 := by
+theorem det_5 : (Matrix.scalar (Fin 6) (5 : ℤ) - M).det
+     = -92217203872757714185879541783308035809746082891863713984313177819391 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 6`, by the certified Bareiss echelon decomposition. -/
-theorem det_6 : (Matrix.scalar (Fin 6) (6 : ℤ) - M).det = -92217203872467700190209828369815189094350194391482562412864491000000 := by
+theorem det_6 : (Matrix.scalar (Fin 6) (6 : ℤ) - M).det
+     = -92217203872467700190209828369815189094350194391482562412864491000000 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
-theorem ev_0 : P.eval (0 : ℤ) = -92217203874207784163935379997152082331434364841943058919508374716416 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_0 : P.eval (0 : ℤ)
+     = -92217203874207784163935379997152082331434364841943058919508374716416 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_1 : P.eval (1 : ℤ) = -92217203873917770168363242868199526070103587334492206688428917702375 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_1 : P.eval (1 : ℤ)
+     = -92217203873917770168363242868199526070103587334492206688428917702375 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_2 : P.eval (2 : ℤ) = -92217203873627756172771590482338774856578957895252443147998757149888 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_2 : P.eval (2 : ℤ)
+     = -92217203873627756172771590482338774856578957895252443147998757149888 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_3 : P.eval (3 : ℤ) = -92217203873337742177160422839569897121550886638635148438266379387743 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_3 : P.eval (3 : ℤ)
+     = -92217203873337742177160422839569897121550886638635148438266379387743 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_4 : P.eval (4 : ℤ) = -92217203873047728181529739939892961295709788431241748283295062528000 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_4 : P.eval (4 : ℤ)
+     = -92217203873047728181529739939892961295709788431241748283295062528000 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_5 : P.eval (5 : ℤ) = -92217203872757714185879541783308035809746082891863713984313177819391 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_5 : P.eval (5 : ℤ)
+     = -92217203872757714185879541783308035809746082891863713984313177819391 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_6 : P.eval (6 : ℤ) = -92217203872467700190209828369815189094350194391482562412864491000000 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_6 : P.eval (6 : ℤ)
+     = -92217203872467700190209828369815189094350194391482562412864491000000 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
 /-- Assembly: the n+1 evaluation points, discharged per case. -/
-theorem hevals : ∀ i : Fin 6, P.eval ((i : ℕ) : ℤ)
+theorem hevals : ∀ i : Fin 7, P.eval ((i : ℕ) : ℤ)
       = (Matrix.scalar (Fin 6) ((i : ℕ) : ℤ) - M).det := by
   intro i
   fin_cases i
-  · show P.eval (0 : ℤ)
+  · change P.eval (0 : ℤ)
       = (Matrix.scalar (Fin 6) (0 : ℤ) - M).det
     rw [ev_0, det_0]
-  · show P.eval (1 : ℤ)
+  · change P.eval (1 : ℤ)
       = (Matrix.scalar (Fin 6) (1 : ℤ) - M).det
     rw [ev_1, det_1]
-  · show P.eval (2 : ℤ)
+  · change P.eval (2 : ℤ)
       = (Matrix.scalar (Fin 6) (2 : ℤ) - M).det
     rw [ev_2, det_2]
-  · show P.eval (3 : ℤ)
+  · change P.eval (3 : ℤ)
       = (Matrix.scalar (Fin 6) (3 : ℤ) - M).det
     rw [ev_3, det_3]
-  · show P.eval (4 : ℤ)
+  · change P.eval (4 : ℤ)
       = (Matrix.scalar (Fin 6) (4 : ℤ) - M).det
     rw [ev_4, det_4]
-  · show P.eval (5 : ℤ)
+  · change P.eval (5 : ℤ)
       = (Matrix.scalar (Fin 6) (5 : ℤ) - M).det
     rw [ev_5, det_5]
-  · show P.eval (6 : ℤ)
+  · change P.eval (6 : ℤ)
       = (Matrix.scalar (Fin 6) (6 : ℤ) - M).det
     rw [ev_6, det_6]
+
+theorem entry_0_0 : coordN Atab (fun m => Xtab 0 m) 0
+      = ((3816 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_1 : coordN Atab (fun m => Xtab 1 m) 0
+      = ((1 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_2 : coordN Atab (fun m => Xtab 2 m) 0
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_3 : coordN Atab (fun m => Xtab 3 m) 0
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_4 : coordN Atab (fun m => Xtab 4 m) 0
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_5 : coordN Atab (fun m => Xtab 5 m) 0
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_0 : coordN Atab (fun m => Xtab 0 m) 1
+      = ((37778931862964847360000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_1 : coordN Atab (fun m => Xtab 1 m) 1
+      = ((4368384 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_2 : coordN Atab (fun m => Xtab 2 m) 1
+      = ((2328 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_3 : coordN Atab (fun m => Xtab 3 m) 1
+      = ((1 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_4 : coordN Atab (fun m => Xtab 4 m) 1
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_5 : coordN Atab (fun m => Xtab 5 m) 1
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_0 : coordN Atab (fun m => Xtab 0 m) 2
+      = ((-116056878679478034432000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_1 : coordN Atab (fun m => Xtab 1 m) 2
+      = ((2277310464000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_2 : coordN Atab (fun m => Xtab 2 m) 2
+      = ((1516179456 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_3 : coordN Atab (fun m => Xtab 3 m) 2
+      = ((1064832 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_4 : coordN Atab (fun m => Xtab 4 m) 2
+      = ((840 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_5 : coordN Atab (fun m => Xtab 5 m) 2
+      = ((1 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_0 : coordN Atab (fun m => Xtab 0 m) 3
+      = ((105147532649583083520000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_1 : coordN Atab (fun m => Xtab 1 m) 3
+      = ((37779251285458944000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_2 : coordN Atab (fun m => Xtab 2 m) 3
+      = ((173425950720000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_3 : coordN Atab (fun m => Xtab 3 m) 3
+      = ((83569803264 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_4 : coordN Atab (fun m => Xtab 4 m) 3
+      = ((23552000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_5 : coordN Atab (fun m => Xtab 5 m) 3
+      = ((-24576 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_0 : coordN Atab (fun m => Xtab 0 m) 4
+      = ((-27346059009070202880000000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_1 : coordN Atab (fun m => Xtab 1 m) 4
+      = ((-59827034007797760000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_2 : coordN Atab (fun m => Xtab 2 m) 4
+      = ((4540606709760000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_3 : coordN Atab (fun m => Xtab 3 m) 4
+      = ((517252055040000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_4 : coordN Atab (fun m => Xtab 4 m) 4
+      = ((-140057247744 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_5 : coordN Atab (fun m => Xtab 5 m) 4
+      = ((-38830080 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_0 : coordN Atab (fun m => Xtab 0 m) 5
+      = ((935976560656121856000000000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_1 : coordN Atab (fun m => Xtab 1 m) 5
+      = ((10271347716390912000000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_2 : coordN Atab (fun m => Xtab 2 m) 5
+      = ((59440669655040000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_3 : coordN Atab (fun m => Xtab 3 m) 5
+      = ((-1320903770112000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_4 : coordN Atab (fun m => Xtab 4 m) 5
+      = ((-69306679296000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_5 : coordN Atab (fun m => Xtab 5 m) 5
+      = ((-2113929216 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 /-- **The characteristic polynomial of `T₂` on this weight.** -/
 theorem charpoly_T2 : T2.charpoly = P.map (Int.castRingHom ℂ) := by
   have hdim := finrank_eq
   have hn : 0 < 6 := by norm_num
   rw [charpoly_dimN hn hdim fb Atab Xtab hzero hone hA T2 hX,
-      ← charpoly_of_eval_eq M P P_natDegree hevals, ← Matrix.charpoly_map]
+      ← CharpolyEngine.charpoly_of_eval_eq M P P_natDegree hevals, ← Matrix.charpoly_map]
   congr 1
   ext j i
   fin_cases j <;> fin_cases i
-  · show coordN Atab (fun m => Xtab 0 m) 0 = ((3816 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 0 = ((1 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 0 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 0 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 0 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 0 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 1 = ((37778931862964847360000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 1 = ((4368384 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 1 = ((2328 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 1 = ((1 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 1 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 1 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 2 = ((-116056878679478034432000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 2 = ((2277310464000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 2 = ((1516179456 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 2 = ((1064832 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 2 = ((840 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 2 = ((1 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 3 = ((105147532649583083520000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 3 = ((37779251285458944000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 3 = ((173425950720000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 3 = ((83569803264 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 3 = ((23552000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 3 = ((-24576 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 4 = ((-27346059009070202880000000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 4 = ((-59827034007797760000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 4 = ((4540606709760000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 4 = ((517252055040000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 4 = ((-140057247744 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 4 = ((-38830080 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 5 = ((935976560656121856000000000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 5 = ((10271347716390912000000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 5 = ((59440669655040000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 5 = ((-1320903770112000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 5 = ((-69306679296000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 5 = ((-2113929216 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
+  · change coordN Atab (fun m => Xtab 0 m) 0 = ((3816 : ℤ) : ℂ)
+    exact entry_0_0
+  · change coordN Atab (fun m => Xtab 1 m) 0 = ((1 : ℤ) : ℂ)
+    exact entry_0_1
+  · change coordN Atab (fun m => Xtab 2 m) 0 = ((0 : ℤ) : ℂ)
+    exact entry_0_2
+  · change coordN Atab (fun m => Xtab 3 m) 0 = ((0 : ℤ) : ℂ)
+    exact entry_0_3
+  · change coordN Atab (fun m => Xtab 4 m) 0 = ((0 : ℤ) : ℂ)
+    exact entry_0_4
+  · change coordN Atab (fun m => Xtab 5 m) 0 = ((0 : ℤ) : ℂ)
+    exact entry_0_5
+  · change coordN Atab (fun m => Xtab 0 m) 1 = ((37778931862964847360000 : ℤ) : ℂ)
+    exact entry_1_0
+  · change coordN Atab (fun m => Xtab 1 m) 1 = ((4368384 : ℤ) : ℂ)
+    exact entry_1_1
+  · change coordN Atab (fun m => Xtab 2 m) 1 = ((2328 : ℤ) : ℂ)
+    exact entry_1_2
+  · change coordN Atab (fun m => Xtab 3 m) 1 = ((1 : ℤ) : ℂ)
+    exact entry_1_3
+  · change coordN Atab (fun m => Xtab 4 m) 1 = ((0 : ℤ) : ℂ)
+    exact entry_1_4
+  · change coordN Atab (fun m => Xtab 5 m) 1 = ((0 : ℤ) : ℂ)
+    exact entry_1_5
+  · change coordN Atab (fun m => Xtab 0 m) 2 = ((-116056878679478034432000000 : ℤ) : ℂ)
+    exact entry_2_0
+  · change coordN Atab (fun m => Xtab 1 m) 2 = ((2277310464000 : ℤ) : ℂ)
+    exact entry_2_1
+  · change coordN Atab (fun m => Xtab 2 m) 2 = ((1516179456 : ℤ) : ℂ)
+    exact entry_2_2
+  · change coordN Atab (fun m => Xtab 3 m) 2 = ((1064832 : ℤ) : ℂ)
+    exact entry_2_3
+  · change coordN Atab (fun m => Xtab 4 m) 2 = ((840 : ℤ) : ℂ)
+    exact entry_2_4
+  · change coordN Atab (fun m => Xtab 5 m) 2 = ((1 : ℤ) : ℂ)
+    exact entry_2_5
+  · change coordN Atab (fun m => Xtab 0 m) 3 = ((105147532649583083520000000000 : ℤ) : ℂ)
+    exact entry_3_0
+  · change coordN Atab (fun m => Xtab 1 m) 3 = ((37779251285458944000000 : ℤ) : ℂ)
+    exact entry_3_1
+  · change coordN Atab (fun m => Xtab 2 m) 3 = ((173425950720000 : ℤ) : ℂ)
+    exact entry_3_2
+  · change coordN Atab (fun m => Xtab 3 m) 3 = ((83569803264 : ℤ) : ℂ)
+    exact entry_3_3
+  · change coordN Atab (fun m => Xtab 4 m) 3 = ((23552000 : ℤ) : ℂ)
+    exact entry_3_4
+  · change coordN Atab (fun m => Xtab 5 m) 3 = ((-24576 : ℤ) : ℂ)
+    exact entry_3_5
+  · change coordN Atab (fun m => Xtab 0 m) 4 = ((-27346059009070202880000000000000 : ℤ) : ℂ)
+    exact entry_4_0
+  · change coordN Atab (fun m => Xtab 1 m) 4 = ((-59827034007797760000000000 : ℤ) : ℂ)
+    exact entry_4_1
+  · change coordN Atab (fun m => Xtab 2 m) 4 = ((4540606709760000000 : ℤ) : ℂ)
+    exact entry_4_2
+  · change coordN Atab (fun m => Xtab 3 m) 4 = ((517252055040000 : ℤ) : ℂ)
+    exact entry_4_3
+  · change coordN Atab (fun m => Xtab 4 m) 4 = ((-140057247744 : ℤ) : ℂ)
+    exact entry_4_4
+  · change coordN Atab (fun m => Xtab 5 m) 4 = ((-38830080 : ℤ) : ℂ)
+    exact entry_4_5
+  · change coordN Atab (fun m => Xtab 0 m) 5 = ((935976560656121856000000000000000 : ℤ) : ℂ)
+    exact entry_5_0
+  · change coordN Atab (fun m => Xtab 1 m) 5 = ((10271347716390912000000000000 : ℤ) : ℂ)
+    exact entry_5_1
+  · change coordN Atab (fun m => Xtab 2 m) 5 = ((59440669655040000000000 : ℤ) : ℂ)
+    exact entry_5_2
+  · change coordN Atab (fun m => Xtab 3 m) 5 = ((-1320903770112000000 : ℤ) : ℂ)
+    exact entry_5_3
+  · change coordN Atab (fun m => Xtab 4 m) 5 = ((-69306679296000 : ℤ) : ℂ)
+    exact entry_5_4
+  · change coordN Atab (fun m => Xtab 5 m) 5 = ((-2113929216 : ℤ) : ℂ)
+    exact entry_5_5
 
 /-- The characteristic polynomial mod the certificate prime (little-endian). -/
 noncomputable def fr : List ℤ := [89, 16, 106, 121, 83, 8, 1]
 
 lemma hmap : P.map (Int.castRingHom (ZMod 137)) = RabinCert.toPoly 137 fr := by
-  simp [P, RabinCert.toPoly, fr, map_ofNat]
+  simp only [P, RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr,
+      Polynomial.map_C, Polynomial.map_X, Polynomial.map_add, Polynomial.map_mul,
+      Polynomial.map_pow, Int.coe_castRingHom, ← Polynomial.C_neg]
+  rw [show ((57080822040 : ℤ) : ZMod 137) = (8 : ZMod 137) from by decide +kernel,
+      show ((-198007918566571424544768 : ℤ) : ZMod 137) = (83 : ZMod 137) from by decide +kernel,
+      show ((-11405115067164354385292006554337280 : ℤ) : ZMod 137)
+           = (121 : ZMod 137) from by decide +kernel,
+      show ((9757628454131691442128845013041495838774263808 : ℤ) : ZMod 137)
+           = (106 : ZMod 137) from by decide +kernel,
+      show ((290013995562379500498435975003716024800114593761580810240 : ℤ) : ZMod 137)
+           = (16 : ZMod 137) from by decide +kernel,
+      show ((-92217203874207784163935379997152082331434364841943058919508374716416 : ℤ)
+          : ZMod 137) = (89 : ZMod 137) from by decide +kernel]
+  ring_nf
 
 lemma hmon' : (RabinCert.toPoly 137 fr).Monic := by
-  simp only [RabinCert.toPoly]
+  simp only [RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr, mul_zero, add_zero]
   monicity!
 
 lemma hnd : (RabinCert.toPoly 137 fr).natDegree = 6 := by
-  simp only [RabinCert.toPoly]
+  simp only [RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr, mul_zero, add_zero]
   compute_degree!
 
 lemma hF : 137 ^ 6 < 2 ^ 43 := by norm_num
@@ -2271,9 +2713,13 @@ lemma h2 : ∀ q : ℕ, q.Prime → q ∣ 6 → ∃ w : ℕ,
   intro q hq hq2
   have hqb : q ≤ 6 := Nat.le_of_dvd (by norm_num) hq2
   interval_cases q
+  · exact absurd hq (by decide)
+  · exact absurd hq (by decide)
   · exact h2_2
   · exact h2_3
+  · exact absurd hq (by decide)
   · exact absurd hq2 (by decide)
+  · exact absurd hq (by decide)
 
 /-- The second certificate prime (sanity decide, not used by `maeda`). -/
 noncomputable def fr2 : List ℤ := [151, 31, 25, 101, 68, 36, 1]
@@ -2284,8 +2730,8 @@ lemma h1_2 : RabinCert.zpxw 173 fr2 (RabinCert.bitsOf 45 (173 ^ 6)) [1]
 
 /-- **Maeda's conjecture (irreducibility) in this weight.** -/
 theorem maeda : Irreducible (P.map (Int.castRingHom ℚ)) :=
-  have : Fact (137.Prime) := ⟨by norm_num⟩
-  RabinCert.irreducible_of_rabin_int P_monic hmap hmon' hnd (by norm_num) h1 h2
+  haveI : Fact (Nat.Prime 137) := ⟨by norm_num⟩
+  RabinCert.irreducible_of_rabin_int P_monic hmap hmon' hnd (by norm_num) hF h1 h2
 
 end MaedaWeight76
 /-! ### Weight 78 (dim 6) -/
@@ -3139,18 +3585,24 @@ def M : Matrix (Fin 6) (Fin 6) ℤ :=
       !![3072, 1, 0, 0, 0, 0;
       151115727451831810560000, 2243328, 1584, 1, 0, 0;
       -351797413507815997440000000, 36495360000, 36913152, 46848, 96, 1;
-      218244960138874060800000000000, 151115567283044352000000, -117273526272000, -87512973312, -60375040, 64512;
-      -31343124549772247040000000000000, -126952886910320640000000000, -6824669478912000000, -1668116643840000, 351642058752, 44236800;
-      254215855980675072000000000000000, 4707701036679168000000000000, 87179648827392000000000, 1614437941248000000, 29896998912000, 553648128]
+      218244960138874060800000000000, 151115567283044352000000, -117273526272000, -87512973312,
+      -60375040, 64512;
+      -31343124549772247040000000000000, -126952886910320640000000000, -6824669478912000000,
+      -1668116643840000, 351642058752, 44236800;
+      254215855980675072000000000000000, 4707701036679168000000000000, 87179648827392000000000,
+      1614437941248000000, 29896998912000, 553648128]
 
 /-- The translated matrices `t·1 − M`, as an explicit literal (symbolic in `t`). -/
 def MT (t : ℤ) : Matrix (Fin 6) (Fin 6) ℤ :=
       !![t - 3072, (-1), (0), (0), (0), (0);
       (-151115727451831810560000), t - 2243328, (-1584), (-1), (0), (0);
       (351797413507815997440000000), (-36495360000), t - 36913152, (-46848), (-96), (-1);
-      (-218244960138874060800000000000), (-151115567283044352000000), (117273526272000), t - -87512973312, (60375040), (-64512);
-      (31343124549772247040000000000000), (126952886910320640000000000), (6824669478912000000), (1668116643840000), t - 351642058752, (-44236800);
-      (-254215855980675072000000000000000), (-4707701036679168000000000000), (-87179648827392000000000), (-1614437941248000000), (-29896998912000), t - 553648128]
+      (-218244960138874060800000000000), (-151115567283044352000000), (117273526272000),
+      t - -87512973312, (60375040), (-64512);
+      (31343124549772247040000000000000), (126952886910320640000000000), (6824669478912000000),
+      (1668116643840000), t - 351642058752, (-44236800);
+      (-254215855980675072000000000000000), (-4707701036679168000000000000),
+      (-87179648827392000000000), (-1614437941248000000), (-29896998912000), t - 553648128]
 
 /-- One-time symbolic bridge, reused by all determinant lemmas. -/
 theorem scalar_sub_M (t : ℤ) : Matrix.scalar (Fin 6) t - M = MT t := by
@@ -3160,232 +3612,445 @@ theorem scalar_sub_M (t : ℤ) : Matrix.scalar (Fin 6) t - M = MT t := by
 
 /-- The characteristic polynomial of `T₂` (descending literal). -/
 noncomputable def P : ℤ[X] :=
-  (X : ℤ[X]) ^ 6 + - C (264721893120) * (X : ℤ[X]) ^ 5 + - C (625552701032748610916352) * (X : ℤ[X]) ^ 4 + C (152186338121332529221656486095093760) * (X : ℤ[X]) ^ 3 + C (73781654811533569711451734836266998840235655168) * (X : ℤ[X]) ^ 2 + - C (13858265616170285441123883155767378501080128760239483781120) * (X : ℤ[X]) ^ 1 + - C (1760725869560168758370165898745109881407673355007925193621425675567104)
+  C (1) * (X : ℤ[X]) ^ 6 + - C (264721893120) * (X : ℤ[X]) ^ 5 +
+      - C (625552701032748610916352) * (X : ℤ[X]) ^ 4 +
+      C (152186338121332529221656486095093760) * (X : ℤ[X]) ^ 3 +
+      C (73781654811533569711451734836266998840235655168) * (X : ℤ[X]) ^ 2 +
+      - C (13858265616170285441123883155767378501080128760239483781120) * (X : ℤ[X]) ^ 1 +
+      - C (1760725869560168758370165898745109881407673355007925193621425675567104)
 
 theorem P_natDegree : P.natDegree = 6 := by unfold P; compute_degree!
 
 theorem P_monic : P.Monic := by unfold P; monicity!
 
 /-- `det (t·1 − M)` at `t = 0`, by the certified Bareiss echelon decomposition. -/
-theorem det_0 : (Matrix.scalar (Fin 6) (0 : ℤ) - M).det = -1760725869560168758370165898745109881407673355007925193621425675567104 := by
+theorem det_0 : (Matrix.scalar (Fin 6) (0 : ℤ) - M).det
+     = -1760725869560168758370165898745109881407673355007925193621425675567104 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 1`, by the certified Bareiss echelon decomposition. -/
-theorem det_1 : (Matrix.scalar (Fin 6) (1 : ℤ) - M).det = -1760725869574027023986262402531422078807391161067192534759352161408767 := by
+theorem det_1 : (Matrix.scalar (Fin 6) (1 : ℤ) - M).det
+     = -1760725869574027023986262402531422078807391161067192534759352161408767 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 2`, by the certified Bareiss echelon decomposition. -/
-theorem det_2 : (Matrix.scalar (Fin 6) (2 : ℤ) - M).det = -1760725869587885289602211343008110295949657344419349826427103815000000 := by
+theorem det_2 : (Matrix.scalar (Fin 6) (2 : ℤ) - M).det
+     = -1760725869587885289602211343008110295949657344419349826427103815000000 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 3`, by the certified Bareiss echelon decomposition. -/
-theorem det_3 : (Matrix.scalar (Fin 6) (3 : ℤ) - M).det = -1760725869601743555218012720175173619716443199589118975904422342734375 := by
+theorem det_3 : (Matrix.scalar (Fin 6) (3 : ℤ) - M).det
+     = -1760725869601743555218012720175173619716443199589118975904422342734375 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 4`, by the certified Bareiss echelon decomposition. -/
-theorem det_4 : (Matrix.scalar (Fin 6) (4 : ℤ) - M).det = -1760725869615601820833666534032611136989720036114486715320549367345152 := by
+theorem det_4 : (Matrix.scalar (Fin 6) (4 : ℤ) - M).det
+     = -1760725869615601820833666534032611136989720036114486715320549367345152 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 5`, by the certified Bareiss echelon decomposition. -/
-theorem det_5 : (Matrix.scalar (Fin 6) (5 : ℤ) - M).det = -1760725869629460086449172784580421934651459178546704601685993055077879 := by
+theorem det_5 : (Matrix.scalar (Fin 6) (5 : ℤ) - M).det
+     = -1760725869629460086449172784580421934651459178546704601685993055077879 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 6`, by the certified Bareiss echelon decomposition. -/
-theorem det_6 : (Matrix.scalar (Fin 6) (6 : ℤ) - M).det = -1760725869643318352064531471818605099583631966450289016924294742862272 := by
+theorem det_6 : (Matrix.scalar (Fin 6) (6 : ℤ) - M).det
+     = -1760725869643318352064531471818605099583631966450289016924294742862272 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
-theorem ev_0 : P.eval (0 : ℤ) = -1760725869560168758370165898745109881407673355007925193621425675567104 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_0 : P.eval (0 : ℤ)
+     = -1760725869560168758370165898745109881407673355007925193621425675567104 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_1 : P.eval (1 : ℤ) = -1760725869574027023986262402531422078807391161067192534759352161408767 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_1 : P.eval (1 : ℤ)
+     = -1760725869574027023986262402531422078807391161067192534759352161408767 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_2 : P.eval (2 : ℤ) = -1760725869587885289602211343008110295949657344419349826427103815000000 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_2 : P.eval (2 : ℤ)
+     = -1760725869587885289602211343008110295949657344419349826427103815000000 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_3 : P.eval (3 : ℤ) = -1760725869601743555218012720175173619716443199589118975904422342734375 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_3 : P.eval (3 : ℤ)
+     = -1760725869601743555218012720175173619716443199589118975904422342734375 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_4 : P.eval (4 : ℤ) = -1760725869615601820833666534032611136989720036114486715320549367345152 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_4 : P.eval (4 : ℤ)
+     = -1760725869615601820833666534032611136989720036114486715320549367345152 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_5 : P.eval (5 : ℤ) = -1760725869629460086449172784580421934651459178546704601685993055077879 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_5 : P.eval (5 : ℤ)
+     = -1760725869629460086449172784580421934651459178546704601685993055077879 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_6 : P.eval (6 : ℤ) = -1760725869643318352064531471818605099583631966450289016924294742862272 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_6 : P.eval (6 : ℤ)
+     = -1760725869643318352064531471818605099583631966450289016924294742862272 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
 /-- Assembly: the n+1 evaluation points, discharged per case. -/
-theorem hevals : ∀ i : Fin 6, P.eval ((i : ℕ) : ℤ)
+theorem hevals : ∀ i : Fin 7, P.eval ((i : ℕ) : ℤ)
       = (Matrix.scalar (Fin 6) ((i : ℕ) : ℤ) - M).det := by
   intro i
   fin_cases i
-  · show P.eval (0 : ℤ)
+  · change P.eval (0 : ℤ)
       = (Matrix.scalar (Fin 6) (0 : ℤ) - M).det
     rw [ev_0, det_0]
-  · show P.eval (1 : ℤ)
+  · change P.eval (1 : ℤ)
       = (Matrix.scalar (Fin 6) (1 : ℤ) - M).det
     rw [ev_1, det_1]
-  · show P.eval (2 : ℤ)
+  · change P.eval (2 : ℤ)
       = (Matrix.scalar (Fin 6) (2 : ℤ) - M).det
     rw [ev_2, det_2]
-  · show P.eval (3 : ℤ)
+  · change P.eval (3 : ℤ)
       = (Matrix.scalar (Fin 6) (3 : ℤ) - M).det
     rw [ev_3, det_3]
-  · show P.eval (4 : ℤ)
+  · change P.eval (4 : ℤ)
       = (Matrix.scalar (Fin 6) (4 : ℤ) - M).det
     rw [ev_4, det_4]
-  · show P.eval (5 : ℤ)
+  · change P.eval (5 : ℤ)
       = (Matrix.scalar (Fin 6) (5 : ℤ) - M).det
     rw [ev_5, det_5]
-  · show P.eval (6 : ℤ)
+  · change P.eval (6 : ℤ)
       = (Matrix.scalar (Fin 6) (6 : ℤ) - M).det
     rw [ev_6, det_6]
+
+theorem entry_0_0 : coordN Atab (fun m => Xtab 0 m) 0
+      = ((3072 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_1 : coordN Atab (fun m => Xtab 1 m) 0
+      = ((1 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_2 : coordN Atab (fun m => Xtab 2 m) 0
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_3 : coordN Atab (fun m => Xtab 3 m) 0
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_4 : coordN Atab (fun m => Xtab 4 m) 0
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_5 : coordN Atab (fun m => Xtab 5 m) 0
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_0 : coordN Atab (fun m => Xtab 0 m) 1
+      = ((151115727451831810560000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_1 : coordN Atab (fun m => Xtab 1 m) 1
+      = ((2243328 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_2 : coordN Atab (fun m => Xtab 2 m) 1
+      = ((1584 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_3 : coordN Atab (fun m => Xtab 3 m) 1
+      = ((1 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_4 : coordN Atab (fun m => Xtab 4 m) 1
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_5 : coordN Atab (fun m => Xtab 5 m) 1
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_0 : coordN Atab (fun m => Xtab 0 m) 2
+      = ((-351797413507815997440000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_1 : coordN Atab (fun m => Xtab 1 m) 2
+      = ((36495360000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_2 : coordN Atab (fun m => Xtab 2 m) 2
+      = ((36913152 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_3 : coordN Atab (fun m => Xtab 3 m) 2
+      = ((46848 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_4 : coordN Atab (fun m => Xtab 4 m) 2
+      = ((96 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_5 : coordN Atab (fun m => Xtab 5 m) 2
+      = ((1 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_0 : coordN Atab (fun m => Xtab 0 m) 3
+      = ((218244960138874060800000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_1 : coordN Atab (fun m => Xtab 1 m) 3
+      = ((151115567283044352000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_2 : coordN Atab (fun m => Xtab 2 m) 3
+      = ((-117273526272000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_3 : coordN Atab (fun m => Xtab 3 m) 3
+      = ((-87512973312 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_4 : coordN Atab (fun m => Xtab 4 m) 3
+      = ((-60375040 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_5 : coordN Atab (fun m => Xtab 5 m) 3
+      = ((64512 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_0 : coordN Atab (fun m => Xtab 0 m) 4
+      = ((-31343124549772247040000000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_1 : coordN Atab (fun m => Xtab 1 m) 4
+      = ((-126952886910320640000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_2 : coordN Atab (fun m => Xtab 2 m) 4
+      = ((-6824669478912000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_3 : coordN Atab (fun m => Xtab 3 m) 4
+      = ((-1668116643840000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_4 : coordN Atab (fun m => Xtab 4 m) 4
+      = ((351642058752 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_5 : coordN Atab (fun m => Xtab 5 m) 4
+      = ((44236800 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_0 : coordN Atab (fun m => Xtab 0 m) 5
+      = ((254215855980675072000000000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_1 : coordN Atab (fun m => Xtab 1 m) 5
+      = ((4707701036679168000000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_2 : coordN Atab (fun m => Xtab 2 m) 5
+      = ((87179648827392000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_3 : coordN Atab (fun m => Xtab 3 m) 5
+      = ((1614437941248000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_4 : coordN Atab (fun m => Xtab 4 m) 5
+      = ((29896998912000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_5 : coordN Atab (fun m => Xtab 5 m) 5
+      = ((553648128 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 /-- **The characteristic polynomial of `T₂` on this weight.** -/
 theorem charpoly_T2 : T2.charpoly = P.map (Int.castRingHom ℂ) := by
   have hdim := finrank_eq
   have hn : 0 < 6 := by norm_num
   rw [charpoly_dimN hn hdim fb Atab Xtab hzero hone hA T2 hX,
-      ← charpoly_of_eval_eq M P P_natDegree hevals, ← Matrix.charpoly_map]
+      ← CharpolyEngine.charpoly_of_eval_eq M P P_natDegree hevals, ← Matrix.charpoly_map]
   congr 1
   ext j i
   fin_cases j <;> fin_cases i
-  · show coordN Atab (fun m => Xtab 0 m) 0 = ((3072 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 0 = ((1 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 0 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 0 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 0 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 0 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 1 = ((151115727451831810560000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 1 = ((2243328 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 1 = ((1584 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 1 = ((1 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 1 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 1 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 2 = ((-351797413507815997440000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 2 = ((36495360000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 2 = ((36913152 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 2 = ((46848 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 2 = ((96 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 2 = ((1 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 3 = ((218244960138874060800000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 3 = ((151115567283044352000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 3 = ((-117273526272000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 3 = ((-87512973312 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 3 = ((-60375040 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 3 = ((64512 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 4 = ((-31343124549772247040000000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 4 = ((-126952886910320640000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 4 = ((-6824669478912000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 4 = ((-1668116643840000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 4 = ((351642058752 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 4 = ((44236800 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 5 = ((254215855980675072000000000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 5 = ((4707701036679168000000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 5 = ((87179648827392000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 5 = ((1614437941248000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 5 = ((29896998912000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 5 = ((553648128 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
+  · change coordN Atab (fun m => Xtab 0 m) 0 = ((3072 : ℤ) : ℂ)
+    exact entry_0_0
+  · change coordN Atab (fun m => Xtab 1 m) 0 = ((1 : ℤ) : ℂ)
+    exact entry_0_1
+  · change coordN Atab (fun m => Xtab 2 m) 0 = ((0 : ℤ) : ℂ)
+    exact entry_0_2
+  · change coordN Atab (fun m => Xtab 3 m) 0 = ((0 : ℤ) : ℂ)
+    exact entry_0_3
+  · change coordN Atab (fun m => Xtab 4 m) 0 = ((0 : ℤ) : ℂ)
+    exact entry_0_4
+  · change coordN Atab (fun m => Xtab 5 m) 0 = ((0 : ℤ) : ℂ)
+    exact entry_0_5
+  · change coordN Atab (fun m => Xtab 0 m) 1 = ((151115727451831810560000 : ℤ) : ℂ)
+    exact entry_1_0
+  · change coordN Atab (fun m => Xtab 1 m) 1 = ((2243328 : ℤ) : ℂ)
+    exact entry_1_1
+  · change coordN Atab (fun m => Xtab 2 m) 1 = ((1584 : ℤ) : ℂ)
+    exact entry_1_2
+  · change coordN Atab (fun m => Xtab 3 m) 1 = ((1 : ℤ) : ℂ)
+    exact entry_1_3
+  · change coordN Atab (fun m => Xtab 4 m) 1 = ((0 : ℤ) : ℂ)
+    exact entry_1_4
+  · change coordN Atab (fun m => Xtab 5 m) 1 = ((0 : ℤ) : ℂ)
+    exact entry_1_5
+  · change coordN Atab (fun m => Xtab 0 m) 2 = ((-351797413507815997440000000 : ℤ) : ℂ)
+    exact entry_2_0
+  · change coordN Atab (fun m => Xtab 1 m) 2 = ((36495360000 : ℤ) : ℂ)
+    exact entry_2_1
+  · change coordN Atab (fun m => Xtab 2 m) 2 = ((36913152 : ℤ) : ℂ)
+    exact entry_2_2
+  · change coordN Atab (fun m => Xtab 3 m) 2 = ((46848 : ℤ) : ℂ)
+    exact entry_2_3
+  · change coordN Atab (fun m => Xtab 4 m) 2 = ((96 : ℤ) : ℂ)
+    exact entry_2_4
+  · change coordN Atab (fun m => Xtab 5 m) 2 = ((1 : ℤ) : ℂ)
+    exact entry_2_5
+  · change coordN Atab (fun m => Xtab 0 m) 3 = ((218244960138874060800000000000 : ℤ) : ℂ)
+    exact entry_3_0
+  · change coordN Atab (fun m => Xtab 1 m) 3 = ((151115567283044352000000 : ℤ) : ℂ)
+    exact entry_3_1
+  · change coordN Atab (fun m => Xtab 2 m) 3 = ((-117273526272000 : ℤ) : ℂ)
+    exact entry_3_2
+  · change coordN Atab (fun m => Xtab 3 m) 3 = ((-87512973312 : ℤ) : ℂ)
+    exact entry_3_3
+  · change coordN Atab (fun m => Xtab 4 m) 3 = ((-60375040 : ℤ) : ℂ)
+    exact entry_3_4
+  · change coordN Atab (fun m => Xtab 5 m) 3 = ((64512 : ℤ) : ℂ)
+    exact entry_3_5
+  · change coordN Atab (fun m => Xtab 0 m) 4 = ((-31343124549772247040000000000000 : ℤ) : ℂ)
+    exact entry_4_0
+  · change coordN Atab (fun m => Xtab 1 m) 4 = ((-126952886910320640000000000 : ℤ) : ℂ)
+    exact entry_4_1
+  · change coordN Atab (fun m => Xtab 2 m) 4 = ((-6824669478912000000 : ℤ) : ℂ)
+    exact entry_4_2
+  · change coordN Atab (fun m => Xtab 3 m) 4 = ((-1668116643840000 : ℤ) : ℂ)
+    exact entry_4_3
+  · change coordN Atab (fun m => Xtab 4 m) 4 = ((351642058752 : ℤ) : ℂ)
+    exact entry_4_4
+  · change coordN Atab (fun m => Xtab 5 m) 4 = ((44236800 : ℤ) : ℂ)
+    exact entry_4_5
+  · change coordN Atab (fun m => Xtab 0 m) 5 = ((254215855980675072000000000000000 : ℤ) : ℂ)
+    exact entry_5_0
+  · change coordN Atab (fun m => Xtab 1 m) 5 = ((4707701036679168000000000000 : ℤ) : ℂ)
+    exact entry_5_1
+  · change coordN Atab (fun m => Xtab 2 m) 5 = ((87179648827392000000000 : ℤ) : ℂ)
+    exact entry_5_2
+  · change coordN Atab (fun m => Xtab 3 m) 5 = ((1614437941248000000 : ℤ) : ℂ)
+    exact entry_5_3
+  · change coordN Atab (fun m => Xtab 4 m) 5 = ((29896998912000 : ℤ) : ℂ)
+    exact entry_5_4
+  · change coordN Atab (fun m => Xtab 5 m) 5 = ((553648128 : ℤ) : ℂ)
+    exact entry_5_5
 
 /-- The characteristic polynomial mod the certificate prime (little-endian). -/
 noncomputable def fr : List ℤ := [103, 78, 84, 62, 33, 108, 1]
 
 lemma hmap : P.map (Int.castRingHom (ZMod 139)) = RabinCert.toPoly 139 fr := by
-  simp [P, RabinCert.toPoly, fr, map_ofNat]
+  simp only [P, RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr,
+      Polynomial.map_C, Polynomial.map_X, Polynomial.map_add, Polynomial.map_mul,
+      Polynomial.map_pow, Int.coe_castRingHom, ← Polynomial.C_neg]
+  rw [show ((-264721893120 : ℤ) : ZMod 139) = (108 : ZMod 139) from by decide +kernel,
+      show ((-625552701032748610916352 : ℤ) : ZMod 139) = (33 : ZMod 139) from by decide +kernel,
+      show ((152186338121332529221656486095093760 : ℤ) : ZMod 139)
+           = (62 : ZMod 139) from by decide +kernel,
+      show ((73781654811533569711451734836266998840235655168 : ℤ) : ZMod 139)
+           = (84 : ZMod 139) from by decide +kernel,
+      show ((-13858265616170285441123883155767378501080128760239483781120 : ℤ) : ZMod 139)
+           = (78 : ZMod 139) from by decide +kernel,
+      show ((-1760725869560168758370165898745109881407673355007925193621425675567104 : ℤ)
+          : ZMod 139) = (103 : ZMod 139) from by decide +kernel]
+  ring_nf
 
 lemma hmon' : (RabinCert.toPoly 139 fr).Monic := by
-  simp only [RabinCert.toPoly]
+  simp only [RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr, mul_zero, add_zero]
   monicity!
 
 lemma hnd : (RabinCert.toPoly 139 fr).natDegree = 6 := by
-  simp only [RabinCert.toPoly]
+  simp only [RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr, mul_zero, add_zero]
   compute_degree!
 
 lemma hF : 139 ^ 6 < 2 ^ 43 := by norm_num
@@ -3407,9 +4072,13 @@ lemma h2 : ∀ q : ℕ, q.Prime → q ∣ 6 → ∃ w : ℕ,
   intro q hq hq2
   have hqb : q ≤ 6 := Nat.le_of_dvd (by norm_num) hq2
   interval_cases q
+  · exact absurd hq (by decide)
+  · exact absurd hq (by decide)
   · exact h2_2
   · exact h2_3
+  · exact absurd hq (by decide)
   · exact absurd hq2 (by decide)
+  · exact absurd hq (by decide)
 
 /-- The second certificate prime (sanity decide, not used by `maeda`). -/
 noncomputable def fr2 : List ℤ := [159, 142, 40, 92, 67, 122, 1]
@@ -3420,8 +4089,8 @@ lemma h1_2 : RabinCert.zpxw 173 fr2 (RabinCert.bitsOf 45 (173 ^ 6)) [1]
 
 /-- **Maeda's conjecture (irreducibility) in this weight.** -/
 theorem maeda : Irreducible (P.map (Int.castRingHom ℚ)) :=
-  have : Fact (139.Prime) := ⟨by norm_num⟩
-  RabinCert.irreducible_of_rabin_int P_monic hmap hmon' hnd (by norm_num) h1 h2
+  haveI : Fact (Nat.Prime 139) := ⟨by norm_num⟩
+  RabinCert.irreducible_of_rabin_int P_monic hmap hmon' hnd (by norm_num) hF h1 h2
 
 end MaedaWeight78
 /-! ### Weight 80 (dim 6) -/
@@ -4275,18 +4944,24 @@ def M : Matrix (Fin 6) (Fin 6) ℤ :=
       !![4056, 1, 0, 0, 0, 0;
       604462909807323924480000, 5107584, 2568, 1, 0, 0;
       -2001981157276835487744000000, 3200311296000, 2106249216, 1446912, 1080, 1;
-      2053742526125109411840000000000, 604463470501036032000000, 324954685440000, 179558252544, 83609600, 384;
-      -679678523279715336192000000000000, -1102506036100595712000000000, 13016405901312000000, 3086865137664000, -269000638464, 273285120;
-      44672659055513174016000000000000000, 316913874332811264000000000000, 733101592412160000000000, -1614437941248000000, 1168700866560000, 71244447744]
+      2053742526125109411840000000000, 604463470501036032000000, 324954685440000, 179558252544,
+      83609600, 384;
+      -679678523279715336192000000000000, -1102506036100595712000000000, 13016405901312000000,
+      3086865137664000, -269000638464, 273285120;
+      44672659055513174016000000000000000, 316913874332811264000000000000,
+      733101592412160000000000, -1614437941248000000, 1168700866560000, 71244447744]
 
 /-- The translated matrices `t·1 − M`, as an explicit literal (symbolic in `t`). -/
 def MT (t : ℤ) : Matrix (Fin 6) (Fin 6) ℤ :=
       !![t - 4056, (-1), (0), (0), (0), (0);
       (-604462909807323924480000), t - 5107584, (-2568), (-1), (0), (0);
       (2001981157276835487744000000), (-3200311296000), t - 2106249216, (-1446912), (-1080), (-1);
-      (-2053742526125109411840000000000), (-604463470501036032000000), (-324954685440000), t - 179558252544, (-83609600), (-384);
-      (679678523279715336192000000000000), (1102506036100595712000000000), (-13016405901312000000), (-3086865137664000), t - -269000638464, (-273285120);
-      (-44672659055513174016000000000000000), (-316913874332811264000000000000), (-733101592412160000000000), (1614437941248000000), (-1168700866560000), t - 71244447744]
+      (-2053742526125109411840000000000), (-604463470501036032000000), (-324954685440000),
+      t - 179558252544, (-83609600), (-384);
+      (679678523279715336192000000000000), (1102506036100595712000000000),
+      (-13016405901312000000), (-3086865137664000), t - -269000638464, (-273285120);
+      (-44672659055513174016000000000000000), (-316913874332811264000000000000),
+      (-733101592412160000000000), (1614437941248000000), (-1168700866560000), t - 71244447744]
 
 /-- One-time symbolic bridge, reused by all determinant lemmas. -/
 theorem scalar_sub_M (t : ℤ) : Matrix.scalar (Fin 6) t - M = MT t := by
@@ -4296,232 +4971,445 @@ theorem scalar_sub_M (t : ℤ) : Matrix.scalar (Fin 6) t - M = MT t := by
 
 /-- The characteristic polynomial of `T₂` (descending literal). -/
 noncomputable def P : ℤ[X] :=
-  (X : ℤ[X]) ^ 6 + C (16086577320) * (X : ℤ[X]) ^ 5 + - C (2588128021566210544708608) * (X : ℤ[X]) ^ 4 + - C (216009704480258385253119204198973440) * (X : ℤ[X]) ^ 3 + C (1718109851793900696170553960996854270563071295488) * (X : ℤ[X]) ^ 2 + C (296032901024703008707204440039659404285760899529649023877120) * (X : ℤ[X]) ^ 1 + - C (146067238099513054720421635022646234101475074700352906870756624885088256)
+  C (1) * (X : ℤ[X]) ^ 6 + C (16086577320) * (X : ℤ[X]) ^ 5 +
+      - C (2588128021566210544708608) * (X : ℤ[X]) ^ 4 +
+      - C (216009704480258385253119204198973440) * (X : ℤ[X]) ^ 3 +
+      C (1718109851793900696170553960996854270563071295488) * (X : ℤ[X]) ^ 2 +
+      C (296032901024703008707204440039659404285760899529649023877120) * (X : ℤ[X]) ^ 1 +
+      - C (146067238099513054720421635022646234101475074700352906870756624885088256)
 
 theorem P_natDegree : P.natDegree = 6 := by unfold P; compute_degree!
 
 theorem P_monic : P.Monic := by unfold P; monicity!
 
 /-- `det (t·1 − M)` at `t = 0`, by the certified Bareiss echelon decomposition. -/
-theorem det_0 : (Matrix.scalar (Fin 6) (0 : ℤ) - M).det = -146067238099513054720421635022646234101475074700352906870756624885088256 := by
+theorem det_0 : (Matrix.scalar (Fin 6) (0 : ℤ) - M).det
+     = -146067238099513054720421635022646234101475074700352906870756624885088256 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 1`, by the certified Bareiss echelon decomposition. -/
-theorem det_1 : (Matrix.scalar (Fin 6) (1 : ℤ) - M).det = -146067238099217021819395213904087235976748949224952662391641811447020375 := by
+theorem det_1 : (Matrix.scalar (Fin 6) (1 : ℤ) - M).det
+     = -146067238099217021819395213904087235976748949224952662391641811447020375 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 2`, by the certified Bareiss echelon decomposition. -/
-theorem det_2 : (Matrix.scalar (Fin 6) (2 : ℤ) - M).det = -146067238098920988918365356565824651346688709559414528024627562088803008 := by
+theorem det_2 : (Matrix.scalar (Fin 6) (2 : ℤ) - M).det
+     = -146067238098920988918365356565824651346688709559414528024627562088803008 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 3`, by the certified Bareiss echelon decomposition. -/
-theorem det_3 : (Matrix.scalar (Fin 6) (3 : ℤ) - M).det = -146067238098624956017332063007858481507352582678461424064810268627188143 := by
+theorem det_3 : (Matrix.scalar (Fin 6) (3 : ℤ) - M).det
+     = -146067238098624956017332063007858481507352582678461424064810268627188143 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 4`, by the certified Bareiss echelon decomposition. -/
-theorem det_4 : (Matrix.scalar (Fin 6) (4 : ℤ) - M).det = -146067238098328923116295333230188727754798795618931343324871515173376000 := by
+theorem det_4 : (Matrix.scalar (Fin 6) (4 : ℤ) - M).det
+     = -146067238098328923116295333230188727754798795618931343324871515173376000 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 5`, by the certified Bareiss echelon decomposition. -/
-theorem det_5 : (Matrix.scalar (Fin 6) (5 : ℤ) - M).det = -146067238098032890215255167232815391385085575479777351135076147743734831 := by
+theorem det_5 : (Matrix.scalar (Fin 6) (5 : ℤ) - M).det
+     = -146067238098032890215255167232815391385085575479777351135076147743734831 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 6`, by the certified Bareiss echelon decomposition. -/
-theorem det_6 : (Matrix.scalar (Fin 6) (6 : ℤ) - M).det = -146067238097736857314211565015738473694271149422067585343270343870520000 := by
+theorem det_6 : (Matrix.scalar (Fin 6) (6 : ℤ) - M).det
+     = -146067238097736857314211565015738473694271149422067585343270343870520000 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
-theorem ev_0 : P.eval (0 : ℤ) = -146067238099513054720421635022646234101475074700352906870756624885088256 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_0 : P.eval (0 : ℤ)
+     = -146067238099513054720421635022646234101475074700352906870756624885088256 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_1 : P.eval (1 : ℤ) = -146067238099217021819395213904087235976748949224952662391641811447020375 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_1 : P.eval (1 : ℤ)
+     = -146067238099217021819395213904087235976748949224952662391641811447020375 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_2 : P.eval (2 : ℤ) = -146067238098920988918365356565824651346688709559414528024627562088803008 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_2 : P.eval (2 : ℤ)
+     = -146067238098920988918365356565824651346688709559414528024627562088803008 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_3 : P.eval (3 : ℤ) = -146067238098624956017332063007858481507352582678461424064810268627188143 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_3 : P.eval (3 : ℤ)
+     = -146067238098624956017332063007858481507352582678461424064810268627188143 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_4 : P.eval (4 : ℤ) = -146067238098328923116295333230188727754798795618931343324871515173376000 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_4 : P.eval (4 : ℤ)
+     = -146067238098328923116295333230188727754798795618931343324871515173376000 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_5 : P.eval (5 : ℤ) = -146067238098032890215255167232815391385085575479777351135076147743734831 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_5 : P.eval (5 : ℤ)
+     = -146067238098032890215255167232815391385085575479777351135076147743734831 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_6 : P.eval (6 : ℤ) = -146067238097736857314211565015738473694271149422067585343270343870520000 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_6 : P.eval (6 : ℤ)
+     = -146067238097736857314211565015738473694271149422067585343270343870520000 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
 /-- Assembly: the n+1 evaluation points, discharged per case. -/
-theorem hevals : ∀ i : Fin 6, P.eval ((i : ℕ) : ℤ)
+theorem hevals : ∀ i : Fin 7, P.eval ((i : ℕ) : ℤ)
       = (Matrix.scalar (Fin 6) ((i : ℕ) : ℤ) - M).det := by
   intro i
   fin_cases i
-  · show P.eval (0 : ℤ)
+  · change P.eval (0 : ℤ)
       = (Matrix.scalar (Fin 6) (0 : ℤ) - M).det
     rw [ev_0, det_0]
-  · show P.eval (1 : ℤ)
+  · change P.eval (1 : ℤ)
       = (Matrix.scalar (Fin 6) (1 : ℤ) - M).det
     rw [ev_1, det_1]
-  · show P.eval (2 : ℤ)
+  · change P.eval (2 : ℤ)
       = (Matrix.scalar (Fin 6) (2 : ℤ) - M).det
     rw [ev_2, det_2]
-  · show P.eval (3 : ℤ)
+  · change P.eval (3 : ℤ)
       = (Matrix.scalar (Fin 6) (3 : ℤ) - M).det
     rw [ev_3, det_3]
-  · show P.eval (4 : ℤ)
+  · change P.eval (4 : ℤ)
       = (Matrix.scalar (Fin 6) (4 : ℤ) - M).det
     rw [ev_4, det_4]
-  · show P.eval (5 : ℤ)
+  · change P.eval (5 : ℤ)
       = (Matrix.scalar (Fin 6) (5 : ℤ) - M).det
     rw [ev_5, det_5]
-  · show P.eval (6 : ℤ)
+  · change P.eval (6 : ℤ)
       = (Matrix.scalar (Fin 6) (6 : ℤ) - M).det
     rw [ev_6, det_6]
+
+theorem entry_0_0 : coordN Atab (fun m => Xtab 0 m) 0
+      = ((4056 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_1 : coordN Atab (fun m => Xtab 1 m) 0
+      = ((1 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_2 : coordN Atab (fun m => Xtab 2 m) 0
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_3 : coordN Atab (fun m => Xtab 3 m) 0
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_4 : coordN Atab (fun m => Xtab 4 m) 0
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_5 : coordN Atab (fun m => Xtab 5 m) 0
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_0 : coordN Atab (fun m => Xtab 0 m) 1
+      = ((604462909807323924480000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_1 : coordN Atab (fun m => Xtab 1 m) 1
+      = ((5107584 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_2 : coordN Atab (fun m => Xtab 2 m) 1
+      = ((2568 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_3 : coordN Atab (fun m => Xtab 3 m) 1
+      = ((1 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_4 : coordN Atab (fun m => Xtab 4 m) 1
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_5 : coordN Atab (fun m => Xtab 5 m) 1
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_0 : coordN Atab (fun m => Xtab 0 m) 2
+      = ((-2001981157276835487744000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_1 : coordN Atab (fun m => Xtab 1 m) 2
+      = ((3200311296000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_2 : coordN Atab (fun m => Xtab 2 m) 2
+      = ((2106249216 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_3 : coordN Atab (fun m => Xtab 3 m) 2
+      = ((1446912 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_4 : coordN Atab (fun m => Xtab 4 m) 2
+      = ((1080 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_5 : coordN Atab (fun m => Xtab 5 m) 2
+      = ((1 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_0 : coordN Atab (fun m => Xtab 0 m) 3
+      = ((2053742526125109411840000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_1 : coordN Atab (fun m => Xtab 1 m) 3
+      = ((604463470501036032000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_2 : coordN Atab (fun m => Xtab 2 m) 3
+      = ((324954685440000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_3 : coordN Atab (fun m => Xtab 3 m) 3
+      = ((179558252544 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_4 : coordN Atab (fun m => Xtab 4 m) 3
+      = ((83609600 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_5 : coordN Atab (fun m => Xtab 5 m) 3
+      = ((384 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_0 : coordN Atab (fun m => Xtab 0 m) 4
+      = ((-679678523279715336192000000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_1 : coordN Atab (fun m => Xtab 1 m) 4
+      = ((-1102506036100595712000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_2 : coordN Atab (fun m => Xtab 2 m) 4
+      = ((13016405901312000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_3 : coordN Atab (fun m => Xtab 3 m) 4
+      = ((3086865137664000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_4 : coordN Atab (fun m => Xtab 4 m) 4
+      = ((-269000638464 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_5 : coordN Atab (fun m => Xtab 5 m) 4
+      = ((273285120 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_0 : coordN Atab (fun m => Xtab 0 m) 5
+      = ((44672659055513174016000000000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_1 : coordN Atab (fun m => Xtab 1 m) 5
+      = ((316913874332811264000000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_2 : coordN Atab (fun m => Xtab 2 m) 5
+      = ((733101592412160000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_3 : coordN Atab (fun m => Xtab 3 m) 5
+      = ((-1614437941248000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_4 : coordN Atab (fun m => Xtab 4 m) 5
+      = ((1168700866560000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_5 : coordN Atab (fun m => Xtab 5 m) 5
+      = ((71244447744 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 /-- **The characteristic polynomial of `T₂` on this weight.** -/
 theorem charpoly_T2 : T2.charpoly = P.map (Int.castRingHom ℂ) := by
   have hdim := finrank_eq
   have hn : 0 < 6 := by norm_num
   rw [charpoly_dimN hn hdim fb Atab Xtab hzero hone hA T2 hX,
-      ← charpoly_of_eval_eq M P P_natDegree hevals, ← Matrix.charpoly_map]
+      ← CharpolyEngine.charpoly_of_eval_eq M P P_natDegree hevals, ← Matrix.charpoly_map]
   congr 1
   ext j i
   fin_cases j <;> fin_cases i
-  · show coordN Atab (fun m => Xtab 0 m) 0 = ((4056 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 0 = ((1 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 0 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 0 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 0 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 0 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 1 = ((604462909807323924480000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 1 = ((5107584 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 1 = ((2568 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 1 = ((1 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 1 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 1 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 2 = ((-2001981157276835487744000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 2 = ((3200311296000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 2 = ((2106249216 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 2 = ((1446912 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 2 = ((1080 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 2 = ((1 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 3 = ((2053742526125109411840000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 3 = ((604463470501036032000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 3 = ((324954685440000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 3 = ((179558252544 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 3 = ((83609600 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 3 = ((384 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 4 = ((-679678523279715336192000000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 4 = ((-1102506036100595712000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 4 = ((13016405901312000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 4 = ((3086865137664000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 4 = ((-269000638464 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 4 = ((273285120 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 5 = ((44672659055513174016000000000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 5 = ((316913874332811264000000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 5 = ((733101592412160000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 5 = ((-1614437941248000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 5 = ((1168700866560000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 5 = ((71244447744 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
+  · change coordN Atab (fun m => Xtab 0 m) 0 = ((4056 : ℤ) : ℂ)
+    exact entry_0_0
+  · change coordN Atab (fun m => Xtab 1 m) 0 = ((1 : ℤ) : ℂ)
+    exact entry_0_1
+  · change coordN Atab (fun m => Xtab 2 m) 0 = ((0 : ℤ) : ℂ)
+    exact entry_0_2
+  · change coordN Atab (fun m => Xtab 3 m) 0 = ((0 : ℤ) : ℂ)
+    exact entry_0_3
+  · change coordN Atab (fun m => Xtab 4 m) 0 = ((0 : ℤ) : ℂ)
+    exact entry_0_4
+  · change coordN Atab (fun m => Xtab 5 m) 0 = ((0 : ℤ) : ℂ)
+    exact entry_0_5
+  · change coordN Atab (fun m => Xtab 0 m) 1 = ((604462909807323924480000 : ℤ) : ℂ)
+    exact entry_1_0
+  · change coordN Atab (fun m => Xtab 1 m) 1 = ((5107584 : ℤ) : ℂ)
+    exact entry_1_1
+  · change coordN Atab (fun m => Xtab 2 m) 1 = ((2568 : ℤ) : ℂ)
+    exact entry_1_2
+  · change coordN Atab (fun m => Xtab 3 m) 1 = ((1 : ℤ) : ℂ)
+    exact entry_1_3
+  · change coordN Atab (fun m => Xtab 4 m) 1 = ((0 : ℤ) : ℂ)
+    exact entry_1_4
+  · change coordN Atab (fun m => Xtab 5 m) 1 = ((0 : ℤ) : ℂ)
+    exact entry_1_5
+  · change coordN Atab (fun m => Xtab 0 m) 2 = ((-2001981157276835487744000000 : ℤ) : ℂ)
+    exact entry_2_0
+  · change coordN Atab (fun m => Xtab 1 m) 2 = ((3200311296000 : ℤ) : ℂ)
+    exact entry_2_1
+  · change coordN Atab (fun m => Xtab 2 m) 2 = ((2106249216 : ℤ) : ℂ)
+    exact entry_2_2
+  · change coordN Atab (fun m => Xtab 3 m) 2 = ((1446912 : ℤ) : ℂ)
+    exact entry_2_3
+  · change coordN Atab (fun m => Xtab 4 m) 2 = ((1080 : ℤ) : ℂ)
+    exact entry_2_4
+  · change coordN Atab (fun m => Xtab 5 m) 2 = ((1 : ℤ) : ℂ)
+    exact entry_2_5
+  · change coordN Atab (fun m => Xtab 0 m) 3 = ((2053742526125109411840000000000 : ℤ) : ℂ)
+    exact entry_3_0
+  · change coordN Atab (fun m => Xtab 1 m) 3 = ((604463470501036032000000 : ℤ) : ℂ)
+    exact entry_3_1
+  · change coordN Atab (fun m => Xtab 2 m) 3 = ((324954685440000 : ℤ) : ℂ)
+    exact entry_3_2
+  · change coordN Atab (fun m => Xtab 3 m) 3 = ((179558252544 : ℤ) : ℂ)
+    exact entry_3_3
+  · change coordN Atab (fun m => Xtab 4 m) 3 = ((83609600 : ℤ) : ℂ)
+    exact entry_3_4
+  · change coordN Atab (fun m => Xtab 5 m) 3 = ((384 : ℤ) : ℂ)
+    exact entry_3_5
+  · change coordN Atab (fun m => Xtab 0 m) 4 = ((-679678523279715336192000000000000 : ℤ) : ℂ)
+    exact entry_4_0
+  · change coordN Atab (fun m => Xtab 1 m) 4 = ((-1102506036100595712000000000 : ℤ) : ℂ)
+    exact entry_4_1
+  · change coordN Atab (fun m => Xtab 2 m) 4 = ((13016405901312000000 : ℤ) : ℂ)
+    exact entry_4_2
+  · change coordN Atab (fun m => Xtab 3 m) 4 = ((3086865137664000 : ℤ) : ℂ)
+    exact entry_4_3
+  · change coordN Atab (fun m => Xtab 4 m) 4 = ((-269000638464 : ℤ) : ℂ)
+    exact entry_4_4
+  · change coordN Atab (fun m => Xtab 5 m) 4 = ((273285120 : ℤ) : ℂ)
+    exact entry_4_5
+  · change coordN Atab (fun m => Xtab 0 m) 5 = ((44672659055513174016000000000000000 : ℤ) : ℂ)
+    exact entry_5_0
+  · change coordN Atab (fun m => Xtab 1 m) 5 = ((316913874332811264000000000000 : ℤ) : ℂ)
+    exact entry_5_1
+  · change coordN Atab (fun m => Xtab 2 m) 5 = ((733101592412160000000000 : ℤ) : ℂ)
+    exact entry_5_2
+  · change coordN Atab (fun m => Xtab 3 m) 5 = ((-1614437941248000000 : ℤ) : ℂ)
+    exact entry_5_3
+  · change coordN Atab (fun m => Xtab 4 m) 5 = ((1168700866560000 : ℤ) : ℂ)
+    exact entry_5_4
+  · change coordN Atab (fun m => Xtab 5 m) 5 = ((71244447744 : ℤ) : ℂ)
+    exact entry_5_5
 
 /-- The characteristic polynomial mod the certificate prime (little-endian). -/
 noncomputable def fr : List ℤ := [90, 38, 92, 81, 102, 34, 1]
 
 lemma hmap : P.map (Int.castRingHom (ZMod 103)) = RabinCert.toPoly 103 fr := by
-  simp [P, RabinCert.toPoly, fr, map_ofNat]
+  simp only [P, RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr,
+      Polynomial.map_C, Polynomial.map_X, Polynomial.map_add, Polynomial.map_mul,
+      Polynomial.map_pow, Int.coe_castRingHom, ← Polynomial.C_neg]
+  rw [show ((16086577320 : ℤ) : ZMod 103) = (34 : ZMod 103) from by decide +kernel,
+      show ((-2588128021566210544708608 : ℤ) : ZMod 103) = (102 : ZMod 103) from by decide +kernel,
+      show ((-216009704480258385253119204198973440 : ℤ) : ZMod 103)
+           = (81 : ZMod 103) from by decide +kernel,
+      show ((1718109851793900696170553960996854270563071295488 : ℤ) : ZMod 103)
+           = (92 : ZMod 103) from by decide +kernel,
+      show ((296032901024703008707204440039659404285760899529649023877120 : ℤ) : ZMod 103)
+           = (38 : ZMod 103) from by decide +kernel,
+      show ((-146067238099513054720421635022646234101475074700352906870756624885088256 : ℤ)
+          : ZMod 103) = (90 : ZMod 103) from by decide +kernel]
+  ring_nf
 
 lemma hmon' : (RabinCert.toPoly 103 fr).Monic := by
-  simp only [RabinCert.toPoly]
+  simp only [RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr, mul_zero, add_zero]
   monicity!
 
 lemma hnd : (RabinCert.toPoly 103 fr).natDegree = 6 := by
-  simp only [RabinCert.toPoly]
+  simp only [RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr, mul_zero, add_zero]
   compute_degree!
 
 lemma hF : 103 ^ 6 < 2 ^ 41 := by norm_num
@@ -4543,9 +5431,13 @@ lemma h2 : ∀ q : ℕ, q.Prime → q ∣ 6 → ∃ w : ℕ,
   intro q hq hq2
   have hqb : q ≤ 6 := Nat.le_of_dvd (by norm_num) hq2
   interval_cases q
+  · exact absurd hq (by decide)
+  · exact absurd hq (by decide)
   · exact h2_2
   · exact h2_3
+  · exact absurd hq (by decide)
   · exact absurd hq2 (by decide)
+  · exact absurd hq (by decide)
 
 /-- The second certificate prime (sanity decide, not used by `maeda`). -/
 noncomputable def fr2 : List ℤ := [74, 65, 86, 98, 22, 12, 1]
@@ -4556,8 +5448,8 @@ lemma h1_2 : RabinCert.zpxw 107 fr2 (RabinCert.bitsOf 41 (107 ^ 6)) [1]
 
 /-- **Maeda's conjecture (irreducibility) in this weight.** -/
 theorem maeda : Irreducible (P.map (Int.castRingHom ℚ)) :=
-  have : Fact (103.Prime) := ⟨by norm_num⟩
-  RabinCert.irreducible_of_rabin_int P_monic hmap hmon' hnd (by norm_num) h1 h2
+  haveI : Fact (Nat.Prime 103) := ⟨by norm_num⟩
+  RabinCert.irreducible_of_rabin_int P_monic hmap hmon' hnd (by norm_num) hF h1 h2
 
 end MaedaWeight80
 /-! ### Weight 82 (dim 6) -/
@@ -5411,18 +6303,24 @@ def M : Matrix (Fin 6) (Fin 6) ℤ :=
       !![3312, 1, 0, 0, 0, 0;
       2417851639229262520320000, 2803968, 1824, 1, 0, 0;
       -6209043009540379951104000000, 284663808000, 248389632, 250368, 336, 1;
-      4545715823958420357120000000000, 2417851422508843008000000, -164348559360000, -131671130112, -113213440, -89088;
-      -914094978999527669760000000000000, -2611310348866682880000000000, -15685732270080000000, -6100006993920000, -288230473728, -462028800;
-      23018090232432033792000000000000000, 270906796019810304000000000000, 2139864107581440000000000, -13649338957824000000, -1239366500352000, -41221619712]
+      4545715823958420357120000000000, 2417851422508843008000000, -164348559360000,
+      -131671130112, -113213440, -89088;
+      -914094978999527669760000000000000, -2611310348866682880000000000, -15685732270080000000,
+      -6100006993920000, -288230473728, -462028800;
+      23018090232432033792000000000000000, 270906796019810304000000000000,
+      2139864107581440000000000, -13649338957824000000, -1239366500352000, -41221619712]
 
 /-- The translated matrices `t·1 − M`, as an explicit literal (symbolic in `t`). -/
 def MT (t : ℤ) : Matrix (Fin 6) (Fin 6) ℤ :=
       !![t - 3312, (-1), (0), (0), (0), (0);
       (-2417851639229262520320000), t - 2803968, (-1824), (-1), (0), (0);
       (6209043009540379951104000000), (-284663808000), t - 248389632, (-250368), (-336), (-1);
-      (-4545715823958420357120000000000), (-2417851422508843008000000), (164348559360000), t - -131671130112, (113213440), (89088);
-      (914094978999527669760000000000000), (2611310348866682880000000000), (15685732270080000000), (6100006993920000), t - -288230473728, (462028800);
-      (-23018090232432033792000000000000000), (-270906796019810304000000000000), (-2139864107581440000000000), (13649338957824000000), (1239366500352000), t - -41221619712]
+      (-4545715823958420357120000000000), (-2417851422508843008000000), (164348559360000),
+      t - -131671130112, (113213440), (89088);
+      (914094978999527669760000000000000), (2611310348866682880000000000),
+      (15685732270080000000), (6100006993920000), t - -288230473728, (462028800);
+      (-23018090232432033792000000000000000), (-270906796019810304000000000000),
+      (-2139864107581440000000000), (13649338957824000000), (1239366500352000), t - -41221619712]
 
 /-- One-time symbolic bridge, reused by all determinant lemmas. -/
 theorem scalar_sub_M (t : ℤ) : Matrix.scalar (Fin 6) t - M = MT t := by
@@ -5432,232 +6330,445 @@ theorem scalar_sub_M (t : ℤ) : Matrix.scalar (Fin 6) t - M = MT t := by
 
 /-- The characteristic polynomial of `T₂` (descending literal). -/
 noncomputable def P : ℤ[X] :=
-  (X : ℤ[X]) ^ 6 + C (460872026640) * (X : ℤ[X]) ^ 5 + - C (9394328893568181494648832) * (X : ℤ[X]) ^ 4 + - C (1786618443034384862706625909641707520) * (X : ℤ[X]) ^ 3 + C (18922795595101542125465117347843310471957874475008) * (X : ℤ[X]) ^ 2 + C (223728893344178383310221034990027409432576297286802174115840) * (X : ℤ[X]) ^ 1 + - C (2542544959214497700779571512506616106945227047673199939041604512235126784)
+  C (1) * (X : ℤ[X]) ^ 6 + C (460872026640) * (X : ℤ[X]) ^ 5 +
+      - C (9394328893568181494648832) * (X : ℤ[X]) ^ 4 +
+      - C (1786618443034384862706625909641707520) * (X : ℤ[X]) ^ 3 +
+      C (18922795595101542125465117347843310471957874475008) * (X : ℤ[X]) ^ 2 +
+      C (223728893344178383310221034990027409432576297286802174115840) * (X : ℤ[X]) ^ 1 +
+      - C (2542544959214497700779571512506616106945227047673199939041604512235126784)
 
 theorem P_natDegree : P.natDegree = 6 := by unfold P; compute_degree!
 
 theorem P_monic : P.Monic := by unfold P; monicity!
 
 /-- `det (t·1 − M)` at `t = 0`, by the certified Bareiss echelon decomposition. -/
-theorem det_0 : (Matrix.scalar (Fin 6) (0 : ℤ) - M).det = -2542544959214497700779571512506616106945227047673199939041604512235126784 := by
+theorem det_0 : (Matrix.scalar (Fin 6) (0 : ℤ) - M).det
+     = -2542544959214497700779571512506616106945227047673199939041604512235126784 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 1`, by the certified Bareiss echelon decomposition. -/
-theorem det_1 : (Matrix.scalar (Fin 6) (1 : ℤ) - M).det = -2542544959214273971886208411327710786154729998190198711034039382450865647 := by
+theorem det_1 : (Matrix.scalar (Fin 6) (1 : ℤ) - M).det
+     = -2542544959214273971886208411327710786154729998190198711034039382450865647 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 2`, by the certified Bareiss echelon decomposition. -/
-theorem det_2 : (Matrix.scalar (Fin 6) (2 : ℤ) - M).det = -2542544959214050242992807464557615272999692676810331577155226509532184000 := by
+theorem det_2 : (Matrix.scalar (Fin 6) (2 : ℤ) - M).det
+     = -2542544959214050242992807464557615272999692676810331577155226509532184000 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 3`, by the certified Bareiss echelon decomposition. -/
-theorem det_3 : (Matrix.scalar (Fin 6) (3 : ℤ) - M).det = -2542544959213826514099368672196329578199825742078103553813306754332688375 := by
+theorem det_3 : (Matrix.scalar (Fin 6) (3 : ℤ) - M).det
+     = -2542544959213826514099368672196329578199825742078103553813306754332688375 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 4`, by the certified Bareiss echelon decomposition. -/
-theorem det_4 : (Matrix.scalar (Fin 6) (4 : ℤ) - M).det = -2542544959213602785205892034243853712474839852763483550861946724291162112 := by
+theorem det_4 : (Matrix.scalar (Fin 6) (4 : ℤ) - M).det
+     = -2542544959213602785205892034243853712474839852763483550861946724291162112 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 5`, by the certified Bareiss echelon decomposition. -/
-theorem det_5 : (Matrix.scalar (Fin 6) (5 : ℤ) - M).det = -2542544959213379056312377550700187686544445667861904371600283468788366759 := by
+theorem det_5 : (Matrix.scalar (Fin 6) (5 : ℤ) - M).det
+     = -2542544959213379056312377550700187686544445667861904371600283468788366759 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 6`, by the certified Bareiss echelon decomposition. -/
-theorem det_6 : (Matrix.scalar (Fin 6) (6 : ℤ) - M).det = -2542544959213155327418825221565331511128353846594262712772869174503842752 := by
+theorem det_6 : (Matrix.scalar (Fin 6) (6 : ℤ) - M).det
+     = -2542544959213155327418825221565331511128353846594262712772869174503842752 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
-theorem ev_0 : P.eval (0 : ℤ) = -2542544959214497700779571512506616106945227047673199939041604512235126784 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_0 : P.eval (0 : ℤ)
+     = -2542544959214497700779571512506616106945227047673199939041604512235126784 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_1 : P.eval (1 : ℤ) = -2542544959214273971886208411327710786154729998190198711034039382450865647 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_1 : P.eval (1 : ℤ)
+     = -2542544959214273971886208411327710786154729998190198711034039382450865647 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_2 : P.eval (2 : ℤ) = -2542544959214050242992807464557615272999692676810331577155226509532184000 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_2 : P.eval (2 : ℤ)
+     = -2542544959214050242992807464557615272999692676810331577155226509532184000 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_3 : P.eval (3 : ℤ) = -2542544959213826514099368672196329578199825742078103553813306754332688375 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_3 : P.eval (3 : ℤ)
+     = -2542544959213826514099368672196329578199825742078103553813306754332688375 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_4 : P.eval (4 : ℤ) = -2542544959213602785205892034243853712474839852763483550861946724291162112 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_4 : P.eval (4 : ℤ)
+     = -2542544959213602785205892034243853712474839852763483550861946724291162112 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_5 : P.eval (5 : ℤ) = -2542544959213379056312377550700187686544445667861904371600283468788366759 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_5 : P.eval (5 : ℤ)
+     = -2542544959213379056312377550700187686544445667861904371600283468788366759 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_6 : P.eval (6 : ℤ) = -2542544959213155327418825221565331511128353846594262712772869174503842752 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_6 : P.eval (6 : ℤ)
+     = -2542544959213155327418825221565331511128353846594262712772869174503842752 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
 /-- Assembly: the n+1 evaluation points, discharged per case. -/
-theorem hevals : ∀ i : Fin 6, P.eval ((i : ℕ) : ℤ)
+theorem hevals : ∀ i : Fin 7, P.eval ((i : ℕ) : ℤ)
       = (Matrix.scalar (Fin 6) ((i : ℕ) : ℤ) - M).det := by
   intro i
   fin_cases i
-  · show P.eval (0 : ℤ)
+  · change P.eval (0 : ℤ)
       = (Matrix.scalar (Fin 6) (0 : ℤ) - M).det
     rw [ev_0, det_0]
-  · show P.eval (1 : ℤ)
+  · change P.eval (1 : ℤ)
       = (Matrix.scalar (Fin 6) (1 : ℤ) - M).det
     rw [ev_1, det_1]
-  · show P.eval (2 : ℤ)
+  · change P.eval (2 : ℤ)
       = (Matrix.scalar (Fin 6) (2 : ℤ) - M).det
     rw [ev_2, det_2]
-  · show P.eval (3 : ℤ)
+  · change P.eval (3 : ℤ)
       = (Matrix.scalar (Fin 6) (3 : ℤ) - M).det
     rw [ev_3, det_3]
-  · show P.eval (4 : ℤ)
+  · change P.eval (4 : ℤ)
       = (Matrix.scalar (Fin 6) (4 : ℤ) - M).det
     rw [ev_4, det_4]
-  · show P.eval (5 : ℤ)
+  · change P.eval (5 : ℤ)
       = (Matrix.scalar (Fin 6) (5 : ℤ) - M).det
     rw [ev_5, det_5]
-  · show P.eval (6 : ℤ)
+  · change P.eval (6 : ℤ)
       = (Matrix.scalar (Fin 6) (6 : ℤ) - M).det
     rw [ev_6, det_6]
+
+theorem entry_0_0 : coordN Atab (fun m => Xtab 0 m) 0
+      = ((3312 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_1 : coordN Atab (fun m => Xtab 1 m) 0
+      = ((1 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_2 : coordN Atab (fun m => Xtab 2 m) 0
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_3 : coordN Atab (fun m => Xtab 3 m) 0
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_4 : coordN Atab (fun m => Xtab 4 m) 0
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_5 : coordN Atab (fun m => Xtab 5 m) 0
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_0 : coordN Atab (fun m => Xtab 0 m) 1
+      = ((2417851639229262520320000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_1 : coordN Atab (fun m => Xtab 1 m) 1
+      = ((2803968 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_2 : coordN Atab (fun m => Xtab 2 m) 1
+      = ((1824 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_3 : coordN Atab (fun m => Xtab 3 m) 1
+      = ((1 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_4 : coordN Atab (fun m => Xtab 4 m) 1
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_5 : coordN Atab (fun m => Xtab 5 m) 1
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_0 : coordN Atab (fun m => Xtab 0 m) 2
+      = ((-6209043009540379951104000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_1 : coordN Atab (fun m => Xtab 1 m) 2
+      = ((284663808000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_2 : coordN Atab (fun m => Xtab 2 m) 2
+      = ((248389632 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_3 : coordN Atab (fun m => Xtab 3 m) 2
+      = ((250368 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_4 : coordN Atab (fun m => Xtab 4 m) 2
+      = ((336 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_5 : coordN Atab (fun m => Xtab 5 m) 2
+      = ((1 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_0 : coordN Atab (fun m => Xtab 0 m) 3
+      = ((4545715823958420357120000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_1 : coordN Atab (fun m => Xtab 1 m) 3
+      = ((2417851422508843008000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_2 : coordN Atab (fun m => Xtab 2 m) 3
+      = ((-164348559360000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_3 : coordN Atab (fun m => Xtab 3 m) 3
+      = ((-131671130112 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_4 : coordN Atab (fun m => Xtab 4 m) 3
+      = ((-113213440 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_5 : coordN Atab (fun m => Xtab 5 m) 3
+      = ((-89088 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_0 : coordN Atab (fun m => Xtab 0 m) 4
+      = ((-914094978999527669760000000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_1 : coordN Atab (fun m => Xtab 1 m) 4
+      = ((-2611310348866682880000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_2 : coordN Atab (fun m => Xtab 2 m) 4
+      = ((-15685732270080000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_3 : coordN Atab (fun m => Xtab 3 m) 4
+      = ((-6100006993920000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_4 : coordN Atab (fun m => Xtab 4 m) 4
+      = ((-288230473728 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_5 : coordN Atab (fun m => Xtab 5 m) 4
+      = ((-462028800 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_0 : coordN Atab (fun m => Xtab 0 m) 5
+      = ((23018090232432033792000000000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_1 : coordN Atab (fun m => Xtab 1 m) 5
+      = ((270906796019810304000000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_2 : coordN Atab (fun m => Xtab 2 m) 5
+      = ((2139864107581440000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_3 : coordN Atab (fun m => Xtab 3 m) 5
+      = ((-13649338957824000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_4 : coordN Atab (fun m => Xtab 4 m) 5
+      = ((-1239366500352000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_5 : coordN Atab (fun m => Xtab 5 m) 5
+      = ((-41221619712 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 /-- **The characteristic polynomial of `T₂` on this weight.** -/
 theorem charpoly_T2 : T2.charpoly = P.map (Int.castRingHom ℂ) := by
   have hdim := finrank_eq
   have hn : 0 < 6 := by norm_num
   rw [charpoly_dimN hn hdim fb Atab Xtab hzero hone hA T2 hX,
-      ← charpoly_of_eval_eq M P P_natDegree hevals, ← Matrix.charpoly_map]
+      ← CharpolyEngine.charpoly_of_eval_eq M P P_natDegree hevals, ← Matrix.charpoly_map]
   congr 1
   ext j i
   fin_cases j <;> fin_cases i
-  · show coordN Atab (fun m => Xtab 0 m) 0 = ((3312 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 0 = ((1 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 0 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 0 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 0 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 0 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 1 = ((2417851639229262520320000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 1 = ((2803968 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 1 = ((1824 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 1 = ((1 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 1 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 1 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 2 = ((-6209043009540379951104000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 2 = ((284663808000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 2 = ((248389632 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 2 = ((250368 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 2 = ((336 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 2 = ((1 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 3 = ((4545715823958420357120000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 3 = ((2417851422508843008000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 3 = ((-164348559360000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 3 = ((-131671130112 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 3 = ((-113213440 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 3 = ((-89088 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 4 = ((-914094978999527669760000000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 4 = ((-2611310348866682880000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 4 = ((-15685732270080000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 4 = ((-6100006993920000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 4 = ((-288230473728 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 4 = ((-462028800 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 5 = ((23018090232432033792000000000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 5 = ((270906796019810304000000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 5 = ((2139864107581440000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 5 = ((-13649338957824000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 5 = ((-1239366500352000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 5 = ((-41221619712 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
+  · change coordN Atab (fun m => Xtab 0 m) 0 = ((3312 : ℤ) : ℂ)
+    exact entry_0_0
+  · change coordN Atab (fun m => Xtab 1 m) 0 = ((1 : ℤ) : ℂ)
+    exact entry_0_1
+  · change coordN Atab (fun m => Xtab 2 m) 0 = ((0 : ℤ) : ℂ)
+    exact entry_0_2
+  · change coordN Atab (fun m => Xtab 3 m) 0 = ((0 : ℤ) : ℂ)
+    exact entry_0_3
+  · change coordN Atab (fun m => Xtab 4 m) 0 = ((0 : ℤ) : ℂ)
+    exact entry_0_4
+  · change coordN Atab (fun m => Xtab 5 m) 0 = ((0 : ℤ) : ℂ)
+    exact entry_0_5
+  · change coordN Atab (fun m => Xtab 0 m) 1 = ((2417851639229262520320000 : ℤ) : ℂ)
+    exact entry_1_0
+  · change coordN Atab (fun m => Xtab 1 m) 1 = ((2803968 : ℤ) : ℂ)
+    exact entry_1_1
+  · change coordN Atab (fun m => Xtab 2 m) 1 = ((1824 : ℤ) : ℂ)
+    exact entry_1_2
+  · change coordN Atab (fun m => Xtab 3 m) 1 = ((1 : ℤ) : ℂ)
+    exact entry_1_3
+  · change coordN Atab (fun m => Xtab 4 m) 1 = ((0 : ℤ) : ℂ)
+    exact entry_1_4
+  · change coordN Atab (fun m => Xtab 5 m) 1 = ((0 : ℤ) : ℂ)
+    exact entry_1_5
+  · change coordN Atab (fun m => Xtab 0 m) 2 = ((-6209043009540379951104000000 : ℤ) : ℂ)
+    exact entry_2_0
+  · change coordN Atab (fun m => Xtab 1 m) 2 = ((284663808000 : ℤ) : ℂ)
+    exact entry_2_1
+  · change coordN Atab (fun m => Xtab 2 m) 2 = ((248389632 : ℤ) : ℂ)
+    exact entry_2_2
+  · change coordN Atab (fun m => Xtab 3 m) 2 = ((250368 : ℤ) : ℂ)
+    exact entry_2_3
+  · change coordN Atab (fun m => Xtab 4 m) 2 = ((336 : ℤ) : ℂ)
+    exact entry_2_4
+  · change coordN Atab (fun m => Xtab 5 m) 2 = ((1 : ℤ) : ℂ)
+    exact entry_2_5
+  · change coordN Atab (fun m => Xtab 0 m) 3 = ((4545715823958420357120000000000 : ℤ) : ℂ)
+    exact entry_3_0
+  · change coordN Atab (fun m => Xtab 1 m) 3 = ((2417851422508843008000000 : ℤ) : ℂ)
+    exact entry_3_1
+  · change coordN Atab (fun m => Xtab 2 m) 3 = ((-164348559360000 : ℤ) : ℂ)
+    exact entry_3_2
+  · change coordN Atab (fun m => Xtab 3 m) 3 = ((-131671130112 : ℤ) : ℂ)
+    exact entry_3_3
+  · change coordN Atab (fun m => Xtab 4 m) 3 = ((-113213440 : ℤ) : ℂ)
+    exact entry_3_4
+  · change coordN Atab (fun m => Xtab 5 m) 3 = ((-89088 : ℤ) : ℂ)
+    exact entry_3_5
+  · change coordN Atab (fun m => Xtab 0 m) 4 = ((-914094978999527669760000000000000 : ℤ) : ℂ)
+    exact entry_4_0
+  · change coordN Atab (fun m => Xtab 1 m) 4 = ((-2611310348866682880000000000 : ℤ) : ℂ)
+    exact entry_4_1
+  · change coordN Atab (fun m => Xtab 2 m) 4 = ((-15685732270080000000 : ℤ) : ℂ)
+    exact entry_4_2
+  · change coordN Atab (fun m => Xtab 3 m) 4 = ((-6100006993920000 : ℤ) : ℂ)
+    exact entry_4_3
+  · change coordN Atab (fun m => Xtab 4 m) 4 = ((-288230473728 : ℤ) : ℂ)
+    exact entry_4_4
+  · change coordN Atab (fun m => Xtab 5 m) 4 = ((-462028800 : ℤ) : ℂ)
+    exact entry_4_5
+  · change coordN Atab (fun m => Xtab 0 m) 5 = ((23018090232432033792000000000000000 : ℤ) : ℂ)
+    exact entry_5_0
+  · change coordN Atab (fun m => Xtab 1 m) 5 = ((270906796019810304000000000000 : ℤ) : ℂ)
+    exact entry_5_1
+  · change coordN Atab (fun m => Xtab 2 m) 5 = ((2139864107581440000000000 : ℤ) : ℂ)
+    exact entry_5_2
+  · change coordN Atab (fun m => Xtab 3 m) 5 = ((-13649338957824000000 : ℤ) : ℂ)
+    exact entry_5_3
+  · change coordN Atab (fun m => Xtab 4 m) 5 = ((-1239366500352000 : ℤ) : ℂ)
+    exact entry_5_4
+  · change coordN Atab (fun m => Xtab 5 m) 5 = ((-41221619712 : ℤ) : ℂ)
+    exact entry_5_5
 
 /-- The characteristic polynomial mod the certificate prime (little-endian). -/
 noncomputable def fr : List ℤ := [44, 103, 18, 80, 99, 10, 1]
 
 lemma hmap : P.map (Int.castRingHom (ZMod 113)) = RabinCert.toPoly 113 fr := by
-  simp [P, RabinCert.toPoly, fr, map_ofNat]
+  simp only [P, RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr,
+      Polynomial.map_C, Polynomial.map_X, Polynomial.map_add, Polynomial.map_mul,
+      Polynomial.map_pow, Int.coe_castRingHom, ← Polynomial.C_neg]
+  rw [show ((460872026640 : ℤ) : ZMod 113) = (10 : ZMod 113) from by decide +kernel,
+      show ((-9394328893568181494648832 : ℤ) : ZMod 113) = (99 : ZMod 113) from by decide +kernel,
+      show ((-1786618443034384862706625909641707520 : ℤ) : ZMod 113)
+           = (80 : ZMod 113) from by decide +kernel,
+      show ((18922795595101542125465117347843310471957874475008 : ℤ) : ZMod 113)
+           = (18 : ZMod 113) from by decide +kernel,
+      show ((223728893344178383310221034990027409432576297286802174115840 : ℤ) : ZMod 113)
+           = (103 : ZMod 113) from by decide +kernel,
+      show ((-2542544959214497700779571512506616106945227047673199939041604512235126784 : ℤ)
+          : ZMod 113) = (44 : ZMod 113) from by decide +kernel]
+  ring_nf
 
 lemma hmon' : (RabinCert.toPoly 113 fr).Monic := by
-  simp only [RabinCert.toPoly]
+  simp only [RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr, mul_zero, add_zero]
   monicity!
 
 lemma hnd : (RabinCert.toPoly 113 fr).natDegree = 6 := by
-  simp only [RabinCert.toPoly]
+  simp only [RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr, mul_zero, add_zero]
   compute_degree!
 
 lemma hF : 113 ^ 6 < 2 ^ 41 := by norm_num
@@ -5679,9 +6790,13 @@ lemma h2 : ∀ q : ℕ, q.Prime → q ∣ 6 → ∃ w : ℕ,
   intro q hq hq2
   have hqb : q ≤ 6 := Nat.le_of_dvd (by norm_num) hq2
   interval_cases q
+  · exact absurd hq (by decide)
+  · exact absurd hq (by decide)
   · exact h2_2
   · exact h2_3
+  · exact absurd hq (by decide)
   · exact absurd hq2 (by decide)
+  · exact absurd hq (by decide)
 
 /-- The second certificate prime (sanity decide, not used by `maeda`). -/
 noncomputable def fr2 : List ℤ := [69, 173, 6, 31, 56, 79, 1]
@@ -5692,8 +6807,8 @@ lemma h1_2 : RabinCert.zpxw 179 fr2 (RabinCert.bitsOf 45 (179 ^ 6)) [1]
 
 /-- **Maeda's conjecture (irreducibility) in this weight.** -/
 theorem maeda : Irreducible (P.map (Int.castRingHom ℚ)) :=
-  have : Fact (113.Prime) := ⟨by norm_num⟩
-  RabinCert.irreducible_of_rabin_int P_monic hmap hmon' hnd (by norm_num) h1 h2
+  haveI : Fact (Nat.Prime 113) := ⟨by norm_num⟩
+  RabinCert.irreducible_of_rabin_int P_monic hmap hmon' hnd (by norm_num) hF h1 h2
 
 end MaedaWeight82
 /-! ### Weight 86 (dim 6) -/
@@ -6547,18 +7662,25 @@ def M : Matrix (Fin 6) (Fin 6) ℤ :=
       !![3552, 1, 0, 0, 0, 0;
       38685626227668138946560000, 3422208, 2064, 1, 0, 0;
       -108629238447291263090688000000, 664215552000, 552026112, 511488, 576, 1;
-      91820488593508372316160000000000, 38685625957485379584000000, -208461496320000, -172334579712, -159600640, -185088;
-      -24132898392858295271424000000000000, -51065081543497089024000000000, -31481539854336000000, -15741109665792000, -4606717329408, 2172518400;
-      1206046241837046300672000000000000000, 9623396864615251968000000000000, 37764638787502080000000000, -143391442599936000000, 14296201297920000, 1181585768448]
+      91820488593508372316160000000000, 38685625957485379584000000, -208461496320000,
+      -172334579712, -159600640, -185088;
+      -24132898392858295271424000000000000, -51065081543497089024000000000,
+      -31481539854336000000, -15741109665792000, -4606717329408, 2172518400;
+      1206046241837046300672000000000000000, 9623396864615251968000000000000,
+      37764638787502080000000000, -143391442599936000000, 14296201297920000, 1181585768448]
 
 /-- The translated matrices `t·1 − M`, as an explicit literal (symbolic in `t`). -/
 def MT (t : ℤ) : Matrix (Fin 6) (Fin 6) ℤ :=
       !![t - 3552, (-1), (0), (0), (0), (0);
       (-38685626227668138946560000), t - 3422208, (-2064), (-1), (0), (0);
       (108629238447291263090688000000), (-664215552000), t - 552026112, (-511488), (-576), (-1);
-      (-91820488593508372316160000000000), (-38685625957485379584000000), (208461496320000), t - -172334579712, (159600640), (185088);
-      (24132898392858295271424000000000000), (51065081543497089024000000000), (31481539854336000000), (15741109665792000), t - -4606717329408, (-2172518400);
-      (-1206046241837046300672000000000000000), (-9623396864615251968000000000000), (-37764638787502080000000000), (143391442599936000000), (-14296201297920000), t - 1181585768448]
+      (-91820488593508372316160000000000), (-38685625957485379584000000), (208461496320000),
+      t - -172334579712, (159600640), (185088);
+      (24132898392858295271424000000000000), (51065081543497089024000000000),
+      (31481539854336000000), (15741109665792000), t - -4606717329408, (-2172518400);
+      (-1206046241837046300672000000000000000), (-9623396864615251968000000000000),
+      (-37764638787502080000000000), (143391442599936000000), (-14296201297920000),
+      t - 1181585768448]
 
 /-- One-time symbolic bridge, reused by all determinant lemmas. -/
 theorem scalar_sub_M (t : ℤ) : Matrix.scalar (Fin 6) t - M = MT t := by
@@ -6568,232 +7690,446 @@ theorem scalar_sub_M (t : ℤ) : Matrix.scalar (Fin 6) t - M = MT t := by
 
 /-- The characteristic polynomial of `T₂` (descending literal). -/
 noncomputable def P : ℤ[X] :=
-  (X : ℤ[X]) ^ 6 + C (3596910688800) * (X : ℤ[X]) ^ 5 + - C (180083699101345331242893312) * (X : ℤ[X]) ^ 4 + - C (718682363872979487719506400535537254400) * (X : ℤ[X]) ^ 3 + C (6762034528787600549896548602635210390056501245902848) * (X : ℤ[X]) ^ 2 + C (25777042732431769711558332265361302177218232143229983587617996800) * (X : ℤ[X]) ^ 1 + - C (651453564182627074233502499539063680566772829640480606321381488113393598464)
+  C (1) * (X : ℤ[X]) ^ 6 + C (3596910688800) * (X : ℤ[X]) ^ 5 +
+      - C (180083699101345331242893312) * (X : ℤ[X]) ^ 4 +
+      - C (718682363872979487719506400535537254400) * (X : ℤ[X]) ^ 3 +
+      C (6762034528787600549896548602635210390056501245902848) * (X : ℤ[X]) ^ 2 +
+      C (25777042732431769711558332265361302177218232143229983587617996800) * (X : ℤ[X]) ^ 1 +
+      - C (651453564182627074233502499539063680566772829640480606321381488113393598464)
 
 theorem P_natDegree : P.natDegree = 6 := by unfold P; compute_degree!
 
 theorem P_monic : P.Monic := by unfold P; monicity!
 
 /-- `det (t·1 − M)` at `t = 0`, by the certified Bareiss echelon decomposition. -/
-theorem det_0 : (Matrix.scalar (Fin 6) (0 : ℤ) - M).det = -651453564182627074233502499539063680566772829640480606321381488113393598464 := by
+theorem det_0 : (Matrix.scalar (Fin 6) (0 : ℤ) - M).det
+     = -651453564182627074233502499539063680566772829640480606321381488113393598464 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 1`, by the certified Bareiss echelon decomposition. -/
-theorem det_1 : (Matrix.scalar (Fin 6) (1 : ℤ) - M).det = -651453564156850031501063967792976561419543994787819310386369190294399157727 := by
+theorem det_1 : (Matrix.scalar (Fin 6) (1 : ℤ) - M).det
+     = -651453564156850031501063967792976561419543994787819310386369190294399157727 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 2`, by the certified Bareiss echelon decomposition. -/
-theorem det_2 : (Matrix.scalar (Fin 6) (2 : ℤ) - M).det = -651453564131072988768611911977831871383309550078350842135033909416216280000 := by
+theorem det_2 : (Matrix.scalar (Fin 6) (2 : ℤ) - M).det
+     = -651453564131072988768611911977831871383309550078350842135033909416216280000 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 3`, by the certified Bareiss echelon decomposition. -/
-theorem det_3 : (Matrix.scalar (Fin 6) (3 : ℤ) - M).det = -651453564105295946036146332093629614770163678756435141052061941080209330375 := by
+theorem det_3 : (Matrix.scalar (Fin 6) (3 : ℤ) - M).det
+     = -651453564105295946036146332093629614770163678756435141052061941080209330375 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 4`, by the certified Bareiss echelon decomposition. -/
-theorem det_4 : (Matrix.scalar (Fin 6) (4 : ℤ) - M).det = -651453564079518903303667228140369795892200564070754155400571005579006799872 := by
+theorem det_4 : (Matrix.scalar (Fin 6) (4 : ℤ) - M).det
+     = -651453564079518903303667228140369795892200564070754155400571005579006799872 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 5`, by the certified Bareiss echelon decomposition. -/
-theorem det_5 : (Matrix.scalar (Fin 6) (5 : ℤ) - M).det = -651453564053741860571174600118052419061514389274311842222109816267218647639 := by
+theorem det_5 : (Matrix.scalar (Fin 6) (5 : ℤ) - M).det
+     = -651453564053741860571174600118052419061514389274311842222109816267218647639 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
 /-- `det (t·1 − M)` at `t = 6`, by the certified Bareiss echelon decomposition. -/
-theorem det_6 : (Matrix.scalar (Fin 6) (6 : ℤ) - M).det = -651453564027964817838668448026677488590199337624434167336657647932153642432 := by
+theorem det_6 : (Matrix.scalar (Fin 6) (6 : ℤ) - M).det
+     = -651453564027964817838668448026677488590199337624434167336657647932153642432 := by
   rw [scalar_sub_M]
   simp only [MT]
   eval_det
 
-theorem ev_0 : P.eval (0 : ℤ) = -651453564182627074233502499539063680566772829640480606321381488113393598464 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_0 : P.eval (0 : ℤ)
+     = -651453564182627074233502499539063680566772829640480606321381488113393598464 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_1 : P.eval (1 : ℤ) = -651453564156850031501063967792976561419543994787819310386369190294399157727 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_1 : P.eval (1 : ℤ)
+     = -651453564156850031501063967792976561419543994787819310386369190294399157727 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_2 : P.eval (2 : ℤ) = -651453564131072988768611911977831871383309550078350842135033909416216280000 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_2 : P.eval (2 : ℤ)
+     = -651453564131072988768611911977831871383309550078350842135033909416216280000 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_3 : P.eval (3 : ℤ) = -651453564105295946036146332093629614770163678756435141052061941080209330375 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_3 : P.eval (3 : ℤ)
+     = -651453564105295946036146332093629614770163678756435141052061941080209330375 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_4 : P.eval (4 : ℤ) = -651453564079518903303667228140369795892200564070754155400571005579006799872 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_4 : P.eval (4 : ℤ)
+     = -651453564079518903303667228140369795892200564070754155400571005579006799872 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_5 : P.eval (5 : ℤ) = -651453564053741860571174600118052419061514389274311842222109816267218647639 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_5 : P.eval (5 : ℤ)
+     = -651453564053741860571174600118052419061514389274311842222109816267218647639 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
-theorem ev_6 : P.eval (6 : ℤ) = -651453564027964817838668448026677488590199337624434167336657647932153642432 := by
-  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
+theorem ev_6 : P.eval (6 : ℤ)
+     = -651453564027964817838668448026677488590199337624434167336657647932153642432 := by
+  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,
+      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]
 
 /-- Assembly: the n+1 evaluation points, discharged per case. -/
-theorem hevals : ∀ i : Fin 6, P.eval ((i : ℕ) : ℤ)
+theorem hevals : ∀ i : Fin 7, P.eval ((i : ℕ) : ℤ)
       = (Matrix.scalar (Fin 6) ((i : ℕ) : ℤ) - M).det := by
   intro i
   fin_cases i
-  · show P.eval (0 : ℤ)
+  · change P.eval (0 : ℤ)
       = (Matrix.scalar (Fin 6) (0 : ℤ) - M).det
     rw [ev_0, det_0]
-  · show P.eval (1 : ℤ)
+  · change P.eval (1 : ℤ)
       = (Matrix.scalar (Fin 6) (1 : ℤ) - M).det
     rw [ev_1, det_1]
-  · show P.eval (2 : ℤ)
+  · change P.eval (2 : ℤ)
       = (Matrix.scalar (Fin 6) (2 : ℤ) - M).det
     rw [ev_2, det_2]
-  · show P.eval (3 : ℤ)
+  · change P.eval (3 : ℤ)
       = (Matrix.scalar (Fin 6) (3 : ℤ) - M).det
     rw [ev_3, det_3]
-  · show P.eval (4 : ℤ)
+  · change P.eval (4 : ℤ)
       = (Matrix.scalar (Fin 6) (4 : ℤ) - M).det
     rw [ev_4, det_4]
-  · show P.eval (5 : ℤ)
+  · change P.eval (5 : ℤ)
       = (Matrix.scalar (Fin 6) (5 : ℤ) - M).det
     rw [ev_5, det_5]
-  · show P.eval (6 : ℤ)
+  · change P.eval (6 : ℤ)
       = (Matrix.scalar (Fin 6) (6 : ℤ) - M).det
     rw [ev_6, det_6]
+
+theorem entry_0_0 : coordN Atab (fun m => Xtab 0 m) 0
+      = ((3552 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_1 : coordN Atab (fun m => Xtab 1 m) 0
+      = ((1 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_2 : coordN Atab (fun m => Xtab 2 m) 0
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_3 : coordN Atab (fun m => Xtab 3 m) 0
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_4 : coordN Atab (fun m => Xtab 4 m) 0
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_0_5 : coordN Atab (fun m => Xtab 5 m) 0
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_0 : coordN Atab (fun m => Xtab 0 m) 1
+      = ((38685626227668138946560000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_1 : coordN Atab (fun m => Xtab 1 m) 1
+      = ((3422208 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_2 : coordN Atab (fun m => Xtab 2 m) 1
+      = ((2064 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_3 : coordN Atab (fun m => Xtab 3 m) 1
+      = ((1 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_4 : coordN Atab (fun m => Xtab 4 m) 1
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_1_5 : coordN Atab (fun m => Xtab 5 m) 1
+      = ((0 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_0 : coordN Atab (fun m => Xtab 0 m) 2
+      = ((-108629238447291263090688000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_1 : coordN Atab (fun m => Xtab 1 m) 2
+      = ((664215552000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_2 : coordN Atab (fun m => Xtab 2 m) 2
+      = ((552026112 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_3 : coordN Atab (fun m => Xtab 3 m) 2
+      = ((511488 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_4 : coordN Atab (fun m => Xtab 4 m) 2
+      = ((576 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_2_5 : coordN Atab (fun m => Xtab 5 m) 2
+      = ((1 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_0 : coordN Atab (fun m => Xtab 0 m) 3
+      = ((91820488593508372316160000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_1 : coordN Atab (fun m => Xtab 1 m) 3
+      = ((38685625957485379584000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_2 : coordN Atab (fun m => Xtab 2 m) 3
+      = ((-208461496320000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_3 : coordN Atab (fun m => Xtab 3 m) 3
+      = ((-172334579712 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_4 : coordN Atab (fun m => Xtab 4 m) 3
+      = ((-159600640 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_3_5 : coordN Atab (fun m => Xtab 5 m) 3
+      = ((-185088 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_0 : coordN Atab (fun m => Xtab 0 m) 4
+      = ((-24132898392858295271424000000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_1 : coordN Atab (fun m => Xtab 1 m) 4
+      = ((-51065081543497089024000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_2 : coordN Atab (fun m => Xtab 2 m) 4
+      = ((-31481539854336000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_3 : coordN Atab (fun m => Xtab 3 m) 4
+      = ((-15741109665792000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_4 : coordN Atab (fun m => Xtab 4 m) 4
+      = ((-4606717329408 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_4_5 : coordN Atab (fun m => Xtab 5 m) 4
+      = ((2172518400 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_0 : coordN Atab (fun m => Xtab 0 m) 5
+      = ((1206046241837046300672000000000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_1 : coordN Atab (fun m => Xtab 1 m) 5
+      = ((9623396864615251968000000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_2 : coordN Atab (fun m => Xtab 2 m) 5
+      = ((37764638787502080000000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_3 : coordN Atab (fun m => Xtab 3 m) 5
+      = ((-143391442599936000000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_4 : coordN Atab (fun m => Xtab 4 m) 5
+      = ((14296201297920000 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+
+theorem entry_5_5 : coordN Atab (fun m => Xtab 5 m) 5
+      = ((1181585768448 : ℤ) : ℂ) := by
+  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
+      Finset.sum_range_zero]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 /-- **The characteristic polynomial of `T₂` on this weight.** -/
 theorem charpoly_T2 : T2.charpoly = P.map (Int.castRingHom ℂ) := by
   have hdim := finrank_eq
   have hn : 0 < 6 := by norm_num
   rw [charpoly_dimN hn hdim fb Atab Xtab hzero hone hA T2 hX,
-      ← charpoly_of_eval_eq M P P_natDegree hevals, ← Matrix.charpoly_map]
+      ← CharpolyEngine.charpoly_of_eval_eq M P P_natDegree hevals, ← Matrix.charpoly_map]
   congr 1
   ext j i
   fin_cases j <;> fin_cases i
-  · show coordN Atab (fun m => Xtab 0 m) 0 = ((3552 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 0 = ((1 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 0 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 0 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 0 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 0 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 1 = ((38685626227668138946560000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 1 = ((3422208 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 1 = ((2064 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 1 = ((1 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 1 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 1 = ((0 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 2 = ((-108629238447291263090688000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 2 = ((664215552000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 2 = ((552026112 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 2 = ((511488 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 2 = ((576 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 2 = ((1 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 3 = ((91820488593508372316160000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 3 = ((38685625957485379584000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 3 = ((-208461496320000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 3 = ((-172334579712 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 3 = ((-159600640 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 3 = ((-185088 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 4 = ((-24132898392858295271424000000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 4 = ((-51065081543497089024000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 4 = ((-31481539854336000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 4 = ((-15741109665792000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 4 = ((-4606717329408 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 4 = ((2172518400 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 0 m) 5 = ((1206046241837046300672000000000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 1 m) 5 = ((9623396864615251968000000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 2 m) 5 = ((37764638787502080000000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 3 m) 5 = ((-143391442599936000000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 4 m) 5 = ((14296201297920000 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
-  · show coordN Atab (fun m => Xtab 5 m) 5 = ((1181585768448 : ℤ) : ℂ)
-    simp only [coordN, coordsAux, Atab, Xtab]
-    norm_num [Matrix.map_apply, M, List.getD_cons_succ, List.getD_cons_zero]
+  · change coordN Atab (fun m => Xtab 0 m) 0 = ((3552 : ℤ) : ℂ)
+    exact entry_0_0
+  · change coordN Atab (fun m => Xtab 1 m) 0 = ((1 : ℤ) : ℂ)
+    exact entry_0_1
+  · change coordN Atab (fun m => Xtab 2 m) 0 = ((0 : ℤ) : ℂ)
+    exact entry_0_2
+  · change coordN Atab (fun m => Xtab 3 m) 0 = ((0 : ℤ) : ℂ)
+    exact entry_0_3
+  · change coordN Atab (fun m => Xtab 4 m) 0 = ((0 : ℤ) : ℂ)
+    exact entry_0_4
+  · change coordN Atab (fun m => Xtab 5 m) 0 = ((0 : ℤ) : ℂ)
+    exact entry_0_5
+  · change coordN Atab (fun m => Xtab 0 m) 1 = ((38685626227668138946560000 : ℤ) : ℂ)
+    exact entry_1_0
+  · change coordN Atab (fun m => Xtab 1 m) 1 = ((3422208 : ℤ) : ℂ)
+    exact entry_1_1
+  · change coordN Atab (fun m => Xtab 2 m) 1 = ((2064 : ℤ) : ℂ)
+    exact entry_1_2
+  · change coordN Atab (fun m => Xtab 3 m) 1 = ((1 : ℤ) : ℂ)
+    exact entry_1_3
+  · change coordN Atab (fun m => Xtab 4 m) 1 = ((0 : ℤ) : ℂ)
+    exact entry_1_4
+  · change coordN Atab (fun m => Xtab 5 m) 1 = ((0 : ℤ) : ℂ)
+    exact entry_1_5
+  · change coordN Atab (fun m => Xtab 0 m) 2 = ((-108629238447291263090688000000 : ℤ) : ℂ)
+    exact entry_2_0
+  · change coordN Atab (fun m => Xtab 1 m) 2 = ((664215552000 : ℤ) : ℂ)
+    exact entry_2_1
+  · change coordN Atab (fun m => Xtab 2 m) 2 = ((552026112 : ℤ) : ℂ)
+    exact entry_2_2
+  · change coordN Atab (fun m => Xtab 3 m) 2 = ((511488 : ℤ) : ℂ)
+    exact entry_2_3
+  · change coordN Atab (fun m => Xtab 4 m) 2 = ((576 : ℤ) : ℂ)
+    exact entry_2_4
+  · change coordN Atab (fun m => Xtab 5 m) 2 = ((1 : ℤ) : ℂ)
+    exact entry_2_5
+  · change coordN Atab (fun m => Xtab 0 m) 3 = ((91820488593508372316160000000000 : ℤ) : ℂ)
+    exact entry_3_0
+  · change coordN Atab (fun m => Xtab 1 m) 3 = ((38685625957485379584000000 : ℤ) : ℂ)
+    exact entry_3_1
+  · change coordN Atab (fun m => Xtab 2 m) 3 = ((-208461496320000 : ℤ) : ℂ)
+    exact entry_3_2
+  · change coordN Atab (fun m => Xtab 3 m) 3 = ((-172334579712 : ℤ) : ℂ)
+    exact entry_3_3
+  · change coordN Atab (fun m => Xtab 4 m) 3 = ((-159600640 : ℤ) : ℂ)
+    exact entry_3_4
+  · change coordN Atab (fun m => Xtab 5 m) 3 = ((-185088 : ℤ) : ℂ)
+    exact entry_3_5
+  · change coordN Atab (fun m => Xtab 0 m) 4 = ((-24132898392858295271424000000000000 : ℤ) : ℂ)
+    exact entry_4_0
+  · change coordN Atab (fun m => Xtab 1 m) 4 = ((-51065081543497089024000000000 : ℤ) : ℂ)
+    exact entry_4_1
+  · change coordN Atab (fun m => Xtab 2 m) 4 = ((-31481539854336000000 : ℤ) : ℂ)
+    exact entry_4_2
+  · change coordN Atab (fun m => Xtab 3 m) 4 = ((-15741109665792000 : ℤ) : ℂ)
+    exact entry_4_3
+  · change coordN Atab (fun m => Xtab 4 m) 4 = ((-4606717329408 : ℤ) : ℂ)
+    exact entry_4_4
+  · change coordN Atab (fun m => Xtab 5 m) 4 = ((2172518400 : ℤ) : ℂ)
+    exact entry_4_5
+  · change coordN Atab (fun m => Xtab 0 m) 5 = ((1206046241837046300672000000000000000 : ℤ) : ℂ)
+    exact entry_5_0
+  · change coordN Atab (fun m => Xtab 1 m) 5 = ((9623396864615251968000000000000 : ℤ) : ℂ)
+    exact entry_5_1
+  · change coordN Atab (fun m => Xtab 2 m) 5 = ((37764638787502080000000000 : ℤ) : ℂ)
+    exact entry_5_2
+  · change coordN Atab (fun m => Xtab 3 m) 5 = ((-143391442599936000000 : ℤ) : ℂ)
+    exact entry_5_3
+  · change coordN Atab (fun m => Xtab 4 m) 5 = ((14296201297920000 : ℤ) : ℂ)
+    exact entry_5_4
+  · change coordN Atab (fun m => Xtab 5 m) 5 = ((1181585768448 : ℤ) : ℂ)
+    exact entry_5_5
 
 /-- The characteristic polynomial mod the certificate prime (little-endian). -/
 noncomputable def fr : List ℤ := [15, 52, 85, 97, 32, 6, 1]
 
 lemma hmap : P.map (Int.castRingHom (ZMod 103)) = RabinCert.toPoly 103 fr := by
-  simp [P, RabinCert.toPoly, fr, map_ofNat]
+  simp only [P, RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr,
+      Polynomial.map_C, Polynomial.map_X, Polynomial.map_add, Polynomial.map_mul,
+      Polynomial.map_pow, Int.coe_castRingHom, ← Polynomial.C_neg]
+  rw [show ((3596910688800 : ℤ) : ZMod 103) = (6 : ZMod 103) from by decide +kernel,
+      show ((-180083699101345331242893312 : ℤ) : ZMod 103)
+           = (32 : ZMod 103) from by decide +kernel,
+      show ((-718682363872979487719506400535537254400 : ℤ) : ZMod 103)
+           = (97 : ZMod 103) from by decide +kernel,
+      show ((6762034528787600549896548602635210390056501245902848 : ℤ) : ZMod 103)
+           = (85 : ZMod 103) from by decide +kernel,
+      show ((25777042732431769711558332265361302177218232143229983587617996800 : ℤ) : ZMod 103)
+           = (52 : ZMod 103) from by decide +kernel,
+      show ((-651453564182627074233502499539063680566772829640480606321381488113393598464 : ℤ)
+          : ZMod 103) = (15 : ZMod 103) from by decide +kernel]
+  ring_nf
 
 lemma hmon' : (RabinCert.toPoly 103 fr).Monic := by
-  simp only [RabinCert.toPoly]
+  simp only [RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr, mul_zero, add_zero]
   monicity!
 
 lemma hnd : (RabinCert.toPoly 103 fr).natDegree = 6 := by
-  simp only [RabinCert.toPoly]
+  simp only [RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr, mul_zero, add_zero]
   compute_degree!
 
 lemma hF : 103 ^ 6 < 2 ^ 41 := by norm_num
@@ -6815,9 +8151,13 @@ lemma h2 : ∀ q : ℕ, q.Prime → q ∣ 6 → ∃ w : ℕ,
   intro q hq hq2
   have hqb : q ≤ 6 := Nat.le_of_dvd (by norm_num) hq2
   interval_cases q
+  · exact absurd hq (by decide)
+  · exact absurd hq (by decide)
   · exact h2_2
   · exact h2_3
+  · exact absurd hq (by decide)
   · exact absurd hq2 (by decide)
+  · exact absurd hq (by decide)
 
 /-- The second certificate prime (sanity decide, not used by `maeda`). -/
 noncomputable def fr2 : List ℤ := [8, 68, 77, 85, 65, 38, 1]
@@ -6828,7 +8168,7 @@ lemma h1_2 : RabinCert.zpxw 131 fr2 (RabinCert.bitsOf 43 (131 ^ 6)) [1]
 
 /-- **Maeda's conjecture (irreducibility) in this weight.** -/
 theorem maeda : Irreducible (P.map (Int.castRingHom ℚ)) :=
-  have : Fact (103.Prime) := ⟨by norm_num⟩
-  RabinCert.irreducible_of_rabin_int P_monic hmap hmon' hnd (by norm_num) h1 h2
+  haveI : Fact (Nat.Prime 103) := ⟨by norm_num⟩
+  RabinCert.irreducible_of_rabin_int P_monic hmap hmon' hnd (by norm_num) hF h1 h2
 
 end MaedaWeight86

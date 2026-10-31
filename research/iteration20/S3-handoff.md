@@ -2,7 +2,7 @@
 
 Written 2026-10-31 at the S2/S3 boundary, per operator instruction ("after S2
 complete, take a break before continuing to S3").  Everything needed to resume
-S3 is in this file; the plan is `research/iteration20-plan.md` (S1/S2 checked).
+S3 is in this file; the plan is `research/iteration20-plan.md` (S1/S2/S3 checked).
 
 ## Where things stand
 
@@ -15,8 +15,15 @@ untouched.  Commits in order:
 | `57656b0` | `CharpolyDimN.lean` — **BUT this commit has the superseded Fin-indexed shape** |
 | this commit | `CharpolyDimN.lean` **ℕ-indexed restructure** (required by the generator; compiles clean locally, 0 err/warn, NOT yet Modal-re-verified), `tools/gen_maedan.py`, WIP `MaedaDim6Weights.lean` (does **not** compile yet), this handoff |
 
-Stage status: **S0/S1/S2 done — S3 not started** (the generated dim-6 file
-fails with ~66 errors whose causes are all identified, below).
+Stage status: **S0/S1/S2/S3 done — S4 (dims 7–10) is next.**  The dim-6 file
+(`MaedaDim6Weights.lean`, 8174 lines) is fully verified: local 0 err/0 warn,
+`--only 6 --check` byte-identical, Modal `--file` green **with zero style
+warnings** (6.6 GiB peak, 130 s), `tauceti_audit.sh` clean, and the ℕ-indexed
+`CharpolyDimN` is Modal-verified.  The five error classes below are RESOLVED —
+the resolutions and the new gotchas they surfaced are in §"S3 outcome" at the
+bottom; read that section before S4.
+
+TauCeti Coding rules and math-proof1 lesson learnt can be found in `external-doc/TAU-CETI_Coding_Rules.md`
 
 ## Re-entry procedure (exact commands)
 
@@ -107,35 +114,60 @@ the superseded Fin-version was Modal-verified.
     the ℕ-version vs the committed Fin-olean).
 16. `charpoly_of_eval_eq` lives in `namespace CharpolyEngine` — qualify it.
 
-## Current dim-6 error state (66 errors, all causes identified)
+## S3 outcome (2026-10-31, same session — resolutions of the 66 errors)
 
-Error classes in `MaedaDim6Weights.lean` (line numbers of the current
-uncommitted-then-committed WIP; regenerate before trusting them):
+All five classes below are FIXED in `tools/gen_maedan.py` (the fixes, not the
+diagnoses, are what S4 inherits).  New gotchas discovered while fixing:
 
-1. **hevals (~985, "No goals")**: the per-case `show`-normalization bullets
-   (added for the fin_cases cast-chains) — inspect alignment; some cases may
-   close by `show` alone (rfl) leaving "No goals" for the `rw`-bullet — merge
-   the show into the rw-bullet or drop bullets that are already closed.
-2. **charpoly_T2 (~994)**: `charpoly_of_eval_eq` unknown — emit
-   `CharpolyEngine.charpoly_of_eval_eq`.
-3. **Entry bridge (~1110-1142)**: `simp only [coordN, coordsAux, Atab, Xtab]`
-   + `norm_num [Matrix.map_apply, M, List.getD…]` — "maximum recursion depth"
-   on some entries, "simp made no progress" on others.  Candidates, in order:
-   (a) split the simp-only into staged unrollings (`coordN, coordsAux` first,
-   then `Atab, Xtab`), (b) `norm_num` with the full lemma list instead of the
-   preceding simp-only, (c) if depth still trips, emit per-entry helper lemmas
-   `coordN Atab (fun m => Xtab a m) c = literal` proved by staged unrolling
-   (module boundaries are free; nothing decides on coordN).  The `show`
-   targets are already fully literal, so the entry goal is elementary.
-4. **Rabin block (~1153)**: `Fact (107.Prime)` → `Fact (Nat.Prime 107)`.
-5. **h2 dispatch (~6831 for k=76, same class at k=72)**: `interval_cases q`
-   yields 7 cases (q ≤ 6 from `hqb`); the emitted 3 bullets are wrong.  Emit
-   **7 explicit bullets**: for `q ∈ primeDivisors n` → `exact h2_{q}`; else →
-   `exact absurd hq (by norm_num)` — **refute via `hq : Nat.Prime q`, NOT
-   `hq2`** (q = 6 divides 6; q = 0/1/4 fail primality, and `Nat.Prime` is
-   decidable by `norm_num`/`decide` on literals).
-6. Everything before ~967 (the basis, q/t-lemmas, discharges, M/P/dets/evals
-   up to the hevals shows) **compiles** — do not restructure those.
+17. **`interval_cases` does NOT auto-close primality/divisibility literals**
+    (only linear contradictions): the h2 dispatch needs **n+1 explicit
+    bullets** for q = 0..n — `exact h2_{q}` for q ∈ primeDivisors n;
+    `exact absurd hq (by decide)` for composite q (0, 1, 4, 6 when n = 6);
+    `exact absurd hq2 (by decide)` for prime q with q ∤ n (q = 5 when n = 6 —
+    refuting via `hq` would be decide-false since `Nat.Prime 5` holds).
+18. **hmap cannot go through `norm_num`'s cast normalization**: every path
+    collapses `↑(ofNat-literal)` to a ZMod numeral *before* the mod-reduction
+    fires, and Mathlib has no ZMod-numeral reducer.  Working pipeline (per
+    weight): `simp only [P, toPoly_nil, toPoly_cons, fr, map_C, map_X,
+    map_add, map_mul, map_pow, Int.coe_castRingHom, ← Polynomial.C_neg]`
+    (note: `← C_neg` at the ℤ[X] level makes negative coefficients
+    `C (-c)`, so `map_neg`/`← Int.cast_neg` are never needed), then a `rw`
+    chain of per-coefficient `show ((c : ℤ) : ZMod ℓ) = (c mod ℓ : ZMod ℓ)
+    from by decide +kernel` (kernel-decidable, trivial cost), then `ring_nf`.
+19. **P's leading term must be emitted as `C (1) * X ^ n`** (not bare
+    `X ^ n`): after mapping, both hmap sides then carry the identical atom
+    `C ↑1`, which `ring_nf` matches — it cannot equate `C ↑1` with the bare
+    numeral 1.
+20. **hmon'/hnd need the Horner zero-tail folded**: `simp only
+    [toPoly_nil, toPoly_cons, fr, mul_zero, add_zero]` before `monicity!` /
+    `compute_degree!` (the `X * 0` tail otherwise registers naïve degree n+1).
+21. **`simp only [toPoly]` makes no progress** (the def is noncomputable —
+    no usable equation lemmas): use the `rfl`-lemmas `toPoly_nil` /
+    `toPoly_cons`.
+22. **Cumulative heartbeats killed the 36-entry bridge inside one
+    `charpoly_T2`** (whnf timeout at entry ~25): the entries are now separate
+    `theorem entry_{c}_{a}` declarations (fresh budget each — the `r5c*`
+    pattern), discharged in the main proof by `change …; exact entry_{c}_{a}`.
+    Rows c ≥ 2 additionally need `Finset.sum_range_succ, Finset.sum_range_zero`
+    in the entry's simp set (the range-sum under a binder doesn't split by
+    itself); the c = 0 row omits `sum_range_succ` (unused-arg linter).
+23. **`maeda` needs `haveI`** (plain `have` doesn't register the `Fact`
+    instance) and the full argument order `P_monic hmap hmon' hnd (by
+    norm_num) hF h1 h2` (`hF` was missing).
+24. **`lake env lean` runs NO style linters** — the Mathlib set
+    (linter.style.longLine / .show) only fires under `lake build` / Modal
+    `--file`.  Requirements the generator now enforces: every line ≤ 100
+    *characters* (ℤ is 3 bytes — measure chars, not bytes); tactic `show` →
+    `change`; `ring` → `ring_nf` (plain `ring` closes hmap but emits a
+    "Try this: ring_nf" info on every weight).
+25. **hevals is `∀ i : Fin (n+1)`** (the engine wants n+1 evaluation points)
+    while the `Matrix.scalar` inside stays `Fin n` — the original `Fin n`
+    quantifier left the 7th bullet goalless.
+
+## After dim 6 is green (S3 → S4 → S5 → S6)
+
+* S3 acceptance: `lake env lean` clean (0 err/warn), `--only 6 --check`
+  byte-identical, Modal green, `tauceti_audit.sh` clean, then commit.
 
 ## After dim 6 is green (S3 → S4 → S5 → S6)
 
@@ -151,7 +183,7 @@ uncommitted-then-committed WIP; regenerate before trusting them):
   target `propext`-only for every new decide; `tools/tauceti_audit.sh`.
 * S6: research log entry, README results table, AGENTS.md layout lines,
   merge to master.
-* Cost sanity: dim-6 file ≈ 6.9k lines / 6 weights; CI ≈ a few min/file.
+* Cost sanity: dim-6 file is 8174 lines / 6 weights (Modal 130 s, 6.6 GiB); CI ≈ a few min/file.
   The dim-10 decides are the only kernel-time risk.
 
 ## Invariants

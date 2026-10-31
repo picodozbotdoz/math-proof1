@@ -187,9 +187,11 @@ under the same budget).
 2. [x] **S2 — `tools/gen_maedan.py`.** (done 2026-10-31: emits dim-6 byte-identically with JSON/probe regression asserts; the emitted MaedaDim6Weights.lean does NOT compile yet — 66 errors, S3's work; see research/iteration20/S3-handoff.md)  Emits one file per dim; byte-identical
    re-runs; asserts its recomputed matrices against the JSON; pulls basis
    coefficients via `seqPLc` (N = 2n+1) and all numerals from the JSON.
-3. [ ] **S3 — dim 6 first** (`MaedaDim6Weights.lean`): local `lake env lean`
-   (~5–10 s/weight measured at dim 6), then `tools/modal_run.sh --file`
-   (linters on).  This validates the whole pipeline cheaply.
+3. [x] **S3 — dim 6 first** (`MaedaDim6Weights.lean`): (done 2026-10-31:
+   local 0 err/0 warn, `--only 6 --check` byte-identical, Modal `--file`
+   green with **zero style warnings** — 8174 lines, 6.6 GiB peak, 130 s;
+   the generator fixes are recorded in `research/iteration20/S3-handoff.md`
+   §"S3 outcome".)  This validated the whole pipeline cheaply.
 4. [ ] **S4 — dims 7–10**, one file at a time (spot-check dim 10 locally
    before its Modal run); Modal build per file, never two heavy stages
    concurrently.
