@@ -13,6 +13,8 @@ import Mathlib.RingTheory.Polynomial.Basic
 import Mathlib.RingTheory.IntegralClosure.Algebra.Basic
 import Mathlib.GroupTheory.Perm.Cycle.Type
 import Mathlib.Tactic.Choose
+import Mathlib.FieldTheory.PolynomialGaloisGroup
+import MathProof.ModularForms.MaedaPermCriterion
 
 /-!
 # Frobenius cycle types from factorizations mod `ℓ` (Dedekind's theorem)
@@ -393,4 +395,86 @@ theorem resultant_ne_zero_of_linear_mul_irreducible
   exact h1
 
 end Certificate
+
+/-! ### The Dedekind/Frobenius instantiation
+
+Mathlib's `IsArithFrobAt.exists_of_isInvariant` (`Mathlib.RingTheory.Frobenius`)
+provides the Frobenius element directly: the finite group `Q.Gal` acts on the
+root order `O = ℤ[x₁,…,xₙ]` inside the splitting field `K` of `Q = q.map ℚ`,
+`ℤ` is the invariant base, and a maximal ideal `𝔪` of `O` over `ℓ` has finite
+residue.  Reducing the roots modulo `𝔪` transports `σ`'s permutation of the
+roots to the Frobenius `x ↦ x^ℓ` on the reduced roots, whose orbits are exactly
+the factor degrees of the reduction of `Q` modulo `ℓ`. -/
+
+section Dedekind
+
+open Polynomial.Gal
+
+variable {q : ℤ[X]} {n : ℕ}
+
+/-- The rational polynomial attached to `q : ℤ[X]`. -/
+noncomputable abbrev ratOf (q : ℤ[X]) : ℚ[X] := q.map (Int.castRingHom ℚ)
+
+/-- The splitting field of the rational polynomial attached to `q`. -/
+noncomputable abbrev splField (q : ℤ[X]) : Type := (ratOf q).SplittingField
+
+/-- The roots of the rational polynomial attached to `q` in its splitting
+field, enumerated by `Fin n`. -/
+noncomputable def rootsE (hcard : Fintype.card ((ratOf q).rootSet (splField q)) = n) :
+    Fin n ≃ (ratOf q).rootSet (splField q) := (Fintype.equivFinOfCardEq hcard).symm
+
+/-- The `i`-th enumerated root, as an element of the splitting field. -/
+noncomputable def rootK (x : Fin n ≃ (ratOf q).rootSet (splField q)) (i : Fin n) :
+    splField q := (x i : (ratOf q).rootSet (splField q))
+
+/-- The root order `O = ℤ[x₁,…,xₙ]` as a `ℤ`-subalgebra of the splitting
+field. -/
+noncomputable def rootOrder (x : Fin n ≃ (ratOf q).rootSet (splField q)) :
+    Subalgebra ℤ (splField q) :=
+  Algebra.adjoin ℤ (Set.range (rootK x))
+
+theorem rootK_mem (x : Fin n ≃ (ratOf q).rootSet (splField q)) (i : Fin n) :
+    rootK x i ∈ rootOrder x :=
+  Algebra.mem_adjoin_of_mem (Set.mem_range_self i)
+
+theorem rootK_isIntegral (hq : q.Monic)
+    (x : Fin n ≃ (ratOf q).rootSet (splField q)) (i : Fin n) :
+    IsIntegral ℤ (rootK x i) := by
+  have hroot : Polynomial.eval (rootK x i)
+      ((ratOf q).map (algebraMap ℚ (splField q))) = 0 := by
+    rw [Polynomial.eval_map]
+    exact (Polynomial.mem_rootSet.mp (x i).2).2
+  have hcomp : algebraMap ℤ (splField q)
+      = (algebraMap ℚ (splField q)).comp (Int.castRingHom ℚ) := by
+    ext a
+    simp
+  refine ⟨q, hq, ?_⟩
+  rw [← Polynomial.eval_map, hcomp, ← map_map]
+  exact hroot
+
+/-- Every element of the root order is integral over `ℤ`. -/
+theorem rootOrder_isIntegral (hq : q.Monic)
+    (x : Fin n ≃ (ratOf q).rootSet (splField q)) (a : rootOrder x) :
+    IsIntegral ℤ ((a : rootOrder x) : splField q) := by
+  have hint : Algebra.IsIntegral ℤ (rootOrder x) :=
+    Algebra.IsIntegral.adjoin (fun b hb => by
+      obtain ⟨j, hj⟩ := Set.mem_range.mp hb
+      exact hj ▸ rootK_isIntegral hq x j)
+  exact IsIntegral.map (IsScalarTower.toAlgHom ℤ (rootOrder x) (splField q))
+    (hint.isIntegral a)
+
+/-- The root order is a finite `ℤ`-module. -/
+theorem rootOrder_finite (hq : q.Monic)
+    (x : Fin n ≃ (ratOf q).rootSet (splField q)) : Module.Finite ℤ (rootOrder x) :=
+  Algebra.finite_adjoin_of_finite_of_isIntegral (Set.finite_range (rootK x))
+    (fun b hb => by
+      obtain ⟨j, hj⟩ := Set.mem_range.mp hb
+      exact hj ▸ rootK_isIntegral hq x j)
+
+/-- The splitting field of a separable polynomial is Galois. -/
+theorem isGalois_splField (hsep : (ratOf q).Separable) : IsGalois ℚ (splField q) :=
+  IsGalois.of_separable_splitting_field hsep
+
+end Dedekind
+
 end FrobeniusCert
