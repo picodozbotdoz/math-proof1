@@ -306,3 +306,47 @@ instance, IsInvariant ℤ O G, the maximal ideal, the root-reduction transport,
 the orbit analysis, the packaging).  G2-final/G3/G4 unchanged.
 WIP2 draft (rootOrder + finiteness) saved at wip/FrobeniusCycleType.WIP2.lean;
 the library file is restored to the committed green state (6ca292d).
+
+### 2026-11-01 (cont.) — G2b execution session: Frobenius.lean route confirmed viable, descope at the instance plumbing
+
+**Execution status.**  The WIP2 draft now contains: rootOrder (adjoin ℤ of the
+roots) with Module.Finite ℤ O via Algebra.finite_adjoin_of_finite_of_isIntegral,
+plus the IsIntegral-of-roots lemma.  The next blocks (MulSemiringAction Q.Gal O
+transported through O ↪ K; IsInvariant ℤ O G via IsGalois.tfae — every fixed
+point of O lies in ℚ; the maximal ideal 𝔪 over ℓO with the 1/ℓ non-integrality
+lemma; the Frobenius element σ with σx - x^ℓ ∈ 𝔪; the root-reduction x̄ i with
+distinctness via the transported resultant identity; the orbit analysis
+minpoly ℓ (x̄ i) = gb forcing one Frobenius orbit of size deg gb; the
+cycleType packaging through rootsEquivRootsAux + cycleType_conj) are designed
+but not written — each is 30-80 lines of instance/transport plumbing and the
+session ran out before the first of them stabilized.
+
+**Key API facts established for the continuation** (all verified at this pin):
+- `Polynomial.Gal p` derives `MulSemiringAction _ p.SplittingField` (line 58 of
+  PolynomialGaloisGroup.lean) — the K-side action is stock.
+- `IsArithFrobAt.exists_of_isInvariant [Q.IsPrime] [Finite (S/Q)]` under
+  [Finite G] [Algebra.IsInvariant R S G] gives σ with σ•x - x^(Nat.card
+  (R ⧸ Q.under R)) ∈ Q for ALL x : S.  With R = ℤ and 𝔪.under ℤ = (ℓ), the
+  exponent is ℓ exactly (the invariant subring of O is ℤ, not the full ring
+  of integers — this is why the O-route gives the right power directly).
+- `Algebra.IsInvariant A B G : ∀ b, (∀ g, g • b = b) → ∃ a, algebraMap A B a = b`
+  (mk_iff); for ℤ/O/G the proof is: fixed ⟹ in the Galois-fixed field ℚ
+  (IsGalois.tfae route, cf. Algebra.isInvariant_of_isGalois in
+  RingTheory/Invariant/Galois.lean, which also gives the stock instance for
+  B := the full integral closure if a fallback is wanted) ⟹ integral ⟹ ∈ ℤ.
+- `Algebra.IsIntegral.adjoin (hS : ∀ x ∈ s, IsIntegral R x) : Algebra.IsIntegral
+  R (adjoin R s)` (IntegralClosure/IsIntegralClosure/Basic.lean:136) — every
+  element of O is integral over ℤ.
+- `ZMod.expand_card`, `Polynomial.separable_iff_derivative_ne_zero`,
+  `EuclideanDomain.dvd_or_coprime`, `Nat.mul_div_cancel_left (H : 0 < b)`,
+  `Int.coe_castRingHom : ⇑(castRingHom α) = Int.cast` (rfl) — used by the
+  committed certificate slice.
+- Lexer: U+1E21 (ḡ) is NOT accepted in identifiers; combining-macron
+  identifiers (Q̄) parse but cost debugging time — use ASCII (gb, Qb).
+
+**Honest descope.**  G2b/c (the instantiation core), G2-final, G3 and G4 remain.
+The WORKLOG plan above is executable cold: the route is stock-plumbing, the
+certificate slice it consumes is committed and green, and the per-weight data
+(galoisfull_certs.json) is committed.  Estimated ~300-400 lines + ~10 Modal
+cycles for G2-final, then a generator (~150 lines) + 30 Modal runs for G3, and
+registration/audit/docs for G4.
