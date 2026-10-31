@@ -255,4 +255,142 @@ theorem exists_frobenius_perm {A : Type*} [CommRing A] [Nontrivial A]
 
 end
 
+/-! ### The factorization certificate: the resultant does not vanish mod `ℓ`
+
+The per-weight input for the Maeda program is a factorization certificate:
+the reduction `Qb` of a monic integer polynomial factors as `(X - C r) * gb`
+with `gb` monic irreducible of degree `n - 1 ≥ 2` and `gb(r) ≠ 0`.  This
+section derives the consequence used by the Dedekind machinery: the integer
+resultant `Res(q, q')` does not vanish mod `ℓ`, and `Qb` is coprime to its
+derivative. -/
+
+section Certificate
+
+variable {q : ℤ[X]} {ℓ : ℕ} [Fact ℓ.Prime]
+
+/-- Coprimality is stable under adding a multiple of the first argument to
+the second. -/
+private theorem isCoprime_add_mul_self {R : Type*} [CommRing R] {x y z : R}
+    (h : IsCoprime x y) : IsCoprime x (y + x * z) := by
+  obtain ⟨u, v, huv⟩ := h
+  refine ⟨u - v * z, v, ?_⟩
+  rw [mul_add, sub_mul]
+  linear_combination huv
+
+/-- Coprimality is stable under adding the first argument to the second. -/
+private theorem isCoprime_add_self {R : Type*} [CommRing R] {x y : R}
+    (h : IsCoprime x y) : IsCoprime x (x + y) := by
+  obtain ⟨u, v, huv⟩ := h
+  refine ⟨u - v, v, ?_⟩
+  rw [sub_mul, mul_add]
+  linear_combination huv
+
+/-- Over the perfect field `ZMod ℓ`, a polynomial of degree `≥ 2` whose
+derivative vanishes is not irreducible: irreducibility would force separability
+(`PerfectField.separable_of_irreducible`), and separability with zero
+derivative forces the polynomial to be a unit. -/
+theorem not_irreducible_of_derivative_eq_zero {gb : (ZMod ℓ)[X]}
+    (hdeg : 2 ≤ gb.natDegree) (hd : gb.derivative = 0) : ¬ Irreducible gb := by
+  have hpF : PerfectField (ZMod ℓ) := PerfectRing.toPerfectField (ZMod ℓ) ℓ
+  intro hirr
+  obtain ⟨u, v, huv⟩ := hpF.separable_of_irreducible hirr
+  rw [hd, mul_zero, add_zero] at huv
+  have hu : IsUnit gb := IsUnit.of_mul_eq_one (a := gb) u (by rw [mul_comm]; exact huv)
+  obtain ⟨r, -, hrC⟩ := Polynomial.isUnit_iff.mp hu
+  rw [hrC.symm, Polynomial.natDegree_C] at hdeg
+  omega
+
+/-- **The factorization certificate.**  If a monic `q : ℤ[X]` reduces mod `ℓ`
+as `(X - C r) * gb` with `gb` monic irreducible of degree `q.natDegree - 1 ≥ 2`,
+`gb(r) ≠ 0` and `ℓ ∤ q.natDegree`, then the integer resultant `Res(q, q')`
+is nonzero mod `ℓ`, and `Qb` is coprime to its derivative. -/
+theorem resultant_ne_zero_of_linear_mul_irreducible
+    (hq : q.Monic) (hln : (q.natDegree : ZMod ℓ) ≠ 0)
+    (r : ZMod ℓ) (gb : (ZMod ℓ)[X]) (_hgbm : gb.Monic)
+    (hdeg : gb.natDegree = q.natDegree - 1) (h2 : 2 ≤ gb.natDegree)
+    (hirr : Irreducible gb) (hrgb : gb.eval r ≠ 0)
+    (hfact : q.map (Int.castRingHom (ZMod ℓ)) = (X - C r) * gb) :
+    (q.resultant q.derivative : ZMod ℓ) ≠ 0 ∧
+      IsCoprime (q.map (Int.castRingHom (ZMod ℓ)))
+        ((q.map (Int.castRingHom (ZMod ℓ))).derivative) := by
+  classical
+  set Qb := q.map (Int.castRingHom (ZMod ℓ)) with hQb
+  have hpF : PerfectField (ZMod ℓ) := PerfectRing.toPerfectField (ZMod ℓ) ℓ
+  have hQbm : Qb.Monic := hq.map _
+  have hQbd : Qb.natDegree = q.natDegree :=
+    Polynomial.Monic.natDegree_map hq (Int.castRingHom (ZMod ℓ))
+  -- the derivative of Qb in factored form
+  have hQb' : Qb.derivative = gb + (X - C r) * gb.derivative := by
+    rw [hfact, derivative_mul, derivative_X_sub_C, one_mul]
+  -- gb' ≠ 0: gb is separable (irreducible over the perfect field ZMod ℓ)
+  have hgb'ne : gb.derivative ≠ 0 :=
+    (Polynomial.separable_iff_derivative_ne_zero hirr).mp
+      (hpF.separable_of_irreducible hirr)
+  -- gb does not divide its derivative
+  have hnd : ¬ (gb ∣ gb.derivative) := by
+    intro hdvd
+    rcases eq_or_ne gb.derivative 0 with h0 | h0
+    · exact hgb'ne h0
+    · refine hgb'ne (Polynomial.eq_zero_of_dvd_of_natDegree_lt hdvd ?_)
+      refine Polynomial.natDegree_derivative_lt ?_
+      rw [hdeg]
+      omega
+  -- IsCoprime (X - C r, gb): the factor theorem against gb(r) ≠ 0
+  have hc1 : IsCoprime (X - C r) gb := by
+    have hdvd : (X - C r) ∣ gb - C (gb.eval r) := by
+      refine Polynomial.dvd_iff_isRoot.mpr ?_
+      rw [IsRoot, Polynomial.eval_sub, Polynomial.eval_C]
+      ring
+    obtain ⟨s, hs⟩ := dvd_iff_exists_eq_mul_left.mp hdvd
+    have hbez : C ((gb.eval r)⁻¹) * gb - 1 = C ((gb.eval r)⁻¹) * (s * (X - C r)) := by
+      have h1 : C ((gb.eval r)⁻¹) * (gb - C (gb.eval r))
+          = C ((gb.eval r)⁻¹) * (s * (X - C r)) := by rw [hs]
+      rw [mul_sub] at h1
+      rwa [← Polynomial.C_mul, inv_mul_cancel₀ hrgb, Polynomial.C_1] at h1
+    have hbez' : (-(C ((gb.eval r)⁻¹) * s)) • (X - C r) +
+        (C ((gb.eval r)⁻¹)) • gb = 1 := by
+      simp only [smul_eq_mul, neg_mul]
+      linear_combination hbez
+    exact ⟨-(C ((gb.eval r)⁻¹) * s), C ((gb.eval r)⁻¹), hbez'⟩
+  -- IsCoprime (X - C r, Qb') and IsCoprime (gb, Qb'), via the factored derivative
+  have hc3 : IsCoprime (X - C r) (gb + (X - C r) * gb.derivative) :=
+    isCoprime_add_mul_self hc1
+  have hc2 : IsCoprime gb (gb + (X - C r) * gb.derivative) :=
+    isCoprime_add_self (IsCoprime.mul_right hc1.symm
+      ((EuclideanDomain.dvd_or_coprime gb gb.derivative hirr).resolve_left hnd))
+  -- the coprimality of Qb and its derivative
+  have hcop : IsCoprime Qb Qb.derivative := by
+    rw [hQb', hfact]
+    exact IsCoprime.mul_left hc3 hc2
+  refine ⟨?_, hcop⟩
+  -- the resultant transport
+  have h1 : Qb.resultant Qb.derivative ≠ 0 :=
+    Polynomial.resultant_ne_zero _ _ hcop
+  have h3 : q.natDegree - 1 + 1 = q.natDegree := by omega
+  have hz : ((q.natDegree - 1 : ℕ) : ℤ) + 1 = ((q.natDegree : ℕ) : ℤ) :=
+    ((Nat.cast_add_one (q.natDegree - 1)).symm.trans (congrArg Nat.cast (by omega)))
+  have hdnat : (q.derivative).natDegree = q.natDegree - 1 := by
+    refine le_antisymm (Polynomial.natDegree_derivative_le _) ?_
+    refine le_natDegree_of_ne_zero ?_
+    rw [Polynomial.coeff_derivative, h3, Polynomial.coeff_natDegree, hq.leadingCoeff,
+      one_mul, hz]
+    exact Nat.cast_ne_zero.mpr (by omega)
+  have hdQb' : Qb.derivative.natDegree = q.derivative.natDegree := by
+    rw [derivative_map]
+    refine le_antisymm (Polynomial.natDegree_map_le (f := Int.castRingHom (ZMod ℓ))
+      (p := q.derivative)) ?_
+    refine le_natDegree_of_ne_zero ?_
+    rw [Polynomial.coeff_map, Polynomial.coeff_derivative, hdnat, h3,
+      Polynomial.coeff_natDegree, hq.leadingCoeff, one_mul, hz, Int.coe_castRingHom]
+    simp only [Int.cast_natCast]
+    exact isUnit_iff_ne_zero.mpr hln |>.ne_zero
+  have hres : (q.resultant q.derivative : ZMod ℓ) = Qb.resultant Qb.derivative := by
+    rw [hQbd, hdQb', hQb, derivative_map,
+      show ((q.resultant q.derivative : ℤ) : ZMod ℓ) =
+        (Int.castRingHom (ZMod ℓ)) (q.resultant q.derivative) from rfl]
+    exact (Polynomial.resultant_map_map _ _ _ _ _).symm
+  rw [hres]
+  exact h1
+
+end Certificate
 end FrobeniusCert
