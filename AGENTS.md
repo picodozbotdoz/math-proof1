@@ -369,3 +369,24 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   `MaedaGalois5Defs`) instead of raising `maxHeartbeats`.  Only Tier C heavy
   modules keep `set_option`, each with a measured reason
   (`research/refactor-i18-tauceti/README.md`).
+- **A red build under-reports style warnings** (2026-10-31, maeda-t3 dim-10):
+  Mathlib's linter pipeline skips every remaining command in a file after the
+  first *error*, so a failed build shows only a prefix of the real style
+  violations (observed: 24 longLine violations, 9 reported).  Never claim
+  "zero warnings" from a failed build — get the errors fixed and the build
+  green first (this is also why the Modal check treats warnings as blockers).
+- **Lean's default `exponentiation.threshold = 256`** (2026-10-31): `norm_num`
+  refuses numerals like `10 ^ 257` in light modules (where raising the option
+  is forbidden).  Big chunked literals must keep chunk exponents ≤ 256 — grow
+  the *first* chunk (≤ 341 digits total observed fine) instead of emitting
+  more chunks with bigger exponents.
+- **`tools/modal_run.sh` does not work from a git worktree** (2026-10-31):
+  the worktree's `.git` *file* dangles for the mirroring user (xyz).  Run it
+  from a normal clone, or build a standalone mirror (rsync the tree minus
+  `.git`/`.lake` into the mirror, keep a git repo there whose
+  `refs/remotes/origin/master` points at an empty-tree commit so
+  `git diff --name-only origin/master` lists every file and the overlay
+  covers the complete state — see the iteration-21 agent mirrors under
+  `/home/doz/tmp/math-proof1-temp/agent-work/`).  Local temp artifacts (run
+  logs, mirrors, scratch) go under `/home/doz/tmp/math-proof1-temp/` — `/tmp`
+  is wiped on reboot (2026-10-31 19:26 incident).
