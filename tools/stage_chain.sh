@@ -28,8 +28,10 @@ STAGES=(
   "MaedaGalois5Weights 32768"
 )
 RUN=$(dirname "$0")/modal_run.sh
-LOG_DIR=${STAGE_LOG_DIR:-${TMPDIR:-/tmp}/mathproof-stages}
-mkdir -p "$LOG_DIR"
+# Persistent default (survives reboots; /tmp is wiped on this machine).
+LOG_DIR=${STAGE_LOG_DIR:-${MATHPROOF_TMP_DIR:-/home/doz/tmp/math-proof1-temp}/mathproof-stages}
+mkdir -p "$LOG_DIR" 2>/dev/null || true
+if [ ! -w "$LOG_DIR" ]; then LOG_DIR=${TMPDIR:-/tmp}/mathproof-stages; mkdir -p "$LOG_DIR"; fi
 
 start=${1:-}
 started=$([ -z "$start" ] && echo 1 || echo 0)

@@ -57,7 +57,9 @@ stages concurrently).
      the `lean` process of each module) after every run, and at ≥ 64 GiB
      (`LEAN_CHECK_MEM_ALERT_GIB` overrides) `[memory-alert]` lines naming the
      hot modules plus the profiling command for each.
-  2. `tools/modal_run.sh` keeps every run's log (`$TMPDIR/mathproof-runs/`)
+  2. `tools/modal_run.sh` keeps every run's log
+     (`/home/doz/tmp/math-proof1-temp/mathproof-runs/` — persistent across
+     reboots, unlike `/tmp`; override with `MODAL_RUN_LOG_DIR`)
      and appends each alert to `research/memory-alerts.md` as an **OPEN**
      entry.
   3. Investigate with `LEAN_CHECK_PROFILE=<Module> tools/modal_run.sh`: it

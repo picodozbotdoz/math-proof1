@@ -36,8 +36,13 @@ done
 # appended to research/memory-alerts.md as an OPEN entry to investigate
 # (AGENTS.md, "Memory alerts").  Profile runs are the investigation itself and
 # are not recorded again.
-LOG_DIR=${MODAL_RUN_LOG_DIR:-${TMPDIR:-/tmp}/mathproof-runs}
-mkdir -p "$LOG_DIR"
+# Persistent default (survives reboots; /tmp is wiped on this machine):
+# /home/doz/tmp/math-proof1-temp/mathproof-runs, overridable via
+# MODAL_RUN_LOG_DIR / MATHPROOF_TMP_DIR; falls back to /tmp when the
+# persistent root is not writable (e.g. in-place runs as the Modal user).
+LOG_DIR=${MODAL_RUN_LOG_DIR:-${MATHPROOF_TMP_DIR:-/home/doz/tmp/math-proof1-temp}/mathproof-runs}
+mkdir -p "$LOG_DIR" 2>/dev/null || true
+if [ ! -w "$LOG_DIR" ]; then LOG_DIR=${TMPDIR:-/tmp}/mathproof-runs; mkdir -p "$LOG_DIR"; fi
 LOG=$LOG_DIR/run-$(date +%Y%m%d-%H%M%S)-$$.log
 
 run() {
