@@ -328,7 +328,7 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   reducing `% P` after each operation; soundness is proved by transporting into
   `ZMod P` (mirror `L2P` as `L2PMod`). A nonzero residue mod a prime certifies
   the integer coefficient is nonzero — no magnitude bound needed.
-- CI (`.github/workflows/lean_action_ci.yml`) runs `lean-action` + docgen on
+- CI (`.github/workflows/lean_action_ci.yml`) runs `lean-action` on
   every push; keep `lake build` clean before committing.
 - `defaultTargets` in `lakefile.toml` lists the light modules only: a bare
   `lake build` (CI, Reservoir's automated builder, downstream consumers of
