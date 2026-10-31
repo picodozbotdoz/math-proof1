@@ -38,5 +38,6 @@ import MathProof.ModularForms.MaedaCertC
 import MathProof.ModularForms.MaedaPermCriterion
 import MathProof.ModularForms.CharpolyEngine
 import MathProof.ModularForms.RabinCert
+import MathProof.ModularForms.HeckeAlgebraQT2
 -- MathProof.AxCheck is also opt-in: it imports LehmerMod (heavy) to audit it.
 -- import MathProof.AxCheck

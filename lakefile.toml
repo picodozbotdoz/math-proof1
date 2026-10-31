@@ -44,6 +44,7 @@ defaultTargets = [
   "MathProof.ModularForms.MaedaPermCriterion",
   "MathProof.ModularForms.CharpolyEngine",
   "MathProof.ModularForms.RabinCert",
+  "MathProof.ModularForms.HeckeAlgebraQT2",
 ]
 
 [leanOptions]
