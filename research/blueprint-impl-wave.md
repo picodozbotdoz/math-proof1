@@ -47,6 +47,23 @@ the CDN cache); see the workflow file's NOTE comment.
 
 ## Open (future cycles, not this wave)
 
+**Pickup pointer for the next session (Iteration 20).**  The source
+blueprints, the exploration findings and the certificate-prime census
+(`maeda_dim6_10.json`, all 30 dim-6–10 weights) live **only on the
+`dev/blueprint` branch** (`blueprint/` directory — not merged to master):
+
+```bash
+git show dev/blueprint:blueprint/iteration19-maeda-generic/BLUEPRINT.md   # generator + module plan
+git show dev/blueprint:blueprint/exploration/FINDINGS-maeda-dim6-10.md    # cost model, Rabin primes
+git show dev/blueprint:blueprint/exploration/data/maeda_dim6_10.json      # the census data
+git show dev/blueprint:blueprint/lean/gen_sketch_charpoly.py              # validated pilot generator
+```
+
+(`git checkout dev/blueprint blueprint/` puts the whole directory in the
+working tree without switching branches.)  The engine this file's §Open
+recipe calls into — `MathProof/ModularForms/{CharpolyEngine,RabinCert}.lean`
+— is on `master` since this wave.
+
 * Iteration 19 generated weight files: per weight `f̄ : List ℤ` (charpoly
   coeffs mod `ℓ`), `n = dim S_k`, fuel `F` with `ℓ ^ n < 2 ^ F`:
   `hmon`/`hnd` by `simp only [RabinCert.toPoly]; monicity!` /
