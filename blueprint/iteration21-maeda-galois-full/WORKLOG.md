@@ -101,3 +101,18 @@ Lean gotchas hit (all reproducible, worth remembering):
 Next: Modal tooling recreation, then the Dedekind instantiation
 (Ā = ℤ[x₁..xₙ] ⊗ F_ℓ, rank = #Gal via finrank_baseChange, unit differences
 via resultant Bézout) and `frob_cycleType_of_factorization`.
+
+### 2026-10-31 (evening) — G1 PASSED: certificates re-derived for all 30 weights
+
+`tools/galoisfull_certs.py` + `research/iteration21/data/galoisfull_certs.json`.
+Every weight has BOTH certificate primes (never trusted the census; census
+cross-checked where applicable — it had missed e.g. k=110 nm1@137, k=134
+transp@7403183, because its scan range was too small for the Chebotarev
+density 1/(2(n-2)!) of transposition primes).  Certificate shape per weight:
+- nm1: (ell1, root r, gbar) with P mod ell1 = (X - r) * gbar, gbar monic
+  irreducible deg n-1, gbar(r) != 0  => cycleType {n-1};
+- transp: (ell2, roots r_1..r_{n-2}, hbar) with P mod ell2 =
+  prod (X - r_i) * hbar, hbar monic irreducible deg 2, r_i distinct,
+  hbar(r_i) != 0  => cycleType {2} (a swap; Mathlib isSwap_iff_cycleType:
+  IsSwap <-> cycleType = {2} — fixed points do not appear in cycleType).
+Both give q-bar squarefree (gcd(P,P')=1 re-derived), hence ell ∤ Res(q,q').
