@@ -138,7 +138,10 @@ image = (
 @app.function(
     image=image,
     cpu=2.0,                 # 4 physical cores = 8 vCPU --> reduce to 2 due to idle cpu
-    memory=32768,            # 32 GiB RAM: kernel-heavy `decide`s need headroom
+    memory=int(_os.environ.get("LEAN_BUILD_MEMORY_MIB", "8192")),
+    # 8 GiB default: right-sized for the light targets (measured peaks <= 12 GiB
+    # only for the explicitly-invoked heavy modules); pass e.g.
+    # LEAN_BUILD_MEMORY_MIB=98304 modal run lean_build.py --target MathProof.Tau.LehmerPacked
     timeout=4 * 60 * 60,     # 4-hour ceiling for the build
     startup_timeout=600,
     volumes={"/cache": VOL},

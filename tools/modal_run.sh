@@ -27,12 +27,17 @@ SRC=$(git -C "$(dirname "$0")/.." rev-parse --show-toplevel)
 
 ARGS=""
 if [ $# -gt 0 ]; then ARGS=$(printf '%q ' "$@"); fi
-ENVS="LEAN_CHECK_MEMORY_MIB=${LEAN_CHECK_MEMORY_MIB:-32768}"
+# Memory request ladder (research/iteration21/MEMORY-RIGHTSIZING.md): start at
+# 8192 MiB (covers every light/CI module measured), auto-escalate on OOM
+# (lean_check exits 42 with an `[memory] OOM likely` marker) to 16384 / 32768;
+# heavier targets need an explicit LEAN_CHECK_MEMORY_MIB (e.g. 98304).
+MIB=${LEAN_CHECK_MEMORY_MIB:-8192}
+ENVS=""
 for v in LEAN_CHECK_NO_CACHE LEAN_CHECK_PROFILE LEAN_CHECK_MEM_ALERT_GIB; do
   if [ -n "${!v:-}" ]; then ENVS="$ENVS $v=${!v}"; fi
 done
 
-# Every run's output is kept; a `[memory-alert]` (lake tree >= 64 GiB) is
+# Every run's output is kept; a `[memory-alert]` (lake tree >= 16 GiB) is
 # appended to research/memory-alerts.md as an OPEN entry to investigate
 # (AGENTS.md, "Memory alerts").  Profile runs are the investigation itself and
 # are not recorded again.
@@ -46,19 +51,32 @@ if [ ! -w "$LOG_DIR" ]; then LOG_DIR=${TMPDIR:-/tmp}/mathproof-runs; mkdir -p "$
 LOG=$LOG_DIR/run-$(date +%Y%m%d-%H%M%S)-$$.log
 
 run() {
+  local envs="LEAN_CHECK_MEMORY_MIB=${MIB}${ENVS:+ $ENVS}"
   if [ "$(id -un)" = "$MODAL_USER" ]; then
-    (cd "$SRC" && env $ENVS "$MODAL_BIN" run lean_check.py "$@")
+    (cd "$SRC" && env $envs "$MODAL_BIN" run lean_check.py "$@")
   else
     sudo -n rsync -a --delete --exclude .lake "$SRC/" "$MODAL_MIRROR/"
     sudo -n chown -R "$MODAL_USER:$MODAL_USER" "$MODAL_MIRROR"
-    sudo -n -u "$MODAL_USER" env $ENVS \
+    sudo -n -u "$MODAL_USER" env $envs \
       bash -lc "cd $(printf '%q' "$MODAL_MIRROR") && $(printf '%q' "$MODAL_BIN") run lean_check.py $ARGS"
   fi
 }
 
 set +e
-run "$@" 2>&1 | tee "$LOG"
-rc=${PIPESTATUS[0]}
+while :; do
+  LOG=$LOG_DIR/run-$(date +%Y%m%d-%H%M%S)-$$-m${MIB}.log
+  run "$@" 2>&1 | tee "$LOG"
+  rc=${PIPESTATUS[0]}
+  if [ "$rc" = 42 ] || grep -q '^\[memory\] OOM likely' "$LOG"; then
+    case $MIB in
+      8192)  MIB=16384; echo "[memory] OOM: escalating request to ${MIB} MiB, retrying"; continue;;
+      16384) MIB=32768; echo "[memory] OOM: escalating request to ${MIB} MiB, retrying"; continue;;
+      *) echo "[memory] OOM even at ${MIB} MiB: pass an explicit LEAN_CHECK_MEMORY_MIB" \
+         "(e.g. 98304 for LehmerPacked-class targets)";;
+    esac
+  fi
+  break
+done
 set -e
 
 if [ -z "${LEAN_CHECK_PROFILE:-}" ] && grep -q '^\[memory-alert\]' "$LOG"; then

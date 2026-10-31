@@ -22,7 +22,7 @@ Usage:
 `--file` overlays that one file and (unless `--target` is also given) builds
 the module it defines.  Every run prints `[telemetry]` resource milestones, a
 final peak-RSS/CPU summary for the `lake` process tree and a per-module peak
-table (`[memory]`); a run reaching LEAN_CHECK_MEM_ALERT_GIB (default 64) prints
+table (`[memory]`); a run reaching LEAN_CHECK_MEM_ALERT_GIB (default 16) prints
 `[memory-alert]` lines that must be investigated.  LEAN_CHECK_PROFILE=<Module>
 attributes a module's memory to its individual declarations (`[profile]`).
 """
@@ -176,7 +176,7 @@ def run_monitored(cmd, interval=1.0, marks=None):
 # Investigation policy (AGENTS.md "Memory alerts"): any build whose lake tree
 # reaches this RSS must be investigated.  The alert names the modules and the
 # command that attributes the memory to individual declarations.
-_MEM_ALERT_GIB = float(os.environ.get("LEAN_CHECK_MEM_ALERT_GIB", "64"))
+_MEM_ALERT_GIB = float(os.environ.get("LEAN_CHECK_MEM_ALERT_GIB", "16"))
 
 
 def _memory_alert(peak, module_peaks):
@@ -349,7 +349,11 @@ image = (
 # decides need more than the 32 GiB default:
 #   LEAN_CHECK_MEMORY_MIB=98304 modal run lean_check.py --file ...
 # (Modal's memory= is a soft request; see research/lehmer-mod-scaling-study.md.)
-_CHECK_MEMORY_MIB = int(os.environ.get("LEAN_CHECK_MEMORY_MIB", "32768"))
+# Requests are RIGHT-SIZED (research/iteration21/MEMORY-RIGHTSIZING.md): the
+# default 8192 MiB covers every light/CI module measured so far; modal_run.sh
+# auto-escalates 8192 -> 16384 -> 32768 when a run OOMs (exit 42, see check());
+# anything heavier passes an explicit value (e.g. 98304 for LehmerPacked).
+_CHECK_MEMORY_MIB = int(os.environ.get("LEAN_CHECK_MEMORY_MIB", "8192"))
 
 
 @app.function(
@@ -360,6 +364,7 @@ _CHECK_MEMORY_MIB = int(os.environ.get("LEAN_CHECK_MEMORY_MIB", "32768"))
     volumes={"/cache": modal.Volume.from_name("lean-cache")},
 )
 def check(files: dict, target: str, profile: str = "",
+          use_cache: bool = True,
           repo_url: str = "https://github.com/picodozbotdoz/math-proof1.git"):
     import os
     import pathlib
@@ -405,7 +410,6 @@ def check(files: dict, target: str, profile: str = "",
     # thousands-of-tiny-writes stall never happens.
     cache_dir = pathlib.Path("/cache/buildcache")
     latest = cache_dir / "latest.tar.gz"
-    use_cache = os.environ.get("LEAN_CHECK_NO_CACHE", "") != "1"
     if use_cache:
         try:
             if latest.exists():
@@ -419,6 +423,8 @@ def check(files: dict, target: str, profile: str = "",
             print(f"[cache] restore failed (non-fatal): {e}")
 
     os.chdir(repo)
+    print(f"[memory] request {_CHECK_MEMORY_MIB} MiB "
+          f"(soft; escalation ladder 8192/16384/32768 on OOM)", flush=True)
     if profile:
         rc = profile_module(profile, repo)
     else:
@@ -426,7 +432,12 @@ def check(files: dict, target: str, profile: str = "",
         if target:
             cmd.append(target)
         print(f"$ {' '.join(cmd)}")
-        rc, _, _ = run_monitored(cmd)
+        rc, samples, _ = run_monitored(cmd)
+        peak = max((s[1] for s in samples), default=0)
+        if rc != 0 and peak >= 0.97 * _CHECK_MEMORY_MIB * 2**20:
+            print(f"[memory] OOM likely: peak tree RSS {peak / 2**20:.0f} MiB "
+                  f">= 97% of the {_CHECK_MEMORY_MIB} MiB request", flush=True)
+            raise SystemExit(42)
 
     # Save the build tree even when the build FAILED: lake only writes a
     # module's trace after it elaborates successfully, so every artifact in
@@ -509,4 +520,6 @@ def main(
         if not files:
             raise SystemExit("no local changes found; pass --file or --target")
         target = "MathProof.Tau.CongruenceSmall"
-    check.remote(files=files, target=target, profile=profile)
+    use_cache = os.environ.get("LEAN_CHECK_NO_CACHE", "") != "1"
+    check.remote(files=files, target=target, profile=profile,
+                 use_cache=use_cache)

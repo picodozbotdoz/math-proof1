@@ -35,3 +35,43 @@ Builds that crossed 64 GiB before the tooling existed; numbers from
   IdE4 13.5, IdE5 22.0, IdE6 34.7, Identities 17.6 GiB — every module below
   the threshold.
 - `LehmerPow32` / `LehmerPacked`: not yet investigated (same tooling).
+## 2026-10-31T15:04Z — OPEN
+
+- command: `tools/modal_run.sh --file MathProof/ModularForms/MaedaDim8Weights.lean` (rc=0)
+- log: `/home/doz/tmp/math-proof1-temp/mathproof-runs/run-20261031-225645-100459-m8192.log`
+- alert:
+
+  ```
+  [memory] request 8192 MiB (soft; escalation ladder 8192/16384/32768 on OOM)
+  [memory] per-module peak RSS (GiB, t of peak):
+  [memory]      8.01  t=    304s  /tmp/repo/MathProof/ModularForms/MaedaDim8Weights.lean
+  [memory]      5.66  t=     81s  /tmp/repo/MathProof/Tau/Lehmer.lean
+  [memory]      4.82  t=    128s  /tmp/repo/MathProof/ModularForms/MaedaDim4.lean
+  [memory]      4.77  t=    109s  /tmp/repo/MathProof/ModularForms/LehmerWeight16.lean
+  [memory]      4.76  t=     79s  /tmp/repo/MathProof/ModularForms/Congruence691.lean
+  [memory]      4.76  t=    117s  /tmp/repo/MathProof/ModularForms/MaedaLevelOne.lean
+  [memory]      4.75  t=     72s  /tmp/repo/MathProof/Tau/Bridge.lean
+  [memory]      4.74  t=     95s  /tmp/repo/MathProof/Tau/LehmerPrimeReduction.lean
+  [memory]      4.74  t=    102s  /tmp/repo/MathProof/ModularForms/EigenLevelOne.lean
+  [memory]      4.73  t=     78s  /tmp/repo/MathProof/Tau/Mordell.lean
+  [memory]      4.73  t=    124s  /tmp/repo/MathProof/ModularForms/CharpolyDimN.lean
+  [memory]      4.72  t=     88s  /tmp/repo/MathProof/Tau/LehmerSieve691.lean
+  [memory]      4.67  t=    134s  /tmp/repo/MathProof/ModularForms/MaedaCertC.lean
+  [memory]      4.65  t=     82s  /tmp/repo/MathProof/Tau/LehmerUnbounded.lean
+  [memory]      4.36  t=     72s  /tmp/repo/MathProof/ModularForms/BernoulliHigh.lean
+  [memory-alert] peak tree RSS 20.1 GiB >= 16 GiB — investigation required (AGENTS.md, Memory alerts)
+  [memory-alert]   .tmp.repo.MathProof.ModularForms.MaedaDim8Weights: 8.0 GiB  →  per-declaration profile: LEAN_CHECK_PROFILE=.tmp.repo.MathProof.ModularForms.MaedaDim8Weights tools/modal_run.sh
+  ```
+
+- investigation (CLOSED 2026-10-31): **no-cache cold build of
+  `MaedaDim8Weights`** (`LEAN_CHECK_NO_CACHE=1`, the memory-right-sizing
+  validation V2, `research/iteration21/MEMORY-RIGHTSIZING.md`).  Cause: with
+  the module cache off, lake rebuilt the WHOLE import closure with 7 lean
+  processes in parallel — the 20.1 GiB *tree* peak is the SUM of concurrent
+  processes (Weight12 12.5 GiB, Tau/Basic ≈ 17 GiB …), while the biggest
+  single process peaked at 8.0 GiB (the target module itself, consistent
+  with the 9.3 GiB cached-run measurement minus shared pages).  Verdict:
+  cost inherent to no-cache cold builds; single-module peak (what request
+  sizing keys on) is 8.0 GiB.  No action; the request ladder and the 16 GiB
+  alert behaved exactly as designed.
+

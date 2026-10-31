@@ -51,10 +51,12 @@ stages concurrently).
   `(kernel) deterministic timeout` (default 200000 ≈ 200 s of kernel work).
 
   **Memory alerts — investigation policy (since 2026-10-29).**  Every build
-  whose `lake` tree reaches **64 GiB** RSS must be investigated; "it fit in
+  whose `lake` tree reaches **16 GiB** RSS must be investigated (lowered from
+  64 on 2026-10-31 when requests were right-sized — anything above 16 GiB of
+  *actual* use now deserves a look even when it fits); "it fit in
   the container" is not an answer.  The tooling makes this mechanical:
   1. `lean_check.py` prints a `[memory]` table (peak RSS per module, from
-     the `lean` process of each module) after every run, and at ≥ 64 GiB
+     the `lean` process of each module) after every run, and at ≥ 16 GiB
      (`LEAN_CHECK_MEM_ALERT_GIB` overrides) `[memory-alert]` lines naming the
      hot modules plus the profiling command for each.
   2. `tools/modal_run.sh` keeps every run's log
@@ -113,7 +115,13 @@ recreate them**:
   *identically* in both scripts so the layer cache is shared. If one must
   change, change both — and expect the image rebuild to pay for `lake update`
   + `lake exe cache get` once (~15 min).
-- Per run: 4 CPUs, 32 GiB RAM, 4-hour timeout. Logs stream from `modal run`.
+- Per run: 4 CPUs, 8 GiB RAM **requested** by default, 4-hour timeout.  The
+  request is soft (Modal may grant more) but right-sized
+  (`research/iteration21/MEMORY-RIGHTSIZING.md`): `tools/modal_run.sh`
+  auto-escalates 8 → 16 → 32 GiB when a run OOMs (`lean_check.py` detects
+  peak ≥ 97 % of the request and exits 42); heavier targets pass an explicit
+  `LEAN_CHECK_MEMORY_MIB` (or `LEAN_BUILD_MEMORY_MIB` for `lean_build.py`),
+  e.g. 98304 for the `LehmerPacked`-class decides.  Logs stream from `modal run`.
 
 ### Least preferred: building on this machine
 
