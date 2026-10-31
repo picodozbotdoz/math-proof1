@@ -179,7 +179,7 @@ under the same budget).
 
 ## Stages
 
-1. [ ] **S1 — `CharpolyDimN.lean`.**  Abstract the `charpoly_dim4` skeleton to
+1. [x] **S1 — `CharpolyDimN.lean`.** (done 2026-10-31, commit below: compiles clean locally, 0 errors/warnings)  Abstract the `charpoly_dim4` skeleton to
    `Fin n` (basis `a : Fin n → Fin n → ℤ` strictly triangular, T-data
    `x : Fin n → Fin n → ℤ`, statement `T.charpoly = Matrix.charpoly (backsub A X)`).
    Main design task: phrase the induction so the IH closes on truncated data.
