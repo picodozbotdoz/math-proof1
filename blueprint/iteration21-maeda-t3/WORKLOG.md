@@ -82,3 +82,32 @@ infrastructure; statement lines stay ≤ 91 chars (limit 100).
   every file — lean_check then overlays the complete current state onto its
   fresh clone (GitHub master is still at 4eaf528 = iteration 19; iteration
   20 lives on the dev branch).
+
+### 2026-10-31 — G2 PASSED (k=72 end-to-end on Modal)
+
+`MaedaT3Dim6Weights` (all six dim-6 weights incl. k=72: `MaedaT3Weight72.maeda`)
+**green on Modal, zero errors/warnings**: lake wall 165 s, peak tree RSS
+10.57 GiB, per-module peaks — MaedaT3Dim6Weights 6.50 GiB, MaedaCertCExt
+4.84 GiB, HeckeTPCoeff 4.66 GiB.  (T₂ dim 6 was 130 s / 6.6 GiB → ×1.27.)
+Extrapolated dim 10 ≈ 25 min — watch it; if >20 min, blueprint says re-search
+ℓ (already minimal: ascending search) then split per-weight.
+
+Stretch generator mode added meanwhile: `--prime 3 --small` emits
+`MaedaT3SmallWeights.lean` (24 weights, dims 2–5, k ≤ 74; 20 276 lines) from
+`research/iteration20/data/maeda_t3_small.json`; `charpoly_dimN` is
+dimension-generic so no engine change was needed (blueprint R4 resolved the
+preferred way).  Byte-identical `--check` for the small mode; T₂ `--check`
+still byte-identical after every generator edit.
+
+### 2026-10-31 — G3 progress (Modal, one file at a time; tauceti clean)
+
+| file | wall | peak tree RSS | module peak | errors/warnings |
+|---|---|---|---|---|
+| MaedaT3Dim6Weights | 165 s | 10.57 GiB | 6.50 GiB | 0 / 0 |
+| MaedaT3Dim7Weights | 209 s | 8.49 GiB | 7.25 GiB | 0 / 0 |
+| MaedaT3Dim8Weights | 527 s | 9.53 GiB | — | 0 / 0 |
+
+`tools/tauceti_audit.sh`: all new modules (HeckeTPCoeff, MaedaCertCExt, the
+five per-dim T₃ files, MaedaT3SmallWeights) clean — 0 set_option / #eval /
+native_decide / sorry / bad imports.  Stretch file
+`MaedaT3SmallWeights.lean` compiles locally 0 err / 0 warn.
