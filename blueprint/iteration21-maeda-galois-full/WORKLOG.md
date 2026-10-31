@@ -218,3 +218,28 @@ eq_top_of_isPretransitive_of_cycleType_of_isSwap_mem` finishes each weight
 
 Per-weight data: `research/iteration21/data/galoisfull_certs.json` (committed).
 Estimated remaining Lean: ~600-900 lines over the packaging + rank chunks.
+
+### 2026-10-31 (night, cont.) — G2 partial: certificate slice WIP saved; session close
+
+The Dedekind instantiation is ~50% drafted.  The freshman's-dream lemma
+(`not_irreducible_of_monic_of_derivative_eq_zero`: monic + deg >= 2 + gb' = 0
+=> not irreducible, via gb = expand l gb0 = gb0^l and the degree/l-unit
+argument) is ~90% written but not yet green: the remaining errors are
+mechanical (the coeff-of-Finset-sum simp-lemma name — `Polynomial.finset_sum_coeff`
+does NOT exist at this pin; use the `congrArg (Polynomial.lcoeff (ZMod ℓ) i)
+hgb0` + `map_sum` route; `Nat.mul_div_cancel'` does not exist for Nat — use
+`Nat.div_add_mod` + `Nat.mod_eq_zero_of_dvd`; `Polynomial.isUnit_iff` is the
+`∃ r, IsUnit r ∧ C r = p` form; `Nat.cast_add_one` is `↑(n+1) = ↑n + 1`
+(reversed); `Irreducible`'s second field is applied as `hirr.2 ⟨a, b, hab, _, _⟩`;
+U+1E21 (ḡ) is NOT accepted in Lean identifiers — use gb).
+The draft (incl. the two IsCoprime-stability mini-lemmas, the factor-theorem
+Bézout `hc1`, the `dvd_or_coprime` route to `IsCoprime (Q̄, Q̄')`, and the
+resultant transport through `resultant_map_map` +
+`natDegree_map_eq_of_isUnit_leadingCoeff`) is saved at
+/home/doz/tmp/math-proof1-temp/agent-work/maeda-galois-full/wip/FrobeniusCycleType.WIP.lean
+and the library file is restored to the committed green state.
+
+Tooling: mrun.sh now passes LEAN_CHECK_MEMORY_MIB=8192 per the base-branch
+memory right-sizing (01b58a9); the mirror's lean_check.py stays at the
+pre-change copy until merge time; LEAN_CHECK_NO_CACHE=1 does not work in the
+old copy (do not rely on it).
