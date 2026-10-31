@@ -45,5 +45,8 @@ import MathProof.ModularForms.MaedaDim7Weights
 import MathProof.ModularForms.MaedaDim8Weights
 import MathProof.ModularForms.MaedaDim9Weights
 import MathProof.ModularForms.MaedaDim10Weights
+import MathProof.ModularForms.HeckeCommute
+import MathProof.ModularForms.HeckeGeneratedByT2
+import MathProof.ModularForms.HeckeGeneratedByT2Weights
 -- MathProof.AxCheck is also opt-in: it imports LehmerMod (heavy) to audit it.
 -- import MathProof.AxCheck
