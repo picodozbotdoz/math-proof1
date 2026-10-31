@@ -14,6 +14,9 @@ import Mathlib.RingTheory.IntegralClosure.Algebra.Basic
 import Mathlib.GroupTheory.Perm.Cycle.Type
 import Mathlib.Tactic.Choose
 import Mathlib.FieldTheory.PolynomialGaloisGroup
+import Mathlib.RingTheory.Frobenius
+import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
+import Mathlib.Algebra.GCDMonoid.IntegrallyClosed
 import MathProof.ModularForms.MaedaPermCriterion
 
 /-!
@@ -437,6 +440,12 @@ theorem rootK_mem (x : Fin n ≃ (ratOf q).rootSet (splField q)) (i : Fin n) :
     rootK x i ∈ rootOrder x :=
   Algebra.mem_adjoin_of_mem (Set.mem_range_self i)
 
+/-- `algebraMap ℤ K` factors through `ℚ`. -/
+theorem algebraMap_int_eq (q : ℤ[X]) :
+    algebraMap ℤ (splField q) = (algebraMap ℚ (splField q)).comp (Int.castRingHom ℚ) := by
+  ext a
+  simp
+
 theorem rootK_isIntegral (hq : q.Monic)
     (x : Fin n ≃ (ratOf q).rootSet (splField q)) (i : Fin n) :
     IsIntegral ℤ (rootK x i) := by
@@ -444,12 +453,8 @@ theorem rootK_isIntegral (hq : q.Monic)
       ((ratOf q).map (algebraMap ℚ (splField q))) = 0 := by
     rw [Polynomial.eval_map]
     exact (Polynomial.mem_rootSet.mp (x i).2).2
-  have hcomp : algebraMap ℤ (splField q)
-      = (algebraMap ℚ (splField q)).comp (Int.castRingHom ℚ) := by
-    ext a
-    simp
   refine ⟨q, hq, ?_⟩
-  rw [← Polynomial.eval_map, hcomp, ← map_map]
+  rw [← Polynomial.eval_map, algebraMap_int_eq, ← map_map]
   exact hroot
 
 /-- Every element of the root order is integral over `ℤ`. -/
@@ -474,6 +479,163 @@ theorem rootOrder_finite (hq : q.Monic)
 /-- The splitting field of a separable polynomial is Galois. -/
 theorem isGalois_splField (hsep : (ratOf q).Separable) : IsGalois ℚ (splField q) :=
   IsGalois.of_separable_splitting_field hsep
+
+/-! ### The action of the Galois group on the root order -/
+
+section Action
+
+variable (x : Fin n ≃ (ratOf q).rootSet (splField q))
+
+private theorem algebraMap_int_apply (z : ℤ) :
+    algebraMap ℤ (splField q) z = algebraMap ℚ (splField q) ((z : ℤ) : ℚ) := by
+  rw [algebraMap_int_eq]
+  simp
+
+/-- A Galois element, as a `ℚ`-algebra automorphism of the splitting field. -/
+private noncomputable def galE (σ : (ratOf q).Gal) :
+    splField q ≃ₐ[ℚ] splField q := σ
+
+private theorem smul_eq_coe (σ : (ratOf q).Gal) (y : splField q) :
+    σ • y = galE σ y := rfl
+
+/-- Each group element permutes the enumerated roots. -/
+theorem rootK_smul (σ : (ratOf q).Gal) (i : Fin n) :
+    ∃ j, σ • rootK x i = rootK x j := by
+  have hmem : (galE σ).toAlgHom (rootK x i) ∈ (ratOf q).rootSet (splField q) :=
+    rootSet_mapsTo (galE σ).toAlgHom (x i).2
+  refine ⟨x.symm ⟨σ • rootK x i, hmem⟩, ?_⟩
+  have h1 := Equiv.apply_symm_apply x ⟨σ • rootK x i, hmem⟩
+  exact (congrArg Subtype.val h1).symm
+
+/-- Each Galois element acts as a `ℤ`-algebra endomorphism of the splitting
+field. -/
+noncomputable def toAlgHomInt (σ : (ratOf q).Gal) : splField q →ₐ[ℤ] splField q where
+  toFun y := σ • y
+  map_one' := smul_one σ
+  map_mul' y₁ y₂ := MulSemiringAction.smul_mul σ y₁ y₂
+  map_zero' := smul_zero σ
+  map_add' := smul_add σ
+  commutes' z := by
+    show σ • (algebraMap ℤ (splField q)) z = (algebraMap ℤ (splField q)) z
+    rw [algebraMap_int_apply, smul_eq_coe]
+    exact AlgEquiv.commutes _ _
+
+/-- The root order is stable under the Galois action. -/
+theorem rootOrder_smul_mem (σ : (ratOf q).Gal) (a : rootOrder x) :
+    σ • ((a : rootOrder x) : splField q) ∈ rootOrder x := by
+  have hss : ∀ (τ : (ratOf q).Gal) (y : splField q), y ∈ Set.range (rootK x) →
+      τ • y ∈ Set.range (rootK x) := by
+    intro τ y hy
+    obtain ⟨i, rfl⟩ := Set.mem_range.mp hy
+    obtain ⟨j, hj⟩ := rootK_smul x τ i
+    exact ⟨j, hj.symm⟩
+  have himg : ((toAlgHomInt σ : splField q → splField q)) '' Set.range (rootK x)
+      = Set.range (rootK x) := by
+    refine Set.eq_of_subset_of_subset ?_ ?_
+    · rw [Set.image_subset_iff]
+      exact hss σ
+    · intro y hy
+      refine ⟨toAlgHomInt σ⁻¹ y, hss σ⁻¹ y hy, ?_⟩
+      show σ • (σ⁻¹ • y) = y
+      have h2 : ((σ * σ⁻¹ : (ratOf q).Gal) • y) = y := by
+        rw [mul_inv_cancel, one_smul]
+      rwa [mul_smul] at h2
+  have hmap : (toAlgHomInt σ) ((a : rootOrder x) : splField q)
+      ∈ Subalgebra.map (toAlgHomInt σ)
+        (Algebra.adjoin ℤ (Set.range (rootK x))) :=
+    Subalgebra.mem_map.mpr ⟨a, a.2, rfl⟩
+  rw [AlgHom.map_adjoin, himg] at hmap
+  exact hmap
+
+end Action
+
+section ActionInst
+
+variable {x : Fin n ≃ (ratOf q).rootSet (splField q)}
+
+/-- The action of `Q.Gal` on the root order, transported from the splitting
+field. -/
+@[instance_reducible]
+noncomputable instance instActionRootOrder :
+    MulSemiringAction (ratOf q).Gal (rootOrder x) where
+  smul σ a := ⟨σ • ((a : rootOrder x) : splField q), rootOrder_smul_mem x σ a⟩
+  one_smul a := Subtype.ext (one_smul (ratOf q).Gal ((a : rootOrder x) : splField q))
+  mul_smul g h a := Subtype.ext (mul_smul g h ((a : rootOrder x) : splField q))
+  smul_zero σ := Subtype.ext (smul_zero σ)
+  smul_add σ _a _b := Subtype.ext (smul_add σ _ _)
+  smul_one σ := Subtype.ext (smul_one σ)
+  smul_mul σ _a _b := Subtype.ext (MulSemiringAction.smul_mul σ _ _)
+
+end ActionInst
+
+section WithAction
+
+variable (x : Fin n ≃ (ratOf q).rootSet (splField q))
+
+private theorem coe_smul_action (σ : (ratOf q).Gal) (a : rootOrder x) :
+    ((σ • a : rootOrder x) : splField q) = σ • ((a : rootOrder x) : splField q) := rfl
+
+private theorem coe_smul_int (z : ℤ) (a : rootOrder x) :
+    ((z • a : rootOrder x) : splField q) = z • ((a : rootOrder x) : splField q) := rfl
+
+/-- The action commutes with the `ℤ`-scalars. -/
+theorem instSMulCommClassRootOrder :
+    SMulCommClass (ratOf q).Gal ℤ (rootOrder x) := by
+  refine ⟨fun σ (z : ℤ) a => Subtype.ext ?_⟩
+  have hfix : σ • algebraMap ℤ (splField q) z = algebraMap ℤ (splField q) z := by
+    rw [algebraMap_int_apply, smul_eq_coe]
+    exact AlgEquiv.commutes _ _
+  rw [coe_smul_action x σ (z • a), coe_smul_int x z,
+    show σ • (z • ((a : rootOrder x) : splField q)) =
+      z • (σ • ((a : rootOrder x) : splField q)) from by
+      rw [Algebra.smul_def, MulSemiringAction.smul_mul, hfix, ← Algebra.smul_def],
+    ← coe_smul_action x σ a, ← coe_smul_int x z]
+
+/-- The root order is invariant: every fixed point is an integer. -/
+theorem isInvariant_rootOrder (hq : q.Monic) (hsep : (ratOf q).Separable) :
+    Algebra.IsInvariant ℤ (rootOrder x) (ratOf q).Gal := by
+  have hG := isGalois_splField hsep
+  have hbot : IntermediateField.fixedField (⊤ : Subgroup (ratOf q).Gal) = ⊥ :=
+    ((IsGalois.tfae (F := ℚ) (E := splField q)).out 1 2).mp hG
+  refine ⟨fun b hb => ?_⟩
+  have hbK : ∀ g : (ratOf q).Gal,
+      g • ((b : rootOrder x) : splField q) = ((b : rootOrder x) : splField q) := by
+    intro g
+    rw [← coe_smul_action x g b]
+    exact congrArg Subtype.val (hb g)
+  have hfix : ((b : rootOrder x) : splField q)
+      ∈ IntermediateField.fixedField (⊤ : Subgroup (ratOf q).Gal) := by
+    intro σ
+    exact hbK σ.val
+  rw [hbot, IntermediateField.mem_bot] at hfix
+  obtain ⟨k, hk⟩ := hfix
+  have hinj : Function.Injective (algebraMap ℚ (splField q)) := by
+    intro a b hab
+    by_contra hne
+    have hd : (a - b : ℚ) ≠ 0 := sub_ne_zero_of_ne hne
+    have h3 : algebraMap ℚ (splField q) (a - b) = 0 := by
+      rw [map_sub, hab, sub_self]
+    have h2 : algebraMap ℚ (splField q) (a - b)
+        * algebraMap ℚ (splField q) (a - b)⁻¹ = 1 := by
+      rw [← map_mul, mul_inv_cancel₀ hd, map_one]
+    rw [h3, zero_mul] at h2
+    exact zero_ne_one h2
+  have hint : IsIntegral ℤ k :=
+    (isIntegral_algHom_iff (IsScalarTower.toAlgHom ℤ ℚ (splField q)) hinj
+      (x := k)).mp
+      (show IsIntegral ℤ ((IsScalarTower.toAlgHom ℤ ℚ (splField q)) k) by
+        show IsIntegral ℤ (algebraMap ℚ (splField q) k)
+        rw [hk]
+        exact rootOrder_isIntegral hq x b)
+  obtain ⟨z, hz⟩ := IsIntegrallyClosed.algebraMap_eq_of_integral hint
+  refine ⟨z, ?_⟩
+  have h1 : ((algebraMap ℤ (rootOrder x) z : rootOrder x) : splField q)
+      = ((b : rootOrder x) : splField q) := by
+    rw [Subalgebra.coe_algebraMap, algebraMap_int_apply,
+      show ((z : ℤ) : ℚ) = algebraMap ℤ ℚ z from rfl, hz, hk]
+  exact Subtype.val_injective h1
+
+end WithAction
 
 end Dedekind
 
