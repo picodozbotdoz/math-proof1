@@ -52,3 +52,52 @@ Deviations from blueprint §3/§4 (both within its fallback provisions):
 - `eq_top_of_transitive_of_jordan_of_odd` unused; finish via Mathlib swap theorem.
 `FrobHasCycleType` is still the interface discharged (statement unchanged).
 
+
+### 2026-10-31 (afternoon) — reboot recovery; G0a: golden lemma COMPLETE (commit 428acf5)
+
+Host reboot killed the predecessor mid-run. Recovered state from worktree +
+WORKLOG (decisions honored: (n-1)-cycle route for all dims, swap-theorem
+finish, FrobHasCycleType interface unchanged).
+
+`FrobeniusCycleType.lean` WIP had two `sorry`s, a broken tail and a bogus
+`Finite` instance. Completed and compiled clean locally (single module,
+`lake env lean`, ~0 errors after fixes), zero warnings, no banned constructs:
+
+* `FrobeniusCert.card_algHom_le_finrank` — Dedekind count (kept from WIP).
+* `FrobeniusCert.nonempty_algHom` — kept from WIP.
+* `FrobeniusCert.finite_algHom` — **new**: finiteness of `A →ₐ[ZMod ℓ] F̄`;
+  injects homs into `Π a, (minpoly (ZMod ℓ) a).rootSet F̄` (each rootSet
+  finite, `Fintype A` index). Integrality via `IsIntegral.of_finite`;
+  membership via `mem_rootSet` (aeval-based in this Mathlib) +
+  `aeval_algHom_apply` + `minpoly.aeval`.
+* `FrobeniusCert.exists_frobenius_perm` — **the golden lemma, complete**:
+  for `act : G →* (A ≃ₐ[ZMod ℓ] A)`, `y : Fin n → A` with `hperm`/`hfree`/
+  `hunit`/`hcard : #G = finrank`, there are `χ : A →ₐ F̄`, `τ : G`,
+  `π : Perm (Fin n)` with `act τ (y i) = y (π i)` and
+  `χ (y (π i)) = χ (y i) ^ ℓ`.  Frobenius postcomposition is
+  `(FiniteField.frobeniusAlgHom (ZMod ℓ) F̄).comp χ` (`coe = (· ^ card)`,
+  `ZMod.card` turns it into `^ ℓ`); orbit = everything by Dedekind count +
+  injectivity antisymmetry; surjectivity of the orbit map through
+  `Set.card_range_of_injective` (plain-function variant; `Fintype.card_range`
+  now wants an `EmbeddingLike`).
+
+Lean gotchas hit (all reproducible, worth remembering):
+1. **A one-step `calc a = b := e` inside a `by`-block swallows the following
+   tactic lines at parse time** (the parser keeps looking for `:=`) — the
+   resulting phantom errors ("unknown identifier" for names defined earlier,
+   "unknown tactic obtain") point at unrelated lines.  Replace with plain
+   `rw`.  Multi-step calcs are fine.
+2. **Type-ascribed `set x : T := e with h` misbinds** (bound x : first
+   component of T in one probe) — use un-ascribed `set x := e with h`.
+3. `Fintype.card_range` now requires `EmbeddingLike`; for a plain injective
+   function use `Set.card_range_of_injective`.
+4. `Set.Finite.fintype` cannot be registered as an instance (non-class
+   argument); a `private noncomputable rangeFintype` helper + local instance
+   works.  `Set.mem_rootSet` is aeval-based in this Mathlib and needs
+   `Module.IsTorsionFree (ZMod ℓ) F̄` (supplied by the file's field instance).
+5. `Frobenius` on `F̄` as a `ZMod ℓ`-algebra hom: `FiniteField.frobeniusAlgHom
+   (ZMod ℓ) F̄` (K finite, R arbitrary K-algebra) — do NOT hand-roll.
+
+Next: Modal tooling recreation, then the Dedekind instantiation
+(Ā = ℤ[x₁..xₙ] ⊗ F_ℓ, rank = #Gal via finrank_baseChange, unit differences
+via resultant Bézout) and `frob_cycleType_of_factorization`.
