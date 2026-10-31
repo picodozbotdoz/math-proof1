@@ -89,11 +89,16 @@ computation:
 Maeda's conjecture (open) says the characteristic polynomial of the Hecke
 operator `T₂` on `S_k(SL(2, ℤ))` is irreducible over `ℚ` (with full symmetric
 Galois group).  It is now **formally verified, from the Hecke operator itself,
-for every level-one weight with `2 ≤ dim S_k ≤ 5`** — `k = 24, 28, 30, 32, 34,
-38` (dim 2), `36, 40, 42, 44, 46, 50` (dim 3), `48, 52, 54, 56, 58, 62` (dim 4)
-and `60, 64, 66, 68, 70, 74` (dim 5)
-(`MaedaWeightK.charpoly_T2`, `MaedaWeightK.maeda`), **including the full
-symmetric Galois group** (`S₃`, `S₄` and `S₅` for the cubic, quartic and
+for every level-one weight with `2 ≤ dim S_k ≤ 10`** — `k = 24, 28, 30, 32, 34,
+38` (dim 2), `36, 40, 42, 44, 46, 50` (dim 3), `48, 52, 54, 56, 58, 62` (dim 4),
+`60, 64, 66, 68, 70, 74` (dim 5) and — via the dimension-generic pipeline of
+Iteration 20 (`CharpolyDimN.lean` + `CharpolyEngine` determinant interpolation
++ Rabin certificates, emitted by `tools/gen_maedan.py`) — the 30 further
+weights `72 ≤ k ≤ 134` with `6 ≤ dim S_k ≤ 10` (`MaedaDim{6..10}Weights.lean`,
+all light modules)
+(`MaedaWeightK.charpoly_T2`, `MaedaWeightK.maeda`).  The weights with
+`dim S_k ≤ 5` additionally carry the **full symmetric Galois group**
+(`S₃`, `S₄` and `S₅` for the cubic, quartic and
 quintic weights: `MaedaGalois.maeda_galoisK`).  The quintic `S₅` criterion
 (`galActionHom_bijective_of_quintic`: non-square discriminant + rootless `F₂₀`
 sextic resolvent) rests on degree-24 polynomial identities in the five roots
@@ -188,7 +193,7 @@ MathProof/Tau/Bridge.lean       # (qExpansion Δ).coeff n = τ(n)
 MathProof/ModularForms/Weight12.lean       # 691 • E₁₂ = 441 • E₄³ + 250 • E₆²
 MathProof/ModularForms/EigenLevelOne.lean  # Mordell + Lehmer for any rank-one S_k
 MathProof/ModularForms/LehmerWeight*.lean  # weights 16–26: congruences, sieves, initial segments
-MathProof/ModularForms/Maeda*.lean         # Maeda's conjecture in full (Galois S₂…S₅) for 2 ≤ dim S_k ≤ 5 (24–74)
+MathProof/ModularForms/Maeda*.lean         # Maeda's conjecture (irreducibility) for 2 ≤ dim S_k ≤ 10 (24–134); Galois S₂…S₅ for dim ≤ 5
 MathProof/ModularForms/Poly5.lean          # kernel-checkable sparse polynomials in 5 variables
 MathProof/ModularForms/Congruence691.lean  # τ(n) ≡ σ₁₁(n) mod 691
 research/research-log.md        # the research loop log

@@ -1338,7 +1338,7 @@ before every top-level command, RSS bucketed between them).  Validation on
 
 Branch `dev/i18-refactor-tauCeti-rule`, commits `555491f` + `ebc69ca`
 (2026-10-30).  Goal: the light library complies with
-`external-doc/TAU-CETI_Coding_Rules.md` — **zero `set_option`** in every
+`external-doc/CODING_STANDARDS.md` — **zero `set_option`** in every
 `defaultTargets` module, comment-aware mechanical audit, options in Tier C
 modules documented with measured reasons.
 
@@ -1415,3 +1415,86 @@ round trips for this class of error.
   oleans from the CDN cache, project targets only); the Pages site remains
   the branch-deployed `docs/` folder.  The leftover docgen run on `b5d033e`
   was cancelled in the Actions UI.
+
+## Iteration 20 — Maeda's conjecture for dims 6–10 (weights 72–134)
+
+Branch `dev/iteration20-maeda-dim6-10`, implementing the `dev/blueprint`
+blueprint `iteration19-maeda-generic` (whose engines — `CharpolyEngine`,
+`RabinCert` — landed in the 2026-10-31 blueprint wave).  **Maeda's
+conjecture (the irreducibility half) is now formally verified, from the
+Hecke operator itself, for every level-one weight with `2 ≤ dim S_k ≤ 10`**:
+30 new weights `72 ≤ k ≤ 134` (`MaedaDim{6..10}Weights.lean`) on top of the
+24 weights `24–74` of Iterations 14–16.  With it, `S_k(SL(2,ℤ))` has a
+verified-irreducible `T₂` charpoly for all 54 weights `k ≤ 134` with
+`dim S_k ≥ 2` (every such weight except 26 and 132).
+
+Stages (plan `research/iteration20-plan.md`, handoff
+`research/iteration20/S3-handoff.md`):
+
+* **S1 `CharpolyDimN.lean`** (`57656b0`, ℕ-restructure `eb94f4d`): the
+  dimension-generic echelon extraction `charpoly_dimN` — the matrix of any
+  endomorphism from q-coefficient tables by downward back-substitution
+  (`coordN`/`coordsAux`).  The first, Fin-indexed shape died on
+  `omega`-opaque cast chains; ℕ-indexed hypotheses compiled first-try.
+* **S2 `tools/gen_maedan.py`**: emits one file per dim from
+  `research/iteration20/data/maeda_dim6_10.json` (census regenerates
+  byte-identically; matrices/charpolys regression-asserted against the
+  proved k = 24/48 ones).
+* **S3 dim 6** (`838fc35`): the 66-error pipeline bring-up; its 25 gotchas
+  are in the handoff and remain the reference for the hmap simp+rw chain,
+  per-entry theorems and `C (1) * X ^ n` leading-term idiom.
+* **S4 dims 7–10** (this entry): three new failure classes, all fixed in the
+  generator, never in the generated files:
+  1. *q/t statement lines over 100 chars* (dims 8–10): the RHS value now
+     wraps to a continuation line (`coeff_stmt`).
+  2. *Chunked determinant literals*: `eval_det` reduces `det (t·1 − M)` to a
+     flat numeral but cannot close `flat = c0 * 10 ^ e0 + c1 …`; chunked
+     `det_t`s get `norm_num` after `eval_det` (validated locally on the
+     exact goal shapes, incl. 4-chunk dim-10 size, before the Modal run).
+     Charpoly coefficients past 80 digits are chunked with the SAME token
+     sequence inside `P` and the hmap rewrites (`rw` matches syntactically).
+  3. *`simp only [coordsAux]` heartbeat exhaustion at the deepest
+     back-substitution rows* (dim 9: `entry_8_{4..8}`, 30 deterministic
+     timeouts): the entries are now STAGED — per (column, row-count)
+     `Lv{a}_{j} : coordsAux … j = [literal list]`, each proved from the
+     previous stage by a ONE-step unfold (`change`, never `show` —
+     `linter.style.show` rejects goal-changing `show`s) + `rw` + a
+     j-tuned simp set (j = 1: the empty sum kills `Atab`; j = 2: a
+     1-element prefix uses no `getD_cons_succ`); entries are then
+     `simp only [coordN]; rw [Lv{a}_{c+1}]; rfl`.  Staging also made every
+     file faster (dim 9: 931 s failed cascade → 413 s staged).
+
+  Verification matrix (Modal `lean_check --file`, linters on, all green with
+  ZERO warnings; build time / per-module peak RSS):
+
+  | module | lines | build | peak |
+  |---|---|---|---|
+  | `MaedaDim6Weights` | 10587 | 88 s | 6.4 GiB |
+  | `MaedaDim7Weights` | 14199 | 138 s | 7.1 GiB |
+  | `MaedaDim8Weights` | 18389 | 333 s | 8.1 GiB |
+  | `MaedaDim9Weights` | 23257 | 413 s | 9.3 GiB |
+  | `MaedaDim10Weights` | 28922 | 1167 s | 11.6 GiB |
+
+  The flagged kernel-time risk (k = 120: ~28k ZMod-muls in the Rabin block)
+  passed inside the 200 s-per-declaration kernel budget; cold full pass of
+  the five files ≈ 36 min, which CI now pays on every push.
+
+* **S5 registration + audit**: `CharpolyDimN` and the five weight files in
+  `MathProof.lean`, `defaultTargets`, CI list; `tools/tauceti_audit.sh`
+  clean (no `set_option`/`#eval`/`meta`/`native_decide` anywhere in the new
+  modules); `MathProof/AxCheckDecide.lean` on Modal: **409 decide certificates
+  audited, 0 depending on more than `propext`** (up from 109 — the five new
+  files add ~300 propext-clean certificates).
+
+* **S6 bookkeeping**: README (Maeda section: `2 ≤ dim ≤ 10`, 54 weights,
+  dims ≤ 5 keep the Galois-group statements; layout line), docs landing
+  page (card retitled "weights 24–134"), AGENTS.md layout entry with the
+  measured costs, this entry.
+
+Invariants kept: no ancestor of the heavy `MaedaGalois5Defs` chain touched;
+generated files never hand-edited (`gen_maedan.py --check` byte-identical);
+every certificate is `decide +kernel` / `norm_num` / `eval_det`, and the
+audit target stays propext-only.  Natural follow-ups, recorded as the next
+blueprints: the Galois-group half for dims 6–10 (Frobenius cycle types +
+`MaedaPermCriterion`), Hecke commutativity → "T_m is a polynomial in T₂"
+(uses these 54 irreducibilities), and the T₃ twin run.

@@ -65,6 +65,12 @@ jobs:
             MathProof.ModularForms.CharpolyEngine
             MathProof.ModularForms.RabinCert
             MathProof.ModularForms.HeckeAlgebraQT2
+            MathProof.ModularForms.CharpolyDimN
+            MathProof.ModularForms.MaedaDim6Weights
+            MathProof.ModularForms.MaedaDim7Weights
+            MathProof.ModularForms.MaedaDim8Weights
+            MathProof.ModularForms.MaedaDim9Weights
+            MathProof.ModularForms.MaedaDim10Weights
       # NOTE: no docgen-action step.  It re-ran the whole build a second time
       # and built the doc-gen4 tool and its Mathlib dependency from source
       # (30+ min per push), and its deploy step would overwrite the

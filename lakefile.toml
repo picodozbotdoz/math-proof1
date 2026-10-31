@@ -45,6 +45,12 @@ defaultTargets = [
   "MathProof.ModularForms.CharpolyEngine",
   "MathProof.ModularForms.RabinCert",
   "MathProof.ModularForms.HeckeAlgebraQT2",
+  "MathProof.ModularForms.CharpolyDimN",
+  "MathProof.ModularForms.MaedaDim6Weights",
+  "MathProof.ModularForms.MaedaDim7Weights",
+  "MathProof.ModularForms.MaedaDim8Weights",
+  "MathProof.ModularForms.MaedaDim9Weights",
+  "MathProof.ModularForms.MaedaDim10Weights",
 ]
 
 [leanOptions]

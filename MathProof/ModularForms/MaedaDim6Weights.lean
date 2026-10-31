@@ -1018,215 +1018,614 @@ theorem hevals : ∀ i : Fin 7, P.eval ((i : ℕ) : ℤ)
       = (Matrix.scalar (Fin 6) (6 : ℤ) - M).det
     rw [ev_6, det_6]
 
+theorem Lv0_1 : coordsAux Atab (fun m => Xtab 0 m) 1 =
+    [((3576 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv0_2 : coordsAux Atab (fun m => Xtab 0 m) 2 =
+    [((3576 : ℤ) : ℂ), ((2361183241441063680000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 0 m) 1
+      ++ [Xtab 0 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 0 m) 1).getD i 0] =
+      [((3576 : ℤ) : ℂ), ((2361183241441063680000 : ℤ) : ℂ)]
+  rw [Lv0_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv0_3 : coordsAux Atab (fun m => Xtab 0 m) 3 =
+    [((3576 : ℤ) : ℂ), ((2361183241441063680000 : ℤ) : ℂ), ((-6686870937316024320000000 : ℤ) : ℂ)]
+      := by
+  change coordsAux Atab (fun m => Xtab 0 m) 2
+      ++ [Xtab 0 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 0 m) 2).getD i 0] =
+      [((3576 : ℤ) : ℂ), ((2361183241441063680000 : ℤ) : ℂ),
+      ((-6686870937316024320000000 : ℤ) : ℂ)]
+  rw [Lv0_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv0_4 : coordsAux Atab (fun m => Xtab 0 m) 4 =
+    [((3576 : ℤ) : ℂ), ((2361183241441063680000 : ℤ) : ℂ), ((-6686870937316024320000000 : ℤ) : ℂ),
+    ((5257014245625692160000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 0 m) 3
+      ++ [Xtab 0 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 0 m) 3).getD i 0] =
+      [((3576 : ℤ) : ℂ), ((2361183241441063680000 : ℤ) : ℂ),
+      ((-6686870937316024320000000 : ℤ) : ℂ), ((5257014245625692160000000000 : ℤ) : ℂ)]
+  rw [Lv0_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv0_5 : coordsAux Atab (fun m => Xtab 0 m) 5 =
+    [((3576 : ℤ) : ℂ), ((2361183241441063680000 : ℤ) : ℂ), ((-6686870937316024320000000 : ℤ) : ℂ),
+    ((5257014245625692160000000000 : ℤ) : ℂ), ((-1009146538984734720000000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 0 m) 4
+      ++ [Xtab 0 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 0 m) 4).getD i 0] =
+      [((3576 : ℤ) : ℂ), ((2361183241441063680000 : ℤ) : ℂ),
+      ((-6686870937316024320000000 : ℤ) : ℂ), ((5257014245625692160000000000 : ℤ) : ℂ),
+      ((-1009146538984734720000000000000 : ℤ) : ℂ)]
+  rw [Lv0_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv0_6 : coordsAux Atab (fun m => Xtab 0 m) 6 =
+    [((3576 : ℤ) : ℂ), ((2361183241441063680000 : ℤ) : ℂ), ((-6686870937316024320000000 : ℤ) : ℂ),
+    ((5257014245625692160000000000 : ℤ) : ℂ), ((-1009146538984734720000000000000 : ℤ) : ℂ),
+    ((11555266180939776000000000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 0 m) 5
+      ++ [Xtab 0 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 0 m) 5).getD i 0] =
+      [((3576 : ℤ) : ℂ), ((2361183241441063680000 : ℤ) : ℂ),
+      ((-6686870937316024320000000 : ℤ) : ℂ), ((5257014245625692160000000000 : ℤ) : ℂ),
+      ((-1009146538984734720000000000000 : ℤ) : ℂ), ((11555266180939776000000000000000 : ℤ) : ℂ)]
+  rw [Lv0_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_1 : coordsAux Atab (fun m => Xtab 1 m) 1 =
+    [((1 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv1_2 : coordsAux Atab (fun m => Xtab 1 m) 2 =
+    [((1 : ℤ) : ℂ), ((3686784 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 1
+      ++ [Xtab 1 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 1 m) 1).getD i 0] =
+      [((1 : ℤ) : ℂ), ((3686784 : ℤ) : ℂ)]
+  rw [Lv1_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_3 : coordsAux Atab (fun m => Xtab 1 m) 3 =
+    [((1 : ℤ) : ℂ), ((3686784 : ℤ) : ℂ), ((1569300480000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 2
+      ++ [Xtab 1 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 1 m) 2).getD i 0] =
+      [((1 : ℤ) : ℂ), ((3686784 : ℤ) : ℂ), ((1569300480000 : ℤ) : ℂ)]
+  rw [Lv1_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_4 : coordsAux Atab (fun m => Xtab 1 m) 4 =
+    [((1 : ℤ) : ℂ), ((3686784 : ℤ) : ℂ), ((1569300480000 : ℤ) : ℂ),
+    ((2361354558898176000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 3
+      ++ [Xtab 1 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 1 m) 3).getD i 0] =
+      [((1 : ℤ) : ℂ), ((3686784 : ℤ) : ℂ), ((1569300480000 : ℤ) : ℂ),
+      ((2361354558898176000000 : ℤ) : ℂ)]
+  rw [Lv1_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_5 : coordsAux Atab (fun m => Xtab 1 m) 5 =
+    [((1 : ℤ) : ℂ), ((3686784 : ℤ) : ℂ), ((1569300480000 : ℤ) : ℂ),
+    ((2361354558898176000000 : ℤ) : ℂ), ((-3167692353699840000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 4
+      ++ [Xtab 1 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 1 m) 4).getD i 0] =
+      [((1 : ℤ) : ℂ), ((3686784 : ℤ) : ℂ), ((1569300480000 : ℤ) : ℂ),
+      ((2361354558898176000000 : ℤ) : ℂ), ((-3167692353699840000000000 : ℤ) : ℂ)]
+  rw [Lv1_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_6 : coordsAux Atab (fun m => Xtab 1 m) 6 =
+    [((1 : ℤ) : ℂ), ((3686784 : ℤ) : ℂ), ((1569300480000 : ℤ) : ℂ),
+    ((2361354558898176000000 : ℤ) : ℂ), ((-3167692353699840000000000 : ℤ) : ℂ),
+    ((213986410758144000000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 5
+      ++ [Xtab 1 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 1 m) 5).getD i 0] =
+      [((1 : ℤ) : ℂ), ((3686784 : ℤ) : ℂ), ((1569300480000 : ℤ) : ℂ),
+      ((2361354558898176000000 : ℤ) : ℂ), ((-3167692353699840000000000 : ℤ) : ℂ),
+      ((213986410758144000000000000 : ℤ) : ℂ)]
+  rw [Lv1_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_1 : coordsAux Atab (fun m => Xtab 2 m) 1 =
+    [((0 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv2_2 : coordsAux Atab (fun m => Xtab 2 m) 2 =
+    [((0 : ℤ) : ℂ), ((2088 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 1
+      ++ [Xtab 2 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 2 m) 1).getD i 0] =
+      [((0 : ℤ) : ℂ), ((2088 : ℤ) : ℂ)]
+  rw [Lv2_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_3 : coordsAux Atab (fun m => Xtab 2 m) 3 =
+    [((0 : ℤ) : ℂ), ((2088 : ℤ) : ℂ), ((1047300096 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 2
+      ++ [Xtab 2 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 2 m) 2).getD i 0] =
+      [((0 : ℤ) : ℂ), ((2088 : ℤ) : ℂ), ((1047300096 : ℤ) : ℂ)]
+  rw [Lv2_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_4 : coordsAux Atab (fun m => Xtab 2 m) 4 =
+    [((0 : ℤ) : ℂ), ((2088 : ℤ) : ℂ), ((1047300096 : ℤ) : ℂ), ((84053458944000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 3
+      ++ [Xtab 2 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 2 m) 3).getD i 0] =
+      [((0 : ℤ) : ℂ), ((2088 : ℤ) : ℂ), ((1047300096 : ℤ) : ℂ), ((84053458944000 : ℤ) : ℂ)]
+  rw [Lv2_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_5 : coordsAux Atab (fun m => Xtab 2 m) 5 =
+    [((0 : ℤ) : ℂ), ((2088 : ℤ) : ℂ), ((1047300096 : ℤ) : ℂ), ((84053458944000 : ℤ) : ℂ),
+    ((1265866113024000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 4
+      ++ [Xtab 2 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 2 m) 4).getD i 0] =
+      [((0 : ℤ) : ℂ), ((2088 : ℤ) : ℂ), ((1047300096 : ℤ) : ℂ), ((84053458944000 : ℤ) : ℂ),
+      ((1265866113024000000 : ℤ) : ℂ)]
+  rw [Lv2_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_6 : coordsAux Atab (fun m => Xtab 2 m) 6 =
+    [((0 : ℤ) : ℂ), ((2088 : ℤ) : ℂ), ((1047300096 : ℤ) : ℂ), ((84053458944000 : ℤ) : ℂ),
+    ((1265866113024000000 : ℤ) : ℂ), ((3962711310336000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 5
+      ++ [Xtab 2 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 2 m) 5).getD i 0] =
+      [((0 : ℤ) : ℂ), ((2088 : ℤ) : ℂ), ((1047300096 : ℤ) : ℂ), ((84053458944000 : ℤ) : ℂ),
+      ((1265866113024000000 : ℤ) : ℂ), ((3962711310336000000000 : ℤ) : ℂ)]
+  rw [Lv2_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_1 : coordsAux Atab (fun m => Xtab 3 m) 1 =
+    [((0 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv3_2 : coordsAux Atab (fun m => Xtab 3 m) 2 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 1
+      ++ [Xtab 3 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 3 m) 1).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)]
+  rw [Lv3_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_3 : coordsAux Atab (fun m => Xtab 3 m) 3 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((740352 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 2
+      ++ [Xtab 3 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 3 m) 2).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((740352 : ℤ) : ℂ)]
+  rw [Lv3_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_4 : coordsAux Atab (fun m => Xtab 3 m) 4 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((740352 : ℤ) : ℂ), ((31486377984 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 3
+      ++ [Xtab 3 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 3 m) 3).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((740352 : ℤ) : ℂ), ((31486377984 : ℤ) : ℂ)]
+  rw [Lv3_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_5 : coordsAux Atab (fun m => Xtab 3 m) 5 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((740352 : ℤ) : ℂ), ((31486377984 : ℤ) : ℂ),
+    ((-27179089920000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 4
+      ++ [Xtab 3 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 3 m) 4).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((740352 : ℤ) : ℂ), ((31486377984 : ℤ) : ℂ),
+      ((-27179089920000 : ℤ) : ℂ)]
+  rw [Lv3_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_6 : coordsAux Atab (fun m => Xtab 3 m) 6 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((740352 : ℤ) : ℂ), ((31486377984 : ℤ) : ℂ),
+    ((-27179089920000 : ℤ) : ℂ), ((73383542784000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 5
+      ++ [Xtab 3 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 3 m) 5).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((740352 : ℤ) : ℂ), ((31486377984 : ℤ) : ℂ),
+      ((-27179089920000 : ℤ) : ℂ), ((73383542784000000 : ℤ) : ℂ)]
+  rw [Lv3_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_1 : coordsAux Atab (fun m => Xtab 4 m) 1 =
+    [((0 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv4_2 : coordsAux Atab (fun m => Xtab 4 m) 2 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 1
+      ++ [Xtab 4 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 4 m) 1).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)]
+  rw [Lv4_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_3 : coordsAux Atab (fun m => Xtab 4 m) 3 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((600 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 2
+      ++ [Xtab 4 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 4 m) 2).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((600 : ℤ) : ℂ)]
+  rw [Lv4_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_4 : coordsAux Atab (fun m => Xtab 4 m) 4 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((600 : ℤ) : ℂ), ((-1024000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 3
+      ++ [Xtab 4 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 4 m) 3).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((600 : ℤ) : ℂ), ((-1024000 : ℤ) : ℂ)]
+  rw [Lv4_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_5 : coordsAux Atab (fun m => Xtab 4 m) 5 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((600 : ℤ) : ℂ), ((-1024000 : ℤ) : ℂ), ((33594802176 : ℤ) : ℂ)]
+      := by
+  change coordsAux Atab (fun m => Xtab 4 m) 4
+      ++ [Xtab 4 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 4 m) 4).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((600 : ℤ) : ℂ), ((-1024000 : ℤ) : ℂ),
+      ((33594802176 : ℤ) : ℂ)]
+  rw [Lv4_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_6 : coordsAux Atab (fun m => Xtab 4 m) 6 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((600 : ℤ) : ℂ), ((-1024000 : ℤ) : ℂ), ((33594802176 : ℤ) : ℂ),
+    ((1358954496000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 5
+      ++ [Xtab 4 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 4 m) 5).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((600 : ℤ) : ℂ), ((-1024000 : ℤ) : ℂ),
+      ((33594802176 : ℤ) : ℂ), ((1358954496000 : ℤ) : ℂ)]
+  rw [Lv4_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_1 : coordsAux Atab (fun m => Xtab 5 m) 1 =
+    [((0 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv5_2 : coordsAux Atab (fun m => Xtab 5 m) 2 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 5 m) 1
+      ++ [Xtab 5 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 5 m) 1).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)]
+  rw [Lv5_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_3 : coordsAux Atab (fun m => Xtab 5 m) 3 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 5 m) 2
+      ++ [Xtab 5 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 5 m) 2).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)]
+  rw [Lv5_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_4 : coordsAux Atab (fun m => Xtab 5 m) 4 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((8064 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 5 m) 3
+      ++ [Xtab 5 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 5 m) 3).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((8064 : ℤ) : ℂ)]
+  rw [Lv5_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_5 : coordsAux Atab (fun m => Xtab 5 m) 5 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((8064 : ℤ) : ℂ), ((2949120 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 5 m) 4
+      ++ [Xtab 5 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 5 m) 4).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((8064 : ℤ) : ℂ), ((2949120 : ℤ) : ℂ)]
+  rw [Lv5_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_6 : coordsAux Atab (fun m => Xtab 5 m) 6 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((8064 : ℤ) : ℂ), ((2949120 : ℤ) : ℂ),
+    ((25165824 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 5 m) 5
+      ++ [Xtab 5 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 5 m) 5).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((8064 : ℤ) : ℂ), ((2949120 : ℤ) : ℂ),
+      ((25165824 : ℤ) : ℂ)]
+  rw [Lv5_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
 theorem entry_0_0 : coordN Atab (fun m => Xtab 0 m) 0
       = ((3576 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_1]
+  rfl
 
 theorem entry_0_1 : coordN Atab (fun m => Xtab 1 m) 0
       = ((1 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_1]
+  rfl
 
 theorem entry_0_2 : coordN Atab (fun m => Xtab 2 m) 0
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_1]
+  rfl
 
 theorem entry_0_3 : coordN Atab (fun m => Xtab 3 m) 0
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_1]
+  rfl
 
 theorem entry_0_4 : coordN Atab (fun m => Xtab 4 m) 0
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_1]
+  rfl
 
 theorem entry_0_5 : coordN Atab (fun m => Xtab 5 m) 0
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_1]
+  rfl
 
 theorem entry_1_0 : coordN Atab (fun m => Xtab 0 m) 1
       = ((2361183241441063680000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_2]
+  rfl
 
 theorem entry_1_1 : coordN Atab (fun m => Xtab 1 m) 1
       = ((3686784 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_2]
+  rfl
 
 theorem entry_1_2 : coordN Atab (fun m => Xtab 2 m) 1
       = ((2088 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_2]
+  rfl
 
 theorem entry_1_3 : coordN Atab (fun m => Xtab 3 m) 1
       = ((1 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_2]
+  rfl
 
 theorem entry_1_4 : coordN Atab (fun m => Xtab 4 m) 1
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_2]
+  rfl
 
 theorem entry_1_5 : coordN Atab (fun m => Xtab 5 m) 1
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_2]
+  rfl
 
 theorem entry_2_0 : coordN Atab (fun m => Xtab 0 m) 2
       = ((-6686870937316024320000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_3]
+  rfl
 
 theorem entry_2_1 : coordN Atab (fun m => Xtab 1 m) 2
       = ((1569300480000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_3]
+  rfl
 
 theorem entry_2_2 : coordN Atab (fun m => Xtab 2 m) 2
       = ((1047300096 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_3]
+  rfl
 
 theorem entry_2_3 : coordN Atab (fun m => Xtab 3 m) 2
       = ((740352 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_3]
+  rfl
 
 theorem entry_2_4 : coordN Atab (fun m => Xtab 4 m) 2
       = ((600 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_3]
+  rfl
 
 theorem entry_2_5 : coordN Atab (fun m => Xtab 5 m) 2
       = ((1 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_3]
+  rfl
 
 theorem entry_3_0 : coordN Atab (fun m => Xtab 0 m) 3
       = ((5257014245625692160000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_4]
+  rfl
 
 theorem entry_3_1 : coordN Atab (fun m => Xtab 1 m) 3
       = ((2361354558898176000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_4]
+  rfl
 
 theorem entry_3_2 : coordN Atab (fun m => Xtab 2 m) 3
       = ((84053458944000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_4]
+  rfl
 
 theorem entry_3_3 : coordN Atab (fun m => Xtab 3 m) 3
       = ((31486377984 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_4]
+  rfl
 
 theorem entry_3_4 : coordN Atab (fun m => Xtab 4 m) 3
       = ((-1024000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_4]
+  rfl
 
 theorem entry_3_5 : coordN Atab (fun m => Xtab 5 m) 3
       = ((8064 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_4]
+  rfl
 
 theorem entry_4_0 : coordN Atab (fun m => Xtab 0 m) 4
       = ((-1009146538984734720000000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_5]
+  rfl
 
 theorem entry_4_1 : coordN Atab (fun m => Xtab 1 m) 4
       = ((-3167692353699840000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_5]
+  rfl
 
 theorem entry_4_2 : coordN Atab (fun m => Xtab 2 m) 4
       = ((1265866113024000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_5]
+  rfl
 
 theorem entry_4_3 : coordN Atab (fun m => Xtab 3 m) 4
       = ((-27179089920000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_5]
+  rfl
 
 theorem entry_4_4 : coordN Atab (fun m => Xtab 4 m) 4
       = ((33594802176 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_5]
+  rfl
 
 theorem entry_4_5 : coordN Atab (fun m => Xtab 5 m) 4
       = ((2949120 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_5]
+  rfl
 
 theorem entry_5_0 : coordN Atab (fun m => Xtab 0 m) 5
       = ((11555266180939776000000000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_6]
+  rfl
 
 theorem entry_5_1 : coordN Atab (fun m => Xtab 1 m) 5
       = ((213986410758144000000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_6]
+  rfl
 
 theorem entry_5_2 : coordN Atab (fun m => Xtab 2 m) 5
       = ((3962711310336000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_6]
+  rfl
 
 theorem entry_5_3 : coordN Atab (fun m => Xtab 3 m) 5
       = ((73383542784000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_6]
+  rfl
 
 theorem entry_5_4 : coordN Atab (fun m => Xtab 4 m) 5
       = ((1358954496000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_6]
+  rfl
 
 theorem entry_5_5 : coordN Atab (fun m => Xtab 5 m) 5
       = ((25165824 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_6]
+  rfl
 
 /-- **The characteristic polynomial of `T₂` on this weight.** -/
 theorem charpoly_T2 : T2.charpoly = P.map (Int.castRingHom ℂ) := by
@@ -2375,215 +2774,618 @@ theorem hevals : ∀ i : Fin 7, P.eval ((i : ℕ) : ℤ)
       = (Matrix.scalar (Fin 6) (6 : ℤ) - M).det
     rw [ev_6, det_6]
 
+theorem Lv0_1 : coordsAux Atab (fun m => Xtab 0 m) 1 =
+    [((3816 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv0_2 : coordsAux Atab (fun m => Xtab 0 m) 2 =
+    [((3816 : ℤ) : ℂ), ((37778931862964847360000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 0 m) 1
+      ++ [Xtab 0 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 0 m) 1).getD i 0] =
+      [((3816 : ℤ) : ℂ), ((37778931862964847360000 : ℤ) : ℂ)]
+  rw [Lv0_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv0_3 : coordsAux Atab (fun m => Xtab 0 m) 3 =
+    [((3816 : ℤ) : ℂ), ((37778931862964847360000 : ℤ) : ℂ),
+    ((-116056878679478034432000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 0 m) 2
+      ++ [Xtab 0 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 0 m) 2).getD i 0] =
+      [((3816 : ℤ) : ℂ), ((37778931862964847360000 : ℤ) : ℂ),
+      ((-116056878679478034432000000 : ℤ) : ℂ)]
+  rw [Lv0_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv0_4 : coordsAux Atab (fun m => Xtab 0 m) 4 =
+    [((3816 : ℤ) : ℂ), ((37778931862964847360000 : ℤ) : ℂ),
+    ((-116056878679478034432000000 : ℤ) : ℂ), ((105147532649583083520000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 0 m) 3
+      ++ [Xtab 0 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 0 m) 3).getD i 0] =
+      [((3816 : ℤ) : ℂ), ((37778931862964847360000 : ℤ) : ℂ),
+      ((-116056878679478034432000000 : ℤ) : ℂ), ((105147532649583083520000000000 : ℤ) : ℂ)]
+  rw [Lv0_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv0_5 : coordsAux Atab (fun m => Xtab 0 m) 5 =
+    [((3816 : ℤ) : ℂ), ((37778931862964847360000 : ℤ) : ℂ),
+    ((-116056878679478034432000000 : ℤ) : ℂ), ((105147532649583083520000000000 : ℤ) : ℂ),
+    ((-27346059009070202880000000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 0 m) 4
+      ++ [Xtab 0 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 0 m) 4).getD i 0] =
+      [((3816 : ℤ) : ℂ), ((37778931862964847360000 : ℤ) : ℂ),
+      ((-116056878679478034432000000 : ℤ) : ℂ), ((105147532649583083520000000000 : ℤ) : ℂ),
+      ((-27346059009070202880000000000000 : ℤ) : ℂ)]
+  rw [Lv0_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv0_6 : coordsAux Atab (fun m => Xtab 0 m) 6 =
+    [((3816 : ℤ) : ℂ), ((37778931862964847360000 : ℤ) : ℂ),
+    ((-116056878679478034432000000 : ℤ) : ℂ), ((105147532649583083520000000000 : ℤ) : ℂ),
+    ((-27346059009070202880000000000000 : ℤ) : ℂ), ((935976560656121856000000000000000 : ℤ) : ℂ)]
+      := by
+  change coordsAux Atab (fun m => Xtab 0 m) 5
+      ++ [Xtab 0 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 0 m) 5).getD i 0] =
+      [((3816 : ℤ) : ℂ), ((37778931862964847360000 : ℤ) : ℂ),
+      ((-116056878679478034432000000 : ℤ) : ℂ), ((105147532649583083520000000000 : ℤ) : ℂ),
+      ((-27346059009070202880000000000000 : ℤ) : ℂ),
+      ((935976560656121856000000000000000 : ℤ) : ℂ)]
+  rw [Lv0_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_1 : coordsAux Atab (fun m => Xtab 1 m) 1 =
+    [((1 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv1_2 : coordsAux Atab (fun m => Xtab 1 m) 2 =
+    [((1 : ℤ) : ℂ), ((4368384 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 1
+      ++ [Xtab 1 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 1 m) 1).getD i 0] =
+      [((1 : ℤ) : ℂ), ((4368384 : ℤ) : ℂ)]
+  rw [Lv1_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_3 : coordsAux Atab (fun m => Xtab 1 m) 3 =
+    [((1 : ℤ) : ℂ), ((4368384 : ℤ) : ℂ), ((2277310464000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 2
+      ++ [Xtab 1 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 1 m) 2).getD i 0] =
+      [((1 : ℤ) : ℂ), ((4368384 : ℤ) : ℂ), ((2277310464000 : ℤ) : ℂ)]
+  rw [Lv1_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_4 : coordsAux Atab (fun m => Xtab 1 m) 4 =
+    [((1 : ℤ) : ℂ), ((4368384 : ℤ) : ℂ), ((2277310464000 : ℤ) : ℂ),
+    ((37779251285458944000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 3
+      ++ [Xtab 1 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 1 m) 3).getD i 0] =
+      [((1 : ℤ) : ℂ), ((4368384 : ℤ) : ℂ), ((2277310464000 : ℤ) : ℂ),
+      ((37779251285458944000000 : ℤ) : ℂ)]
+  rw [Lv1_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_5 : coordsAux Atab (fun m => Xtab 1 m) 5 =
+    [((1 : ℤ) : ℂ), ((4368384 : ℤ) : ℂ), ((2277310464000 : ℤ) : ℂ),
+    ((37779251285458944000000 : ℤ) : ℂ), ((-59827034007797760000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 4
+      ++ [Xtab 1 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 1 m) 4).getD i 0] =
+      [((1 : ℤ) : ℂ), ((4368384 : ℤ) : ℂ), ((2277310464000 : ℤ) : ℂ),
+      ((37779251285458944000000 : ℤ) : ℂ), ((-59827034007797760000000000 : ℤ) : ℂ)]
+  rw [Lv1_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_6 : coordsAux Atab (fun m => Xtab 1 m) 6 =
+    [((1 : ℤ) : ℂ), ((4368384 : ℤ) : ℂ), ((2277310464000 : ℤ) : ℂ),
+    ((37779251285458944000000 : ℤ) : ℂ), ((-59827034007797760000000000 : ℤ) : ℂ),
+    ((10271347716390912000000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 5
+      ++ [Xtab 1 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 1 m) 5).getD i 0] =
+      [((1 : ℤ) : ℂ), ((4368384 : ℤ) : ℂ), ((2277310464000 : ℤ) : ℂ),
+      ((37779251285458944000000 : ℤ) : ℂ), ((-59827034007797760000000000 : ℤ) : ℂ),
+      ((10271347716390912000000000000 : ℤ) : ℂ)]
+  rw [Lv1_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_1 : coordsAux Atab (fun m => Xtab 2 m) 1 =
+    [((0 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv2_2 : coordsAux Atab (fun m => Xtab 2 m) 2 =
+    [((0 : ℤ) : ℂ), ((2328 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 1
+      ++ [Xtab 2 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 2 m) 1).getD i 0] =
+      [((0 : ℤ) : ℂ), ((2328 : ℤ) : ℂ)]
+  rw [Lv2_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_3 : coordsAux Atab (fun m => Xtab 2 m) 3 =
+    [((0 : ℤ) : ℂ), ((2328 : ℤ) : ℂ), ((1516179456 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 2
+      ++ [Xtab 2 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 2 m) 2).getD i 0] =
+      [((0 : ℤ) : ℂ), ((2328 : ℤ) : ℂ), ((1516179456 : ℤ) : ℂ)]
+  rw [Lv2_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_4 : coordsAux Atab (fun m => Xtab 2 m) 4 =
+    [((0 : ℤ) : ℂ), ((2328 : ℤ) : ℂ), ((1516179456 : ℤ) : ℂ), ((173425950720000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 3
+      ++ [Xtab 2 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 2 m) 3).getD i 0] =
+      [((0 : ℤ) : ℂ), ((2328 : ℤ) : ℂ), ((1516179456 : ℤ) : ℂ), ((173425950720000 : ℤ) : ℂ)]
+  rw [Lv2_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_5 : coordsAux Atab (fun m => Xtab 2 m) 5 =
+    [((0 : ℤ) : ℂ), ((2328 : ℤ) : ℂ), ((1516179456 : ℤ) : ℂ), ((173425950720000 : ℤ) : ℂ),
+    ((4540606709760000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 4
+      ++ [Xtab 2 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 2 m) 4).getD i 0] =
+      [((0 : ℤ) : ℂ), ((2328 : ℤ) : ℂ), ((1516179456 : ℤ) : ℂ), ((173425950720000 : ℤ) : ℂ),
+      ((4540606709760000000 : ℤ) : ℂ)]
+  rw [Lv2_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_6 : coordsAux Atab (fun m => Xtab 2 m) 6 =
+    [((0 : ℤ) : ℂ), ((2328 : ℤ) : ℂ), ((1516179456 : ℤ) : ℂ), ((173425950720000 : ℤ) : ℂ),
+    ((4540606709760000000 : ℤ) : ℂ), ((59440669655040000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 5
+      ++ [Xtab 2 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 2 m) 5).getD i 0] =
+      [((0 : ℤ) : ℂ), ((2328 : ℤ) : ℂ), ((1516179456 : ℤ) : ℂ), ((173425950720000 : ℤ) : ℂ),
+      ((4540606709760000000 : ℤ) : ℂ), ((59440669655040000000000 : ℤ) : ℂ)]
+  rw [Lv2_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_1 : coordsAux Atab (fun m => Xtab 3 m) 1 =
+    [((0 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv3_2 : coordsAux Atab (fun m => Xtab 3 m) 2 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 1
+      ++ [Xtab 3 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 3 m) 1).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)]
+  rw [Lv3_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_3 : coordsAux Atab (fun m => Xtab 3 m) 3 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((1064832 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 2
+      ++ [Xtab 3 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 3 m) 2).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((1064832 : ℤ) : ℂ)]
+  rw [Lv3_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_4 : coordsAux Atab (fun m => Xtab 3 m) 4 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((1064832 : ℤ) : ℂ), ((83569803264 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 3
+      ++ [Xtab 3 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 3 m) 3).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((1064832 : ℤ) : ℂ), ((83569803264 : ℤ) : ℂ)]
+  rw [Lv3_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_5 : coordsAux Atab (fun m => Xtab 3 m) 5 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((1064832 : ℤ) : ℂ), ((83569803264 : ℤ) : ℂ),
+    ((517252055040000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 4
+      ++ [Xtab 3 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 3 m) 4).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((1064832 : ℤ) : ℂ), ((83569803264 : ℤ) : ℂ),
+      ((517252055040000 : ℤ) : ℂ)]
+  rw [Lv3_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_6 : coordsAux Atab (fun m => Xtab 3 m) 6 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((1064832 : ℤ) : ℂ), ((83569803264 : ℤ) : ℂ),
+    ((517252055040000 : ℤ) : ℂ), ((-1320903770112000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 5
+      ++ [Xtab 3 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 3 m) 5).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((1064832 : ℤ) : ℂ), ((83569803264 : ℤ) : ℂ),
+      ((517252055040000 : ℤ) : ℂ), ((-1320903770112000000 : ℤ) : ℂ)]
+  rw [Lv3_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_1 : coordsAux Atab (fun m => Xtab 4 m) 1 =
+    [((0 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv4_2 : coordsAux Atab (fun m => Xtab 4 m) 2 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 1
+      ++ [Xtab 4 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 4 m) 1).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)]
+  rw [Lv4_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_3 : coordsAux Atab (fun m => Xtab 4 m) 3 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((840 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 2
+      ++ [Xtab 4 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 4 m) 2).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((840 : ℤ) : ℂ)]
+  rw [Lv4_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_4 : coordsAux Atab (fun m => Xtab 4 m) 4 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((840 : ℤ) : ℂ), ((23552000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 3
+      ++ [Xtab 4 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 4 m) 3).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((840 : ℤ) : ℂ), ((23552000 : ℤ) : ℂ)]
+  rw [Lv4_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_5 : coordsAux Atab (fun m => Xtab 4 m) 5 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((840 : ℤ) : ℂ), ((23552000 : ℤ) : ℂ),
+    ((-140057247744 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 4
+      ++ [Xtab 4 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 4 m) 4).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((840 : ℤ) : ℂ), ((23552000 : ℤ) : ℂ),
+      ((-140057247744 : ℤ) : ℂ)]
+  rw [Lv4_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_6 : coordsAux Atab (fun m => Xtab 4 m) 6 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((840 : ℤ) : ℂ), ((23552000 : ℤ) : ℂ),
+    ((-140057247744 : ℤ) : ℂ), ((-69306679296000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 5
+      ++ [Xtab 4 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 4 m) 5).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((840 : ℤ) : ℂ), ((23552000 : ℤ) : ℂ),
+      ((-140057247744 : ℤ) : ℂ), ((-69306679296000 : ℤ) : ℂ)]
+  rw [Lv4_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_1 : coordsAux Atab (fun m => Xtab 5 m) 1 =
+    [((0 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv5_2 : coordsAux Atab (fun m => Xtab 5 m) 2 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 5 m) 1
+      ++ [Xtab 5 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 5 m) 1).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)]
+  rw [Lv5_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_3 : coordsAux Atab (fun m => Xtab 5 m) 3 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 5 m) 2
+      ++ [Xtab 5 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 5 m) 2).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)]
+  rw [Lv5_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_4 : coordsAux Atab (fun m => Xtab 5 m) 4 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((-24576 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 5 m) 3
+      ++ [Xtab 5 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 5 m) 3).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((-24576 : ℤ) : ℂ)]
+  rw [Lv5_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_5 : coordsAux Atab (fun m => Xtab 5 m) 5 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((-24576 : ℤ) : ℂ), ((-38830080 : ℤ) : ℂ)]
+      := by
+  change coordsAux Atab (fun m => Xtab 5 m) 4
+      ++ [Xtab 5 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 5 m) 4).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((-24576 : ℤ) : ℂ), ((-38830080 : ℤ) : ℂ)]
+  rw [Lv5_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_6 : coordsAux Atab (fun m => Xtab 5 m) 6 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((-24576 : ℤ) : ℂ), ((-38830080 : ℤ) : ℂ),
+    ((-2113929216 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 5 m) 5
+      ++ [Xtab 5 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 5 m) 5).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((-24576 : ℤ) : ℂ), ((-38830080 : ℤ) : ℂ),
+      ((-2113929216 : ℤ) : ℂ)]
+  rw [Lv5_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
 theorem entry_0_0 : coordN Atab (fun m => Xtab 0 m) 0
       = ((3816 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_1]
+  rfl
 
 theorem entry_0_1 : coordN Atab (fun m => Xtab 1 m) 0
       = ((1 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_1]
+  rfl
 
 theorem entry_0_2 : coordN Atab (fun m => Xtab 2 m) 0
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_1]
+  rfl
 
 theorem entry_0_3 : coordN Atab (fun m => Xtab 3 m) 0
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_1]
+  rfl
 
 theorem entry_0_4 : coordN Atab (fun m => Xtab 4 m) 0
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_1]
+  rfl
 
 theorem entry_0_5 : coordN Atab (fun m => Xtab 5 m) 0
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_1]
+  rfl
 
 theorem entry_1_0 : coordN Atab (fun m => Xtab 0 m) 1
       = ((37778931862964847360000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_2]
+  rfl
 
 theorem entry_1_1 : coordN Atab (fun m => Xtab 1 m) 1
       = ((4368384 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_2]
+  rfl
 
 theorem entry_1_2 : coordN Atab (fun m => Xtab 2 m) 1
       = ((2328 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_2]
+  rfl
 
 theorem entry_1_3 : coordN Atab (fun m => Xtab 3 m) 1
       = ((1 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_2]
+  rfl
 
 theorem entry_1_4 : coordN Atab (fun m => Xtab 4 m) 1
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_2]
+  rfl
 
 theorem entry_1_5 : coordN Atab (fun m => Xtab 5 m) 1
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_2]
+  rfl
 
 theorem entry_2_0 : coordN Atab (fun m => Xtab 0 m) 2
       = ((-116056878679478034432000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_3]
+  rfl
 
 theorem entry_2_1 : coordN Atab (fun m => Xtab 1 m) 2
       = ((2277310464000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_3]
+  rfl
 
 theorem entry_2_2 : coordN Atab (fun m => Xtab 2 m) 2
       = ((1516179456 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_3]
+  rfl
 
 theorem entry_2_3 : coordN Atab (fun m => Xtab 3 m) 2
       = ((1064832 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_3]
+  rfl
 
 theorem entry_2_4 : coordN Atab (fun m => Xtab 4 m) 2
       = ((840 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_3]
+  rfl
 
 theorem entry_2_5 : coordN Atab (fun m => Xtab 5 m) 2
       = ((1 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_3]
+  rfl
 
 theorem entry_3_0 : coordN Atab (fun m => Xtab 0 m) 3
       = ((105147532649583083520000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_4]
+  rfl
 
 theorem entry_3_1 : coordN Atab (fun m => Xtab 1 m) 3
       = ((37779251285458944000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_4]
+  rfl
 
 theorem entry_3_2 : coordN Atab (fun m => Xtab 2 m) 3
       = ((173425950720000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_4]
+  rfl
 
 theorem entry_3_3 : coordN Atab (fun m => Xtab 3 m) 3
       = ((83569803264 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_4]
+  rfl
 
 theorem entry_3_4 : coordN Atab (fun m => Xtab 4 m) 3
       = ((23552000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_4]
+  rfl
 
 theorem entry_3_5 : coordN Atab (fun m => Xtab 5 m) 3
       = ((-24576 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_4]
+  rfl
 
 theorem entry_4_0 : coordN Atab (fun m => Xtab 0 m) 4
       = ((-27346059009070202880000000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_5]
+  rfl
 
 theorem entry_4_1 : coordN Atab (fun m => Xtab 1 m) 4
       = ((-59827034007797760000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_5]
+  rfl
 
 theorem entry_4_2 : coordN Atab (fun m => Xtab 2 m) 4
       = ((4540606709760000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_5]
+  rfl
 
 theorem entry_4_3 : coordN Atab (fun m => Xtab 3 m) 4
       = ((517252055040000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_5]
+  rfl
 
 theorem entry_4_4 : coordN Atab (fun m => Xtab 4 m) 4
       = ((-140057247744 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_5]
+  rfl
 
 theorem entry_4_5 : coordN Atab (fun m => Xtab 5 m) 4
       = ((-38830080 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_5]
+  rfl
 
 theorem entry_5_0 : coordN Atab (fun m => Xtab 0 m) 5
       = ((935976560656121856000000000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_6]
+  rfl
 
 theorem entry_5_1 : coordN Atab (fun m => Xtab 1 m) 5
       = ((10271347716390912000000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_6]
+  rfl
 
 theorem entry_5_2 : coordN Atab (fun m => Xtab 2 m) 5
       = ((59440669655040000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_6]
+  rfl
 
 theorem entry_5_3 : coordN Atab (fun m => Xtab 3 m) 5
       = ((-1320903770112000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_6]
+  rfl
 
 theorem entry_5_4 : coordN Atab (fun m => Xtab 4 m) 5
       = ((-69306679296000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_6]
+  rfl
 
 theorem entry_5_5 : coordN Atab (fun m => Xtab 5 m) 5
       = ((-2113929216 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_6]
+  rfl
 
 /-- **The characteristic polynomial of `T₂` on this weight.** -/
 theorem charpoly_T2 : T2.charpoly = P.map (Int.castRingHom ℂ) := by
@@ -3734,215 +4536,617 @@ theorem hevals : ∀ i : Fin 7, P.eval ((i : ℕ) : ℤ)
       = (Matrix.scalar (Fin 6) (6 : ℤ) - M).det
     rw [ev_6, det_6]
 
+theorem Lv0_1 : coordsAux Atab (fun m => Xtab 0 m) 1 =
+    [((3072 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv0_2 : coordsAux Atab (fun m => Xtab 0 m) 2 =
+    [((3072 : ℤ) : ℂ), ((151115727451831810560000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 0 m) 1
+      ++ [Xtab 0 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 0 m) 1).getD i 0] =
+      [((3072 : ℤ) : ℂ), ((151115727451831810560000 : ℤ) : ℂ)]
+  rw [Lv0_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv0_3 : coordsAux Atab (fun m => Xtab 0 m) 3 =
+    [((3072 : ℤ) : ℂ), ((151115727451831810560000 : ℤ) : ℂ),
+    ((-351797413507815997440000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 0 m) 2
+      ++ [Xtab 0 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 0 m) 2).getD i 0] =
+      [((3072 : ℤ) : ℂ), ((151115727451831810560000 : ℤ) : ℂ),
+      ((-351797413507815997440000000 : ℤ) : ℂ)]
+  rw [Lv0_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv0_4 : coordsAux Atab (fun m => Xtab 0 m) 4 =
+    [((3072 : ℤ) : ℂ), ((151115727451831810560000 : ℤ) : ℂ),
+    ((-351797413507815997440000000 : ℤ) : ℂ), ((218244960138874060800000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 0 m) 3
+      ++ [Xtab 0 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 0 m) 3).getD i 0] =
+      [((3072 : ℤ) : ℂ), ((151115727451831810560000 : ℤ) : ℂ),
+      ((-351797413507815997440000000 : ℤ) : ℂ), ((218244960138874060800000000000 : ℤ) : ℂ)]
+  rw [Lv0_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv0_5 : coordsAux Atab (fun m => Xtab 0 m) 5 =
+    [((3072 : ℤ) : ℂ), ((151115727451831810560000 : ℤ) : ℂ),
+    ((-351797413507815997440000000 : ℤ) : ℂ), ((218244960138874060800000000000 : ℤ) : ℂ),
+    ((-31343124549772247040000000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 0 m) 4
+      ++ [Xtab 0 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 0 m) 4).getD i 0] =
+      [((3072 : ℤ) : ℂ), ((151115727451831810560000 : ℤ) : ℂ),
+      ((-351797413507815997440000000 : ℤ) : ℂ), ((218244960138874060800000000000 : ℤ) : ℂ),
+      ((-31343124549772247040000000000000 : ℤ) : ℂ)]
+  rw [Lv0_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv0_6 : coordsAux Atab (fun m => Xtab 0 m) 6 =
+    [((3072 : ℤ) : ℂ), ((151115727451831810560000 : ℤ) : ℂ),
+    ((-351797413507815997440000000 : ℤ) : ℂ), ((218244960138874060800000000000 : ℤ) : ℂ),
+    ((-31343124549772247040000000000000 : ℤ) : ℂ), ((254215855980675072000000000000000 : ℤ) : ℂ)]
+      := by
+  change coordsAux Atab (fun m => Xtab 0 m) 5
+      ++ [Xtab 0 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 0 m) 5).getD i 0] =
+      [((3072 : ℤ) : ℂ), ((151115727451831810560000 : ℤ) : ℂ),
+      ((-351797413507815997440000000 : ℤ) : ℂ), ((218244960138874060800000000000 : ℤ) : ℂ),
+      ((-31343124549772247040000000000000 : ℤ) : ℂ),
+      ((254215855980675072000000000000000 : ℤ) : ℂ)]
+  rw [Lv0_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_1 : coordsAux Atab (fun m => Xtab 1 m) 1 =
+    [((1 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv1_2 : coordsAux Atab (fun m => Xtab 1 m) 2 =
+    [((1 : ℤ) : ℂ), ((2243328 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 1
+      ++ [Xtab 1 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 1 m) 1).getD i 0] =
+      [((1 : ℤ) : ℂ), ((2243328 : ℤ) : ℂ)]
+  rw [Lv1_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_3 : coordsAux Atab (fun m => Xtab 1 m) 3 =
+    [((1 : ℤ) : ℂ), ((2243328 : ℤ) : ℂ), ((36495360000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 2
+      ++ [Xtab 1 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 1 m) 2).getD i 0] =
+      [((1 : ℤ) : ℂ), ((2243328 : ℤ) : ℂ), ((36495360000 : ℤ) : ℂ)]
+  rw [Lv1_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_4 : coordsAux Atab (fun m => Xtab 1 m) 4 =
+    [((1 : ℤ) : ℂ), ((2243328 : ℤ) : ℂ), ((36495360000 : ℤ) : ℂ),
+    ((151115567283044352000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 3
+      ++ [Xtab 1 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 1 m) 3).getD i 0] =
+      [((1 : ℤ) : ℂ), ((2243328 : ℤ) : ℂ), ((36495360000 : ℤ) : ℂ),
+      ((151115567283044352000000 : ℤ) : ℂ)]
+  rw [Lv1_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_5 : coordsAux Atab (fun m => Xtab 1 m) 5 =
+    [((1 : ℤ) : ℂ), ((2243328 : ℤ) : ℂ), ((36495360000 : ℤ) : ℂ),
+    ((151115567283044352000000 : ℤ) : ℂ), ((-126952886910320640000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 4
+      ++ [Xtab 1 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 1 m) 4).getD i 0] =
+      [((1 : ℤ) : ℂ), ((2243328 : ℤ) : ℂ), ((36495360000 : ℤ) : ℂ),
+      ((151115567283044352000000 : ℤ) : ℂ), ((-126952886910320640000000000 : ℤ) : ℂ)]
+  rw [Lv1_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_6 : coordsAux Atab (fun m => Xtab 1 m) 6 =
+    [((1 : ℤ) : ℂ), ((2243328 : ℤ) : ℂ), ((36495360000 : ℤ) : ℂ),
+    ((151115567283044352000000 : ℤ) : ℂ), ((-126952886910320640000000000 : ℤ) : ℂ),
+    ((4707701036679168000000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 5
+      ++ [Xtab 1 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 1 m) 5).getD i 0] =
+      [((1 : ℤ) : ℂ), ((2243328 : ℤ) : ℂ), ((36495360000 : ℤ) : ℂ),
+      ((151115567283044352000000 : ℤ) : ℂ), ((-126952886910320640000000000 : ℤ) : ℂ),
+      ((4707701036679168000000000000 : ℤ) : ℂ)]
+  rw [Lv1_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_1 : coordsAux Atab (fun m => Xtab 2 m) 1 =
+    [((0 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv2_2 : coordsAux Atab (fun m => Xtab 2 m) 2 =
+    [((0 : ℤ) : ℂ), ((1584 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 1
+      ++ [Xtab 2 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 2 m) 1).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1584 : ℤ) : ℂ)]
+  rw [Lv2_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_3 : coordsAux Atab (fun m => Xtab 2 m) 3 =
+    [((0 : ℤ) : ℂ), ((1584 : ℤ) : ℂ), ((36913152 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 2
+      ++ [Xtab 2 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 2 m) 2).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1584 : ℤ) : ℂ), ((36913152 : ℤ) : ℂ)]
+  rw [Lv2_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_4 : coordsAux Atab (fun m => Xtab 2 m) 4 =
+    [((0 : ℤ) : ℂ), ((1584 : ℤ) : ℂ), ((36913152 : ℤ) : ℂ), ((-117273526272000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 3
+      ++ [Xtab 2 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 2 m) 3).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1584 : ℤ) : ℂ), ((36913152 : ℤ) : ℂ), ((-117273526272000 : ℤ) : ℂ)]
+  rw [Lv2_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_5 : coordsAux Atab (fun m => Xtab 2 m) 5 =
+    [((0 : ℤ) : ℂ), ((1584 : ℤ) : ℂ), ((36913152 : ℤ) : ℂ), ((-117273526272000 : ℤ) : ℂ),
+    ((-6824669478912000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 4
+      ++ [Xtab 2 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 2 m) 4).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1584 : ℤ) : ℂ), ((36913152 : ℤ) : ℂ), ((-117273526272000 : ℤ) : ℂ),
+      ((-6824669478912000000 : ℤ) : ℂ)]
+  rw [Lv2_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_6 : coordsAux Atab (fun m => Xtab 2 m) 6 =
+    [((0 : ℤ) : ℂ), ((1584 : ℤ) : ℂ), ((36913152 : ℤ) : ℂ), ((-117273526272000 : ℤ) : ℂ),
+    ((-6824669478912000000 : ℤ) : ℂ), ((87179648827392000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 5
+      ++ [Xtab 2 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 2 m) 5).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1584 : ℤ) : ℂ), ((36913152 : ℤ) : ℂ), ((-117273526272000 : ℤ) : ℂ),
+      ((-6824669478912000000 : ℤ) : ℂ), ((87179648827392000000000 : ℤ) : ℂ)]
+  rw [Lv2_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_1 : coordsAux Atab (fun m => Xtab 3 m) 1 =
+    [((0 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv3_2 : coordsAux Atab (fun m => Xtab 3 m) 2 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 1
+      ++ [Xtab 3 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 3 m) 1).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)]
+  rw [Lv3_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_3 : coordsAux Atab (fun m => Xtab 3 m) 3 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((46848 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 2
+      ++ [Xtab 3 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 3 m) 2).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((46848 : ℤ) : ℂ)]
+  rw [Lv3_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_4 : coordsAux Atab (fun m => Xtab 3 m) 4 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((46848 : ℤ) : ℂ), ((-87512973312 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 3
+      ++ [Xtab 3 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 3 m) 3).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((46848 : ℤ) : ℂ), ((-87512973312 : ℤ) : ℂ)]
+  rw [Lv3_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_5 : coordsAux Atab (fun m => Xtab 3 m) 5 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((46848 : ℤ) : ℂ), ((-87512973312 : ℤ) : ℂ),
+    ((-1668116643840000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 4
+      ++ [Xtab 3 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 3 m) 4).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((46848 : ℤ) : ℂ), ((-87512973312 : ℤ) : ℂ),
+      ((-1668116643840000 : ℤ) : ℂ)]
+  rw [Lv3_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_6 : coordsAux Atab (fun m => Xtab 3 m) 6 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((46848 : ℤ) : ℂ), ((-87512973312 : ℤ) : ℂ),
+    ((-1668116643840000 : ℤ) : ℂ), ((1614437941248000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 5
+      ++ [Xtab 3 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 3 m) 5).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((46848 : ℤ) : ℂ), ((-87512973312 : ℤ) : ℂ),
+      ((-1668116643840000 : ℤ) : ℂ), ((1614437941248000000 : ℤ) : ℂ)]
+  rw [Lv3_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_1 : coordsAux Atab (fun m => Xtab 4 m) 1 =
+    [((0 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv4_2 : coordsAux Atab (fun m => Xtab 4 m) 2 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 1
+      ++ [Xtab 4 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 4 m) 1).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)]
+  rw [Lv4_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_3 : coordsAux Atab (fun m => Xtab 4 m) 3 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((96 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 2
+      ++ [Xtab 4 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 4 m) 2).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((96 : ℤ) : ℂ)]
+  rw [Lv4_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_4 : coordsAux Atab (fun m => Xtab 4 m) 4 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((96 : ℤ) : ℂ), ((-60375040 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 3
+      ++ [Xtab 4 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 4 m) 3).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((96 : ℤ) : ℂ), ((-60375040 : ℤ) : ℂ)]
+  rw [Lv4_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_5 : coordsAux Atab (fun m => Xtab 4 m) 5 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((96 : ℤ) : ℂ), ((-60375040 : ℤ) : ℂ),
+    ((351642058752 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 4
+      ++ [Xtab 4 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 4 m) 4).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((96 : ℤ) : ℂ), ((-60375040 : ℤ) : ℂ),
+      ((351642058752 : ℤ) : ℂ)]
+  rw [Lv4_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_6 : coordsAux Atab (fun m => Xtab 4 m) 6 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((96 : ℤ) : ℂ), ((-60375040 : ℤ) : ℂ),
+    ((351642058752 : ℤ) : ℂ), ((29896998912000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 5
+      ++ [Xtab 4 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 4 m) 5).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((96 : ℤ) : ℂ), ((-60375040 : ℤ) : ℂ),
+      ((351642058752 : ℤ) : ℂ), ((29896998912000 : ℤ) : ℂ)]
+  rw [Lv4_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_1 : coordsAux Atab (fun m => Xtab 5 m) 1 =
+    [((0 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv5_2 : coordsAux Atab (fun m => Xtab 5 m) 2 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 5 m) 1
+      ++ [Xtab 5 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 5 m) 1).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)]
+  rw [Lv5_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_3 : coordsAux Atab (fun m => Xtab 5 m) 3 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 5 m) 2
+      ++ [Xtab 5 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 5 m) 2).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)]
+  rw [Lv5_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_4 : coordsAux Atab (fun m => Xtab 5 m) 4 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((64512 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 5 m) 3
+      ++ [Xtab 5 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 5 m) 3).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((64512 : ℤ) : ℂ)]
+  rw [Lv5_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_5 : coordsAux Atab (fun m => Xtab 5 m) 5 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((64512 : ℤ) : ℂ), ((44236800 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 5 m) 4
+      ++ [Xtab 5 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 5 m) 4).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((64512 : ℤ) : ℂ), ((44236800 : ℤ) : ℂ)]
+  rw [Lv5_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_6 : coordsAux Atab (fun m => Xtab 5 m) 6 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((64512 : ℤ) : ℂ), ((44236800 : ℤ) : ℂ),
+    ((553648128 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 5 m) 5
+      ++ [Xtab 5 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 5 m) 5).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((64512 : ℤ) : ℂ), ((44236800 : ℤ) : ℂ),
+      ((553648128 : ℤ) : ℂ)]
+  rw [Lv5_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
 theorem entry_0_0 : coordN Atab (fun m => Xtab 0 m) 0
       = ((3072 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_1]
+  rfl
 
 theorem entry_0_1 : coordN Atab (fun m => Xtab 1 m) 0
       = ((1 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_1]
+  rfl
 
 theorem entry_0_2 : coordN Atab (fun m => Xtab 2 m) 0
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_1]
+  rfl
 
 theorem entry_0_3 : coordN Atab (fun m => Xtab 3 m) 0
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_1]
+  rfl
 
 theorem entry_0_4 : coordN Atab (fun m => Xtab 4 m) 0
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_1]
+  rfl
 
 theorem entry_0_5 : coordN Atab (fun m => Xtab 5 m) 0
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_1]
+  rfl
 
 theorem entry_1_0 : coordN Atab (fun m => Xtab 0 m) 1
       = ((151115727451831810560000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_2]
+  rfl
 
 theorem entry_1_1 : coordN Atab (fun m => Xtab 1 m) 1
       = ((2243328 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_2]
+  rfl
 
 theorem entry_1_2 : coordN Atab (fun m => Xtab 2 m) 1
       = ((1584 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_2]
+  rfl
 
 theorem entry_1_3 : coordN Atab (fun m => Xtab 3 m) 1
       = ((1 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_2]
+  rfl
 
 theorem entry_1_4 : coordN Atab (fun m => Xtab 4 m) 1
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_2]
+  rfl
 
 theorem entry_1_5 : coordN Atab (fun m => Xtab 5 m) 1
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_2]
+  rfl
 
 theorem entry_2_0 : coordN Atab (fun m => Xtab 0 m) 2
       = ((-351797413507815997440000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_3]
+  rfl
 
 theorem entry_2_1 : coordN Atab (fun m => Xtab 1 m) 2
       = ((36495360000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_3]
+  rfl
 
 theorem entry_2_2 : coordN Atab (fun m => Xtab 2 m) 2
       = ((36913152 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_3]
+  rfl
 
 theorem entry_2_3 : coordN Atab (fun m => Xtab 3 m) 2
       = ((46848 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_3]
+  rfl
 
 theorem entry_2_4 : coordN Atab (fun m => Xtab 4 m) 2
       = ((96 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_3]
+  rfl
 
 theorem entry_2_5 : coordN Atab (fun m => Xtab 5 m) 2
       = ((1 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_3]
+  rfl
 
 theorem entry_3_0 : coordN Atab (fun m => Xtab 0 m) 3
       = ((218244960138874060800000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_4]
+  rfl
 
 theorem entry_3_1 : coordN Atab (fun m => Xtab 1 m) 3
       = ((151115567283044352000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_4]
+  rfl
 
 theorem entry_3_2 : coordN Atab (fun m => Xtab 2 m) 3
       = ((-117273526272000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_4]
+  rfl
 
 theorem entry_3_3 : coordN Atab (fun m => Xtab 3 m) 3
       = ((-87512973312 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_4]
+  rfl
 
 theorem entry_3_4 : coordN Atab (fun m => Xtab 4 m) 3
       = ((-60375040 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_4]
+  rfl
 
 theorem entry_3_5 : coordN Atab (fun m => Xtab 5 m) 3
       = ((64512 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_4]
+  rfl
 
 theorem entry_4_0 : coordN Atab (fun m => Xtab 0 m) 4
       = ((-31343124549772247040000000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_5]
+  rfl
 
 theorem entry_4_1 : coordN Atab (fun m => Xtab 1 m) 4
       = ((-126952886910320640000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_5]
+  rfl
 
 theorem entry_4_2 : coordN Atab (fun m => Xtab 2 m) 4
       = ((-6824669478912000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_5]
+  rfl
 
 theorem entry_4_3 : coordN Atab (fun m => Xtab 3 m) 4
       = ((-1668116643840000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_5]
+  rfl
 
 theorem entry_4_4 : coordN Atab (fun m => Xtab 4 m) 4
       = ((351642058752 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_5]
+  rfl
 
 theorem entry_4_5 : coordN Atab (fun m => Xtab 5 m) 4
       = ((44236800 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_5]
+  rfl
 
 theorem entry_5_0 : coordN Atab (fun m => Xtab 0 m) 5
       = ((254215855980675072000000000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_6]
+  rfl
 
 theorem entry_5_1 : coordN Atab (fun m => Xtab 1 m) 5
       = ((4707701036679168000000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_6]
+  rfl
 
 theorem entry_5_2 : coordN Atab (fun m => Xtab 2 m) 5
       = ((87179648827392000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_6]
+  rfl
 
 theorem entry_5_3 : coordN Atab (fun m => Xtab 3 m) 5
       = ((1614437941248000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_6]
+  rfl
 
 theorem entry_5_4 : coordN Atab (fun m => Xtab 4 m) 5
       = ((29896998912000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_6]
+  rfl
 
 theorem entry_5_5 : coordN Atab (fun m => Xtab 5 m) 5
       = ((553648128 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_6]
+  rfl
 
 /-- **The characteristic polynomial of `T₂` on this weight.** -/
 theorem charpoly_T2 : T2.charpoly = P.map (Int.castRingHom ℂ) := by
@@ -5093,215 +6297,617 @@ theorem hevals : ∀ i : Fin 7, P.eval ((i : ℕ) : ℤ)
       = (Matrix.scalar (Fin 6) (6 : ℤ) - M).det
     rw [ev_6, det_6]
 
+theorem Lv0_1 : coordsAux Atab (fun m => Xtab 0 m) 1 =
+    [((4056 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv0_2 : coordsAux Atab (fun m => Xtab 0 m) 2 =
+    [((4056 : ℤ) : ℂ), ((604462909807323924480000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 0 m) 1
+      ++ [Xtab 0 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 0 m) 1).getD i 0] =
+      [((4056 : ℤ) : ℂ), ((604462909807323924480000 : ℤ) : ℂ)]
+  rw [Lv0_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv0_3 : coordsAux Atab (fun m => Xtab 0 m) 3 =
+    [((4056 : ℤ) : ℂ), ((604462909807323924480000 : ℤ) : ℂ),
+    ((-2001981157276835487744000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 0 m) 2
+      ++ [Xtab 0 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 0 m) 2).getD i 0] =
+      [((4056 : ℤ) : ℂ), ((604462909807323924480000 : ℤ) : ℂ),
+      ((-2001981157276835487744000000 : ℤ) : ℂ)]
+  rw [Lv0_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv0_4 : coordsAux Atab (fun m => Xtab 0 m) 4 =
+    [((4056 : ℤ) : ℂ), ((604462909807323924480000 : ℤ) : ℂ),
+    ((-2001981157276835487744000000 : ℤ) : ℂ), ((2053742526125109411840000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 0 m) 3
+      ++ [Xtab 0 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 0 m) 3).getD i 0] =
+      [((4056 : ℤ) : ℂ), ((604462909807323924480000 : ℤ) : ℂ),
+      ((-2001981157276835487744000000 : ℤ) : ℂ), ((2053742526125109411840000000000 : ℤ) : ℂ)]
+  rw [Lv0_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv0_5 : coordsAux Atab (fun m => Xtab 0 m) 5 =
+    [((4056 : ℤ) : ℂ), ((604462909807323924480000 : ℤ) : ℂ),
+    ((-2001981157276835487744000000 : ℤ) : ℂ), ((2053742526125109411840000000000 : ℤ) : ℂ),
+    ((-679678523279715336192000000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 0 m) 4
+      ++ [Xtab 0 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 0 m) 4).getD i 0] =
+      [((4056 : ℤ) : ℂ), ((604462909807323924480000 : ℤ) : ℂ),
+      ((-2001981157276835487744000000 : ℤ) : ℂ), ((2053742526125109411840000000000 : ℤ) : ℂ),
+      ((-679678523279715336192000000000000 : ℤ) : ℂ)]
+  rw [Lv0_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv0_6 : coordsAux Atab (fun m => Xtab 0 m) 6 =
+    [((4056 : ℤ) : ℂ), ((604462909807323924480000 : ℤ) : ℂ),
+    ((-2001981157276835487744000000 : ℤ) : ℂ), ((2053742526125109411840000000000 : ℤ) : ℂ),
+    ((-679678523279715336192000000000000 : ℤ) : ℂ),
+    ((44672659055513174016000000000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 0 m) 5
+      ++ [Xtab 0 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 0 m) 5).getD i 0] =
+      [((4056 : ℤ) : ℂ), ((604462909807323924480000 : ℤ) : ℂ),
+      ((-2001981157276835487744000000 : ℤ) : ℂ), ((2053742526125109411840000000000 : ℤ) : ℂ),
+      ((-679678523279715336192000000000000 : ℤ) : ℂ),
+      ((44672659055513174016000000000000000 : ℤ) : ℂ)]
+  rw [Lv0_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_1 : coordsAux Atab (fun m => Xtab 1 m) 1 =
+    [((1 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv1_2 : coordsAux Atab (fun m => Xtab 1 m) 2 =
+    [((1 : ℤ) : ℂ), ((5107584 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 1
+      ++ [Xtab 1 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 1 m) 1).getD i 0] =
+      [((1 : ℤ) : ℂ), ((5107584 : ℤ) : ℂ)]
+  rw [Lv1_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_3 : coordsAux Atab (fun m => Xtab 1 m) 3 =
+    [((1 : ℤ) : ℂ), ((5107584 : ℤ) : ℂ), ((3200311296000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 2
+      ++ [Xtab 1 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 1 m) 2).getD i 0] =
+      [((1 : ℤ) : ℂ), ((5107584 : ℤ) : ℂ), ((3200311296000 : ℤ) : ℂ)]
+  rw [Lv1_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_4 : coordsAux Atab (fun m => Xtab 1 m) 4 =
+    [((1 : ℤ) : ℂ), ((5107584 : ℤ) : ℂ), ((3200311296000 : ℤ) : ℂ),
+    ((604463470501036032000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 3
+      ++ [Xtab 1 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 1 m) 3).getD i 0] =
+      [((1 : ℤ) : ℂ), ((5107584 : ℤ) : ℂ), ((3200311296000 : ℤ) : ℂ),
+      ((604463470501036032000000 : ℤ) : ℂ)]
+  rw [Lv1_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_5 : coordsAux Atab (fun m => Xtab 1 m) 5 =
+    [((1 : ℤ) : ℂ), ((5107584 : ℤ) : ℂ), ((3200311296000 : ℤ) : ℂ),
+    ((604463470501036032000000 : ℤ) : ℂ), ((-1102506036100595712000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 4
+      ++ [Xtab 1 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 1 m) 4).getD i 0] =
+      [((1 : ℤ) : ℂ), ((5107584 : ℤ) : ℂ), ((3200311296000 : ℤ) : ℂ),
+      ((604463470501036032000000 : ℤ) : ℂ), ((-1102506036100595712000000000 : ℤ) : ℂ)]
+  rw [Lv1_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_6 : coordsAux Atab (fun m => Xtab 1 m) 6 =
+    [((1 : ℤ) : ℂ), ((5107584 : ℤ) : ℂ), ((3200311296000 : ℤ) : ℂ),
+    ((604463470501036032000000 : ℤ) : ℂ), ((-1102506036100595712000000000 : ℤ) : ℂ),
+    ((316913874332811264000000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 5
+      ++ [Xtab 1 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 1 m) 5).getD i 0] =
+      [((1 : ℤ) : ℂ), ((5107584 : ℤ) : ℂ), ((3200311296000 : ℤ) : ℂ),
+      ((604463470501036032000000 : ℤ) : ℂ), ((-1102506036100595712000000000 : ℤ) : ℂ),
+      ((316913874332811264000000000000 : ℤ) : ℂ)]
+  rw [Lv1_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_1 : coordsAux Atab (fun m => Xtab 2 m) 1 =
+    [((0 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv2_2 : coordsAux Atab (fun m => Xtab 2 m) 2 =
+    [((0 : ℤ) : ℂ), ((2568 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 1
+      ++ [Xtab 2 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 2 m) 1).getD i 0] =
+      [((0 : ℤ) : ℂ), ((2568 : ℤ) : ℂ)]
+  rw [Lv2_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_3 : coordsAux Atab (fun m => Xtab 2 m) 3 =
+    [((0 : ℤ) : ℂ), ((2568 : ℤ) : ℂ), ((2106249216 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 2
+      ++ [Xtab 2 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 2 m) 2).getD i 0] =
+      [((0 : ℤ) : ℂ), ((2568 : ℤ) : ℂ), ((2106249216 : ℤ) : ℂ)]
+  rw [Lv2_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_4 : coordsAux Atab (fun m => Xtab 2 m) 4 =
+    [((0 : ℤ) : ℂ), ((2568 : ℤ) : ℂ), ((2106249216 : ℤ) : ℂ), ((324954685440000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 3
+      ++ [Xtab 2 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 2 m) 3).getD i 0] =
+      [((0 : ℤ) : ℂ), ((2568 : ℤ) : ℂ), ((2106249216 : ℤ) : ℂ), ((324954685440000 : ℤ) : ℂ)]
+  rw [Lv2_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_5 : coordsAux Atab (fun m => Xtab 2 m) 5 =
+    [((0 : ℤ) : ℂ), ((2568 : ℤ) : ℂ), ((2106249216 : ℤ) : ℂ), ((324954685440000 : ℤ) : ℂ),
+    ((13016405901312000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 4
+      ++ [Xtab 2 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 2 m) 4).getD i 0] =
+      [((0 : ℤ) : ℂ), ((2568 : ℤ) : ℂ), ((2106249216 : ℤ) : ℂ), ((324954685440000 : ℤ) : ℂ),
+      ((13016405901312000000 : ℤ) : ℂ)]
+  rw [Lv2_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_6 : coordsAux Atab (fun m => Xtab 2 m) 6 =
+    [((0 : ℤ) : ℂ), ((2568 : ℤ) : ℂ), ((2106249216 : ℤ) : ℂ), ((324954685440000 : ℤ) : ℂ),
+    ((13016405901312000000 : ℤ) : ℂ), ((733101592412160000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 5
+      ++ [Xtab 2 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 2 m) 5).getD i 0] =
+      [((0 : ℤ) : ℂ), ((2568 : ℤ) : ℂ), ((2106249216 : ℤ) : ℂ), ((324954685440000 : ℤ) : ℂ),
+      ((13016405901312000000 : ℤ) : ℂ), ((733101592412160000000000 : ℤ) : ℂ)]
+  rw [Lv2_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_1 : coordsAux Atab (fun m => Xtab 3 m) 1 =
+    [((0 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv3_2 : coordsAux Atab (fun m => Xtab 3 m) 2 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 1
+      ++ [Xtab 3 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 3 m) 1).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)]
+  rw [Lv3_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_3 : coordsAux Atab (fun m => Xtab 3 m) 3 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((1446912 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 2
+      ++ [Xtab 3 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 3 m) 2).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((1446912 : ℤ) : ℂ)]
+  rw [Lv3_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_4 : coordsAux Atab (fun m => Xtab 3 m) 4 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((1446912 : ℤ) : ℂ), ((179558252544 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 3
+      ++ [Xtab 3 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 3 m) 3).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((1446912 : ℤ) : ℂ), ((179558252544 : ℤ) : ℂ)]
+  rw [Lv3_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_5 : coordsAux Atab (fun m => Xtab 3 m) 5 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((1446912 : ℤ) : ℂ), ((179558252544 : ℤ) : ℂ),
+    ((3086865137664000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 4
+      ++ [Xtab 3 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 3 m) 4).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((1446912 : ℤ) : ℂ), ((179558252544 : ℤ) : ℂ),
+      ((3086865137664000 : ℤ) : ℂ)]
+  rw [Lv3_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_6 : coordsAux Atab (fun m => Xtab 3 m) 6 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((1446912 : ℤ) : ℂ), ((179558252544 : ℤ) : ℂ),
+    ((3086865137664000 : ℤ) : ℂ), ((-1614437941248000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 5
+      ++ [Xtab 3 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 3 m) 5).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((1446912 : ℤ) : ℂ), ((179558252544 : ℤ) : ℂ),
+      ((3086865137664000 : ℤ) : ℂ), ((-1614437941248000000 : ℤ) : ℂ)]
+  rw [Lv3_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_1 : coordsAux Atab (fun m => Xtab 4 m) 1 =
+    [((0 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv4_2 : coordsAux Atab (fun m => Xtab 4 m) 2 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 1
+      ++ [Xtab 4 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 4 m) 1).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)]
+  rw [Lv4_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_3 : coordsAux Atab (fun m => Xtab 4 m) 3 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1080 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 2
+      ++ [Xtab 4 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 4 m) 2).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1080 : ℤ) : ℂ)]
+  rw [Lv4_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_4 : coordsAux Atab (fun m => Xtab 4 m) 4 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1080 : ℤ) : ℂ), ((83609600 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 3
+      ++ [Xtab 4 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 4 m) 3).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1080 : ℤ) : ℂ), ((83609600 : ℤ) : ℂ)]
+  rw [Lv4_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_5 : coordsAux Atab (fun m => Xtab 4 m) 5 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1080 : ℤ) : ℂ), ((83609600 : ℤ) : ℂ),
+    ((-269000638464 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 4
+      ++ [Xtab 4 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 4 m) 4).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1080 : ℤ) : ℂ), ((83609600 : ℤ) : ℂ),
+      ((-269000638464 : ℤ) : ℂ)]
+  rw [Lv4_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_6 : coordsAux Atab (fun m => Xtab 4 m) 6 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1080 : ℤ) : ℂ), ((83609600 : ℤ) : ℂ),
+    ((-269000638464 : ℤ) : ℂ), ((1168700866560000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 5
+      ++ [Xtab 4 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 4 m) 5).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1080 : ℤ) : ℂ), ((83609600 : ℤ) : ℂ),
+      ((-269000638464 : ℤ) : ℂ), ((1168700866560000 : ℤ) : ℂ)]
+  rw [Lv4_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_1 : coordsAux Atab (fun m => Xtab 5 m) 1 =
+    [((0 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv5_2 : coordsAux Atab (fun m => Xtab 5 m) 2 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 5 m) 1
+      ++ [Xtab 5 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 5 m) 1).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)]
+  rw [Lv5_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_3 : coordsAux Atab (fun m => Xtab 5 m) 3 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 5 m) 2
+      ++ [Xtab 5 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 5 m) 2).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)]
+  rw [Lv5_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_4 : coordsAux Atab (fun m => Xtab 5 m) 4 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((384 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 5 m) 3
+      ++ [Xtab 5 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 5 m) 3).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((384 : ℤ) : ℂ)]
+  rw [Lv5_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_5 : coordsAux Atab (fun m => Xtab 5 m) 5 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((384 : ℤ) : ℂ), ((273285120 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 5 m) 4
+      ++ [Xtab 5 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 5 m) 4).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((384 : ℤ) : ℂ), ((273285120 : ℤ) : ℂ)]
+  rw [Lv5_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_6 : coordsAux Atab (fun m => Xtab 5 m) 6 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((384 : ℤ) : ℂ), ((273285120 : ℤ) : ℂ),
+    ((71244447744 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 5 m) 5
+      ++ [Xtab 5 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 5 m) 5).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((384 : ℤ) : ℂ), ((273285120 : ℤ) : ℂ),
+      ((71244447744 : ℤ) : ℂ)]
+  rw [Lv5_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
 theorem entry_0_0 : coordN Atab (fun m => Xtab 0 m) 0
       = ((4056 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_1]
+  rfl
 
 theorem entry_0_1 : coordN Atab (fun m => Xtab 1 m) 0
       = ((1 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_1]
+  rfl
 
 theorem entry_0_2 : coordN Atab (fun m => Xtab 2 m) 0
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_1]
+  rfl
 
 theorem entry_0_3 : coordN Atab (fun m => Xtab 3 m) 0
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_1]
+  rfl
 
 theorem entry_0_4 : coordN Atab (fun m => Xtab 4 m) 0
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_1]
+  rfl
 
 theorem entry_0_5 : coordN Atab (fun m => Xtab 5 m) 0
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_1]
+  rfl
 
 theorem entry_1_0 : coordN Atab (fun m => Xtab 0 m) 1
       = ((604462909807323924480000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_2]
+  rfl
 
 theorem entry_1_1 : coordN Atab (fun m => Xtab 1 m) 1
       = ((5107584 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_2]
+  rfl
 
 theorem entry_1_2 : coordN Atab (fun m => Xtab 2 m) 1
       = ((2568 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_2]
+  rfl
 
 theorem entry_1_3 : coordN Atab (fun m => Xtab 3 m) 1
       = ((1 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_2]
+  rfl
 
 theorem entry_1_4 : coordN Atab (fun m => Xtab 4 m) 1
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_2]
+  rfl
 
 theorem entry_1_5 : coordN Atab (fun m => Xtab 5 m) 1
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_2]
+  rfl
 
 theorem entry_2_0 : coordN Atab (fun m => Xtab 0 m) 2
       = ((-2001981157276835487744000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_3]
+  rfl
 
 theorem entry_2_1 : coordN Atab (fun m => Xtab 1 m) 2
       = ((3200311296000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_3]
+  rfl
 
 theorem entry_2_2 : coordN Atab (fun m => Xtab 2 m) 2
       = ((2106249216 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_3]
+  rfl
 
 theorem entry_2_3 : coordN Atab (fun m => Xtab 3 m) 2
       = ((1446912 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_3]
+  rfl
 
 theorem entry_2_4 : coordN Atab (fun m => Xtab 4 m) 2
       = ((1080 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_3]
+  rfl
 
 theorem entry_2_5 : coordN Atab (fun m => Xtab 5 m) 2
       = ((1 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_3]
+  rfl
 
 theorem entry_3_0 : coordN Atab (fun m => Xtab 0 m) 3
       = ((2053742526125109411840000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_4]
+  rfl
 
 theorem entry_3_1 : coordN Atab (fun m => Xtab 1 m) 3
       = ((604463470501036032000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_4]
+  rfl
 
 theorem entry_3_2 : coordN Atab (fun m => Xtab 2 m) 3
       = ((324954685440000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_4]
+  rfl
 
 theorem entry_3_3 : coordN Atab (fun m => Xtab 3 m) 3
       = ((179558252544 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_4]
+  rfl
 
 theorem entry_3_4 : coordN Atab (fun m => Xtab 4 m) 3
       = ((83609600 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_4]
+  rfl
 
 theorem entry_3_5 : coordN Atab (fun m => Xtab 5 m) 3
       = ((384 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_4]
+  rfl
 
 theorem entry_4_0 : coordN Atab (fun m => Xtab 0 m) 4
       = ((-679678523279715336192000000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_5]
+  rfl
 
 theorem entry_4_1 : coordN Atab (fun m => Xtab 1 m) 4
       = ((-1102506036100595712000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_5]
+  rfl
 
 theorem entry_4_2 : coordN Atab (fun m => Xtab 2 m) 4
       = ((13016405901312000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_5]
+  rfl
 
 theorem entry_4_3 : coordN Atab (fun m => Xtab 3 m) 4
       = ((3086865137664000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_5]
+  rfl
 
 theorem entry_4_4 : coordN Atab (fun m => Xtab 4 m) 4
       = ((-269000638464 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_5]
+  rfl
 
 theorem entry_4_5 : coordN Atab (fun m => Xtab 5 m) 4
       = ((273285120 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_5]
+  rfl
 
 theorem entry_5_0 : coordN Atab (fun m => Xtab 0 m) 5
       = ((44672659055513174016000000000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_6]
+  rfl
 
 theorem entry_5_1 : coordN Atab (fun m => Xtab 1 m) 5
       = ((316913874332811264000000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_6]
+  rfl
 
 theorem entry_5_2 : coordN Atab (fun m => Xtab 2 m) 5
       = ((733101592412160000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_6]
+  rfl
 
 theorem entry_5_3 : coordN Atab (fun m => Xtab 3 m) 5
       = ((-1614437941248000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_6]
+  rfl
 
 theorem entry_5_4 : coordN Atab (fun m => Xtab 4 m) 5
       = ((1168700866560000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_6]
+  rfl
 
 theorem entry_5_5 : coordN Atab (fun m => Xtab 5 m) 5
       = ((71244447744 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_6]
+  rfl
 
 /-- **The characteristic polynomial of `T₂` on this weight.** -/
 theorem charpoly_T2 : T2.charpoly = P.map (Int.castRingHom ℂ) := by
@@ -6452,215 +8058,618 @@ theorem hevals : ∀ i : Fin 7, P.eval ((i : ℕ) : ℤ)
       = (Matrix.scalar (Fin 6) (6 : ℤ) - M).det
     rw [ev_6, det_6]
 
+theorem Lv0_1 : coordsAux Atab (fun m => Xtab 0 m) 1 =
+    [((3312 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv0_2 : coordsAux Atab (fun m => Xtab 0 m) 2 =
+    [((3312 : ℤ) : ℂ), ((2417851639229262520320000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 0 m) 1
+      ++ [Xtab 0 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 0 m) 1).getD i 0] =
+      [((3312 : ℤ) : ℂ), ((2417851639229262520320000 : ℤ) : ℂ)]
+  rw [Lv0_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv0_3 : coordsAux Atab (fun m => Xtab 0 m) 3 =
+    [((3312 : ℤ) : ℂ), ((2417851639229262520320000 : ℤ) : ℂ),
+    ((-6209043009540379951104000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 0 m) 2
+      ++ [Xtab 0 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 0 m) 2).getD i 0] =
+      [((3312 : ℤ) : ℂ), ((2417851639229262520320000 : ℤ) : ℂ),
+      ((-6209043009540379951104000000 : ℤ) : ℂ)]
+  rw [Lv0_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv0_4 : coordsAux Atab (fun m => Xtab 0 m) 4 =
+    [((3312 : ℤ) : ℂ), ((2417851639229262520320000 : ℤ) : ℂ),
+    ((-6209043009540379951104000000 : ℤ) : ℂ), ((4545715823958420357120000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 0 m) 3
+      ++ [Xtab 0 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 0 m) 3).getD i 0] =
+      [((3312 : ℤ) : ℂ), ((2417851639229262520320000 : ℤ) : ℂ),
+      ((-6209043009540379951104000000 : ℤ) : ℂ), ((4545715823958420357120000000000 : ℤ) : ℂ)]
+  rw [Lv0_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv0_5 : coordsAux Atab (fun m => Xtab 0 m) 5 =
+    [((3312 : ℤ) : ℂ), ((2417851639229262520320000 : ℤ) : ℂ),
+    ((-6209043009540379951104000000 : ℤ) : ℂ), ((4545715823958420357120000000000 : ℤ) : ℂ),
+    ((-914094978999527669760000000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 0 m) 4
+      ++ [Xtab 0 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 0 m) 4).getD i 0] =
+      [((3312 : ℤ) : ℂ), ((2417851639229262520320000 : ℤ) : ℂ),
+      ((-6209043009540379951104000000 : ℤ) : ℂ), ((4545715823958420357120000000000 : ℤ) : ℂ),
+      ((-914094978999527669760000000000000 : ℤ) : ℂ)]
+  rw [Lv0_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv0_6 : coordsAux Atab (fun m => Xtab 0 m) 6 =
+    [((3312 : ℤ) : ℂ), ((2417851639229262520320000 : ℤ) : ℂ),
+    ((-6209043009540379951104000000 : ℤ) : ℂ), ((4545715823958420357120000000000 : ℤ) : ℂ),
+    ((-914094978999527669760000000000000 : ℤ) : ℂ),
+    ((23018090232432033792000000000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 0 m) 5
+      ++ [Xtab 0 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 0 m) 5).getD i 0] =
+      [((3312 : ℤ) : ℂ), ((2417851639229262520320000 : ℤ) : ℂ),
+      ((-6209043009540379951104000000 : ℤ) : ℂ), ((4545715823958420357120000000000 : ℤ) : ℂ),
+      ((-914094978999527669760000000000000 : ℤ) : ℂ),
+      ((23018090232432033792000000000000000 : ℤ) : ℂ)]
+  rw [Lv0_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_1 : coordsAux Atab (fun m => Xtab 1 m) 1 =
+    [((1 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv1_2 : coordsAux Atab (fun m => Xtab 1 m) 2 =
+    [((1 : ℤ) : ℂ), ((2803968 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 1
+      ++ [Xtab 1 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 1 m) 1).getD i 0] =
+      [((1 : ℤ) : ℂ), ((2803968 : ℤ) : ℂ)]
+  rw [Lv1_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_3 : coordsAux Atab (fun m => Xtab 1 m) 3 =
+    [((1 : ℤ) : ℂ), ((2803968 : ℤ) : ℂ), ((284663808000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 2
+      ++ [Xtab 1 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 1 m) 2).getD i 0] =
+      [((1 : ℤ) : ℂ), ((2803968 : ℤ) : ℂ), ((284663808000 : ℤ) : ℂ)]
+  rw [Lv1_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_4 : coordsAux Atab (fun m => Xtab 1 m) 4 =
+    [((1 : ℤ) : ℂ), ((2803968 : ℤ) : ℂ), ((284663808000 : ℤ) : ℂ),
+    ((2417851422508843008000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 3
+      ++ [Xtab 1 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 1 m) 3).getD i 0] =
+      [((1 : ℤ) : ℂ), ((2803968 : ℤ) : ℂ), ((284663808000 : ℤ) : ℂ),
+      ((2417851422508843008000000 : ℤ) : ℂ)]
+  rw [Lv1_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_5 : coordsAux Atab (fun m => Xtab 1 m) 5 =
+    [((1 : ℤ) : ℂ), ((2803968 : ℤ) : ℂ), ((284663808000 : ℤ) : ℂ),
+    ((2417851422508843008000000 : ℤ) : ℂ), ((-2611310348866682880000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 4
+      ++ [Xtab 1 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 1 m) 4).getD i 0] =
+      [((1 : ℤ) : ℂ), ((2803968 : ℤ) : ℂ), ((284663808000 : ℤ) : ℂ),
+      ((2417851422508843008000000 : ℤ) : ℂ), ((-2611310348866682880000000000 : ℤ) : ℂ)]
+  rw [Lv1_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_6 : coordsAux Atab (fun m => Xtab 1 m) 6 =
+    [((1 : ℤ) : ℂ), ((2803968 : ℤ) : ℂ), ((284663808000 : ℤ) : ℂ),
+    ((2417851422508843008000000 : ℤ) : ℂ), ((-2611310348866682880000000000 : ℤ) : ℂ),
+    ((270906796019810304000000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 5
+      ++ [Xtab 1 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 1 m) 5).getD i 0] =
+      [((1 : ℤ) : ℂ), ((2803968 : ℤ) : ℂ), ((284663808000 : ℤ) : ℂ),
+      ((2417851422508843008000000 : ℤ) : ℂ), ((-2611310348866682880000000000 : ℤ) : ℂ),
+      ((270906796019810304000000000000 : ℤ) : ℂ)]
+  rw [Lv1_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_1 : coordsAux Atab (fun m => Xtab 2 m) 1 =
+    [((0 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv2_2 : coordsAux Atab (fun m => Xtab 2 m) 2 =
+    [((0 : ℤ) : ℂ), ((1824 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 1
+      ++ [Xtab 2 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 2 m) 1).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1824 : ℤ) : ℂ)]
+  rw [Lv2_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_3 : coordsAux Atab (fun m => Xtab 2 m) 3 =
+    [((0 : ℤ) : ℂ), ((1824 : ℤ) : ℂ), ((248389632 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 2
+      ++ [Xtab 2 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 2 m) 2).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1824 : ℤ) : ℂ), ((248389632 : ℤ) : ℂ)]
+  rw [Lv2_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_4 : coordsAux Atab (fun m => Xtab 2 m) 4 =
+    [((0 : ℤ) : ℂ), ((1824 : ℤ) : ℂ), ((248389632 : ℤ) : ℂ), ((-164348559360000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 3
+      ++ [Xtab 2 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 2 m) 3).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1824 : ℤ) : ℂ), ((248389632 : ℤ) : ℂ), ((-164348559360000 : ℤ) : ℂ)]
+  rw [Lv2_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_5 : coordsAux Atab (fun m => Xtab 2 m) 5 =
+    [((0 : ℤ) : ℂ), ((1824 : ℤ) : ℂ), ((248389632 : ℤ) : ℂ), ((-164348559360000 : ℤ) : ℂ),
+    ((-15685732270080000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 4
+      ++ [Xtab 2 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 2 m) 4).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1824 : ℤ) : ℂ), ((248389632 : ℤ) : ℂ), ((-164348559360000 : ℤ) : ℂ),
+      ((-15685732270080000000 : ℤ) : ℂ)]
+  rw [Lv2_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_6 : coordsAux Atab (fun m => Xtab 2 m) 6 =
+    [((0 : ℤ) : ℂ), ((1824 : ℤ) : ℂ), ((248389632 : ℤ) : ℂ), ((-164348559360000 : ℤ) : ℂ),
+    ((-15685732270080000000 : ℤ) : ℂ), ((2139864107581440000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 5
+      ++ [Xtab 2 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 2 m) 5).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1824 : ℤ) : ℂ), ((248389632 : ℤ) : ℂ), ((-164348559360000 : ℤ) : ℂ),
+      ((-15685732270080000000 : ℤ) : ℂ), ((2139864107581440000000000 : ℤ) : ℂ)]
+  rw [Lv2_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_1 : coordsAux Atab (fun m => Xtab 3 m) 1 =
+    [((0 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv3_2 : coordsAux Atab (fun m => Xtab 3 m) 2 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 1
+      ++ [Xtab 3 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 3 m) 1).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)]
+  rw [Lv3_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_3 : coordsAux Atab (fun m => Xtab 3 m) 3 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((250368 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 2
+      ++ [Xtab 3 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 3 m) 2).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((250368 : ℤ) : ℂ)]
+  rw [Lv3_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_4 : coordsAux Atab (fun m => Xtab 3 m) 4 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((250368 : ℤ) : ℂ), ((-131671130112 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 3
+      ++ [Xtab 3 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 3 m) 3).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((250368 : ℤ) : ℂ), ((-131671130112 : ℤ) : ℂ)]
+  rw [Lv3_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_5 : coordsAux Atab (fun m => Xtab 3 m) 5 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((250368 : ℤ) : ℂ), ((-131671130112 : ℤ) : ℂ),
+    ((-6100006993920000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 4
+      ++ [Xtab 3 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 3 m) 4).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((250368 : ℤ) : ℂ), ((-131671130112 : ℤ) : ℂ),
+      ((-6100006993920000 : ℤ) : ℂ)]
+  rw [Lv3_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_6 : coordsAux Atab (fun m => Xtab 3 m) 6 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((250368 : ℤ) : ℂ), ((-131671130112 : ℤ) : ℂ),
+    ((-6100006993920000 : ℤ) : ℂ), ((-13649338957824000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 5
+      ++ [Xtab 3 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 3 m) 5).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((250368 : ℤ) : ℂ), ((-131671130112 : ℤ) : ℂ),
+      ((-6100006993920000 : ℤ) : ℂ), ((-13649338957824000000 : ℤ) : ℂ)]
+  rw [Lv3_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_1 : coordsAux Atab (fun m => Xtab 4 m) 1 =
+    [((0 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv4_2 : coordsAux Atab (fun m => Xtab 4 m) 2 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 1
+      ++ [Xtab 4 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 4 m) 1).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)]
+  rw [Lv4_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_3 : coordsAux Atab (fun m => Xtab 4 m) 3 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((336 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 2
+      ++ [Xtab 4 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 4 m) 2).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((336 : ℤ) : ℂ)]
+  rw [Lv4_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_4 : coordsAux Atab (fun m => Xtab 4 m) 4 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((336 : ℤ) : ℂ), ((-113213440 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 3
+      ++ [Xtab 4 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 4 m) 3).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((336 : ℤ) : ℂ), ((-113213440 : ℤ) : ℂ)]
+  rw [Lv4_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_5 : coordsAux Atab (fun m => Xtab 4 m) 5 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((336 : ℤ) : ℂ), ((-113213440 : ℤ) : ℂ),
+    ((-288230473728 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 4
+      ++ [Xtab 4 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 4 m) 4).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((336 : ℤ) : ℂ), ((-113213440 : ℤ) : ℂ),
+      ((-288230473728 : ℤ) : ℂ)]
+  rw [Lv4_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_6 : coordsAux Atab (fun m => Xtab 4 m) 6 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((336 : ℤ) : ℂ), ((-113213440 : ℤ) : ℂ),
+    ((-288230473728 : ℤ) : ℂ), ((-1239366500352000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 5
+      ++ [Xtab 4 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 4 m) 5).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((336 : ℤ) : ℂ), ((-113213440 : ℤ) : ℂ),
+      ((-288230473728 : ℤ) : ℂ), ((-1239366500352000 : ℤ) : ℂ)]
+  rw [Lv4_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_1 : coordsAux Atab (fun m => Xtab 5 m) 1 =
+    [((0 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv5_2 : coordsAux Atab (fun m => Xtab 5 m) 2 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 5 m) 1
+      ++ [Xtab 5 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 5 m) 1).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)]
+  rw [Lv5_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_3 : coordsAux Atab (fun m => Xtab 5 m) 3 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 5 m) 2
+      ++ [Xtab 5 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 5 m) 2).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)]
+  rw [Lv5_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_4 : coordsAux Atab (fun m => Xtab 5 m) 4 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((-89088 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 5 m) 3
+      ++ [Xtab 5 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 5 m) 3).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((-89088 : ℤ) : ℂ)]
+  rw [Lv5_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_5 : coordsAux Atab (fun m => Xtab 5 m) 5 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((-89088 : ℤ) : ℂ), ((-462028800 : ℤ) : ℂ)]
+      := by
+  change coordsAux Atab (fun m => Xtab 5 m) 4
+      ++ [Xtab 5 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 5 m) 4).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((-89088 : ℤ) : ℂ), ((-462028800 : ℤ) : ℂ)]
+  rw [Lv5_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_6 : coordsAux Atab (fun m => Xtab 5 m) 6 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((-89088 : ℤ) : ℂ), ((-462028800 : ℤ) : ℂ),
+    ((-41221619712 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 5 m) 5
+      ++ [Xtab 5 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 5 m) 5).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((-89088 : ℤ) : ℂ), ((-462028800 : ℤ) : ℂ),
+      ((-41221619712 : ℤ) : ℂ)]
+  rw [Lv5_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
 theorem entry_0_0 : coordN Atab (fun m => Xtab 0 m) 0
       = ((3312 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_1]
+  rfl
 
 theorem entry_0_1 : coordN Atab (fun m => Xtab 1 m) 0
       = ((1 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_1]
+  rfl
 
 theorem entry_0_2 : coordN Atab (fun m => Xtab 2 m) 0
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_1]
+  rfl
 
 theorem entry_0_3 : coordN Atab (fun m => Xtab 3 m) 0
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_1]
+  rfl
 
 theorem entry_0_4 : coordN Atab (fun m => Xtab 4 m) 0
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_1]
+  rfl
 
 theorem entry_0_5 : coordN Atab (fun m => Xtab 5 m) 0
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_1]
+  rfl
 
 theorem entry_1_0 : coordN Atab (fun m => Xtab 0 m) 1
       = ((2417851639229262520320000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_2]
+  rfl
 
 theorem entry_1_1 : coordN Atab (fun m => Xtab 1 m) 1
       = ((2803968 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_2]
+  rfl
 
 theorem entry_1_2 : coordN Atab (fun m => Xtab 2 m) 1
       = ((1824 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_2]
+  rfl
 
 theorem entry_1_3 : coordN Atab (fun m => Xtab 3 m) 1
       = ((1 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_2]
+  rfl
 
 theorem entry_1_4 : coordN Atab (fun m => Xtab 4 m) 1
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_2]
+  rfl
 
 theorem entry_1_5 : coordN Atab (fun m => Xtab 5 m) 1
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_2]
+  rfl
 
 theorem entry_2_0 : coordN Atab (fun m => Xtab 0 m) 2
       = ((-6209043009540379951104000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_3]
+  rfl
 
 theorem entry_2_1 : coordN Atab (fun m => Xtab 1 m) 2
       = ((284663808000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_3]
+  rfl
 
 theorem entry_2_2 : coordN Atab (fun m => Xtab 2 m) 2
       = ((248389632 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_3]
+  rfl
 
 theorem entry_2_3 : coordN Atab (fun m => Xtab 3 m) 2
       = ((250368 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_3]
+  rfl
 
 theorem entry_2_4 : coordN Atab (fun m => Xtab 4 m) 2
       = ((336 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_3]
+  rfl
 
 theorem entry_2_5 : coordN Atab (fun m => Xtab 5 m) 2
       = ((1 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_3]
+  rfl
 
 theorem entry_3_0 : coordN Atab (fun m => Xtab 0 m) 3
       = ((4545715823958420357120000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_4]
+  rfl
 
 theorem entry_3_1 : coordN Atab (fun m => Xtab 1 m) 3
       = ((2417851422508843008000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_4]
+  rfl
 
 theorem entry_3_2 : coordN Atab (fun m => Xtab 2 m) 3
       = ((-164348559360000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_4]
+  rfl
 
 theorem entry_3_3 : coordN Atab (fun m => Xtab 3 m) 3
       = ((-131671130112 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_4]
+  rfl
 
 theorem entry_3_4 : coordN Atab (fun m => Xtab 4 m) 3
       = ((-113213440 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_4]
+  rfl
 
 theorem entry_3_5 : coordN Atab (fun m => Xtab 5 m) 3
       = ((-89088 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_4]
+  rfl
 
 theorem entry_4_0 : coordN Atab (fun m => Xtab 0 m) 4
       = ((-914094978999527669760000000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_5]
+  rfl
 
 theorem entry_4_1 : coordN Atab (fun m => Xtab 1 m) 4
       = ((-2611310348866682880000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_5]
+  rfl
 
 theorem entry_4_2 : coordN Atab (fun m => Xtab 2 m) 4
       = ((-15685732270080000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_5]
+  rfl
 
 theorem entry_4_3 : coordN Atab (fun m => Xtab 3 m) 4
       = ((-6100006993920000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_5]
+  rfl
 
 theorem entry_4_4 : coordN Atab (fun m => Xtab 4 m) 4
       = ((-288230473728 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_5]
+  rfl
 
 theorem entry_4_5 : coordN Atab (fun m => Xtab 5 m) 4
       = ((-462028800 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_5]
+  rfl
 
 theorem entry_5_0 : coordN Atab (fun m => Xtab 0 m) 5
       = ((23018090232432033792000000000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_6]
+  rfl
 
 theorem entry_5_1 : coordN Atab (fun m => Xtab 1 m) 5
       = ((270906796019810304000000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_6]
+  rfl
 
 theorem entry_5_2 : coordN Atab (fun m => Xtab 2 m) 5
       = ((2139864107581440000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_6]
+  rfl
 
 theorem entry_5_3 : coordN Atab (fun m => Xtab 3 m) 5
       = ((-13649338957824000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_6]
+  rfl
 
 theorem entry_5_4 : coordN Atab (fun m => Xtab 4 m) 5
       = ((-1239366500352000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_6]
+  rfl
 
 theorem entry_5_5 : coordN Atab (fun m => Xtab 5 m) 5
       = ((-41221619712 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_6]
+  rfl
 
 /-- **The characteristic polynomial of `T₂` on this weight.** -/
 theorem charpoly_T2 : T2.charpoly = P.map (Int.castRingHom ℂ) := by
@@ -7812,215 +9821,619 @@ theorem hevals : ∀ i : Fin 7, P.eval ((i : ℕ) : ℤ)
       = (Matrix.scalar (Fin 6) (6 : ℤ) - M).det
     rw [ev_6, det_6]
 
+theorem Lv0_1 : coordsAux Atab (fun m => Xtab 0 m) 1 =
+    [((3552 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv0_2 : coordsAux Atab (fun m => Xtab 0 m) 2 =
+    [((3552 : ℤ) : ℂ), ((38685626227668138946560000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 0 m) 1
+      ++ [Xtab 0 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 0 m) 1).getD i 0] =
+      [((3552 : ℤ) : ℂ), ((38685626227668138946560000 : ℤ) : ℂ)]
+  rw [Lv0_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv0_3 : coordsAux Atab (fun m => Xtab 0 m) 3 =
+    [((3552 : ℤ) : ℂ), ((38685626227668138946560000 : ℤ) : ℂ),
+    ((-108629238447291263090688000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 0 m) 2
+      ++ [Xtab 0 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 0 m) 2).getD i 0] =
+      [((3552 : ℤ) : ℂ), ((38685626227668138946560000 : ℤ) : ℂ),
+      ((-108629238447291263090688000000 : ℤ) : ℂ)]
+  rw [Lv0_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv0_4 : coordsAux Atab (fun m => Xtab 0 m) 4 =
+    [((3552 : ℤ) : ℂ), ((38685626227668138946560000 : ℤ) : ℂ),
+    ((-108629238447291263090688000000 : ℤ) : ℂ), ((91820488593508372316160000000000 : ℤ) : ℂ)]
+      := by
+  change coordsAux Atab (fun m => Xtab 0 m) 3
+      ++ [Xtab 0 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 0 m) 3).getD i 0] =
+      [((3552 : ℤ) : ℂ), ((38685626227668138946560000 : ℤ) : ℂ),
+      ((-108629238447291263090688000000 : ℤ) : ℂ), ((91820488593508372316160000000000 : ℤ) : ℂ)]
+  rw [Lv0_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv0_5 : coordsAux Atab (fun m => Xtab 0 m) 5 =
+    [((3552 : ℤ) : ℂ), ((38685626227668138946560000 : ℤ) : ℂ),
+    ((-108629238447291263090688000000 : ℤ) : ℂ), ((91820488593508372316160000000000 : ℤ) : ℂ),
+    ((-24132898392858295271424000000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 0 m) 4
+      ++ [Xtab 0 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 0 m) 4).getD i 0] =
+      [((3552 : ℤ) : ℂ), ((38685626227668138946560000 : ℤ) : ℂ),
+      ((-108629238447291263090688000000 : ℤ) : ℂ), ((91820488593508372316160000000000 : ℤ) : ℂ),
+      ((-24132898392858295271424000000000000 : ℤ) : ℂ)]
+  rw [Lv0_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv0_6 : coordsAux Atab (fun m => Xtab 0 m) 6 =
+    [((3552 : ℤ) : ℂ), ((38685626227668138946560000 : ℤ) : ℂ),
+    ((-108629238447291263090688000000 : ℤ) : ℂ), ((91820488593508372316160000000000 : ℤ) : ℂ),
+    ((-24132898392858295271424000000000000 : ℤ) : ℂ),
+    ((1206046241837046300672000000000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 0 m) 5
+      ++ [Xtab 0 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 0 m) 5).getD i 0] =
+      [((3552 : ℤ) : ℂ), ((38685626227668138946560000 : ℤ) : ℂ),
+      ((-108629238447291263090688000000 : ℤ) : ℂ), ((91820488593508372316160000000000 : ℤ) : ℂ),
+      ((-24132898392858295271424000000000000 : ℤ) : ℂ),
+      ((1206046241837046300672000000000000000 : ℤ) : ℂ)]
+  rw [Lv0_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_1 : coordsAux Atab (fun m => Xtab 1 m) 1 =
+    [((1 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv1_2 : coordsAux Atab (fun m => Xtab 1 m) 2 =
+    [((1 : ℤ) : ℂ), ((3422208 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 1
+      ++ [Xtab 1 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 1 m) 1).getD i 0] =
+      [((1 : ℤ) : ℂ), ((3422208 : ℤ) : ℂ)]
+  rw [Lv1_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_3 : coordsAux Atab (fun m => Xtab 1 m) 3 =
+    [((1 : ℤ) : ℂ), ((3422208 : ℤ) : ℂ), ((664215552000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 2
+      ++ [Xtab 1 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 1 m) 2).getD i 0] =
+      [((1 : ℤ) : ℂ), ((3422208 : ℤ) : ℂ), ((664215552000 : ℤ) : ℂ)]
+  rw [Lv1_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_4 : coordsAux Atab (fun m => Xtab 1 m) 4 =
+    [((1 : ℤ) : ℂ), ((3422208 : ℤ) : ℂ), ((664215552000 : ℤ) : ℂ),
+    ((38685625957485379584000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 3
+      ++ [Xtab 1 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 1 m) 3).getD i 0] =
+      [((1 : ℤ) : ℂ), ((3422208 : ℤ) : ℂ), ((664215552000 : ℤ) : ℂ),
+      ((38685625957485379584000000 : ℤ) : ℂ)]
+  rw [Lv1_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_5 : coordsAux Atab (fun m => Xtab 1 m) 5 =
+    [((1 : ℤ) : ℂ), ((3422208 : ℤ) : ℂ), ((664215552000 : ℤ) : ℂ),
+    ((38685625957485379584000000 : ℤ) : ℂ), ((-51065081543497089024000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 4
+      ++ [Xtab 1 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 1 m) 4).getD i 0] =
+      [((1 : ℤ) : ℂ), ((3422208 : ℤ) : ℂ), ((664215552000 : ℤ) : ℂ),
+      ((38685625957485379584000000 : ℤ) : ℂ), ((-51065081543497089024000000000 : ℤ) : ℂ)]
+  rw [Lv1_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv1_6 : coordsAux Atab (fun m => Xtab 1 m) 6 =
+    [((1 : ℤ) : ℂ), ((3422208 : ℤ) : ℂ), ((664215552000 : ℤ) : ℂ),
+    ((38685625957485379584000000 : ℤ) : ℂ), ((-51065081543497089024000000000 : ℤ) : ℂ),
+    ((9623396864615251968000000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 1 m) 5
+      ++ [Xtab 1 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 1 m) 5).getD i 0] =
+      [((1 : ℤ) : ℂ), ((3422208 : ℤ) : ℂ), ((664215552000 : ℤ) : ℂ),
+      ((38685625957485379584000000 : ℤ) : ℂ), ((-51065081543497089024000000000 : ℤ) : ℂ),
+      ((9623396864615251968000000000000 : ℤ) : ℂ)]
+  rw [Lv1_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_1 : coordsAux Atab (fun m => Xtab 2 m) 1 =
+    [((0 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv2_2 : coordsAux Atab (fun m => Xtab 2 m) 2 =
+    [((0 : ℤ) : ℂ), ((2064 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 1
+      ++ [Xtab 2 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 2 m) 1).getD i 0] =
+      [((0 : ℤ) : ℂ), ((2064 : ℤ) : ℂ)]
+  rw [Lv2_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_3 : coordsAux Atab (fun m => Xtab 2 m) 3 =
+    [((0 : ℤ) : ℂ), ((2064 : ℤ) : ℂ), ((552026112 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 2
+      ++ [Xtab 2 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 2 m) 2).getD i 0] =
+      [((0 : ℤ) : ℂ), ((2064 : ℤ) : ℂ), ((552026112 : ℤ) : ℂ)]
+  rw [Lv2_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_4 : coordsAux Atab (fun m => Xtab 2 m) 4 =
+    [((0 : ℤ) : ℂ), ((2064 : ℤ) : ℂ), ((552026112 : ℤ) : ℂ), ((-208461496320000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 3
+      ++ [Xtab 2 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 2 m) 3).getD i 0] =
+      [((0 : ℤ) : ℂ), ((2064 : ℤ) : ℂ), ((552026112 : ℤ) : ℂ), ((-208461496320000 : ℤ) : ℂ)]
+  rw [Lv2_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_5 : coordsAux Atab (fun m => Xtab 2 m) 5 =
+    [((0 : ℤ) : ℂ), ((2064 : ℤ) : ℂ), ((552026112 : ℤ) : ℂ), ((-208461496320000 : ℤ) : ℂ),
+    ((-31481539854336000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 4
+      ++ [Xtab 2 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 2 m) 4).getD i 0] =
+      [((0 : ℤ) : ℂ), ((2064 : ℤ) : ℂ), ((552026112 : ℤ) : ℂ), ((-208461496320000 : ℤ) : ℂ),
+      ((-31481539854336000000 : ℤ) : ℂ)]
+  rw [Lv2_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv2_6 : coordsAux Atab (fun m => Xtab 2 m) 6 =
+    [((0 : ℤ) : ℂ), ((2064 : ℤ) : ℂ), ((552026112 : ℤ) : ℂ), ((-208461496320000 : ℤ) : ℂ),
+    ((-31481539854336000000 : ℤ) : ℂ), ((37764638787502080000000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 2 m) 5
+      ++ [Xtab 2 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 2 m) 5).getD i 0] =
+      [((0 : ℤ) : ℂ), ((2064 : ℤ) : ℂ), ((552026112 : ℤ) : ℂ), ((-208461496320000 : ℤ) : ℂ),
+      ((-31481539854336000000 : ℤ) : ℂ), ((37764638787502080000000000 : ℤ) : ℂ)]
+  rw [Lv2_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_1 : coordsAux Atab (fun m => Xtab 3 m) 1 =
+    [((0 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv3_2 : coordsAux Atab (fun m => Xtab 3 m) 2 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 1
+      ++ [Xtab 3 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 3 m) 1).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)]
+  rw [Lv3_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_3 : coordsAux Atab (fun m => Xtab 3 m) 3 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((511488 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 2
+      ++ [Xtab 3 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 3 m) 2).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((511488 : ℤ) : ℂ)]
+  rw [Lv3_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_4 : coordsAux Atab (fun m => Xtab 3 m) 4 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((511488 : ℤ) : ℂ), ((-172334579712 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 3
+      ++ [Xtab 3 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 3 m) 3).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((511488 : ℤ) : ℂ), ((-172334579712 : ℤ) : ℂ)]
+  rw [Lv3_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_5 : coordsAux Atab (fun m => Xtab 3 m) 5 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((511488 : ℤ) : ℂ), ((-172334579712 : ℤ) : ℂ),
+    ((-15741109665792000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 4
+      ++ [Xtab 3 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 3 m) 4).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((511488 : ℤ) : ℂ), ((-172334579712 : ℤ) : ℂ),
+      ((-15741109665792000 : ℤ) : ℂ)]
+  rw [Lv3_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv3_6 : coordsAux Atab (fun m => Xtab 3 m) 6 =
+    [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((511488 : ℤ) : ℂ), ((-172334579712 : ℤ) : ℂ),
+    ((-15741109665792000 : ℤ) : ℂ), ((-143391442599936000000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 3 m) 5
+      ++ [Xtab 3 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 3 m) 5).getD i 0] =
+      [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((511488 : ℤ) : ℂ), ((-172334579712 : ℤ) : ℂ),
+      ((-15741109665792000 : ℤ) : ℂ), ((-143391442599936000000 : ℤ) : ℂ)]
+  rw [Lv3_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_1 : coordsAux Atab (fun m => Xtab 4 m) 1 =
+    [((0 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv4_2 : coordsAux Atab (fun m => Xtab 4 m) 2 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 1
+      ++ [Xtab 4 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 4 m) 1).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)]
+  rw [Lv4_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_3 : coordsAux Atab (fun m => Xtab 4 m) 3 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((576 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 2
+      ++ [Xtab 4 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 4 m) 2).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((576 : ℤ) : ℂ)]
+  rw [Lv4_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_4 : coordsAux Atab (fun m => Xtab 4 m) 4 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((576 : ℤ) : ℂ), ((-159600640 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 3
+      ++ [Xtab 4 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 4 m) 3).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((576 : ℤ) : ℂ), ((-159600640 : ℤ) : ℂ)]
+  rw [Lv4_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_5 : coordsAux Atab (fun m => Xtab 4 m) 5 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((576 : ℤ) : ℂ), ((-159600640 : ℤ) : ℂ),
+    ((-4606717329408 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 4
+      ++ [Xtab 4 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 4 m) 4).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((576 : ℤ) : ℂ), ((-159600640 : ℤ) : ℂ),
+      ((-4606717329408 : ℤ) : ℂ)]
+  rw [Lv4_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv4_6 : coordsAux Atab (fun m => Xtab 4 m) 6 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((576 : ℤ) : ℂ), ((-159600640 : ℤ) : ℂ),
+    ((-4606717329408 : ℤ) : ℂ), ((14296201297920000 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 4 m) 5
+      ++ [Xtab 4 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 4 m) 5).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((576 : ℤ) : ℂ), ((-159600640 : ℤ) : ℂ),
+      ((-4606717329408 : ℤ) : ℂ), ((14296201297920000 : ℤ) : ℂ)]
+  rw [Lv4_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_1 : coordsAux Atab (fun m => Xtab 5 m) 1 =
+    [((0 : ℤ) : ℂ)] := by
+  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]
+  norm_num
+
+theorem Lv5_2 : coordsAux Atab (fun m => Xtab 5 m) 2 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 5 m) 1
+      ++ [Xtab 5 1 - ∑ i ∈ Finset.range 1,
+      Atab i 1 * (coordsAux Atab (fun m => Xtab 5 m) 1).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)]
+  rw [Lv5_1]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_3 : coordsAux Atab (fun m => Xtab 5 m) 3 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 5 m) 2
+      ++ [Xtab 5 2 - ∑ i ∈ Finset.range 2,
+      Atab i 2 * (coordsAux Atab (fun m => Xtab 5 m) 2).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)]
+  rw [Lv5_2]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_4 : coordsAux Atab (fun m => Xtab 5 m) 4 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((-185088 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 5 m) 3
+      ++ [Xtab 5 3 - ∑ i ∈ Finset.range 3,
+      Atab i 3 * (coordsAux Atab (fun m => Xtab 5 m) 3).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((-185088 : ℤ) : ℂ)]
+  rw [Lv5_3]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_5 : coordsAux Atab (fun m => Xtab 5 m) 5 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((-185088 : ℤ) : ℂ), ((2172518400 : ℤ) : ℂ)]
+      := by
+  change coordsAux Atab (fun m => Xtab 5 m) 4
+      ++ [Xtab 5 4 - ∑ i ∈ Finset.range 4,
+      Atab i 4 * (coordsAux Atab (fun m => Xtab 5 m) 4).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((-185088 : ℤ) : ℂ), ((2172518400 : ℤ) : ℂ)]
+  rw [Lv5_4]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
+theorem Lv5_6 : coordsAux Atab (fun m => Xtab 5 m) 6 =
+    [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((-185088 : ℤ) : ℂ), ((2172518400 : ℤ) : ℂ),
+    ((1181585768448 : ℤ) : ℂ)] := by
+  change coordsAux Atab (fun m => Xtab 5 m) 5
+      ++ [Xtab 5 5 - ∑ i ∈ Finset.range 5,
+      Atab i 5 * (coordsAux Atab (fun m => Xtab 5 m) 5).getD i 0] =
+      [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ), ((-185088 : ℤ) : ℂ), ((2172518400 : ℤ) : ℂ),
+      ((1181585768448 : ℤ) : ℂ)]
+  rw [Lv5_5]
+  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,
+      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+  norm_num
+
 theorem entry_0_0 : coordN Atab (fun m => Xtab 0 m) 0
       = ((3552 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_1]
+  rfl
 
 theorem entry_0_1 : coordN Atab (fun m => Xtab 1 m) 0
       = ((1 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_1]
+  rfl
 
 theorem entry_0_2 : coordN Atab (fun m => Xtab 2 m) 0
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_1]
+  rfl
 
 theorem entry_0_3 : coordN Atab (fun m => Xtab 3 m) 0
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_1]
+  rfl
 
 theorem entry_0_4 : coordN Atab (fun m => Xtab 4 m) 0
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_1]
+  rfl
 
 theorem entry_0_5 : coordN Atab (fun m => Xtab 5 m) 0
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_1]
+  rfl
 
 theorem entry_1_0 : coordN Atab (fun m => Xtab 0 m) 1
       = ((38685626227668138946560000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_2]
+  rfl
 
 theorem entry_1_1 : coordN Atab (fun m => Xtab 1 m) 1
       = ((3422208 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_2]
+  rfl
 
 theorem entry_1_2 : coordN Atab (fun m => Xtab 2 m) 1
       = ((2064 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_2]
+  rfl
 
 theorem entry_1_3 : coordN Atab (fun m => Xtab 3 m) 1
       = ((1 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_2]
+  rfl
 
 theorem entry_1_4 : coordN Atab (fun m => Xtab 4 m) 1
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_2]
+  rfl
 
 theorem entry_1_5 : coordN Atab (fun m => Xtab 5 m) 1
       = ((0 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_2]
+  rfl
 
 theorem entry_2_0 : coordN Atab (fun m => Xtab 0 m) 2
       = ((-108629238447291263090688000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_3]
+  rfl
 
 theorem entry_2_1 : coordN Atab (fun m => Xtab 1 m) 2
       = ((664215552000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_3]
+  rfl
 
 theorem entry_2_2 : coordN Atab (fun m => Xtab 2 m) 2
       = ((552026112 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_3]
+  rfl
 
 theorem entry_2_3 : coordN Atab (fun m => Xtab 3 m) 2
       = ((511488 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_3]
+  rfl
 
 theorem entry_2_4 : coordN Atab (fun m => Xtab 4 m) 2
       = ((576 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_3]
+  rfl
 
 theorem entry_2_5 : coordN Atab (fun m => Xtab 5 m) 2
       = ((1 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_3]
+  rfl
 
 theorem entry_3_0 : coordN Atab (fun m => Xtab 0 m) 3
       = ((91820488593508372316160000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_4]
+  rfl
 
 theorem entry_3_1 : coordN Atab (fun m => Xtab 1 m) 3
       = ((38685625957485379584000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_4]
+  rfl
 
 theorem entry_3_2 : coordN Atab (fun m => Xtab 2 m) 3
       = ((-208461496320000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_4]
+  rfl
 
 theorem entry_3_3 : coordN Atab (fun m => Xtab 3 m) 3
       = ((-172334579712 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_4]
+  rfl
 
 theorem entry_3_4 : coordN Atab (fun m => Xtab 4 m) 3
       = ((-159600640 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_4]
+  rfl
 
 theorem entry_3_5 : coordN Atab (fun m => Xtab 5 m) 3
       = ((-185088 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_4]
+  rfl
 
 theorem entry_4_0 : coordN Atab (fun m => Xtab 0 m) 4
       = ((-24132898392858295271424000000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_5]
+  rfl
 
 theorem entry_4_1 : coordN Atab (fun m => Xtab 1 m) 4
       = ((-51065081543497089024000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_5]
+  rfl
 
 theorem entry_4_2 : coordN Atab (fun m => Xtab 2 m) 4
       = ((-31481539854336000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_5]
+  rfl
 
 theorem entry_4_3 : coordN Atab (fun m => Xtab 3 m) 4
       = ((-15741109665792000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_5]
+  rfl
 
 theorem entry_4_4 : coordN Atab (fun m => Xtab 4 m) 4
       = ((-4606717329408 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_5]
+  rfl
 
 theorem entry_4_5 : coordN Atab (fun m => Xtab 5 m) 4
       = ((2172518400 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_5]
+  rfl
 
 theorem entry_5_0 : coordN Atab (fun m => Xtab 0 m) 5
       = ((1206046241837046300672000000000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv0_6]
+  rfl
 
 theorem entry_5_1 : coordN Atab (fun m => Xtab 1 m) 5
       = ((9623396864615251968000000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv1_6]
+  rfl
 
 theorem entry_5_2 : coordN Atab (fun m => Xtab 2 m) 5
       = ((37764638787502080000000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv2_6]
+  rfl
 
 theorem entry_5_3 : coordN Atab (fun m => Xtab 3 m) 5
       = ((-143391442599936000000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv3_6]
+  rfl
 
 theorem entry_5_4 : coordN Atab (fun m => Xtab 4 m) 5
       = ((14296201297920000 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv4_6]
+  rfl
 
 theorem entry_5_5 : coordN Atab (fun m => Xtab 5 m) 5
       = ((1181585768448 : ℤ) : ℂ) := by
-  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,
-      Finset.sum_range_zero]
-  norm_num [List.getD_cons_succ, List.getD_cons_zero]
+  simp only [coordN]
+  rw [Lv5_6]
+  rfl
 
 /-- **The characteristic polynomial of `T₂` on this weight.** -/
 theorem charpoly_T2 : T2.charpoly = P.map (Int.castRingHom ℂ) := by

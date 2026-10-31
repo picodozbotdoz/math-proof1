@@ -39,5 +39,11 @@ import MathProof.ModularForms.MaedaPermCriterion
 import MathProof.ModularForms.CharpolyEngine
 import MathProof.ModularForms.RabinCert
 import MathProof.ModularForms.HeckeAlgebraQT2
+import MathProof.ModularForms.CharpolyDimN
+import MathProof.ModularForms.MaedaDim6Weights
+import MathProof.ModularForms.MaedaDim7Weights
+import MathProof.ModularForms.MaedaDim8Weights
+import MathProof.ModularForms.MaedaDim9Weights
+import MathProof.ModularForms.MaedaDim10Weights
 -- MathProof.AxCheck is also opt-in: it imports LehmerMod (heavy) to audit it.
 -- import MathProof.AxCheck

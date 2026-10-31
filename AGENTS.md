@@ -273,6 +273,26 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   `MaedaGalois5` — `galActionHom_bijective_of_quintic`;
   `MaedaGalois5Weights` — the six instances (generated, `tools/gen_galois5.py`);
   `MaedaGalois5AxCheck` (heavy) — `#print axioms` for every certificate.
+- `MathProof/ModularForms/CharpolyDimN.lean` (light) — the dimension-generic
+  echelon extraction `charpoly_dimN` (ℕ-indexed basis hypotheses; the
+  back-substitution matrix of any endomorphism from q-coefficient tables).
+- `MathProof/ModularForms/MaedaDim{6,7,8,9,10}Weights.lean` (light,
+  generated — `tools/gen_maedan.py`, never hand-edit; `--check` verifies
+  byte-identical regeneration) — Maeda irreducibility for the 30 weights
+  `72 ≤ k ≤ 134` with `6 ≤ dim S_k ≤ 10`: literal T₂-matrix per weight,
+  charpoly via `CharpolyEngine` determinant interpolation, Rabin
+  irreducibility certificates (`RabinCert.irreducible_of_rabin_int`).
+  Coefficients past 80 digits are emitted as chunked `c0 * 10 ^ e0 + c1 …`
+  literals; a chunked `det_t` needs `norm_num` after `eval_det` (the tactic
+  leaves `flat = chunked`); the back-substitution is STAGED (`Lv{a}_{j}`
+  list lemmas, one-step `change` unfolds + `rw` — a full-cascade
+  `simp only [coordsAux]` exhausts the default heartbeats at dim ≥ 9, and
+  `show` is rejected by `linter.style.show`, use `change`).  Build cost on
+  Modal (staged, measured 2026-10-31): dim 6 = 88 s / 6.4 GiB, dim 7 = 138 s
+  / 7.1 GiB, dim 8 = 333 s / 8.1 GiB, dim 9 = 413 s / 9.3 GiB, dim 10 =
+  1167 s / 11.6 GiB (the k=120 Rabin decide, ~28k ZMod-muls, fits the
+  200 s kernel budget per declaration).  Cold full pass of the five files
+  ≈ 36 min — CI pays this on every push now.
 - `MathProof/ModularForms/HornerCert.lean` (light) — `propext`-free residue
   certificates: `hornerZ` (structural Horner over `ℤ`), `no_root_of_cert`,
   `ne_sq_of_cert`.  State "no root / non-square mod ℓ" as
@@ -282,7 +302,8 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
 - `MathProof/ModularForms/MaedaCertC.lean` (light) — `seqPLc`, the Maeda
   coefficient lists without `Finset`/`ArithmeticFunction`/`Ramanujan.tau`
   (`sigmaL`, `convLc`, `dCc`), and `seqPLc_eq` back to `seqPL`; the `L{j}c`
-  certificates of `MaedaDim{4,5}Weights` are about it.
+  certificates of `MaedaDim{4,5}Weights` and `gen_maedan.py`'s dim-6…10
+  files are about it.
 - `MathProof/AxCheckDecide.lean` (opt-in audit, imports the light root) —
   `#audit_decide_certs`: finds every `decide` certificate in the light library
   and reports those depending on more than `propext`; `#axiom_path ax n`
@@ -335,7 +356,7 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   the package) must never pull the heavy kernel decides. When adding a
   module: light → add it to `defaultTargets`, `MathProof.lean`, and the CI
   list; heavy → add it to none of those, and build it explicitly on Modal.
-- **TauCeti coding rules** (`external-doc/TAU-CETI_Coding_Rules.md`) apply to
+- **Coding rules** (`external-doc/CODING_STANDARDS.md`) apply to
   every light module since iteration 18b: no `set_option` at all (no
   heartbeat/recdepth raises, no linter suppressions), no `#eval`/`meta`/
   `unsafe`, no `native_decide`/`sorry`, Mathlib-level imports only.  Check

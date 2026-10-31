@@ -137,6 +137,16 @@ def lean_list(xs, indent=0):
     return "[" + ("\n" + pad).join(lines) + "]"
 
 
+def coeff_stmt(head, val):
+    """Physical lines of a `lemma … = (val : ℂ) := by` statement: one line
+    when it fits WIDTH, else the RHS carried to a continuation line (a
+    newline inside the statement is insignificant to Lean)."""
+    one = f"{head} = ({val} : ℂ) := by"
+    if len(one) <= WIDTH:
+        return [one]
+    return [f"{head} =", f"    ({val} : ℂ) := by"]
+
+
 def matrix_literal(M, indent=6, diag=None):
     """`!![…]` literal, rows separated by `;`, entries wrapped so every line
     stays within WIDTH (continuation lines aligned at `indent`).  With `diag`
@@ -162,20 +172,99 @@ def sym_matrix_literal(M, indent=6):
     return matrix_literal(M, indent, diag=lambda i, j, x: f"t - {x}" if i == j else f"({-x})")
 
 
+CHUNK = 60         # digits per chunk in decomposed big literals
+PLAIN_DIGITS = 80  # a plain (undecomposed) literal renders fine up to this
+
+
+def pos_chunks(x):
+    """Decimal string chunks of |x| (first CHUNK digits, last maybe shorter),
+    or None when the plain literal is short enough for every emission site."""
+    s = str(abs(x))
+    if len(s) <= PLAIN_DIGITS:
+        return None
+    return [s[i:i + CHUNK] for i in range(0, len(s), CHUNK)]
+
+
+def term_chunks(c, suffix):
+    """Chunking decision for a P coefficient `c` carrying `suffix`
+    (` * (X : ℤ[X]) ^ e`, or "" for the constant term): None when the plain
+    `- C (c){suffix}` term fits a continuation line, else the chunk list.
+    p_literal and the hmap rw MUST decide identically (the rw rewrites the
+    exact expression P contains)."""
+    body = f"C ({c})" if c >= 0 else f"- C ({-c})"
+    if 6 + len(body) + len(suffix) + 2 <= WIDTH:
+        return None
+    s = str(abs(c))
+    return [s[i:i + CHUNK] for i in range(0, len(s), CHUNK)]
+
+
+def chunk_expr_tokens(chs):
+    """Token lines of the positive expression `c0 * 10 ^ E0 + c1 * 10 ^ E1 …`.
+    The SAME token sequence is used inside `C (…)` in P and inside the hmap
+    `show ((… : ℤ) : ZMod ℓ)` rewrite (rw matches syntactically)."""
+    toks = []
+    for j, ch in enumerate(chs):
+        e = sum(len(c) for c in chs[j + 1:])
+        core = ch if e == 0 else f"{ch} * 10 ^ {e}"
+        toks.append(core if j == 0 else f"+ {core}")
+    return toks
+
+
+def flat_expr_lines(v, lead, cont):
+    """Physical lines of a (possibly negative) integer rendered as
+    `-c0 * 10 ^ E0 - c1 …` (flat; no unit parentheses), `lead` before the
+    first line and `cont` before the rest; plain literal when it fits."""
+    chs = pos_chunks(v)
+    if chs is None:
+        return [f"{lead}{v}"]
+    toks = chunk_expr_tokens(chs)
+    if v < 0:
+        toks = [toks[0]] + [t.replace("+ ", "- ", 1) for t in toks[1:]]
+        toks[0] = "-" + toks[0]
+    return [lead + toks[0]] + [cont + t for t in toks[1:]]
+
+
 def p_literal(cp, n):
-    terms = []
+    # term units: plain strings (packed like the dim-6 output) or pre-rendered
+    # multi-line blocks for coefficients whose literal does not fit on a line
+    units = []
     for i, c in enumerate(cp):
         if i == 0:
             # leading term as C 1 * X^n: after mapping, both sides of hmap carry
             # the identical atom C ((1 : ℤ) : ZMod ℓ) (ring_nf cannot equate
             # `C ↑1` with the bare numeral 1)
-            terms.append(f"C (1) * (X : ℤ[X]) ^ {n}")
-        elif i < n:
-            terms.append(f"C ({c}) * (X : ℤ[X]) ^ {n - i}" if c >= 0
-                         else f"- C ({-c}) * (X : ℤ[X]) ^ {n - i}")
+            units.append(("plain", f"C (1) * (X : ℤ[X]) ^ {n}"))
+            continue
+        suffix = f" * (X : ℤ[X]) ^ {n - i}" if i < n else ""
+        chs = term_chunks(c, suffix)
+        if chs is None:
+            units.append(("plain", (f"C ({c})" if c >= 0 else f"- C ({-c})") + suffix))
         else:
-            terms.append(f"C ({c})" if c >= 0 else f"- C ({-c})")
-    return wrap_terms(terms, 6)
+            toks = chunk_expr_tokens(chs)
+            block = [("- C (" if c < 0 else "C (")] + \
+                [f"  {t}" for t in toks[:-1]] + [f"{toks[-1]}){suffix}"]
+            units.append(("block", block))
+    # greedy assembly: plain terms pack exactly like the earlier wrap_terms
+    # (byte-identical when every coefficient is plain, i.e. dim 6); a block
+    # flushes the current line and stands on its own physical lines
+    pad = " " * 6
+    out, cur = [], ""
+    for idx, (kind, payload) in enumerate(units):
+        sep = "" if idx == len(units) - 1 else " + "
+        if kind == "plain":
+            budget = WIDTH if not out else WIDTH - 6
+            if cur and len(cur) + len(payload) + len(sep) > budget:
+                out.append(cur.rstrip())
+                cur = ""
+            cur += payload + sep
+        else:
+            if cur:
+                out.append(cur.rstrip())
+                cur = ""
+            out.extend([pad + payload[0]] + [pad + l for l in payload[1:-1]])
+            cur = pad + payload[-1] + sep
+    out.append(cur.rstrip())
+    return ("\n" + pad).join(out)
 
 
 def wrap_name(k):
@@ -233,7 +322,8 @@ def emit_weight(w):
         P(f"  exact L{j}c")
         P("")
         for m in range(1, 2 * n + 1):
-            P(f"lemma q{j}_{m} : (qExpansion 1 f{j}).coeff {m} = ({f[m]} : ℂ) := by")
+            for _s in coeff_stmt(f"lemma q{j}_{m} : (qExpansion 1 f{j}).coeff {m}", f[m]):
+                P(_s)
             P(f"  rw [c{j}, seqP_getD (N := {N}) (by norm_num), L{j}]")
             P("  norm_num [List.getD_cons_succ, List.getD_cons_zero]")
             P("")
@@ -246,7 +336,8 @@ def emit_weight(w):
         j = i0 + 1
         for m in range(1, n + 1):
             extra = f", q{j}_{m // 2}" if m % 2 == 0 else ""
-            P(f"lemma t{j}_{m} : (qExpansion 1 (T2 f{j})).coeff {m} = ({t[m]} : ℂ) := by")
+            for _s in coeff_stmt(f"lemma t{j}_{m} : (qExpansion 1 (T2 f{j})).coeff {m}", t[m]):
+                P(_s)
             P(f"  rw [T2, heckeT2_coeff (by norm_num)]")
             P(f"  norm_num [q{j}_{2 * m}{extra}]")
             P("")
@@ -377,24 +468,33 @@ def emit_weight(w):
     for t, v in enumerate(vals):
         P(f"/-- `det (t·1 − M)` at `t = {t}`, by the certified Bareiss echelon decomposition. -/")
         head = f"theorem det_{t} : (Matrix.scalar (Fin {n}) ({t} : ℤ) - M).det"
-        tail = f" = {v} := by"
-        if len(head) + len(tail) <= WIDTH:
-            P(head + tail)
+        if len(head) + 3 + len(str(abs(v))) + 7 <= WIDTH:
+            P(f"{head} = {v} := by")
         else:
             P(head)
-            P(f"    {tail}")
+            ls = flat_expr_lines(v, "     = ", "      ")
+            ls[-1] += " := by"
+            for l in ls:
+                P(l)
         P(f"  rw [scalar_sub_M]")
         P(f"  simp only [MT]")
         P(f"  eval_det")
+        if pos_chunks(v) is not None:
+            # the RHS is a chunked `c0 * 10 ^ e0 + c1 …` literal; `eval_det`
+            # reduces the det side to the flat numeral and leaves the pure
+            # arithmetic identity for `norm_num` (both sides fully numeric)
+            P(f"  norm_num")
         P("")
     for t, v in enumerate(vals):
         head = f"theorem ev_{t} : P.eval ({t} : ℤ)"
-        tail = f" = {v} := by"
-        if len(head) + len(tail) <= WIDTH:
-            P(head + tail)
+        if len(head) + 3 + len(str(abs(v))) + 7 <= WIDTH:
+            P(f"{head} = {v} := by")
         else:
             P(head)
-            P(f"    {tail}")
+            ls = flat_expr_lines(v, "     = ", "      ")
+            ls[-1] += " := by"
+            for l in ls:
+                P(l)
         P("  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,")
         P("      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]")
         P("")
@@ -408,19 +508,68 @@ def emit_weight(w):
         P(f"      = (Matrix.scalar (Fin {n}) ({t} : ℤ) - M).det")
         P(f"    rw [ev_{t}, det_{t}]")
     P("")
-    # per-entry helper theorems: each is its own declaration, so the back-
-    # substitution unrolling gets a fresh heartbeat budget (all 36 entries in
-    # one declaration exhaust the default 200k; TauCeti forbids raising it)
+    # per-entry helper theorems: the back-substitution is STAGED — one lemma
+    # per (column, row-count) holding the first j coordinates as a literal
+    # list, each proved from the previous stage by a ONE-step `coordsAux`
+    # unfold.  Letting `simp only [coordsAux]` unfold the whole cascade
+    # exhausts the 200k heartbeat budget at the deepest rows from dim 9 on
+    # (entry_8_{4..8}); splitting the declaration is the sanctioned fix
+    # (TauCeti forbids raising any option)
+    def clist_lines(vals, indent):
+        """A `[((v : ℤ) : ℂ), …]` literal wrapped to WIDTH (elements are
+        ~20–50 chars each; dim-10 lists need multi-line)."""
+        pad = " " * indent
+        items = [f"(({v} : ℤ) : ℂ)" for v in vals]
+        lines, cur = [], "["
+        for it in items:
+            sep = "" if cur == "[" else ", "
+            if len(pad + cur + sep + it) > WIDTH - 1 and cur != "[":
+                lines.append(cur + ",")
+                cur = it
+            else:
+                cur += sep + it
+        lines.append(cur + "]")
+        return [pad + lines[0]] + [pad + l for l in lines[1:]]
+
+    for a in range(n):
+        col = [M[c][a] for c in range(n)]
+        for j in range(1, n + 1):
+            ls = clist_lines(col[:j], 4)
+            P(f"theorem Lv{a}_{j} : coordsAux Atab (fun m => Xtab {a} m) {j} =")
+            for l in ls[:-1]:
+                P(l)
+            if len(ls[-1]) + 7 > WIDTH:
+                P(ls[-1])
+                P("      := by")
+            else:
+                P(ls[-1] + " := by")
+            if j == 1:
+                # range 0: the sum vanishes, so Atab never fires
+                P("  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]")
+                P("  norm_num")
+            else:
+                # `change` (not `show`): the unfold changes the goal, and
+                # linter.style.show rejects goal-changing `show`s
+                P(f"  change coordsAux Atab (fun m => Xtab {a} m) {j-1}")
+                P(f"      ++ [Xtab {a} {j-1} - ∑ i ∈ Finset.range {j-1},")
+                P(f"      Atab i {j-1} * (coordsAux Atab (fun m => Xtab {a} m) {j-1}).getD i 0] =")
+                for l in clist_lines(col[:j], 6):
+                    P(l)
+                P(f"  rw [Lv{a}_{j-1}]")
+                # a 1-element prefix needs only getD_cons_zero (succ would be
+                # an unused simp argument — the style linter rejects it)
+                succ = "List.getD_cons_succ, " if j >= 3 else ""
+                P("  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,")
+                P(f"      {succ}List.getD_cons_zero, List.nil_append, List.cons_append]")
+                P("  norm_num")
+            P("")
     for c in range(n):
         for a in range(n):
             P(f"theorem entry_{c}_{a} : coordN Atab (fun m => Xtab {a} m) {c}")
             P(f"      = (({M[c][a]} : ℤ) : ℂ) := by")
-            if c == 0:
-                P("  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_zero]")
-            else:
-                P("  simp only [coordN, coordsAux, Atab, Xtab, Finset.sum_range_succ,")
-                P("      Finset.sum_range_zero]")
-            P("  norm_num [List.getD_cons_succ, List.getD_cons_zero]")
+            P("  simp only [coordN]")
+            P(f"  rw [Lv{a}_{c+1}]")
+            P("  rfl")
             P("")
     P("/-- **The characteristic polynomial of `T₂` on this weight.** -/")
     P("theorem charpoly_T2 : T2.charpoly = P.map (Int.castRingHom ℂ) := by")
@@ -473,15 +622,32 @@ def emit_weight(w):
     P("      Polynomial.map_pow, Int.coe_castRingHom, ← Polynomial.C_neg]")
     # per-coefficient kernel casts: c mod ell (the leading C 1 needs no rewrite)
     rw_items = []
-    for c in cp[1:]:
-        head = f"show (({c} : ℤ) : ZMod {ell})"
-        tail = f" = ({c % ell} : ZMod {ell}) from by decide +kernel"
-        if 6 + len(head) + len(tail) <= WIDTH:
-            rw_items.append(head + tail)
-        elif 6 + len(head) <= WIDTH:
-            rw_items.append(head + "\n          " + tail)
-        else:  # the coefficient literal alone nearly fills the line: split the cast
-            rw_items.append(f"show (({c} : ℤ)\n          : ZMod {ell})" + tail)
+    for i, c in enumerate(cp):
+        if i == 0:
+            continue
+        suffix = f" * (X : ℤ[X]) ^ {n - i}" if i < n else ""
+        chs = term_chunks(c, suffix)  # SAME decision as P's literal (syntactic match)
+        if chs is None:
+            head = f"show (({c} : ℤ) : ZMod {ell})"
+            tail = f" = ({c % ell} : ZMod {ell}) from by decide +kernel"
+            if 6 + len(head) + len(tail) <= WIDTH:
+                rw_items.append(head + tail)
+            elif 6 + len(head) <= WIDTH:
+                rw_items.append(head + "\n          " + tail)
+            else:  # the coefficient literal alone nearly fills the line: split the cast
+                rw_items.append(f"show (({c} : ℤ)\n          : ZMod {ell})" + tail)
+        else:
+            # chunked coefficient: the pattern must be syntactically the cast of
+            # NEGATED unit expression (what <- C_neg + map_C leave in the goal);
+            # the inner tokens come from the same builder as P's C (…) literal
+            toks = chunk_expr_tokens(chs)
+            op = "show ((- (" if c < 0 else "show (("
+            cl = ") : ℤ) : ZMod %d)" % ell if c < 0 else " : ℤ) : ZMod %d)" % ell
+            lines = ["      " + op + toks[0]]
+            lines += ["            " + t for t in toks[1:]]
+            lines[-1] += cl
+            lines.append("          = (%d : ZMod %d) from by decide +kernel" % (c % ell, ell))
+            rw_items.append("\n".join(lines))
     P("  rw [" + ",\n      ".join(rw_items) + "]")
     P("  ring_nf")
     P("")
