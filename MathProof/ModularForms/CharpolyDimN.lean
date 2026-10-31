@@ -193,13 +193,12 @@ T-coefficient data `X i m = coeff q^{m+1} (T (f i))` (`hX`).  This is the
 (`CharpolyEngine`) turns the resulting matrix into a literal polynomial. -/
 theorem charpoly_dimN {k : ℤ} {n : ℕ} (hn : 0 < n)
     (hdim : Module.finrank ℂ (CuspForm 𝒮ℒ k) = n)
-    (f : Fin n → CuspForm 𝒮ℒ k) (A X : ℕ → ℕ → ℂ)
-    (hzero : ∀ (i : Fin n) (m : ℕ), 1 ≤ m → m ≤ i.val → (qExpansion 1 (f i)).coeff m = 0)
-    (hone : ∀ i : Fin n, (qExpansion 1 (f i)).coeff (i.val + 1) = 1)
-    (hA : ∀ (i j : ℕ) (_ : i < j) (_ : j < n),
-      (qExpansion 1 (f ⟨i, by omega⟩)).coeff (j + 1) = A i j)
+    (f : ℕ → CuspForm 𝒮ℒ k) (A X : ℕ → ℕ → ℂ)
+    (hzero : ∀ (i m : ℕ), i < n → 1 ≤ m → m ≤ i → (qExpansion 1 (f i)).coeff m = 0)
+    (hone : ∀ i : ℕ, i < n → (qExpansion 1 (f i)).coeff (i + 1) = 1)
+    (hA : ∀ (i j : ℕ), i < j → j < n → (qExpansion 1 (f i)).coeff (j + 1) = A i j)
     (T : CuspForm 𝒮ℒ k →ₗ[ℂ] CuspForm 𝒮ℒ k)
-    (hX : ∀ (i : Fin n) (m : ℕ), m < n → (qExpansion 1 (T (f i))).coeff (m + 1) = X i.val m) :
+    (hX : ∀ (i m : ℕ), i < n → m < n → (qExpansion 1 (T (f i))).coeff (m + 1) = X i m) :
     T.charpoly = Matrix.charpoly
       (Matrix.of fun (j i : Fin n) => coordN A (fun m => X i.val m) j.val) := by
   have hne : Nonempty (Fin n) := ⟨⟨0, hn⟩⟩
@@ -211,10 +210,10 @@ theorem charpoly_dimN {k : ℤ} {n : ℕ} (hn : 0 < n)
     rcases Nat.lt_trichotomy l.val m with h | h | h
     · rw [ite_eq_left h, hA l.val m h hm]
     · rw [ite_eq_right (show ¬((l : ℕ) < m) from by omega), ite_eq_left h, ← h]
-      exact hone ⟨l.val, by omega⟩
+      exact hone l.val (by omega)
     · rw [ite_eq_right (show ¬((l : ℕ) < m) from by omega),
         ite_eq_right (show ¬((l : ℕ) = m) from by omega),
-        hzero l (m + 1) (by omega) (by omega)]
+        hzero l.val (m + 1) l.isLt (by omega) (by omega)]
   -- The elimination lemma: the coordinates of any `g = ∑ γ l • f l` are the
   -- back-substitution of its q-coefficients (ℕ-indexed via the extension `γd`).
   have coord_eq : ∀ (g : CuspForm 𝒮ℒ k) (γ : Fin n → ℂ), (∑ l, γ l • f l) = g →
@@ -227,10 +226,10 @@ theorem charpoly_dimN {k : ℤ} {n : ℕ} (hn : 0 < n)
     have hgsum : ∀ m : ℕ, m < n → (qExpansion 1 g).coeff (m + 1)
         = (∑ x ∈ Finset.range m, A x m * γd x) + γd m := by
       intro m hm
-      have heq := coeff_sum (Finset.univ (α := Fin n)) γ f (m + 1)
+      have heq := coeff_sum (Finset.univ (α := Fin n)) γ (fun i : Fin n => f i.val) (m + 1)
       rw [hg] at heq
       have hpt2 : ∀ l : Fin n,
-          γ l * (qExpansion 1 (f l)).coeff (m + 1)
+          γ l * (qExpansion 1 (f l.val)).coeff (m + 1)
             = (if (l : ℕ) < m then A l.val m * γd l.val
                else if (l : ℕ) = m then γd l.val else 0) := by
         intro l
@@ -271,7 +270,7 @@ theorem charpoly_dimN {k : ℤ} {n : ℕ} (hn : 0 < n)
     intro j
     exact key j.val j (Nat.le_refl _)
   -- Linear independence of the echelon family.
-  have hli : LinearIndependent ℂ f := by
+  have hli : LinearIndependent ℂ (fun i : Fin n => f i.val) := by
     rw [Fintype.linearIndependent_iff]
     intro γ hγ j
     have h0 : (fun p => (qExpansion 1 (0 : CuspForm 𝒮ℒ k)).coeff (p + 1)) = fun _ => (0 : ℂ) := by
@@ -283,16 +282,16 @@ theorem charpoly_dimN {k : ℤ} {n : ℕ} (hn : 0 < n)
   -- The basis, and the matrix entries.
   have hcard : Fintype.card (Fin n) = Module.finrank ℂ (CuspForm 𝒮ℒ k) := by simp [hdim]
   let b := basisOfLinearIndependentOfCardEqFinrank hli hcard
-  have hb : ∀ i : Fin n, b i = f i := by
+  have hb : ∀ i : Fin n, b i = f i.val := by
     intro i
     simp [b]
   rw [← LinearMap.charpoly_toMatrix T b]
   congr 1
   ext j i
   rw [LinearMap.toMatrix_apply, hb i]
-  have hg' : (∑ l, b.repr (T (f i)) l • f l) = T (f i) :=
-    (Finset.sum_congr rfl fun l _ => by rw [hb l]).trans (b.sum_repr (T (f i)))
-  rw [coord_eq (T (f i)) (b.repr (T (f i))) hg' j]
-  exact coordN_congr j.val (fun p hp => hX i p (by omega))
+  have hg' : (∑ l, b.repr (T (f i.val)) l • f l.val) = T (f i.val) :=
+    (Finset.sum_congr rfl fun l _ => by rw [hb l]).trans (b.sum_repr (T (f i.val)))
+  rw [coord_eq (T (f i.val)) (b.repr (T (f i.val))) hg' j]
+  exact coordN_congr j.val (fun p hp => hX i.val p i.isLt (by omega))
 
 end MaedaLevelOne

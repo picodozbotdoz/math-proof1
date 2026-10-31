@@ -184,7 +184,7 @@ under the same budget).
    `x : Fin n → Fin n → ℤ`, statement `T.charpoly = Matrix.charpoly (backsub A X)`).
    Main design task: phrase the induction so the IH closes on truncated data.
    Local `lake env lean` checks; ~300 lines expected.
-2. [ ] **S2 — `tools/gen_maedan.py`.**  Emits one file per dim; byte-identical
+2. [x] **S2 — `tools/gen_maedan.py`.** (done 2026-10-31: emits dim-6 byte-identically with JSON/probe regression asserts; the emitted MaedaDim6Weights.lean does NOT compile yet — 66 errors, S3's work; see research/iteration20/S3-handoff.md)  Emits one file per dim; byte-identical
    re-runs; asserts its recomputed matrices against the JSON; pulls basis
    coefficients via `seqPLc` (N = 2n+1) and all numerals from the JSON.
 3. [ ] **S3 — dim 6 first** (`MaedaDim6Weights.lean`): local `lake env lean`
