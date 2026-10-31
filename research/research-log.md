@@ -1401,3 +1401,17 @@ code that fails the real build — the pinned source lives at
 `.lake/packages/mathlib` and is the only valid grep target; local
 `lake env lean <file>` reproduces lake semantics exactly and beats Modal
 round trips for this class of error.
+
+## Merge to master + CI fix (2026-10-31, closes the 18b cycle)
+
+* `dev/i18-refactor-tauCeti-rule` fast-forwarded into `master`; the three
+  `impl/blueprint/*` branches merged via `integration/blueprint-wave`
+  (union-resolved registration files).  Combined light build green
+  (8107 jobs) before the push; master at `b5d033e`, worktrees removed.
+* CI fix `46f4e4d`: dropped the `docgen-action` step — it re-ran the whole
+  build a second time and built doc-gen4 + Mathlib **from source** (30+ min
+  per push), and its deploy would overwrite the hand-maintained `docs/`
+  Pages site.  CI is now the single `lean-action` step (~2 min: Mathlib
+  oleans from the CDN cache, project targets only); the Pages site remains
+  the branch-deployed `docs/` folder.  The leftover docgen run on `b5d033e`
+  was cancelled in the Actions UI.

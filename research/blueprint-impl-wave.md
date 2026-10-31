@@ -1,4 +1,4 @@
-# Blueprint implementation wave — tracking (2026-10-31)
+# Blueprint implementation wave — tracking (2026-10-31, CLOSED)
 
 Operator instruction (`AGENT_NEW_INSTRUCTIONS_1.md`): implement the blueprints
 from `dev/blueprint` (`blueprint/` directory) as branches
@@ -6,13 +6,24 @@ from `dev/blueprint` (`blueprint/` directory) as branches
 TauCeti coding rules.  One git worktree per item (outside the main tree, so
 `lean_check`'s untracked-file overlay never sees them).
 
-| branch | worktree | blueprint | status |
-|---|---|---|---|
-| `impl/blueprint/dedekind-frobenius` | `~/claude-workdir/wt-dedekind-frobenius` | `dedekind-frobenius/BLUEPRINT.md` §4 stages 1–2 | **committed `f54534a`**, `MaedaPermCriterion.lean` (118 lines) builds clean on Modal (linters on, audit-clean); registered in root/defaultTargets/CI |
-| `impl/blueprint/hecke-algebra-upgrade` | `~/claude-workdir/wt-hecke-algebra-upgrade` | `hecke-algebra-upgrade/BLUEPRINT.md` | **landed+verified**: `HeckeAlgebraQT2.lean` — `minpoly_eq_charpoly_of_irreducible_charpoly` + `exists_aeval_of_commute_of_irreducible_charpoly` (generic; via T₂-cyclicity/Bézout instead of the blueprint's Module-descent).  Modal build clean (0 errors / 0 warnings).  Two fix rounds: (1) section-variable restructure + pin-correct `exists_ne`; (2) the API-grep had targeted Mathlib **master@rc2** instead of the pinned rc1 — `IsOneApplyEqSelf`/`IsMulApplyEqComp` don't exist at the pin, reverted to `Module.End.one_apply`/`mul_apply`.  **Lesson: grep the pinned source at `.lake/packages/mathlib`, never a checkout of another ref.**  `HeckeCommute.lean` = open TODO (needs general `T_m`) |
-| `impl/blueprint/iteration19-maeda-generic` | `~/claude-workdir/wt-iteration19-maeda-generic` | `iteration19-maeda-generic/BLUEPRINT.md` §2–3 (engines only; generated weight files later) | committed `c37db53`: `CharpolyEngine.lean` (47 lines, `charpoly_of_eval_eq`) + `RabinCert.lean` (769 lines) — **`irreducible_of_rabin` fully proved** (blueprint's main risk void: `Irreducible.natDegree_dvd_iff_dvd_X_pow_card_pow_sub_X` + converse already at the pin, `FieldTheory/Finite/Extension.lean`); packaged `irreducible_of_rabin_cert` / `irreducible_of_rabin_int` for the generator; k=72 smoke decides [propext]-only.  Modal build OK exit 0; 12 `show`-tactic style warnings → fix loop in flight |
+**Status: complete.**  All three branches landed, were Modal-verified
+(linters on), and are **merged into `master`** (`b5d033e`, via the
+`integration/blueprint-wave` branch with union-resolved registration files;
+the combined light build passes locally, 8107 jobs).  The worktrees are
+removed and the integration branch deleted; the three `impl/blueprint/*`
+branches remain pushed on GitHub for reference.  Follow-up CI fix: `46f4e4d`
+removed the docgen-action step (it rebuilt doc-gen4 + Mathlib from source and
+risked clobbering the hand-maintained `docs/` Pages site) — CI is now the
+single lean-action step (~2 min, project targets only, Mathlib oleans from
+the CDN cache); see the workflow file's NOTE comment.
 
-## Findings so far (dedekind-frobenius)
+| branch | blueprint | result (merged commits) |
+|---|---|---|
+| `impl/blueprint/dedekind-frobenius` | `dedekind-frobenius/BLUEPRINT.md` §4 stages 1–2 | `MaedaPermCriterion.lean` (118 lines): parity finish `eq_top_of_sup_alternating_of_odd`, the `JordanFor` hypothesis interface, the `FrobHasCycleType` Dedekind interface.  Built clean on Modal; registered in root/defaultTargets/CI |
+| `impl/blueprint/hecke-algebra-upgrade` | `hecke-algebra-upgrade/BLUEPRINT.md` | `HeckeAlgebraQT2.lean`: `minpoly_eq_charpoly_of_irreducible_charpoly` + `exists_aeval_of_commute_of_irreducible_charpoly` (generic over endomorphisms; proved via T₂-cyclicity/Bézout instead of the blueprint's Module-descent).  Two fix rounds before the clean Modal build: (1) section-variable restructure + pin-correct root `exists_ne`; (2) the API-grep had targeted Mathlib **master@rc2** instead of the pinned rc1 — `IsOneApplyEqSelf`/`IsMulApplyEqComp` don't exist at the pin, reverted to `Module.End.one_apply`/`Module.End.mul_apply` (`End.lean:56/59`).  **Lesson: grep the pinned source at `.lake/packages/mathlib`, never a checkout of another ref; `lake env lean <file>` reproduces lake semantics locally and beats Modal round trips for this error class.**  `HeckeCommute.lean` = open TODO (needs general `T_m`) |
+| `impl/blueprint/iteration19-maeda-generic` | `iteration19-maeda-generic/BLUEPRINT.md` §2–3 (engines only) | `CharpolyEngine.lean` (47 lines, `charpoly_of_eval_eq`) + `RabinCert.lean` (769 lines) — **`irreducible_of_rabin` fully proved** (the blueprint's main risk was void: `Irreducible.natDegree_dvd_iff_dvd_X_pow_card_pow_sub_X` ± converse already at the pin, `FieldTheory/Finite/Extension.lean`); packaged `irreducible_of_rabin_cert` / `irreducible_of_rabin_int` for the generator; k=72 smoke decides [propext]-only, Modal build warning-free (14 `show`-tactic style warnings fixed with `change`) |
+
+## Findings (dedekind-frobenius)
 
 * **The blueprint's §1 variant is false.**  "Transitive + transposition +
   p-cycle (`p ≤ n−3`) ⟹ Sₙ" fails: `S₃ ≀ S₂` in `S₆` (setwise stabilizer of
@@ -34,14 +45,21 @@ TauCeti coding rules.  One git worktree per item (outside the main tree, so
   `Equiv.Perm.cycleType/cycleType_conj`, `Polynomial.Gal.galActionHom`,
   `Polynomial.Gal.splits_ℚ_ℂ`.
 
-## Open
+## Open (future cycles, not this wave)
 
-* Stages 3–4 of the dedekind blueprint (Dedekind's theorem proper; Jordan's
-  primitive prime-cycle theorem) — future cycles; the interfaces
-  (`FrobHasCycleType`, corrected `JordanFor`) are now in place to receive them.
-* Verification: all three branches pass `tools/modal_run.sh --file` per new
-  module (linters on) and are pushed (dedekind `f54534a`, iteration19
-  `3de75de`, hecke `5c56cbe`); GitHub CI (lean-action + docgen) runs on each.
-* Next main-loop work (not this wave): Iteration 19 generated weight files
-  (per the RabinCert report's exact call list), `HeckeCommute.lean`,
-  Dedekind stages 3–4.
+* Iteration 19 generated weight files: per weight `f̄ : List ℤ` (charpoly
+  coeffs mod `ℓ`), `n = dim S_k`, fuel `F` with `ℓ ^ n < 2 ^ F`:
+  `hmon`/`hnd` by `simp only [RabinCert.toPoly]; monicity!` /
+  `compute_degree!`; `h1 : zpxw ℓ f̄ (bitsOf F (ℓ ^ n)) [1] = [0, 1]` by
+  `decide +kernel`; per prime `q ∣ n`, `h2 q : ∃ w, zpgcd ℓ W f̄
+  (zpxwsubX ℓ f̄ F (ℓ ^ (n / q))) = [1]` as `⟨W, by decide +kernel⟩`
+  (`W ≈ f̄.length + 4`); then `RabinCert.irreducible_of_rabin_int`.  Needs
+  `tools/gen_maedan.py` (byte-identical re-runs) + `MaedaCertC.seqPLc`
+  basis data + τ through 50 (dim ≤ 10 needs `tauTable` ≤ 50; 21 verified).
+* `HeckeCommute.lean` (general `T_m`, coefficient formula, q-expansion
+  injectivity) — unlocks `exists_aeval_of_commute_of_irreducible_charpoly`
+  for the level-one Hecke algebra, upgrading all Maeda statements to
+  `Tₙ ∈ ℚ[T₂]`.
+* Dedekind stages 3–4: Dedekind's theorem proper (discharges
+  `FrobHasCycleType`) and Jordan's primitive prime-cycle theorem
+  (discharges a *corrected* `JordanFor`).
