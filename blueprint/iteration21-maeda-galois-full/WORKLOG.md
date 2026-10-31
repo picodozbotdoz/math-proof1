@@ -116,3 +116,35 @@ density 1/(2(n-2)!) of transposition primes).  Certificate shape per weight:
   hbar(r_i) != 0  => cycleType {2} (a swap; Mathlib isSwap_iff_cycleType:
   IsSwap <-> cycleType = {2} — fixed points do not appear in cycleType).
 Both give q-bar squarefree (gcd(P,P')=1 re-derived), hence ell ∤ Res(q,q').
+
+### 2026-10-31 (late) — JordanPrimitive.lean COMPLETE: the (n-1)-cycle + swap finish
+
+`MathProof/ModularForms/JordanPrimitive.lean` (218 lines, light, compiles clean
+locally, zero warnings): 
+* `MaedaGalois.exists_pow_eq_of_isCycle` — within a cycle's support, every
+  point is an iterate of any other (via `SameCycle.exists_pow_eq'`).
+* `MaedaGalois.isPreprimitive_of_isPretransitive_of_cycleType_mem` — a
+  pretransitive subgroup of Perm(alpha) (card alpha = n >= 3) containing a
+  permutation of cycleType {n-1} is PREPRIMITIVE.  Block argument: for a
+  block B, either g•B = B (B is a union of g-orbits; if it meets the
+  (n-1)-support it contains it, and the translate h^-1•B containing pt cannot
+  be disjoint from B, so pt in B and B = univ; else B subset {pt}) or
+  g•B is disjoint from B (pt lies in NO g^k-translate; the translates cover
+  the support; the translate containing pt is disjoint from all of them,
+  hence is the singleton {pt}).
+* `MaedaGalois.eq_top_of_isPretransitive_of_cycleType_of_isSwap_mem` — the
+  S_n finish through Mathlib's
+  `Equiv.Perm.subgroup_eq_top_of_isPreprimitive_of_isSwap_mem`.
+
+Gotchas: `MulAction.IsPreprimitive` is a class extending IsPretransitive —
+construct with `{ toIsPretransitive := ..., isTrivialBlock_of_isBlock := ... }`;
+`IsBlock`'s binders are named g1/g2; pointwise set-smul needs
+`open scoped Pointwise`; the subgroup-action smul is NOT syntactically the
+Perm-coe smul (one_smul is a field, not rfl — un-ascribe cardinality lemmas
+and rewrite); mem_erase's IFF is (ne AND mem) shaped; IsBlock/IsTrivialBlock
+API: `Set.eq_empty_iff_forall_notMem`, `Set.disjoint_of_subset_right`,
+`Set.mem_smul_set` (Iff.rfl).
+
+Math note: cycleType records only NONTRIVIAL cycles, so the certificate
+targets are `FrobHasCycleType q {n-1}` and `FrobHasCycleType q {2}` (the
+latter is exactly IsSwap by `isSwap_iff_cycleType`).
