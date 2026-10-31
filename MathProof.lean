@@ -45,5 +45,13 @@ import MathProof.ModularForms.MaedaDim7Weights
 import MathProof.ModularForms.MaedaDim8Weights
 import MathProof.ModularForms.MaedaDim9Weights
 import MathProof.ModularForms.MaedaDim10Weights
+import MathProof.ModularForms.FrobeniusCycleType
+import MathProof.ModularForms.JordanPrimitive
+import MathProof.ModularForms.MaedaGaloisFull
+import MathProof.ModularForms.MaedaGaloisDim6Weights
+import MathProof.ModularForms.MaedaGaloisDim7Weights
+import MathProof.ModularForms.MaedaGaloisDim8Weights
+import MathProof.ModularForms.MaedaGaloisDim9Weights
+import MathProof.ModularForms.MaedaGaloisDim10Weights
 -- MathProof.AxCheck is also opt-in: it imports LehmerMod (heavy) to audit it.
 -- import MathProof.AxCheck

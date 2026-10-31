@@ -97,9 +97,14 @@ Iteration 20 (`CharpolyDimN.lean` + `CharpolyEngine` determinant interpolation
 weights `72 ≤ k ≤ 134` with `6 ≤ dim S_k ≤ 10` (`MaedaDim{6..10}Weights.lean`,
 all light modules)
 (`MaedaWeightK.charpoly_T2`, `MaedaWeightK.maeda`).  The weights with
-`dim S_k ≤ 5` additionally carry the **full symmetric Galois group**
-(`S₃`, `S₄` and `S₅` for the cubic, quartic and
-quintic weights: `MaedaGalois.maeda_galoisK`).  The quintic `S₅` criterion
+`dim S_k ≤ 5` carry the **full symmetric Galois group** (`S₃`, `S₄` and `S₅` for
+the cubic, quartic and quintic weights: `MaedaGalois.maeda_galoisK`), and
+Iteration 21 extends this to every weight `72 ≤ k ≤ 134`
+(`MaedaGaloisDim{6..10}Weights.lean`, `MaedaWeightK.maeda_galois_full`): Dedekind's
+theorem in cycle-type form (`FrobeniusCycleType.lean`, through Mathlib's
+`IsArithFrobAt` on the root order) turns a factorization mod `ℓ₁` into an
+`(n−1)`-cycle and one mod `ℓ₂` into a transposition, and `JordanPrimitive.lean`
+gives `Sₙ`.  The quintic `S₅` criterion
 (`galActionHom_bijective_of_quintic`: non-square discriminant + rootless `F₂₀`
 sextic resolvent) rests on degree-24 polynomial identities in the five roots
 that are out of reach for `ring`; they are certified instead by the kernel on
@@ -193,7 +198,7 @@ MathProof/Tau/Bridge.lean       # (qExpansion Δ).coeff n = τ(n)
 MathProof/ModularForms/Weight12.lean       # 691 • E₁₂ = 441 • E₄³ + 250 • E₆²
 MathProof/ModularForms/EigenLevelOne.lean  # Mordell + Lehmer for any rank-one S_k
 MathProof/ModularForms/LehmerWeight*.lean  # weights 16–26: congruences, sieves, initial segments
-MathProof/ModularForms/Maeda*.lean         # Maeda's conjecture (irreducibility) for 2 ≤ dim S_k ≤ 10 (24–134); Galois S₂…S₅ for dim ≤ 5
+MathProof/ModularForms/Maeda*.lean         # Maeda's conjecture for 2 ≤ dim S_k ≤ 10 (weights 24–134): irreducibility and full Galois group Sₙ
 MathProof/ModularForms/Poly5.lean          # kernel-checkable sparse polynomials in 5 variables
 MathProof/ModularForms/Congruence691.lean  # τ(n) ≡ σ₁₁(n) mod 691
 research/research-log.md        # the research loop log

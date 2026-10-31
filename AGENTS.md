@@ -276,6 +276,17 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
 - `MathProof/ModularForms/CharpolyDimN.lean` (light) — the dimension-generic
   echelon extraction `charpoly_dimN` (ℕ-indexed basis hypotheses; the
   back-substitution matrix of any endomorphism from q-coefficient tables).
+- `MathProof/ModularForms/FrobeniusCycleType.lean` (light) — Dedekind's theorem in
+  cycle-type form, `frob_cycleType_of_factorization`: `IsArithFrobAt` on the root
+  order `ℤ[x₁…xₙ]` + the finite-field orbit lemma `cycleType_of_frobenius_roots`.
+  `JordanPrimitive.lean` (light) — transitive + `(n−1)`-cycle ⟹ primitive; with a
+  swap, `Sₙ`.  `MaedaGaloisFull.lean` (light) — `bijective_of_frobenius`,
+  `cycleType_of_cert`, Bézout Rabin test `irreducible_of_rabin_bezout`.
+  `MaedaGaloisDim{6..10}Weights.lean` (light, generated — `tools/gen_galoisfull.py`
+  from `research/iteration21/data/galoisfull_certs.json`, `--check` for
+  byte-identical regeneration) — `MaedaWeightK.maeda_galois_full` for the 30 weights
+  `72 ≤ k ≤ 134`; Modal 70–80 s / ≤ 7.5 GiB per file on a warm cache.
+  `MaedaGaloisFullAxCheck.lean` — opt-in `#print axioms` audit, not in the root.
 - `MathProof/ModularForms/MaedaDim{6,7,8,9,10}Weights.lean` (light,
   generated — `tools/gen_maedan.py`, never hand-edit; `--check` verifies
   byte-identical regeneration) — Maeda irreducibility for the 30 weights
@@ -341,6 +352,9 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   the `.olean`s come out identical.  Put new infrastructure in a new module
   (as `HornerCert`, `MaedaCertC`), and batch unavoidable ancestor edits with
   an approved chain rebuild.
+- `RabinCert.zpgcd` inverts by a Fermat power structural in `ℓ` (`zspow`): the kernel
+  recursion depth grows with `ℓ` and overflows near `ℓ ≈ 5·10⁶`.  For large primes use
+  Bézout witnesses (`MaedaGaloisFull.irreducible_of_rabin_bezout`), never `maxRecDepth`.
 - Lakefile options: `relaxedAutoImplicit = false`, `linter.mathlibStandardSet = true`,
   Mathlib-style copyright headers disabled. No `autoImplicit` tricks.
 - `decide` / `norm_num [bernoulli]` time out on Mathlib's well-founded Bernoulli

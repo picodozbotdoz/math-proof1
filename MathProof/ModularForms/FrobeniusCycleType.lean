@@ -17,6 +17,8 @@ import Mathlib.FieldTheory.PolynomialGaloisGroup
 import Mathlib.RingTheory.Frobenius
 import Mathlib.RingTheory.IntegralClosure.IntegrallyClosed
 import Mathlib.Algebra.GCDMonoid.IntegrallyClosed
+import Mathlib.Data.ZMod.QuotientRing
+import Mathlib.Algebra.Algebra.ZMod
 import MathProof.ModularForms.MaedaPermCriterion
 
 /-!
@@ -29,25 +31,20 @@ whose permutation of the complex roots has cycle type equal to the multiset
 of the factor degrees — Dedekind's theorem in the cycle-type form the Maeda
 `Sₙ` program needs.
 
-The proof is deliberately elementary (no ideal theory in number fields, no
-decomposition groups):
+The route (`frob_cycleType_of_factorization`):
 
-* `exists_frobenius_perm` (the *golden lemma*, abstract): if a finite group
-  `G` acts on a finite-dimensional `F_ℓ`-algebra `A` by algebra automorphisms
-  with `#G = dim A`, elements `y i` with pairwise-unit differences and `G`
-  acting freely through them, then some `τ : G` and some hom `χ` satisfy
-  `χ (τ • y i) = (χ (y i)) ^ ℓ` for all `i`.  Distinct algebra homs into a
-  field are linearly independent (`linearIndependent_algHom_toLinearMap`,
-  Dedekind), giving `#Hom ≤ dim`; freeness gives `#G ≤ #Hom`; the Frobenius
-  postcomposition permutes the single `G`-orbit of homs.
-* The instantiation replaces `A` by `ℤ[x₁,…,xₙ] ⊗ (ZMod ℓ)` for the roots
-  `x i` of `q` in its splitting field (a finite free `ℤ`-module of rank
-  `[K : ℚ] = #Gal`); the unit differences come from a Bézout certificate
-  against `resultant q q.derivative` and `resultant_eq_prod_eval`.
-* `frob_cycleType_of_factorization`: the packaged theorem — from a
-  reflected factorization `q̄ = ∏ (X − C rᵢ) * ḡ` with `ḡ` irreducible of
-  degree `≥ 2` and the `rᵢ` distinct, conclude
-  `MaedaGalois.FrobHasCycleType q (replicate s 1 + {deg ḡ})`.
+* `IsArithFrobAt.exists_of_isInvariant` (Mathlib) gives a Frobenius `σ` at a
+  maximal ideal `𝔪` over `ℓ` of the root order `O = ℤ[x₁,…,xₙ]` inside the
+  splitting field: the group acts on `O`, and `ℤ` is the invariant ring.
+* Separability of the reduction makes the reduced roots distinct in `O ⧸ 𝔪`, so
+  `σ` acts on them as the `ℓ`-power map.
+* `cycleType_of_frobenius_roots`: such a permutation fixes the roots of the
+  linear factors and is a single cycle on the roots of the irreducible factor
+  (its orbits are bounded below through `FiniteField.orderOf_frobeniusAlgHom`).
+
+The earlier sections (`exists_frobenius_perm`, a Dedekind-count proof of the
+Frobenius step, and `resultant_ne_zero_of_linear_mul_irreducible`) are not used
+by this route.
 
 Everything here is light; nothing is an ancestor of the heavy
 `MaedaGalois5Defs` chain.
@@ -143,7 +140,7 @@ theorem nonempty_algHom {A : Type*} [CommRing A] [Nontrivial A]
 /-- The hom set `A →ₐ[ZMod ℓ] F̄` from a finite algebra is finite: each `χ a`
 is a root of `minpoly (ZMod ℓ) a`, and there are only finitely many roots. -/
 instance (priority := 100) finite_algHom {A : Type*} [CommRing A] [Nontrivial A]
-    [Algebra (ZMod ℓ) A] [Module.Finite (ZMod ℓ) A] [Fintype A] :
+    [Algebra (ZMod ℓ) A] [Module.Finite (ZMod ℓ) A] [Finite A] :
     Finite (A →ₐ[ZMod ℓ] F̄) := by
   classical
   have hroot : ∀ (χ : A →ₐ[ZMod ℓ] F̄) (a : A),
@@ -171,7 +168,7 @@ because the differences are units), the Dedekind count bounds `#homs ≤ #G`,
 so the orbit of any `χ₀` is everything, and the Frobenius postcomposition
 `χ ↦ (· ^ ℓ) ∘ χ` commutes with the `G`-action. -/
 theorem exists_frobenius_perm {A : Type*} [CommRing A] [Nontrivial A]
-    [Algebra (ZMod ℓ) A] [Module.Finite (ZMod ℓ) A] [Fintype A]
+    [Algebra (ZMod ℓ) A] [Module.Finite (ZMod ℓ) A] [Finite A]
     {G : Type*} [Group G] [Fintype G]
     (act : G →* (A ≃ₐ[ZMod ℓ] A)) (y : Fin n → A)
     (hperm : ∀ g : G, ∀ i, ∃ j, act g (y i) = y j)
@@ -399,6 +396,174 @@ theorem resultant_ne_zero_of_linear_mul_irreducible
 
 end Certificate
 
+/-! ### The Frobenius orbits on the roots of a factored reduction
+
+The finite-field half of Dedekind's theorem, stated for an arbitrary field `F`
+over `ZMod ℓ` and an arbitrary index type: a permutation of a separable root
+family that acts as the `ℓ`-power map fixes the roots of the linear factors and
+is one cycle on the roots of the irreducible factor. -/
+
+section Orbit
+
+variable {ℓ : ℕ} [Fact ℓ.Prime]
+
+/-- A root `α` of an irreducible `gb` over `ZMod ℓ` satisfying `α ^ ℓ ^ k = α`
+forces `deg gb ≤ k`: the root of `gb` in `AdjoinRoot gb` satisfies the same
+identity, so the `k`-th power of the Frobenius of that field is trivial, and the
+Frobenius has order `deg gb` (`FiniteField.orderOf_frobeniusAlgHom`). -/
+theorem natDegree_le_of_pow_eq {F : Type*} [Field F] [Algebra (ZMod ℓ) F]
+    {gb : (ZMod ℓ)[X]} (hgm : gb.Monic) (hirr : Irreducible gb) {α : F}
+    (hα : aeval α gb = 0) {k : ℕ} (hk : 0 < k) (hpow : α ^ ℓ ^ k = α) :
+    gb.natDegree ≤ k := by
+  have : Fact (Irreducible gb) := ⟨hirr⟩
+  have hne : gb ≠ 0 := hirr.ne_zero
+  have hfin : Module.Finite (ZMod ℓ) (AdjoinRoot gb) := (AdjoinRoot.powerBasis hne).finite
+  have : Finite (AdjoinRoot gb) := Module.finite_of_finite (ZMod ℓ)
+  have hdvd : gb ∣ X ^ ℓ ^ k - X := by
+    rw [minpoly.eq_of_irreducible_of_monic hirr hα hgm]
+    exact minpoly.dvd _ _ (by simp [hpow])
+  have hθ : AdjoinRoot.root gb ^ ℓ ^ k = AdjoinRoot.root gb := by
+    obtain ⟨c, hc⟩ := hdvd
+    have h0 : aeval (AdjoinRoot.root gb) (X ^ ℓ ^ k - X : (ZMod ℓ)[X]) = 0 := by
+      rw [hc, map_mul, AdjoinRoot.aeval_eq, AdjoinRoot.mk_self, zero_mul]
+    simpa [sub_eq_zero] using h0
+  have hone : FiniteField.frobeniusAlgHom (ZMod ℓ) (AdjoinRoot gb) ^ k = 1 := by
+    refine AdjoinRoot.algHom_ext ?_
+    rw [AlgHom.coe_pow, FiniteField.coe_frobeniusAlgHom, pow_iterate, ZMod.card]
+    exact hθ
+  have hle := Nat.le_of_dvd hk (orderOf_dvd_of_pow_eq_one hone)
+  rwa [FiniteField.orderOf_frobeniusAlgHom, (AdjoinRoot.powerBasis hne).finrank,
+    AdjoinRoot.powerBasis_dim] at hle
+
+/-- **The Frobenius orbits.**  Let `y` be an injective family in a field `F` over
+`ZMod ℓ` with `∏ᵢ (X - y i)` the image of `∏_{r ∈ rs} (X - r) * gb`, `gb` monic
+irreducible of degree `≥ 2`.  A permutation acting on the family as the `ℓ`-power
+map has cycle type exactly `{deg gb}`: it fixes the roots coming from `rs`, and
+any cycle through a root of `gb` has length `≥ deg gb` by
+`natDegree_le_of_pow_eq`, hence exhausts those `≤ deg gb` roots. -/
+theorem cycleType_of_frobenius_roots {ι F : Type*} [Fintype ι] [DecidableEq ι] [Field F]
+    [Algebra (ZMod ℓ) F] (rs : Finset (ZMod ℓ)) {gb : (ZMod ℓ)[X]} (hgm : gb.Monic)
+    (hirr : Irreducible gb) (h2 : 2 ≤ gb.natDegree) (y : ι → F)
+    (hy : Function.Injective y) (π : Equiv.Perm ι) (hπ : ∀ i, y (π i) = y i ^ ℓ)
+    (hprod : ∏ i, (X - C (y i)) =
+      ((∏ r ∈ rs, (X - C r)) * gb).map (algebraMap (ZMod ℓ) F)) :
+    π.cycleType = {gb.natDegree} := by
+  classical
+  have hiter : ∀ (k : ℕ) (i : ι), y ((π ^ k) i) = y i ^ ℓ ^ k := by
+    intro k i
+    induction k with
+    | zero => simp
+    | succ k ih => rw [pow_succ', Equiv.Perm.mul_apply, hπ, ih, ← pow_mul, pow_succ]
+  -- every `y i` is a root of a linear factor or of `gb`
+  have hroot : ∀ i, (∃ r ∈ rs, y i = algebraMap (ZMod ℓ) F r) ∨ aeval (y i) gb = 0 := by
+    intro i
+    have h0 : eval (y i) (∏ j, (X - C (y j))) = 0 := by
+      rw [eval_prod]
+      exact Finset.prod_eq_zero (Finset.mem_univ i) (by simp)
+    rw [hprod, eval_map_algebraMap, map_mul, map_prod, mul_eq_zero,
+      Finset.prod_eq_zero_iff] at h0
+    rcases h0 with ⟨r, hr, h⟩ | h
+    · refine Or.inl ⟨r, hr, ?_⟩
+      simpa [sub_eq_zero] using h
+    · exact Or.inr h
+  -- the linear roots are fixed
+  have hfix : ∀ i, (∃ r ∈ rs, y i = algebraMap (ZMod ℓ) F r) → π i = i := by
+    rintro i ⟨r, -, hr⟩
+    refine hy ?_
+    rw [hπ, hr, ← map_pow, ZMod.pow_card]
+  -- at most `deg gb` indices are roots of `gb`
+  set S : Finset ι := Finset.univ.filter fun i => aeval (y i) gb = 0 with hS
+  have hScard : S.card ≤ gb.natDegree := by
+    have hsub : S.image y ⊆ ((gb.map (algebraMap (ZMod ℓ) F)).roots).toFinset := by
+      intro a ha
+      obtain ⟨i, hi, rfl⟩ := Finset.mem_image.mp ha
+      have hi' : aeval (y i) gb = 0 := (Finset.mem_filter.mp hi).2
+      refine Multiset.mem_toFinset.mpr (mem_roots'.mpr ⟨(hgm.map _).ne_zero, ?_⟩)
+      rwa [IsRoot.def, eval_map_algebraMap]
+    calc S.card = (S.image y).card := (Finset.card_image_of_injective _ hy).symm
+      _ ≤ _ := Finset.card_le_card hsub
+      _ ≤ _ := Multiset.toFinset_card_le _
+      _ ≤ _ := card_roots' _
+      _ ≤ gb.natDegree := natDegree_map_le
+  have hsupp : π.support ⊆ S := by
+    intro i hi
+    refine Finset.mem_filter.mpr ⟨Finset.mem_univ i, ?_⟩
+    exact (hroot i).resolve_left fun h => Equiv.Perm.mem_support.mp hi (hfix i h)
+  -- the degree count: there are more indices than linear factors
+  have hcard : Fintype.card ι = rs.card + gb.natDegree := by
+    have hL : (∏ r ∈ rs, (X - C r) : (ZMod ℓ)[X]).Monic :=
+      monic_prod_of_monic _ _ fun r _ => monic_X_sub_C r
+    have h1 := congrArg natDegree hprod
+    rw [natDegree_prod_of_monic _ _ fun j _ => monic_X_sub_C (y j),
+      (hL.mul hgm).natDegree_map, hL.natDegree_mul hgm,
+      natDegree_prod_of_monic _ _ fun r _ => monic_X_sub_C r] at h1
+    simpa using h1
+  obtain ⟨i₀, hi₀⟩ : ∃ i, ¬ ∃ r ∈ rs, y i = algebraMap (ZMod ℓ) F r := by
+    by_contra hall
+    push Not at hall
+    have hsub : Finset.univ.image y ⊆ rs.image (algebraMap (ZMod ℓ) F) := by
+      intro a ha
+      obtain ⟨i, -, rfl⟩ := Finset.mem_image.mp ha
+      obtain ⟨r, hr, h⟩ := hall i
+      exact Finset.mem_image.mpr ⟨r, hr, h.symm⟩
+    have hle : Fintype.card ι ≤ rs.card := by
+      calc Fintype.card ι = (Finset.univ.image y).card :=
+            (Finset.card_image_of_injective _ hy).symm
+        _ ≤ (rs.image (algebraMap (ZMod ℓ) F)).card := Finset.card_le_card hsub
+        _ ≤ rs.card := Finset.card_image_le
+    omega
+  have hα : aeval (y i₀) gb = 0 := (hroot i₀).resolve_left hi₀
+  -- a return to `i₀` after `k > 0` steps takes at least `deg gb` steps
+  have hret : ∀ k, 0 < k → (π ^ k) i₀ = i₀ → gb.natDegree ≤ k := by
+    intro k hk h
+    refine natDegree_le_of_pow_eq hgm hirr hα hk ?_
+    rw [← hiter, h]
+  have hne : π i₀ ≠ i₀ := by
+    intro h
+    have := hret 1 one_pos (by simpa using h)
+    omega
+  -- the cycle through `i₀` is everything
+  have hc := Equiv.Perm.isCycle_cycleOf π hne
+  set c := π.cycleOf i₀ with hcdef
+  have hmge : gb.natDegree ≤ c.support.card := by
+    refine hret _ (by have := hc.two_le_card_support; omega) ?_
+    rw [← Equiv.Perm.cycleOf_pow_apply_self, ← hcdef, ← hc.orderOf, pow_orderOf_eq_one,
+      Equiv.Perm.one_apply]
+  have hsubs : c.support ⊆ π.support := Equiv.Perm.support_cycleOf_le π i₀
+  have hsame : c.support = π.support :=
+    Finset.eq_of_subset_of_card_le hsubs
+      ((Finset.card_le_card hsupp).trans (hScard.trans hmge))
+  have hπc : π = c := by
+    ext a
+    by_cases ha : a ∈ π.support
+    · have hsc := (Equiv.Perm.mem_support_cycleOf_iff.mp (hsame ▸ ha)).1
+      exact hsc.cycleOf_apply.symm
+    · have h1 : π a = a := Equiv.Perm.notMem_support.mp ha
+      have h2 : c a = a := Equiv.Perm.notMem_support.mp (hsame ▸ ha)
+      rw [h1, h2]
+  have hcard' : c.support.card = gb.natDegree :=
+    le_antisymm (by rw [hsame]; exact (Finset.card_le_card hsupp).trans hScard) hmge
+  rw [hπc, hc.cycleType, hcard']
+
+/-- The reduction `∏_{r ∈ rs} (X - r) * gb` is separable when `deg gb ≥ 2`: `gb` is
+irreducible over the perfect field `ZMod ℓ`, hence has no root, and the linear
+factors are distinct. -/
+theorem separable_prod_mul {rs : Finset (ZMod ℓ)} {gb : (ZMod ℓ)[X]}
+    (hirr : Irreducible gb) (h2 : 2 ≤ gb.natDegree) :
+    ((∏ r ∈ rs, (X - C r)) * gb).Separable := by
+  have hpF : PerfectField (ZMod ℓ) := PerfectRing.toPerfectField (ZMod ℓ) ℓ
+  refine Separable.mul ?_ (hpF.separable_of_irreducible hirr) ?_
+  · exact separable_prod_X_sub_C_iff'.mpr fun a _ b _ h => h
+  · refine IsCoprime.prod_left fun r hr => ?_
+    refine (irreducible_X_sub_C r).coprime_iff_not_dvd.mpr ?_
+    rw [dvd_iff_isRoot]
+    intro hroot
+    have hd := degree_eq_one_of_irreducible_of_root hirr hroot
+    have hnat : gb.natDegree = 1 := natDegree_eq_of_degree_eq_some (n := 1) (by rw [hd]; rfl)
+    omega
+
+end Orbit
+
 /-! ### The Dedekind/Frobenius instantiation
 
 Mathlib's `IsArithFrobAt.exists_of_isInvariant` (`Mathlib.RingTheory.Frobenius`)
@@ -516,7 +681,7 @@ noncomputable def toAlgHomInt (σ : (ratOf q).Gal) : splField q →ₐ[ℤ] splF
   map_zero' := smul_zero σ
   map_add' := smul_add σ
   commutes' z := by
-    show σ • (algebraMap ℤ (splField q)) z = (algebraMap ℤ (splField q)) z
+    change σ • (algebraMap ℤ (splField q)) z = (algebraMap ℤ (splField q)) z
     rw [algebraMap_int_apply, smul_eq_coe]
     exact AlgEquiv.commutes _ _
 
@@ -536,7 +701,7 @@ theorem rootOrder_smul_mem (σ : (ratOf q).Gal) (a : rootOrder x) :
       exact hss σ
     · intro y hy
       refine ⟨toAlgHomInt σ⁻¹ y, hss σ⁻¹ y hy, ?_⟩
-      show σ • (σ⁻¹ • y) = y
+      change σ • (σ⁻¹ • y) = y
       have h2 : ((σ * σ⁻¹ : (ratOf q).Gal) • y) = y := by
         rw [mul_inv_cancel, one_smul]
       rwa [mul_smul] at h2
@@ -567,6 +732,20 @@ noncomputable instance instActionRootOrder :
   smul_mul σ _a _b := Subtype.ext (MulSemiringAction.smul_mul σ _ _)
 
 end ActionInst
+
+/-- The `ℚ → K` algebra map is injective (`K` is a field). -/
+private theorem algebraMap_rat_injective :
+    Function.Injective (algebraMap ℚ (splField q)) := by
+  intro a b hab
+  by_contra hne
+  have hd : (a - b : ℚ) ≠ 0 := sub_ne_zero_of_ne hne
+  have h3 : algebraMap ℚ (splField q) (a - b) = 0 := by
+    rw [map_sub, hab, sub_self]
+  have h2 : algebraMap ℚ (splField q) (a - b)
+      * algebraMap ℚ (splField q) (a - b)⁻¹ = 1 := by
+    rw [← map_mul, mul_inv_cancel₀ hd, map_one]
+  rw [h3, zero_mul] at h2
+  exact zero_ne_one h2
 
 section WithAction
 
@@ -609,22 +788,11 @@ theorem isInvariant_rootOrder (hq : q.Monic) (hsep : (ratOf q).Separable) :
     exact hbK σ.val
   rw [hbot, IntermediateField.mem_bot] at hfix
   obtain ⟨k, hk⟩ := hfix
-  have hinj : Function.Injective (algebraMap ℚ (splField q)) := by
-    intro a b hab
-    by_contra hne
-    have hd : (a - b : ℚ) ≠ 0 := sub_ne_zero_of_ne hne
-    have h3 : algebraMap ℚ (splField q) (a - b) = 0 := by
-      rw [map_sub, hab, sub_self]
-    have h2 : algebraMap ℚ (splField q) (a - b)
-        * algebraMap ℚ (splField q) (a - b)⁻¹ = 1 := by
-      rw [← map_mul, mul_inv_cancel₀ hd, map_one]
-    rw [h3, zero_mul] at h2
-    exact zero_ne_one h2
   have hint : IsIntegral ℤ k :=
-    (isIntegral_algHom_iff (IsScalarTower.toAlgHom ℤ ℚ (splField q)) hinj
-      (x := k)).mp
+    (isIntegral_algHom_iff (IsScalarTower.toAlgHom ℤ ℚ (splField q))
+      algebraMap_rat_injective (x := k)).mp
       (show IsIntegral ℤ ((IsScalarTower.toAlgHom ℤ ℚ (splField q)) k) by
-        show IsIntegral ℤ (algebraMap ℚ (splField q) k)
+        change IsIntegral ℤ (algebraMap ℚ (splField q) k)
         rw [hk]
         exact rootOrder_isIntegral hq x b)
   obtain ⟨z, hz⟩ := IsIntegrallyClosed.algebraMap_eq_of_integral hint
@@ -636,6 +804,181 @@ theorem isInvariant_rootOrder (hq : q.Monic) (hsep : (ratOf q).Separable) :
   exact Subtype.val_injective h1
 
 end WithAction
+
+/-! ### A maximal ideal of the root order over `ℓ` -/
+
+section MaxIdeal
+
+variable (x : Fin n ≃ (ratOf q).rootSet (splField q)) {ℓ : ℕ} [Fact ℓ.Prime]
+
+/-- The ideal `ℓ · O` of the root order is proper: `1 / ℓ` is not integral. -/
+theorem span_ell_ne_top (hq : q.Monic) :
+    Ideal.span {(ℓ : rootOrder x)} ≠ (⊤ : Ideal (rootOrder x)) := by
+  intro htop
+  obtain ⟨c, hc⟩ := Ideal.mem_span_singleton'.mp ((Ideal.eq_top_iff_one _).mp htop)
+  have hℓ0 : (ℓ : ℚ) ≠ 0 := Nat.cast_ne_zero.mpr (Fact.out : ℓ.Prime).ne_zero
+  have hK : ((c : rootOrder x) : splField q) * algebraMap ℚ (splField q) (ℓ : ℚ) = 1 := by
+    have h1 := congrArg (algebraMap (rootOrder x) (splField q)) hc
+    rw [map_mul, map_natCast, map_one] at h1
+    rw [map_natCast]
+    exact h1
+  have hcinv : algebraMap ℚ (splField q) (ℓ : ℚ)⁻¹ = ((c : rootOrder x) : splField q) := by
+    rw [map_inv₀]
+    exact (eq_inv_of_mul_eq_one_left hK).symm
+  have hint : IsIntegral ℤ (ℓ : ℚ)⁻¹ :=
+    (isIntegral_algHom_iff (IsScalarTower.toAlgHom ℤ ℚ (splField q))
+      algebraMap_rat_injective).mp
+      (show IsIntegral ℤ (algebraMap ℚ (splField q) (ℓ : ℚ)⁻¹) by
+        rw [hcinv]
+        exact rootOrder_isIntegral hq x c)
+  obtain ⟨z, hz⟩ := IsIntegrallyClosed.algebraMap_eq_of_integral hint
+  have hcon : z * (ℓ : ℤ) = 1 := by
+    have hrw : (z : ℚ) * (ℓ : ℚ) = 1 := by
+      rw [show (z : ℚ) = algebraMap ℤ ℚ z from rfl, hz, inv_mul_cancel₀ hℓ0]
+    exact_mod_cast hrw
+  have hdvd : (ℓ : ℤ) ∣ ((1 : ℕ) : ℤ) := ⟨z, by rw [mul_comm, hcon]; rfl⟩
+  exact (Fact.out : ℓ.Prime).not_dvd_one (Int.natCast_dvd_natCast.mp hdvd)
+
+/-- The quotient by a proper ideal containing `ℓ` has characteristic `ℓ`. -/
+theorem charP_quotient (𝔪 : Ideal (rootOrder x)) (hne : 𝔪 ≠ ⊤)
+    (hℓ : (ℓ : rootOrder x) ∈ 𝔪) : CharP (rootOrder x ⧸ 𝔪) ℓ := by
+  have : Nontrivial (rootOrder x ⧸ 𝔪) := Ideal.Quotient.nontrivial_iff.mpr hne
+  refine (CharP.charP_iff_prime_eq_zero (Fact.out : ℓ.Prime)).mpr ?_
+  rw [← map_natCast (Ideal.Quotient.mk 𝔪)]
+  exact Ideal.Quotient.eq_zero_iff_mem.mpr hℓ
+
+/-- An ideal over `ℓ` contracts to `(ℓ)` in `ℤ`. -/
+theorem comap_eq_span_ell (𝔪 : Ideal (rootOrder x)) (hne : 𝔪 ≠ ⊤)
+    (hℓ : (ℓ : rootOrder x) ∈ 𝔪) :
+    Ideal.comap (algebraMap ℤ (rootOrder x)) 𝔪 = Ideal.span {(ℓ : ℤ)} := by
+  have := charP_quotient x 𝔪 hne hℓ
+  ext a
+  rw [Ideal.mem_comap, ← Ideal.Quotient.eq_zero_iff_mem, Ideal.mem_span_singleton,
+    show Ideal.Quotient.mk 𝔪 (algebraMap ℤ (rootOrder x) a) = ((a : ℤ) : rootOrder x ⧸ 𝔪) by
+      simp,
+    CharP.intCast_eq_zero_iff _ ℓ]
+
+/-- The Frobenius exponent is exactly `ℓ`. -/
+theorem natCard_comap_eq_ell (𝔪 : Ideal (rootOrder x)) (hne : 𝔪 ≠ ⊤)
+    (hℓ : (ℓ : rootOrder x) ∈ 𝔪) :
+    Nat.card (ℤ ⧸ Ideal.comap (algebraMap ℤ (rootOrder x)) 𝔪) = ℓ := by
+  rw [comap_eq_span_ell x 𝔪 hne hℓ,
+    Nat.card_congr (Int.quotientSpanNatEquivZMod ℓ).toEquiv, Nat.card_zmod]
+
+/-- The residue ring over `ℓ` is finite: it is a finite `ℤ`-module killed by `ℓ`. -/
+theorem finite_quotient (hq : q.Monic) (𝔪 : Ideal (rootOrder x)) (hne : 𝔪 ≠ ⊤)
+    (hℓ : (ℓ : rootOrder x) ∈ 𝔪) : Finite (rootOrder x ⧸ 𝔪) := by
+  have := charP_quotient x 𝔪 hne hℓ
+  have : Module.Finite ℤ (rootOrder x) := rootOrder_finite hq x
+  have : Module.Finite ℤ (rootOrder x ⧸ 𝔪) :=
+    Module.Finite.of_surjective (Ideal.Quotient.mkₐ ℤ 𝔪).toLinearMap
+      (Ideal.Quotient.mkₐ_surjective ℤ 𝔪)
+  let _ : Algebra (ZMod ℓ) (rootOrder x ⧸ 𝔪) := ZMod.algebra (rootOrder x ⧸ 𝔪) ℓ
+  have : Module.Finite (ZMod ℓ) (rootOrder x ⧸ 𝔪) :=
+    Module.Finite.of_restrictScalars_finite ℤ (ZMod ℓ) (rootOrder x ⧸ 𝔪)
+  exact Module.finite_of_finite (ZMod ℓ)
+
+end MaxIdeal
+
+/-! ### The roots inside the root order -/
+
+section Roots
+
+variable (x : Fin n ≃ (ratOf q).rootSet (splField q))
+
+/-- A root in the splitting field, as an element of the root order. -/
+noncomputable def rootO (z : (ratOf q).rootSet (splField q)) : rootOrder x :=
+  ⟨z, by
+    have h := rootK_mem x (x.symm z)
+    simpa [rootK] using h⟩
+
+/-- The Galois action on the roots is the action on the root order. -/
+theorem smul_rootO (σ : (ratOf q).Gal) (z : (ratOf q).rootSet (splField q)) :
+    σ • rootO x z = rootO x (σ • z) := rfl
+
+/-- `q` splits over the root order, with the expected roots. -/
+theorem map_eq_prod_rootO (hq : q.Monic) (hsep : (ratOf q).Separable) :
+    q.map (algebraMap ℤ (rootOrder x)) = ∏ z, (X - C (rootO x z)) := by
+  classical
+  refine Polynomial.map_injective (algebraMap (rootOrder x) (splField q))
+    Subtype.val_injective ?_
+  have hQ : (ratOf q).map (algebraMap ℚ (splField q))
+      = q.map (algebraMap ℤ (splField q)) := by
+    rw [map_map, algebraMap_int_eq]
+  have hm : ((ratOf q).map (algebraMap ℚ (splField q))).Monic := (hq.map _).map _
+  have hsplit := (SplittingField.splits (ratOf q))
+  have hnd : ((ratOf q).aroots (splField q)).Nodup := nodup_roots hsep.map
+  rw [map_map, ← IsScalarTower.algebraMap_eq, ← hQ, hsplit.eq_prod_roots_of_monic hm,
+    Polynomial.map_prod]
+  simp only [Polynomial.map_sub, map_X, map_C]
+  refine Eq.trans ?_ (Finset.prod_subtype (p := fun a => a ∈ (ratOf q).rootSet (splField q))
+    ((ratOf q).aroots (splField q)).toFinset (fun a => by rw [rootSet_def]; simp)
+    (fun a => (X - C a : (splField q)[X])))
+  rw [Finset.prod_eq_multiset_prod, Multiset.toFinset_val, Multiset.dedup_eq_self.mpr hnd]
+
+end Roots
+
+/-! ### Dedekind's theorem in cycle-type form -/
+
+section Main
+
+attribute [local instance] Polynomial.Gal.splits_ℚ_ℂ Ideal.Quotient.field
+
+/-- **Dedekind's theorem, cycle-type form.**  If the reduction of a monic `q` with
+separable rational image factors mod `ℓ` as `∏_{r ∈ rs} (X - r) * gb`, with `gb`
+monic irreducible of degree `≥ 2`, then the Galois group of `q` contains an
+element of cycle type `{deg gb}`.  Mathlib's
+`IsArithFrobAt.exists_of_isInvariant` provides the Frobenius `σ` at a maximal
+ideal `𝔪` of the root order over `ℓ`; separability of the reduction makes the
+reduced roots distinct, and `cycleType_of_frobenius_roots` reads off the cycle
+type of the action of `σ` on the complex roots. -/
+theorem frob_cycleType_of_factorization {q : ℤ[X]} (hq : q.Monic)
+    (hsep : (ratOf q).Separable) {ℓ : ℕ} [Fact ℓ.Prime] (rs : Finset (ZMod ℓ))
+    {gb : (ZMod ℓ)[X]} (hgm : gb.Monic) (hirr : Irreducible gb)
+    (h2 : 2 ≤ gb.natDegree)
+    (hfact : q.map (Int.castRingHom (ZMod ℓ)) = (∏ r ∈ rs, (X - C r)) * gb) :
+    MaedaGalois.FrobHasCycleType (ratOf q) {gb.natDegree} := by
+  classical
+  let x := rootsE (q := q) rfl
+  obtain ⟨𝔪, h𝔪, hle⟩ := Ideal.exists_le_maximal _ (span_ell_ne_top (ℓ := ℓ) x hq)
+  have hℓ : (ℓ : rootOrder x) ∈ 𝔪 := hle (Ideal.mem_span_singleton_self _)
+  have hne𝔪 : 𝔪 ≠ ⊤ := h𝔪.ne_top
+  have := h𝔪
+  have : Finite (rootOrder x ⧸ 𝔪) := finite_quotient x hq 𝔪 hne𝔪 hℓ
+  have : CharP (rootOrder x ⧸ 𝔪) ℓ := charP_quotient x 𝔪 hne𝔪 hℓ
+  let _ : Algebra (ZMod ℓ) (rootOrder x ⧸ 𝔪) := ZMod.algebra (rootOrder x ⧸ 𝔪) ℓ
+  have : SMulCommClass (ratOf q).Gal ℤ (rootOrder x) := instSMulCommClassRootOrder x
+  have : Algebra.IsInvariant ℤ (rootOrder x) (ratOf q).Gal := isInvariant_rootOrder x hq hsep
+  obtain ⟨σ, hσ⟩ := IsArithFrobAt.exists_of_isInvariant ℤ (ratOf q).Gal 𝔪
+  have hfrob : ∀ a : rootOrder x, Ideal.Quotient.mk 𝔪 (σ • a) = Ideal.Quotient.mk 𝔪 a ^ ℓ := by
+    intro a
+    have h := AlgHom.IsArithFrobAt.mk_apply hσ a
+    rw [show Nat.card (ℤ ⧸ Ideal.under ℤ 𝔪) = ℓ from natCard_comap_eq_ell x 𝔪 hne𝔪 hℓ] at h
+    exact h
+  -- the reduced roots, indexed by the complex roots
+  let e := Gal.rootsEquivRootsAux (ratOf q) ℂ
+  let y : (ratOf q).rootSet ℂ → rootOrder x ⧸ 𝔪 :=
+    fun w => Ideal.Quotient.mk 𝔪 (rootO x (e.symm w))
+  have hcomp : (Ideal.Quotient.mk 𝔪).comp (algebraMap ℤ (rootOrder x))
+      = (algebraMap (ZMod ℓ) (rootOrder x ⧸ 𝔪)).comp (Int.castRingHom (ZMod ℓ)) :=
+    RingHom.ext_int _ _
+  have hprod : ∏ w, (X - C (y w)) =
+      ((∏ r ∈ rs, (X - C r)) * gb).map (algebraMap (ZMod ℓ) (rootOrder x ⧸ 𝔪)) := by
+    rw [← hfact, map_map, ← hcomp, ← map_map, map_eq_prod_rootO x hq hsep, Polynomial.map_prod,
+      ← Equiv.prod_comp e.symm]
+    simp [y]
+  have hyinj : Function.Injective y := by
+    refine separable_prod_X_sub_C_iff.mp ?_
+    rw [hprod]
+    exact (separable_prod_mul hirr h2).map
+  refine ⟨σ, cycleType_of_frobenius_roots rs hgm hirr h2 y hyinj _ (fun w => ?_) hprod⟩
+  have hsm : e.symm (Gal.galActionHom (ratOf q) ℂ σ w) = σ • e.symm w := by
+    change e.symm (e (σ • e.symm w)) = _
+    rw [Equiv.symm_apply_apply]
+  simp only [y]
+  rw [hsm, ← smul_rootO, hfrob]
+
+end Main
 
 end Dedekind
 

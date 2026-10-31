@@ -350,3 +350,30 @@ certificate slice it consumes is committed and green, and the per-weight data
 (galoisfull_certs.json) is committed.  Estimated ~300-400 lines + ~10 Modal
 cycles for G2-final, then a generator (~150 lines) + 30 Modal runs for G3, and
 registration/audit/docs for G4.
+
+### 2026-11-01 (later) — G2, G3 PASSED: all 30 weights green; G4 registration done
+
+**Why the stage had stalled.**  The uncommitted M3 block (maximal ideal over ℓ) had
+never been built: ~20 errors at the pin, including missing imports
+(`Mathlib.Data.ZMod.QuotientRing`, `Mathlib.Algebra.Algebra.ZMod`, which show up as
+"Unknown constant" / odd field-notation errors).  Rewritten rather than patched.
+
+**The plan above got much smaller.**  No resultant transport into O: injectivity of the
+reduced roots is `separable_prod_X_sub_C_iff` applied to the mapped separable reduction.
+No conjugation packaging: the orbit lemma is generic in the index type and is
+instantiated at `rootSet ℂ` with π := `galActionHom σ` itself.  One theorem covers both
+certificates (`∏_{r∈rs}(X−r) * gb`), with cycleType {deg gb}.  The orbit bound is
+`FiniteField.orderOf_frobeniusAlgHom` on `AdjoinRoot gb`.  `gb(r) ≠ 0` is not a hypothesis
+(irreducible of degree ≥ 2 has no root); `ℓ ∤ n` is not needed either.
+
+**Deviations.**  `MaedaGaloisFull.lean` + `MaedaGaloisDim{6..10}Weights.lean` (blueprint's
+`MaedaGaloisFullDefs`); theorem name `MaedaWeightK.maeda_galois_full`.  No disc-non-square
+input (the swap is the odd element).  `irreducible_of_rabin_bezout` instead of
+`irreducible_of_rabin_cert` for the cofactors: `zpgcd` hit kernel `deep recursion` at
+ℓ = 4912939, 7403183 (weights 130, 134; Fermat inverse structural in ℓ).
+
+**Numbers (Modal, mrun.sh, warm cache).**  dim 6: 70 s / 6.48 GiB; 7: 75 s / 6.61; 8: 65 s /
+6.84; 9: 70 s / 7.15; 10: 79 s / 7.42.  0 errors, 0 warnings.  `MaedaGaloisFullAxCheck`: 33/33
+on `propext, Classical.choice, Quot.sound`.  `gen_galoisfull.py --check` byte-identical.
+
+`exists_frobenius_perm` and `resultant_ne_zero_of_linear_mul_irreducible` are now unused.

@@ -41,10 +41,10 @@ namespace MaedaGalois
 
 variable {α : Type*} [Fintype α] [DecidableEq α]
 
-omit [DecidableEq α] in
+omit [DecidableEq α] [Fintype α] in
 /-- Within the support of a cycle, every point is a nonnegative iterate of
 any other point of the support. -/
-theorem exists_pow_eq_of_isCycle {g : Equiv.Perm α} (hg : g.IsCycle) {x y : α}
+theorem exists_pow_eq_of_isCycle [Finite α] {g : Equiv.Perm α} (hg : g.IsCycle) {x y : α}
     (hx : g x ≠ x) (hy : g y ≠ y) : ∃ k : ℕ, (g ^ k) x = y := by
   obtain ⟨w, -, hs⟩ := hg
   obtain ⟨k, -, hk⟩ := ((hs hx).symm.trans (hs hy)).exists_pow_eq'

@@ -51,6 +51,14 @@ defaultTargets = [
   "MathProof.ModularForms.MaedaDim8Weights",
   "MathProof.ModularForms.MaedaDim9Weights",
   "MathProof.ModularForms.MaedaDim10Weights",
+  "MathProof.ModularForms.FrobeniusCycleType",
+  "MathProof.ModularForms.JordanPrimitive",
+  "MathProof.ModularForms.MaedaGaloisFull",
+  "MathProof.ModularForms.MaedaGaloisDim6Weights",
+  "MathProof.ModularForms.MaedaGaloisDim7Weights",
+  "MathProof.ModularForms.MaedaGaloisDim8Weights",
+  "MathProof.ModularForms.MaedaGaloisDim9Weights",
+  "MathProof.ModularForms.MaedaGaloisDim10Weights",
 ]
 
 [leanOptions]
