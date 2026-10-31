@@ -243,3 +243,66 @@ Tooling: mrun.sh now passes LEAN_CHECK_MEMORY_MIB=8192 per the base-branch
 memory right-sizing (01b58a9); the mirror's lean_check.py stays at the
 pre-change copy until merge time; LEAN_CHECK_NO_CACHE=1 does not work in the
 old copy (do not rely on it).
+
+### 2026-11-01 — G2 continuation: certificate slice GREEN; Frobenius.lean route discovered; descope
+
+**Certificate slice GREEN (commit 6ca292d).**  `resultant_ne_zero_of_linear_mul_irreducible`
+in FrobeniusCycleType.lean (396 lines, light, zero warnings): from the
+factorization certificate to IsCoprime (Q-bar, Q-bar') and Res(q,q') not-Equiv 0
+mod l.  Key routes at this pin: PerfectRing.ofFiniteOfIsReduced + toPerfectField
+give PerfectField (ZMod l) as a haveI; PerfectField.separable_of_irreducible
+kills gb' = 0; EuclideanDomain.dvd_or_coprime + natDegree_derivative_lt kill
+gb | gb'; the factor-theorem Bezout is scaled via C-mul/inv_mul_cancel with the
+ATOM-matching caveat (C(-x) and -C(x) are different ring-atoms for
+linear_combination — keep the u-argument in the negated-product form
+-(C c^-1 * s), NOT the scalar-smul form); the resultant transport needs
+resultant_map_map (the f/g/m/n section variables instantiated with named args)
+and degree equalities via coeff_map/coeff_derivative/coeff_natDegree + hQbd
+(Monic.natDegree_map) + derivative natDegree = n-1 via le_antisymm of
+natDegree_derivative_le and coeff_natDegree (NOT natDegree_map_eq_of_isUnit —
+the Z-cast of n is not a Z-unit); the coe_castRingHom rewrite exposes the
+ring-hom application for resultant_map_map (the goal's coercion arrow is
+Int.cast, not the RingHom coe — bridge with a show rfl term).
+
+**FROBENIUS.LEAN ROUTE DISCOVERED (major simplification for G2b/c).**
+Mathlib.RingTheory.Frobenius.lean HAS Dedekind's theorem:
+`IsArithFrobAt.exists_of_isInvariant [Q.IsPrime] [Finite (S/Q)] :
+  ∃ σ : G, IsArithFrobAt R σ Q` — in the setting of a finite group G acting
+on a ring S (MulSemiringAction), R the base with SMulCommClass, under
+`Algebra.IsInvariant R S G` (every fixed point of S lies in the image of R),
+and Q a prime of S with finite residue.  IsArithFrobAt R σ Q means
+σ•x - x^(Nat.card (R ⧸ Q.under R)) ∈ Q for ALL x : S.
+
+Instantiation plan (replaces the entire golden-lemma application AND the
+presented-algebra count):
+- S := O := ℤ[x₁..xₙ] ⊆ K (rootOrder := Algebra.adjoin ℤ (Set.range x);
+  Module.Finite ℤ O via Algebra.finite_adjoin_of_finite_of_isIntegral — DONE
+  in the WIP2 draft); the x i are integral (roots of monic q).
+- G := Q.Gal acts on O (σ x i = x (πσ i) keeps O stable; the MulSemiringAction
+  instance is transported from the K-action through the O ↪ K embedding —
+  the one genuinely new instance, ~60 lines).
+- R := ℤ with SMulCommClass (Galois fixes ℤ) and Algebra.IsInvariant ℤ O G
+  (a G-fixed element of O lies in the Galois-fixed field ℚ — via
+  IsGalois.tfae on Q.SplittingField — and is integral, hence in ℤ).
+- 𝔪 := a maximal ideal of O containing ℓO (ℓO is proper: 1/ℓ is not integral;
+  Ideal.exists_maximal); Finite (O/𝔪) (finite module over ZMod ℓ);
+  𝔪.under ℤ = (ℓ) (𝔪 is maximal over ℓ); Nat.card (ℤ/(ℓ)) = ℓ.
+- IsArithFrobAt.exists_of_isInvariant gives σ with σ x - x^ℓ ∈ 𝔪 for ALL x ∈ O.
+- Reducing the roots: x̄ i := x i mod 𝔪 are distinct (the resultant identity
+  transported into O via the IsScalarTower ℤ O K, then mod 𝔪; Res mod l ≠ 0 is
+  a unit of O/𝔪) and exhaust the roots of Q-bar in O/𝔪 ⊆ F̄ (n distinct roots
+  of a separable degree-n polynomial); x̄ (πτ i) = x̄ i ^ l, so the Frobenius
+  orbits on the roots are the factor-degree orbits {r} and the roots of gb
+  (one orbit of size n-1 by the minpoly = gb argument); cycleType transport
+  via rootsEquivRootsAux + cycleType_conj gives FrobHasCycleType.
+- Note IsArithFrobAt's exponent is #(ℤ/(𝔪 ∩ ℤ)) = l EXACTLY (the invariant
+  subring is Z, not the full ring of integers) — the right power for the
+  factor-degree analysis.  The full AKLB instance
+  (Algebra.isInvariant_of_isGalois, Invariant/Galois.lean) also exists for
+  B := the integral closure of Z in K if the O-version needs backup.
+
+Estimated remaining for G2: ~250-350 lines (the MulSemiringAction-on-O
+instance, IsInvariant ℤ O G, the maximal ideal, the root-reduction transport,
+the orbit analysis, the packaging).  G2-final/G3/G4 unchanged.
+WIP2 draft (rootOrder + finiteness) saved at wip/FrobeniusCycleType.WIP2.lean;
+the library file is restored to the committed green state (6ca292d).
