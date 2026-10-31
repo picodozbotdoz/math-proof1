@@ -111,3 +111,93 @@ still byte-identical after every generator edit.
 five per-dim T₃ files, MaedaT3SmallWeights) clean — 0 set_option / #eval /
 native_decide / sorry / bad imports.  Stretch file
 `MaedaT3SmallWeights.lean` compiles locally 0 err / 0 warn.
+
+### 2026-10-31 (evening) — reboot recovery; dim-9 green; dim-10 failure + generator fix
+
+Reboot recovery: worktree WIP committed (e1ce361); the Modal mirror
+(`/home/xyz/mp1-maetat3`, standalone repo, origin/master = empty tree) survived
+and the mirror script was recreated at
+`/home/doz/tmp/math-proof1-temp/agent-work/maeda-t3/maetat3_modal.sh` (the /tmp
+copy died with the wipe; /tmp is now BANNED for anything that must survive —
+logs live in `…/agent-work/maeda-t3/maetat3-runs/`).  Cheap-target verification
+(HeckeTPCoeff, 45 s round trip) confirmed the overlay carries the complete
+state.
+
+**Dim 9 was already green**: lake found nothing to rebuild against the volume
+cache — the predecessor's "in-flight" dim-9 run actually COMPLETED and saved
+the cache before the host died (lake's hash traces are the trust model).
+`MaedaT3Dim9Weights` = 0 errors.
+
+**Dim 10 failed on Modal** (1255 s, 12.53 GiB peak, exit 1) with two
+defect classes, both generator-side (never hand-edit generated files):
+
+1. **`10 ^ 257` vs `exponentiation.threshold`**: k=134's charpoly coefficients
+   reach 317 digits; the 60-digit chunking puts the top place-value exponent
+   at 317 − 60 = 257, one past Lean's default `exponentiation.threshold`
+   (256) — `norm_num` refuses to evaluate the power (and a light module may
+   not raise the option), leaving 11 unsolved `det_t`/`ev_t` goals.
+   Fix: `digit_sizes`/`slice_chunks` in `gen_maedan.py` — the FIRST chunk
+   grows to d − 256 for d > 316 (assert d ≤ 341), so every emitted exponent
+   stays ≤ 256.  T₂ data (≤ 245 digits) and T₃ dims 6–9 (≤ 260) never hit
+   the new branch → byte-identical.
+2. **Long lines**: T₃ dim-10 matrix entries reach 82 digits; the plain
+   `((… : ℤ) : ℂ)` cast items overflow the 100-char linter limit (the old
+   file had 24 such lines; only 9 were reported because Mathlib's longLine
+   linter **skips all remaining commands once the message log has any error**
+   — a failed build under-reports style warnings).  Fix: `cast_item_lines(v,
+   budget)` chunks oversized cast items across continuation lines (budgets:
+   clist 92, coordN 91, entry 86 — computed from each site's prefix/suffix;
+   dims 6–9 entries ≤ 71 digits stay plain).  Also `lean_list` gained a
+   `maxbody` parameter (the stretch file's `L{j}c`/`L{j}` list lemmas sit at
+   102–104 chars — a bare `lake env lean` does NOT apply the lakefile linter
+   options, so the earlier local "0 warnings" never saw them) and the
+   stretch header's weight list was wrapped (153-char docstring line).
+
+Validation before the Modal re-run: all 600 `entry_{c}_{a}` statements of the
+new dim-10 file checked value-identical to the committed rendering (18 chunked);
+a local Mathlib-only test file certifies the three new proof shapes —
+`norm_num` closes the det-style identity with `10 ^ 256` (threshold boundary),
+`rfl` closes chunked-entry casts (±, both half-split sizes), `decide +kernel`
+closes the chunked `ZMod 223` cast (hmap pattern).  Byte-identity `--check`:
+T₂ all five files, T₃ dims 6–9, small mode — all byte-identical.
+
+### 2026-10-31 (night) — G3 PASSED (all five files), G4 done
+
+| file | wall | peak tree RSS | module peak | errors/warnings |
+|---|---|---|---|---|
+| MaedaT3Dim6Weights | 165 s | 10.57 GiB | 6.50 GiB | 0 / 0 |
+| MaedaT3Dim7Weights | 209 s | 8.49 GiB | 7.25 GiB | 0 / 0 |
+| MaedaT3Dim8Weights | 527 s | 9.53 GiB | — | 0 / 0 |
+| MaedaT3Dim9Weights | green via cache (pre-reboot run completed; telemetry lost with /tmp) | — | — | 0 / 0 |
+| MaedaT3Dim10Weights | 1227 s | 12.38 GiB | 11.15 GiB | 0 / 0 |
+| MaedaT3SmallWeights | 125 s | 8.06 GiB | 6.83 GiB | 0 / 0 |
+
+(One dim-10 attempt was lost to a Modal container PREEMPTION at t ≈ 850 s —
+modal restarted the function from scratch; the cache saves only at the end, so
+a preempted heavy run loses its full progress.  Budget accordingly.)
+
+* `AxCheckDecide` on Modal: **842 decide certificates audited, 0 depending on
+  more than `propext`** (up from 409 at iteration 20 — the T₃ files add 433).
+  The same run re-proved the stretch file Modal-green with full lake linters.
+* G4 registration: `HeckeTPCoeff`, `MaedaCertCExt`, `MaedaT3Dim{6..10}Weights`
+  into `MathProof.lean`, `defaultTargets` (lakefile.toml), and the CI list.
+  **CI-weight decision for the stretch file**: `MaedaT3SmallWeights` is
+  registered in the ROOT ONLY and deliberately kept out of
+  `defaultTargets`/CI — it is bonus content behind a CI bill that the five T₃
+  dim files just roughly doubled (measured Modal total 2128 s for dims
+  6–8+10; CI historically tracks Modal wall time); its own cost is 125 s /
+  6.8 GiB on Modal.  Recorded in the lakefile note; promotion later is a
+  one-line change.
+* Docs: README Maeda section gained the "T₃ twin (Iteration 21)" paragraph
+  (incl. the corrected `S₂₄` charpoly `X² − 339480·X − 19020146544`);
+  `docs/index.html` Maeda card gained the T₃ sentence; AGENTS.md layout
+  entries for the two support modules, the five dim files and the stretch
+  file with measured costs and the two generator lessons; research-log
+  Iteration 21 entry written.
+* Byte-identity at close: `gen_maedan.py --check` (T₂, all five files),
+  `--prime 3 --only {6,7,8,9} --check`, `--prime 3 --small --check` — all
+  byte-identical; `tauceti_audit.sh` clean on all eight new modules.
+
+Gates: G1 ✓ (with the corrected anchor), G2 ✓ (k=72), G3 ✓ (dims 6–10 +
+AxCheckDecide), G4 ✓.  Blueprint complete; the stretch (dims 2–5) is verified
+and registered root-only.

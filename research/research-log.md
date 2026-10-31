@@ -1498,3 +1498,124 @@ audit target stays propext-only.  Natural follow-ups, recorded as the next
 blueprints: the Galois-group half for dims 6–10 (Frobenius cycle types +
 `MaedaPermCriterion`), Hecke commutativity → "T_m is a polynomial in T₂"
 (uses these 54 irreducibilities), and the T₃ twin run.
+
+---
+
+## Iteration 21 — Maeda's conjecture for the T₃ Hecke operator (dims 2–10): the pipeline is operator-generic
+
+**Status: complete.  2026-10-31.**
+
+### The problem
+
+Maeda's conjecture concerns the Hecke algebra, not `T₂` specifically.  The
+Iteration-20 pipeline (dimension-generic `charpoly_dimN` extraction +
+determinant interpolation + Rabin certificates, emitted by `tools/gen_maedan.py`)
+is operator-generic by construction — `heckeTPₗ` takes any prime,
+`charpoly_dimN` any endomorphism — so its claim could be tested by re-running it
+for the Hecke operator `T₃`:
+
+    Irreducible (charpoly (T₃ | S_k)) for every level-one weight with 2 ≤ dim S_k ≤ 10,
+
+i.e. the same 54 weights already verified for `T₂` (24 at dims 2–5, 30 at dims
+6–10).
+
+### What was contributed
+
+* **The p-generic coefficient lemma** `MaedaLevelOne.heckeTP_coeff`
+  (`HeckeTPCoeff.lean`, new light module): `(T_p f)_m = f_{pm} + p^{K−1} [p ∣ m]
+  f_{m/p}` for any prime `p`, one `rw` from the prime-generic
+  `heckeTP_qExpansion_coeff`.  A new module because `MaedaLevelOne` is an
+  ancestor of the heavy `MaedaGalois5` chain.
+* **Extended coefficient lists** (`MaedaCertCExt.lean`, new light module):
+  `tau22 … tau30` kernel-verified against `Ramanujan.tau` (each `tauOf_eq_getD
+  + decide`), `tauTableX`, `dCc3`, `seqPLc3`, `seqPLc3_eq` with cap `N ≤ 31` —
+  T₃ reads basis coefficients up to index `3n` = 30 at dim 10, past
+  `MaedaCertC.seqPLc`'s `N ≤ 22`.
+* **Generator mode** `tools/gen_maedan.py --prime 3 [--small]` with a separate
+  `emit_weight_t3`/`emit_small_t3` (the T₂ emitter untouched); byte-identical
+  `--check` regression for prime 2 and for `--prime 3` dims 6–9 after every
+  edit.
+* **Census** `research/iteration20/data/maeda_t3_dim6_10.json` +
+  `maeda_t3_small.json` (probe with reflected-engine sanity asserts and
+  commutation `[M₂, M₃] = 0` against the Lean-proved T₂ charpoly data of
+  iteration 20 — the tie that anchors the whole T₃ census to kernel-verified
+  facts).
+* **The blueprint's k=24 anchor was FALSE and was corrected before any code**
+  (G1 audit): the blueprint claimed `charpoly(T₃ | S₂₄) = X² − 252·X + 3²³`
+  "since S₂₄ is spanned by Δ" — but Δ ∈ S₁₂ and τ(3) = 252 is an eigenvalue of
+  T₃ on **S₁₂**, not S₂₄.  The true charpoly, confirmed by two independent
+  computations (echelon pipeline and non-echelon Cramer), is
+  `X² − 339480·X − 19020146544`; the τ(3)-anchor lives at S₁₂ where
+  `charpoly(T₃ | S₁₂) = X − 252`.
+
+### The dim-10 scale-up: two new generator lessons
+
+T₃ numerics outgrow T₂'s (charpoly coefficients to 317 digits at k = 134,
+matrix entries to 82; `3^{k−1}` to 64 digits).  The first Modal run of
+`MaedaT3Dim10Weights` failed (1255 s, 12.53 GiB) and forced two changes in the
+generator — never in the generated files:
+
+1. **Chunk exponents must respect `exponentiation.threshold`.**  60-digit
+   chunking puts k=134's top place-value exponent at 317 − 60 = 257, one past
+   Lean's default threshold (256): `norm_num` refuses to evaluate the power and
+   a light module may not raise the option — 11 unsolved goals.  Fix: the first
+   chunk grows to d − 256 when d > 316 (assert d ≤ 341), every emitted exponent
+   ≤ 256.  T₂ (≤ 245 digits) and T₃ dims 6–9 (≤ 260) never enter the branch.
+2. **Oversized cast items, and a linter trap.**  82-digit matrix entries make
+   plain `((… : ℤ) : ℂ)` items overflow the 100-char line limit.  The failed
+   build reported only 9 of 24 long lines because **Mathlib's longLine linter
+   returns early once the message log holds any error** — a failed build
+   under-reports style warnings; the clean-build standard is 0.  Fix:
+   `cast_item_lines(v, budget)` chunks oversized items across continuation
+   lines (budgets clist 92 / coordN 91 / entry 86, per-site prefix+suffix);
+   `lean_list` gained a `maxbody` parameter for the stretch file's `L{j}c`
+   lists (102–104 chars — a bare `lake env lean` does NOT apply the lakefile
+   linter options, so local "0 warnings" proves nothing about style lints).
+
+Pre-Modal validation discipline: all 600 `entry_{c}_{a}` statements of the new
+dim-10 file checked value-identical to the committed rendering (18 chunked), and
+a Mathlib-only test file certified the three new proof shapes (`norm_num` with
+`10 ^ 256` exactly at the threshold, `rfl` on chunked casts, `decide +kernel`
+on chunked `ZMod` casts).
+
+### Verification matrix (Modal `lean_check`, linters on, all 0 err / 0 warn)
+
+| module | lines | build | peak |
+|---|---|---|---|
+| `MaedaT3Dim6Weights` | 11980 | 165 s | 10.57 GiB (tree) |
+| `MaedaT3Dim7Weights` | 16128 | 209 s | 8.49 GiB |
+| `MaedaT3Dim8Weights` | 21130 | 527 s | 9.53 GiB |
+| `MaedaT3Dim9Weights` | 26916 | green (cache-validated; the pre-reboot run's telemetry was lost with /tmp) | — |
+| `MaedaT3Dim10Weights` | 33670 | 1227 s | 12.38 GiB |
+| `MaedaT3SmallWeights` (stretch) | 20283 | 125 s | 6.83 GiB |
+
+(Relative to T₂: ×1.27–1.58 build time, ×1.06 peak memory.  One dim-10 attempt
+was lost to a Modal container preemption at t ≈ 850 s — the retry restarted
+from scratch, so a preempted heavy run loses its whole progress; the cache only
+saves at the end.)
+
+### Audit and bookkeeping
+
+* `tools/tauceti_audit.sh` on all eight new modules: clean (no
+  `set_option`/`#eval`/meta/`native_decide`/bad imports).
+* `MathProof.AxCheckDecide` on Modal: **842 decide certificates audited, 0
+  depending on more than `propext`** (up from 409 — the T₃ files add 433).
+* Registration: `HeckeTPCoeff`, `MaedaCertCExt`, `MaedaT3Dim{6..10}Weights` in
+  `MathProof.lean`, `defaultTargets`, and the CI list (the CI now also pays the
+  T₃ dim files, ≈ 25 min per push).  The stretch file `MaedaT3SmallWeights` is
+  registered in the ROOT ONLY (audited via `AxCheckDecide`) and deliberately
+  kept out of `defaultTargets`/CI — bonus content behind an already doubled CI
+  bill; recorded in the lakefile note.
+* README (T₃ twin paragraph in the Maeda section), docs landing page (T₃
+  sentence in the Maeda card), AGENTS.md layout entries with the measured
+  costs, this entry.
+
+Invariants kept: no ancestor of the heavy `MaedaGalois5Defs` chain touched;
+generated files never hand-edited; T₂ mode byte-identical after every generator
+edit (`--check`); every certificate `decide +kernel` / `norm_num` / `eval_det`;
+the audit target stays propext-only.  Maeda's conjecture now has both T₂ and
+T₃ verified across all 54 level-one weights with `2 ≤ dim S_k ≤ 10` — evidence
+that the Iteration-20 pipeline is genuinely operator-generic.  Natural
+follow-ups: the Galois-group half for dims 6–10 (the T₃ charpolys feed the same
+`MaedaPermCriterion` machinery), and "T_m is a polynomial in T₂" from Hecke
+commutativity.

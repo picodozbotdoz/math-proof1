@@ -50,6 +50,7 @@ jobs:
             MathProof.ModularForms.LehmerWeight26
             MathProof.ModularForms.MaedaWeight24
             MathProof.ModularForms.MaedaLevelOne
+            MathProof.ModularForms.HeckeTPCoeff
             MathProof.ModularForms.MaedaSmallWeights
             MathProof.ModularForms.MaedaGalois
             MathProof.ModularForms.MaedaDim4
@@ -61,6 +62,7 @@ jobs:
             MathProof.ModularForms.MaedaGalois5Defs
             MathProof.ModularForms.HornerCert
             MathProof.ModularForms.MaedaCertC
+            MathProof.ModularForms.MaedaCertCExt
             MathProof.ModularForms.MaedaPermCriterion
             MathProof.ModularForms.CharpolyEngine
             MathProof.ModularForms.RabinCert
@@ -71,6 +73,11 @@ jobs:
             MathProof.ModularForms.MaedaDim8Weights
             MathProof.ModularForms.MaedaDim9Weights
             MathProof.ModularForms.MaedaDim10Weights
+            MathProof.ModularForms.MaedaT3Dim6Weights
+            MathProof.ModularForms.MaedaT3Dim7Weights
+            MathProof.ModularForms.MaedaT3Dim8Weights
+            MathProof.ModularForms.MaedaT3Dim9Weights
+            MathProof.ModularForms.MaedaT3Dim10Weights
       # NOTE: no docgen-action step.  It re-ran the whole build a second time
       # and built the doc-gen4 tool and its Mathlib dependency from source
       # (30+ min per push), and its deploy step would overwrite the

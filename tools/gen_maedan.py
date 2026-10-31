@@ -156,9 +156,11 @@ def wrap_terms(terms, cont_indent, sep=" + "):
     return ("\n" + pad).join(out)
 
 
-def lean_list(xs, indent=0):
+def lean_list(xs, indent=0, maxbody=None):
     body = ", ".join(lean_int(x) for x in xs)
-    if len(body) <= 100 - 2 * indent:
+    if maxbody is None:
+        maxbody = 100 - 2 * indent
+    if len(body) <= maxbody:
         return f"[{body}]"
     # wrap at ~90 columns
     lines, cur = [], ""
@@ -210,15 +212,56 @@ def sym_matrix_literal(M, indent=6):
 
 CHUNK = 60         # digits per chunk in decomposed big literals
 PLAIN_DIGITS = 80  # a plain (undecomposed) literal renders fine up to this
+MAX_POW = 256      # Lean's default `exponentiation.threshold`: norm_num
+# evaluates `10 ^ e` only for e ≤ 256, and a light module may not raise the
+# option — so a chunked literal's TOP place-value exponent must stay ≤ 256
+# (T₃ k=134 pushes charpoly coefficients to 317 digits: 317 − 60 = 257 > 256,
+# the dim-10 failure of 2026-10-31).
+MAX_FIRST = 85     # longest first chunk whose token still fits a WIDTH line
+
+
+def digit_sizes(d):
+    """Chunk digit-lengths for a d-digit numeral (only called for d >
+    PLAIN_DIGITS): CHUNK-blocks, except the FIRST chunk grows to d − MAX_POW
+    when plain CHUNK-blocks would put the top exponent past MAX_POW (i.e.
+    d > CHUNK + MAX_POW = 316).  None = plain CHUNK-blocks."""
+    if d - CHUNK <= MAX_POW:
+        return None
+    first = d - MAX_POW
+    assert first <= MAX_FIRST, (
+        f"{d}-digit literal needs a {first}-digit first chunk "
+        f"(> {MAX_FIRST}; its token line would overflow WIDTH)")
+    sizes = [first]
+    rem = MAX_POW
+    while rem:
+        take = min(CHUNK, rem)
+        sizes.append(take)
+        rem -= take
+    return sizes
+
+
+def slice_chunks(s):
+    """Digit-string chunks of a >PLAIN_DIGITS numeral per digit_sizes."""
+    sizes = digit_sizes(len(s))
+    if sizes is None:
+        return [s[i:i + CHUNK] for i in range(0, len(s), CHUNK)]
+    out, i = [], 0
+    for w in sizes:
+        out.append(s[i:i + w])
+        i += w
+    assert i == len(s) and all(out), (len(s), sizes)
+    return out
 
 
 def pos_chunks(x):
     """Decimal string chunks of |x| (first CHUNK digits, last maybe shorter),
-    or None when the plain literal is short enough for every emission site."""
+    or None when the plain literal is short enough for every emission site.
+    The first chunk grows (digit_sizes) so every place-value exponent stays
+    ≤ MAX_POW."""
     s = str(abs(x))
     if len(s) <= PLAIN_DIGITS:
         return None
-    return [s[i:i + CHUNK] for i in range(0, len(s), CHUNK)]
+    return slice_chunks(s)
 
 
 def term_chunks(c, suffix):
@@ -230,8 +273,7 @@ def term_chunks(c, suffix):
     body = f"C ({c})" if c >= 0 else f"- C ({-c})"
     if 6 + len(body) + len(suffix) + 2 <= WIDTH:
         return None
-    s = str(abs(c))
-    return [s[i:i + CHUNK] for i in range(0, len(s), CHUNK)]
+    return slice_chunks(str(abs(c)))
 
 
 def chunk_expr_tokens(chs):
@@ -244,6 +286,36 @@ def chunk_expr_tokens(chs):
         core = ch if e == 0 else f"{ch} * 10 ^ {e}"
         toks.append(core if j == 0 else f"+ {core}")
     return toks
+
+
+def cast_item_lines(v, budget):
+    """Physical lines of one `((v : ℤ) : ℂ)` item; `budget` = the longest
+    plain item the call site can place on one physical line (WIDTH minus the
+    site's own prefix/suffix).  Plain while `len(plain) ≤ budget`; CHUNKED
+    across continuation lines once it is not (T₃ dim-10 matrix entries reach
+    82 digits and the cast syntax around them overflows).  Chunked exponents
+    stay ≤ MAX_POW, so norm_num and the kernel evaluate the pieces.  Budgets:
+    (linter limit 100; every rendered line stays within it, and the
+    dims-6–9 files, whose entries are ≤ 71 digits, stay plain and
+    regenerate byte-identically): clist 92 (indent 6 + bracket), coordN 91
+    (6 spaces + ' = '), entry 86 ('      = ' + ' := by')."""
+    plain = f"(({v} : ℤ) : ℂ)"
+    if len(plain) <= budget:
+        return [plain]
+    chs = pos_chunks(v)
+    if chs is None:
+        # ≤ PLAIN_DIGITS digits but still line-overflowing (69…80 digits at
+        # the entry site): pos_chunks declines to engage, so split the numeral
+        # in half — two token lines always fit
+        s = str(abs(v))
+        h = (len(s) + 1) // 2
+        chs = [s[:h], s[h:]]
+    toks = chunk_expr_tokens(chs)
+    if v < 0:
+        toks = ["-" + toks[0]] + [t.replace("+ ", "- ", 1) for t in toks[1:]]
+    lines = ["((" + toks[0]] + ["    " + t for t in toks[1:]]
+    lines[-1] += " : ℤ) : ℂ)"
+    return lines
 
 
 def flat_expr_lines(v, lead, cont):
@@ -769,7 +841,7 @@ def wrap_name_t3(k):
     return f"MaedaT3Weight{k}"
 
 
-def emit_weight_t3(w):
+def emit_weight_t3(w, list_maxbody=None):
     """The T₃ twin of emit_weight: same skeleton, prime-3 data (N = 3n+1,
     seqPLc3 lists, heckeTP_coeff / Nat.prime_three, MaedaT3Weight namespaces).
 
@@ -817,11 +889,11 @@ def emit_weight_t3(w):
         P(f"  prodForm_coeff _ _ _ _ _ m")
         P("")
         P(f"lemma L{j}c : seqPLc3 {i0} {a} {b} {N} =")
-        P(f"    {lean_list(f, 4)} := by")
+        P(f"    {lean_list(f, 4, list_maxbody)} := by")
         P("  decide +kernel")
         P("")
         P(f"lemma L{j} : seqPL {i0} {a} {b} {N} =")
-        P(f"    {lean_list(f, 4)} := by")
+        P(f"    {lean_list(f, 4, list_maxbody)} := by")
         P(f"  rw [← seqPLc3_eq (by norm_num)]")
         P(f"  exact L{j}c")
         P("")
@@ -1006,17 +1078,32 @@ def emit_weight_t3(w):
     P("")
     def clist_lines(vals, indent):
         """A `[((v : ℤ) : ℂ), …]` literal wrapped to WIDTH (elements are
-        ~20–90 chars each; dim-10 lists need multi-line)."""
+        ~20–90 chars each; dim-10 lists need multi-line).  An item whose
+        plain rendering does not fit a physical line (T₃ k ≥ 124 matrix
+        entries reach 82 digits) is CHUNKED across its own continuation
+        lines by `cast_item_lines` (exponents ≤ MAX_POW); the single-line
+        wrap logic is untouched, so T₂ and T₃ dims 6–9 stay byte-identical."""
         pad = " " * indent
-        items = [f"(({v} : ℤ) : ℂ)" for v in vals]
+        items = [cast_item_lines(v, 92) for v in vals]
         lines, cur = [], "["
-        for it in items:
+        for ls in items:
             sep = "" if cur == "[" else ", "
-            if len(pad + cur + sep + it) > WIDTH - 1 and cur != "[":
-                lines.append(cur + ",")
-                cur = it
+            if len(ls) == 1:
+                it = ls[0]
+                if len(pad + cur + sep + it) > WIDTH - 1 and cur != "[":
+                    lines.append(cur + ",")
+                    cur = it
+                else:
+                    cur += sep + it
             else:
-                cur += sep + it
+                # multi-line item: flush the pending line, emit all but the
+                # item's last line, and leave that open for the next
+                # separator or the closing bracket
+                if cur != "[":
+                    lines.append(cur + ",")
+                for l in ls[:-1]:
+                    lines.append(l)
+                cur = ls[-1]
         lines.append(cur + "]")
         return [pad + lines[0]] + [pad + l for l in lines[1:]]
 
@@ -1049,8 +1136,15 @@ def emit_weight_t3(w):
             P("")
     for c in range(n):
         for a in range(n):
+            ls = cast_item_lines(M[c][a], 86)
             P(f"theorem entry_{c}_{a} : coordN Atab (fun m => Xtab {a} m) {c}")
-            P(f"      = (({M[c][a]} : ℤ) : ℂ) := by")
+            if len(ls) == 1:
+                P(f"      = {ls[0]} := by")
+            else:
+                P(f"      = {ls[0]}")
+                for l in ls[1:-1]:
+                    P(f"          {l}")
+                P(f"          {ls[-1]} := by")
             P("  simp only [coordN]")
             P(f"  rw [Lv{a}_{c+1}]")
             P("  rfl")
@@ -1071,8 +1165,15 @@ def emit_weight_t3(w):
             if len(head) + len(tail) <= WIDTH:
                 P(head + tail)
             else:
+                ls = cast_item_lines(M[c][a], 91)
                 P(head)
-                P(f"      {tail}")
+                if len(ls) == 1:
+                    P(f"      {tail}")
+                else:
+                    P(f"      = {ls[0]}")
+                    for l in ls[1:-1]:
+                        P(f"          {l}")
+                    P(f"          {ls[-1]}")
             P(f"    exact entry_{c}_{a}")
     P("")
 
@@ -1239,10 +1340,11 @@ import MathProof.ModularForms.MaedaCertCExt
 
 Generated by `tools/gen_maedan.py --prime 3 --small` from
 `research/iteration20/data/maeda_t3_small.json` (byte-identical re-runs; do
-not hand-edit).  Weights {klist} — the same per-weight skeleton as
-`MaedaT3Dim{{6..10}}Weights.lean` through the dimension-generic
-`charpoly_dimN` engine, so this file covers every level-one weight `k ≤ 74`
-with `2 ≤ dim S_k ≤ 5`.
+not hand-edit).  Weights
+{klist} —
+the same per-weight skeleton as `MaedaT3Dim{{6..10}}Weights.lean` through the
+dimension-generic `charpoly_dimN` engine, so this file covers every
+level-one weight `k ≤ 74` with `2 ≤ dim S_k ≤ 5`.
 
 Everything is light: `decide +kernel` certificates, no `set_option`, and no
 module in this file is an ancestor of the heavy `MaedaGalois5Defs` chain.
@@ -1260,7 +1362,7 @@ def emit_small_t3():
     assert len(weights) == 24 and set(dims) == {2, 3, 4, 5}, dims
     body = HEADER_T3_SMALL.format(klist=", ".join(str(w["k"]) for w in weights))
     for w in weights:
-        body += emit_weight_t3(w)
+        body += emit_weight_t3(w, list_maxbody=86)
     return body
 
 

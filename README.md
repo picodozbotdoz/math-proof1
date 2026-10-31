@@ -109,6 +109,23 @@ built on Modal).  E.g. on `S₂₄`, `T₂` has characteristic polynomial
 weight-generic machinery (`MaedaLevelOne.lean`) reads the matrix of `T₂` off
 kernel-computed q-coefficients of the basis `Δ^i E₄^a E₆^b`.
 
+**The `T₃` twin (Iteration 21).**  Maeda's conjecture concerns the Hecke
+algebra, not `T₂` specifically.  The Iteration-20 pipeline is
+operator-generic (`heckeTPₗ` takes any prime; `charpoly_dimN` any
+endomorphism), and Iteration 21 re-ran it for the Hecke operator `T₃`:
+`Irreducible (charpoly (T₃ | S_k))` for the same 54 level-one weights —
+`MaedaT3Dim{6..10}Weights.lean` for the 30 weights `72 ≤ k ≤ 134` with
+`6 ≤ dim S_k ≤ 10` (`MaedaT3WeightK.charpoly_T3`, `MaedaT3WeightK.maeda`;
+emitted by `tools/gen_maedan.py --prime 3` from the T₃ coefficient formula
+`(T₃ f)_m = f_{3 m} + 3^(k−1) [3 ∣ m] f_{m/3}`, with the extended
+coefficient lists of `MaedaCertCExt.lean` — T₃ reads basis coefficients up
+to index `3n`), and the stretch file `MaedaT3SmallWeights.lean` for the 24
+weights `k ≤ 74` with `2 ≤ dim S_k ≤ 5` through the same dimension-generic
+engine.  The census data (`research/iteration20/data/maeda_t3_dim6_10.json`)
+cross-checks every T₃ matrix against the Lean-proved T₂ charpolys via
+`[M₂, M₃] = 0` per weight.  E.g. on `S₂₄`, `T₃` has characteristic polynomial
+`X² − 339480 X − 19020146544`, irreducible.
+
 ## Eisenstein series and the 691 congruence (`MathProof/ModularForms/`)
 
 * `RamanujanWeight12.E12_rel` — **Ramanujan's weight-12 identity**
