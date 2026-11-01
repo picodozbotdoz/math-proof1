@@ -62,6 +62,7 @@ import MathProof.ModularForms.MaedaT3SmallWeights
 import MathProof.ModularForms.FrobeniusCycleType
 import MathProof.ModularForms.JordanPrimitive
 import MathProof.ModularForms.MaedaGaloisFull
+import MathProof.ModularForms.MaedaGaloisQuad
 import MathProof.ModularForms.MaedaGaloisDim6Weights
 import MathProof.ModularForms.MaedaGaloisDim7Weights
 import MathProof.ModularForms.MaedaGaloisDim8Weights
