@@ -26,7 +26,7 @@ Status per branch (branch = impl/iteration22/<slug>, base = 569bcf0):
 | branch | blueprint | status | result |
 |---|---|---|---|
 | impl/iteration22/hecke-rational | blueprint/hecke-rational | RUNNING | |
-| impl/iteration22/lehmer-coverage | blueprint/lehmer-coverage | RUNNING | |
+| impl/iteration22/lehmer-coverage | blueprint/lehmer-coverage | **COMPLETE** | STUDY exact (99.9093% below 2³², U=3,894,333, bad primes 294,618, regen-matched; 2 probe cells corrected: 2³⁰ census 78,715, 2¹⁸ candidates 285); LehmerCoverageCount light module (structural noFactorFrom cert — Nat.Prime NOT kernel-decidable; kernel census 2¹⁸ AND 2²⁰, uncovered 23/227) green 0/0 32 s/5.8 GiB, trio-registered, +4 certs 0>propext; **131072 DESCOPE memo** (110–125 GiB ≈ 1.8× stop-rule, +0.0053 pp) — surfaced to operator |
 | impl/iteration22/t3-galois-small | blueprint/t3-galois-small | **COMPLETE** | Gal = Sₙ for T₃ at ALL 54 weights; MaedaGaloisQuad (trio) + MaedaT3GaloisSmallWeights (root-only, 24 wts) green 0/0 (34 s/3.84 GiB; AxCheck 83 s); certs reproduce probe table; byte-identity kept; 1310 decide certs combined, 0 > propext; no descopes/deviations |
 
 Blueprints committed 569bcf0 (from probe FINDINGS in research/iteration22/).
