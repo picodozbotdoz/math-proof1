@@ -66,3 +66,42 @@ M2, M3, Atab, N, D, q-lemma values, stats).
 - No commutation hypothesis needed anywhere (the identity IS the proof).
 
 Next: G2 generic module.
+
+### 2026-11-02 — G2 PASSED: generic module green + weight-24 test drive green
+
+Inbox polled: still empty.
+
+`MathProof/ModularForms/HeckeRational.lean` (new light module, imports only
+`CharpolyDimN`):
+
+- `linearIndependent_dimN`, `represents_dimN` — echelon bundle →
+  representation (sibling of `charpoly_dimN`, internals copied/adapted);
+- `exists_aeval_rat_of_rep` (V-generic) + `exists_aeval_rat_dimN`
+  (CuspForm echelon bundle master, the single lemma the generated files
+  consume); witness built internally as `ratWitness c D =
+  ∑ j < n, C (c j / D) * X ^ j` — only ℤ literals `c j`, `D` enter the
+  generated files; no commutativity hypothesis anywhere.
+
+Modal runs (`./mrun.sh --file ...`): 7 iterations to green (details: missing
+`hn` for the `Nonempty (Fin n)` instance; `M2 ^ j l i` precedence bug;
+`map_div` is the *group* lemma — ring version is `map_div₀`;
+`Finset.sum_smul`/`smul_sum` swapped in this Mathlib; `sum_eq_single`
+has signature (a) (h₀) (h₁ : a ∉ s → f a = _), conclusion `∑ = f a`;
+higher-order `rw` with cast-of-sum inside matrices fails ("function
+expected") — fixed by fully-typed term applications (`Int.cast_sum _ _`,
+`Finset.mul_sum _ _ _`, `Finset.sum_smul`); `rw [← b.sum_repr x]` loops on
+`x` — use a calc; `if_pos/if_neg` deprecated → `ite_eq_left/ite_eq_right`).
+
+- **HeckeRational.lean green: 0 err / 0 warn, wall 37 s, peak tree RSS
+  5.95 GiB.**
+- **Weight-24 test drive (scratch, deleted): 0 err / 0 warn, wall 79 s,
+  peak 6.00 GiB.** The scratch exercised the full per-weight recipe:
+  Xtab2 + hX2 (via `heckeT2_coeff` + the T₃ file's q-lemmas), LvT2 staged
+  lemmas, entryT2 lemmas, `M2` literal (= `MaedaWeight24.toMatrix_heckeT2`
+  literal, confirming the re-derivation), hM2/hM3 Fin-∀ bridges
+  (`fin_cases` + `exact`, defeq on literals), `cert : ℕ → ℤ`,
+  `scaled_id` by `decide +kernel` (D = 1 at weight 24: Q = 195660 − 48·X ∈
+  ℤ[X]!), and the one-line master application. First try green.
+
+Next: G3 generator + dims 6–10 (reuse T₂ dim files via the audited defeq
+bridge; small weights get the scratch's recipe).
