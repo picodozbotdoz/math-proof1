@@ -17,15 +17,74 @@ For each weight this script recomputes, from the charpoly `P_k` of T_2:
 
 The census primes are only *hints*; every assertion is re-derived here.
 Output: research/iteration21/data/galoisfull_certs.json
+
+`--prime 3` (Iteration 22, T1 T3-Galois): the T₃ twin — input census
+`maeda_t3_dim6_10.json`, output
+`research/iteration22-t3-galois/data/t3_galoisfull_certs.json`.  The T₃
+census carries no Frobenius hints (hints list stays empty) and every weight's
+charpoly is additionally pinned to the *kernel-verified* `P` literal of the
+committed `MaedaT3Dim{6..10}Weights.lean` (same parser as
+`research/iteration22-t3-galois/g1_anchor.py`) before any scanning happens.
+The prime-2 path is untouched.
 """
 
 import json
 import os
 import random
+import re
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from galoisfull_data import make, is_prime, factor_full, factor_degrees  # noqa: E402
+
+
+# --- Lean-literal parser (iteration-22 T3 mode only) -------------------------
+# Minimal twin of g1_anchor.parse_P: evaluates the chunked `C (a * 10 ^ e + b)`
+# literals of `noncomputable def P` in MaedaT3Dim{d}Weights.lean.
+_TERM = re.compile(
+    r"([+-])?\s*C\s*\(\s*([^()+]+(?:\([^()]*\))?[^()]*)\)\s*(?:\*\s*\(X : ℤ\[X\]\)\s*\^\s*(\d+))?",
+    re.M)
+_NUMOK = re.compile(r"^[\d\s+*^]+$")
+
+
+def _eval_coeff(txt):
+    txt = " ".join(txt.split())
+    assert _NUMOK.match(txt), f"unexpected coefficient text: {txt!r}"
+    total = 0
+    for part in txt.split("+"):
+        part = part.strip()
+        if "*" in part:
+            num, exp = part.split("*")
+            assert exp.strip().startswith("10 ^"), part
+            total += int(num) * 10 ** int(exp.strip()[4:])
+        else:
+            total += int(part)
+    return total
+
+
+def lean_t3_charpolys(here):
+    """{k: big-endian int list} from the committed MaedaT3Dim files."""
+    mf = os.path.join(here, "MathProof", "ModularForms")
+    out = {}
+    for d in range(6, 11):
+        text = open(os.path.join(mf, f"MaedaT3Dim{d}Weights.lean")).read()
+        for k in sorted(int(m) for m in re.findall(r"namespace MaedaT3Weight(\d+)\b", text)):
+            block = re.search(
+                rf"namespace MaedaT3Weight{k}\b(.*?)\nend MaedaT3Weight{k}\b", text, re.S).group(1)
+            body = re.search(
+                r"noncomputable def P : ℤ\[X\] :=(.*?)\n\ntheorem P_natDegree", block, re.S).group(1)
+            coeffs, deg = {}, 0
+            for sign, ctext, exp in _TERM.findall(body):
+                val = _eval_coeff(ctext)
+                if sign == "-":
+                    val = -val
+                e = int(exp) if exp else 0
+                assert e not in coeffs
+                coeffs[e] = val
+                deg = max(deg, e)
+            assert coeffs.get(deg) == 1, (k, "not monic")
+            out[k] = [coeffs.get(i, 0) for i in range(deg, -1, -1)]
+    return out
 
 
 def check_squarefree(cp, ell):
@@ -90,22 +149,40 @@ def try_pattern(cp, ell, want):
 
 
 def main():
+    prime = int(sys.argv[sys.argv.index('--prime') + 1]) if '--prime' in sys.argv else 2
+    assert prime in (2, 3), prime
     here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    src = os.path.join(here, 'research', 'iteration20', 'data',
-                       'maeda_dim6_10.json')
+    if prime == 2:
+        src = os.path.join(here, 'research', 'iteration20', 'data',
+                           'maeda_dim6_10.json')
+        dst = os.path.join(here, 'research', 'iteration21', 'data')
+        dst_name = 'galoisfull_certs.json'
+    else:
+        src = os.path.join(here, 'research', 'iteration20', 'data',
+                           'maeda_t3_dim6_10.json')
+        dst = os.path.join(here, 'research', 'iteration22-t3-galois', 'data')
+        dst_name = 't3_galoisfull_certs.json'
     census = json.load(open(src))
+    anchors = lean_t3_charpolys(here) if prime == 3 else None
+    if anchors is not None:
+        assert len(anchors) == len(census) == 30, (len(anchors), len(census))
     out = []
     for w in census:
         k, dim = w['k'], w['dim']
         n = dim
         cp = w['charpoly']  # descending coefficients, monic
         assert cp[0] == 1 and len(cp) == n + 1, (k, len(cp))
+        if anchors is not None:
+            # pin the census charpoly to the kernel-verified Lean literal
+            assert cp == anchors[k], (k, 'census charpoly != Lean P literal')
         rec = {'k': k, 'dim': dim, 'charpoly': cp}
-        # candidate primes: census hints first, then a fresh scan
-        hints_nm1 = [w['frobenius']['n_minus_1_cycle']] \
-            if 'n_minus_1_cycle' in w['frobenius'] else []
-        hints_tr = [w['frobenius']['transposition']] \
-            if 'transposition' in w['frobenius'] else []
+        # candidate primes: census hints first, then a fresh scan (the T₃
+        # census has no hints — empty dict, straight to the scan)
+        frob = w.get('frobenius', {})
+        hints_nm1 = [frob['n_minus_1_cycle']] \
+            if 'n_minus_1_cycle' in frob else []
+        hints_tr = [frob['transposition']] \
+            if 'transposition' in frob else []
         nm1 = None
         for ell in hints_nm1 + [p for p in range(max(2 * n, n + 3), 4000)
                                 if is_prime(p)]:
@@ -131,7 +208,7 @@ def main():
         if tr is None:
             # transposition primes have Chebotarev density 1/(2 (n-2)!); scan
             # random primes with the root-counting check
-            random.seed(20261031 + k)
+            random.seed((20261031 if prime == 2 else 20261102) + k)
             tries = 0
             while tr is None and tries < 5000000:
                 tries += 1
@@ -146,7 +223,7 @@ def main():
         assert nm1 is not None, (k, 'nm1')
         assert tr is not None, (k, 'transp')
         # cross-check the census n_minus_1_cycle prime really has type [1, n-1]
-        cens = dict(w['frobenius_census'])
+        cens = dict(w.get('frobenius_census', {}))
         if nm1['ell'] in cens:
             assert sorted(cens[nm1['ell']], reverse=True) == [n - 1, 1], \
                 (k, nm1['ell'], cens[nm1['ell']])
@@ -162,11 +239,10 @@ def main():
         print(f"k={k}: nm1 ell={nm1['ell']} deg gbar={len(nm1['gbar'])-1}; "
               f"transp ell={tr['ell']} roots={tr['roots']}", flush=True)
 
-    dst = os.path.join(here, 'research', 'iteration21', 'data')
     os.makedirs(dst, exist_ok=True)
-    with open(os.path.join(dst, 'galoisfull_certs.json'), 'w') as f:
+    with open(os.path.join(dst, dst_name), 'w') as f:
         json.dump(out, f, indent=1)
-    print(f"wrote {len(out)} weight certificates")
+    print(f"wrote {len(out)} weight certificates to {dst_name}")
 
 
 if __name__ == '__main__':
