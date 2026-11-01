@@ -302,6 +302,16 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   byte-identical regeneration) — `MaedaWeightK.maeda_galois_full` for the 30 weights
   `72 ≤ k ≤ 134`; Modal 70–80 s / ≤ 7.5 GiB per file on a warm cache.
   `MaedaGaloisFullAxCheck.lean` — opt-in `#print axioms` audit, not in the root.
+  `MaedaT3GaloisDim{6..10}Weights.lean` (light, generated —
+  `tools/galoisfull_certs.py --prime 3` +
+  `tools/gen_galoisfull.py --prime 3` from
+  `research/iteration22-t3-galois/data/t3_galoisfull_certs.json`, charpolys
+  pinned to the kernel-verified `P` literals of the T₃ dim files; `--check`
+  byte-identical, T₂ mode untouched) — the T₃ twin
+  `MaedaT3WeightK.maeda_galois_full` (Gal = Sₙ for the T₃ charpolys, same 30
+  weights; Bézout witnesses throughout, transposition ℓ up to ≈ 8.7·10⁶);
+  Modal 25–83 s / ≤ 6.3 GiB per file.  `MaedaT3GaloisFullAxCheck.lean` — the
+  twin opt-in audit (all 30 on the standard three axioms).
 - `MathProof/ModularForms/MaedaDim{6,7,8,9,10}Weights.lean` (light,
   generated — `tools/gen_maedan.py`, never hand-edit; `--check` verifies
   byte-identical regeneration) — Maeda irreducibility for the 30 weights

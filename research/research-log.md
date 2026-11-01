@@ -1772,3 +1772,62 @@ polynomial `T_p ∈ ℚ[T₂]`; Gal = Sₙ for the T₃ charpolys (the certifica
 would feed the same `MaedaGaloisFull` assembly); multiplicative Hecke
 operators T_m; dims ≥ 11 (CI-cost scaling is now the binding constraint, not
 proof technology).
+
+## Iteration 22, T1 — T₃-Galois: `Gal = Sₙ` for the `T₃` charpolys, dims 6–10
+
+**Task A of the 2026-11-02 T2 submission** (task definition =
+`external-doc/ENTRY-PROMPTS.md` §2).  Branch `dev/iteration22-t3-galois`
+(the task had never been commenced — zero artifacts; executed from scratch).
+
+**Result.**  `MaedaT3WeightK.maeda_galois_full` for all 30 weights
+`72 ≤ k ≤ 134` (`6 ≤ dim S_k ≤ 10`): the Galois action on the complex roots
+of the `T₃` characteristic polynomial is the full symmetric group.  With
+Iterations 12–21, Maeda's conjecture is now verified *in full* —
+irreducibility **and** `Gal = Sₙ` — for both `T₂` and `T₃` at every
+level-one weight with `2 ≤ dim S_k ≤ 10` (T₃ Galois for dims 2–5 remains
+open; the T₂ dim-2–5 route went through weight-specific resolvents, but the
+Frobenius assembly is dimension-generic and could take the small weights
+too — a cheap follow-up if wanted).
+
+The math was all landed: `MaedaGaloisFull.bijective_of_frobenius` +
+`cycleType_of_cert` are operator-generic, and the T₃ charpolys are
+kernel-verified in `MaedaT3Dim{6..10}Weights.lean`.  Only certificates +
+a generator run were missing (iteration21-review §9.3) — that is what this
+task supplied:
+
+* **G1 anchor** (`research/iteration22-t3-galois/g1_anchor.py`): the T₃
+  charpoly of every weight was pinned three ways — the `P` literal parsed
+  from the committed (Modal-verified) T₃ dim files == the iteration-20
+  census == an independent Newton-identity charpoly of the census matrix —
+  30/30 exact matches.  The certificates were then derived only from the
+  anchored data (`galoisfull_certs.py --prime 3` re-asserts the Lean-literal
+  equality per weight at run time).
+* **Certificates**: per weight, a prime ℓ₁ with factorization type
+  `[n−1, 1]` (Frobenius `(n−1)`-cycle) and a prime ℓ₂ with `[2, 1^(n−2)]`
+  (transposition), all squarefree- and `ℓ ∤ n`-checked.  Four weights
+  needed the random transposition scan into large ℓ (k=112: ℓ = 8 664 941,
+  k=122: 4 953 917, k=130: 1 897 823, k=134: 7 694 233) — the same regime
+  as T₂'s k=130/134, handled by Bézout witnesses (never `zpgcd`, which
+  overflows the kernel stack near ℓ ≈ 5·10⁶).
+* **Generators**: `tools/galoisfull_certs.py` / `tools/gen_galoisfull.py`
+  gained `--prime {2,3}`; the T₂ output is byte-identical after the change
+  (verified twice), the T₃ output regenerates byte-identically
+  (`--check`).  New modules `MaedaT3GaloisDim{6..10}Weights.lean` (light,
+  registered in root + `defaultTargets` + CI, ≈ +4 min CI) +
+  `MaedaT3GaloisFullAxCheck.lean` (opt-in).
+
+**Measured** (Modal `lean_check`, linters on, 0 err / 0 warn): dim 6 =
+25 s / 5.24 GiB, dim 7 = 38 s / 5.38 GiB, dim 8 = 37 s / 5.59 GiB,
+dim 9 = 58 s / 5.87 GiB, dim 10 = 83 s / 6.22 GiB (per-module peak RSS; all
+under the 16 GiB alert line).  Combined light root build 30 s / 6.64 GiB.
+
+**Audits.**  Combined `AxCheckDecide`: 1 202 decide certificates, **0
+depending on more than `propext`** (T₃-Galois adds 180).
+`MaedaT3GaloisFullAxCheck`: all 30 `maeda_galois_full` theorems on exactly
+`propext, Classical.choice, Quot.sound` (the standard analytic three).
+`tauceti_audit.sh` clean on all five new files.  No ancestor of the heavy
+`MaedaGalois5` chain touched (the new files import only the T₃ dim files +
+`MaedaGaloisFull`).
+
+WORKLOG with the full gate-by-gate record:
+`research/iteration22-t3-galois/WORKLOG.md`.
