@@ -29,9 +29,8 @@ conjecture anywhere (no prior formalization claim of the Galois half beyond
 small dims is known to us; the whole subject is barely present in Mathlib —
 no Maeda, no level-one Hecke algebra, `ModularForm` q-expansions only).
 Framed by the project's standard: every certificate kernel-checked, the
-final audit `842 decide certificates, 0 beyond propext` (T₃ state) plus 33
-galois theorems on the standard three axioms; post-merge combined audit
-figure recorded at §9.
+final combined audit `1 022 decide certificates, 0 beyond propext`
+(§9.1) plus 33 galois theorems on the standard three axioms only.
 
 ## 2. Timeline (what actually happened)
 
