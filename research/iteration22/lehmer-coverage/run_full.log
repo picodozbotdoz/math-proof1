@@ -1,0 +1,41 @@
+[setup] 6542 primes <= 65536 ; setup 0.0s
+[xcheck] B=2^24: formula=8,055  marking=8,055  badprimes=1,520  match=True
+         covered = 16,769,160 / 16,777,215 = 99.951988% uncovered density 0.048012%
+[xcheck] B=2^25: formula=18,158  marking=18,158  badprimes=2,967  match=True
+         covered = 33,536,273 / 33,554,431 = 99.945885% uncovered density 0.054115%
+[xcheck] B=2^26: formula=40,226  marking=40,226  badprimes=5,694  match=True
+         covered = 67,068,637 / 67,108,863 = 99.940059% uncovered density 0.059941%
+
+[2^32] bad primes in (65536, 2^32): 294,618  sieve wall 0.2s (22809.73 Mvals/s effective)
+[2^32] first bad prime: 70481  (== Lean gap bound 70481: OK)
+[2^32] first 10 bad primes: [70481, 92593, 96739, 105031, 120233, 134053, 145109, 167221, 179659, 182423]
+[2^32] last bad prime <= 2^32: 4,294,967,161
+[2^32] saved bad_primes_2p32.npy + bad_primes_2p32.txt.gz (294,618 entries)
+
+[counts] exact uncovered / covered per bound (B <= 2^32, no-overlap identity):
+  B      bad primes in (65536,B]  uncovered U(B)     covered
+  2^18              17                   23         262,120   (99.991226% covered)
+  2^20              98                  227       1,048,348   (99.978352% covered)
+  2^21             204                  599       2,096,552   (99.971437% covered)
+  2^24           1,520                8,055      16,769,160   (99.951988% covered)
+  2^25           2,967               18,158      33,536,273   (99.945885% covered)
+  2^26           5,694               40,226      67,068,637   (99.940059% covered)
+  2^27          10,923               87,869     134,129,858   (99.934532% covered)
+  2^28          21,125              190,208     268,245,247   (99.929142% covered)
+  2^29          40,919              408,563     536,462,348   (99.923899% covered)
+  2^30          78,715              870,897   1,072,870,926   (99.918891% covered)
+  2^31         152,290            1,846,162   2,145,637,485   (99.914031% covered)
+  2^32         294,618            3,894,333   4,291,072,962   (99.909328% covered)
+
+[anchors] small-bound data for MathProof/Tau/LehmerCoverageCount.lean:
+  2^18: candidates 691k+690, k=94..378 (285 values) -> 17 bad primes, U(2^18) = 23
+        primes: [70481, 92593, 96739, 105031, 120233, 134053, 145109, 167221, 179659, 182423, 186569, 187951, 192097, 194861, 212827, 216973, 233557]
+  2^20: candidates 691k+690, k=94..1516 (1,423 values) -> 98 bad primes, U(2^20) = 227
+
+[audit] Miller-Rabin (12-base deterministic): 3,099 checked (all 98 < 2^20 + 3000 random + last), 0 false primes; residue/size spot-check OK
+[mertens] sum 1/p over bad p in (65536, 2^28): 0.00074227
+[mertens] sum 1/p over bad p in (65536, 2^32): 0.00093598
+[piAP] bad primes in (65536, 2^28): 21,125
+[piAP] bad primes in (65536, 2^32): 294,618
+
+[done] wall 1.5s

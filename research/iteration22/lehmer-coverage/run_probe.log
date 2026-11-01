@@ -1,0 +1,22 @@
+[setup] 6542 primes <= 65536 ; setup 0.0s
+[xcheck] B=2^24: formula=8,055  marking=8,055  badprimes=1,520  match=True
+         covered = 16,769,160 / 16,777,215 = 99.951988% uncovered density 0.048012%
+[xcheck] B=2^25: formula=18,158  marking=18,158  badprimes=2,967  match=True
+         covered = 33,536,273 / 33,554,431 = 99.945885% uncovered density 0.054115%
+[xcheck] B=2^26: formula=40,226  marking=40,226  badprimes=5,694  match=True
+         covered = 67,068,637 / 67,108,863 = 99.940059% uncovered density 0.059941%
+
+[2^32] bad primes in (65536, 2^32): 294,618  sieve wall 0.2s (25044.07 Mvals/s effective)
+[2^32] first 10 bad primes: [70481, 92593, 96739, 105031, 120233, 134053, 145109, 167221, 179659, 182423]
+[2^32] last bad prime <= 2^32: 4,294,967,161
+[count] B=2^26: uncovered=     40,226  covered=   67,068,637  uncovered%=0.0599414%
+[count] B=2^27: uncovered=     87,869  covered=  134,129,858  uncovered%=0.0654675%
+[count] B=2^28: uncovered=    190,208  covered=  268,245,247  uncovered%=0.0708580%
+[count] B=2^29: uncovered=    408,563  covered=  536,462,348  uncovered%=0.0761008%
+[count] B=2^30: uncovered=    870,897  covered=1,072,870,926  uncovered%=0.0811086%
+[count] B=2^31: uncovered=  1,846,162  covered=2,145,637,485  uncovered%=0.0859686%
+[count] B=2^32: uncovered=  3,894,333  covered=4,291,072,962  uncovered%=0.0906720%
+[mertens] sum 1/p over bad p in (65536, 2^28): 0.00074227
+[mertens] sum 1/p over bad p in (65536, 2^32): 0.00093598
+[piAP] pi(2^28; 691,690) minus below-65536 part = 21,125
+[piAP] pi(2^32; 691,690) minus below-65536 part = 294,618
