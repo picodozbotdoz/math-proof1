@@ -63,7 +63,8 @@ a fresh session.  Read: research/iteration22-review.md §6–7 (open gaps +
 ranked recommendations: ℚ-rationality corollaries incl. integrality of
 witnesses, composite T_m, CI selective targets BEFORE any new trio
 registration), research/research-log.md tail, external-doc/RESEARCH-WORKFLOW.md
-§4.  Merge state: `integration/iteration22-wave` (tip 08263fe) is
-merge-ready for master (operator's action); `dev/iteration22-t3-galois` (T1)
+§4.  Merge state: `integration/iteration22-wave` is merge-ready for master
+(operator's action; use the branch tip, not a hash — doc-only commits may
+follow this pointer); `dev/iteration22-t3-galois` (T1)
 is independently mergeable but already contained in the integration branch
 via the trunk.  CI bill after this iteration ≈ +9–11 min/push.
