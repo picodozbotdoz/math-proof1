@@ -25,9 +25,9 @@ dims ≥ 11; no Mathlib bump mid-iteration.
 Status per branch (branch = impl/iteration22/<slug>, base = 569bcf0):
 | branch | blueprint | status | result |
 |---|---|---|---|
-| impl/iteration22/hecke-rational | blueprint/hecke-rational | SPAWNED | |
-| impl/iteration22/lehmer-coverage | blueprint/lehmer-coverage | SPAWNED | |
-| impl/iteration22/t3-galois-small | blueprint/t3-galois-small | SPAWNED | |
+| impl/iteration22/hecke-rational | blueprint/hecke-rational | RUNNING | |
+| impl/iteration22/lehmer-coverage | blueprint/lehmer-coverage | RUNNING | |
+| impl/iteration22/t3-galois-small | blueprint/t3-galois-small | **COMPLETE** | Gal = Sₙ for T₃ at ALL 54 weights; MaedaGaloisQuad (trio) + MaedaT3GaloisSmallWeights (root-only, 24 wts) green 0/0 (34 s/3.84 GiB; AxCheck 83 s); certs reproduce probe table; byte-identity kept; 1310 decide certs combined, 0 > propext; no descopes/deviations |
 
 Blueprints committed 569bcf0 (from probe FINDINGS in research/iteration22/).
 Worktrees ready with WORKLOG seeds + standalone-mirror `mrun.sh` (each
