@@ -1705,3 +1705,33 @@ that the Iteration-20 pipeline is genuinely operator-generic.  Natural
 follow-ups: the Galois-group half for dims 6–10 (the T₃ charpolys feed the same
 `MaedaPermCriterion` machinery), and "T_m is a polynomial in T₂" from Hecke
 commutativity.
+
+---
+
+## Iteration 21 — Maeda in full for dims 6–10: Galois group `Sₙ` from Frobenius cycle types
+
+**Result.**  `MaedaWeightK.maeda_galois_full` for all 30 weights `72 ≤ k ≤ 134`
+(`6 ≤ dim S_k ≤ 10`): the Galois action of the charpoly of `T₂` on its complex roots
+is bijective, so together with Iterations 12–18 every level-one weight with
+`2 ≤ dim S_k ≤ 10` has irreducible `T₂` charpoly and full symmetric Galois group.
+
+* `FrobeniusCycleType.frob_cycleType_of_factorization`: Dedekind's theorem in the form
+  needed.  Mathlib's `IsArithFrobAt.exists_of_isInvariant` on the root order supplies
+  the Frobenius; separability of the reduction makes the reduced roots distinct;
+  `cycleType_of_frobenius_roots` reads the cycle type off the factor degrees.
+* `JordanPrimitive`: transitive + `(n−1)`-cycle ⟹ primitive, then Mathlib's swap
+  theorem gives `Sₙ`.  This replaces the blueprint's `p > n/2` Jordan route, which
+  needs the unformalized Wielandt 13.9 (and `JordanFor n` is false for these `n`).
+* `tools/gen_galoisfull.py` emits the per-weight certificates.
+
+**Measured.**  Modal: 65–79 s, peak 6.5–7.4 GiB per `MaedaGaloisDim{d}Weights` file
+(warm dependency cache), 0 errors, 0 warnings; `sorry`/`native_decide`/`set_option` free.
+Axiom audit (`MaedaGaloisFullAxCheck`): all 30 theorems and the three generic ones
+depend on exactly `propext, Classical.choice, Quot.sound`.
+
+**Lesson.**  `zpgcd` overflowed the kernel stack at `ℓ = 4912939` and `7403183`
+(weights 130, 134): its Fermat inverse is structural in `ℓ`.  Bézout witnesses from
+the generator avoid division altogether and are now used for every weight.
+
+Not used by the final route, still in `FrobeniusCycleType`: the Dedekind-count lemma
+`exists_frobenius_perm` and `resultant_ne_zero_of_linear_mul_irreducible`.

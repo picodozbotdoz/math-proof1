@@ -69,6 +69,14 @@ defaultTargets = [
   # registered in the root `MathProof.lean` (so `AxCheckDecide` audits its
   # decide certificates); it is verified on Modal and locally:
   #   lake build MathProof.ModularForms.MaedaT3SmallWeights
+  "MathProof.ModularForms.FrobeniusCycleType",
+  "MathProof.ModularForms.JordanPrimitive",
+  "MathProof.ModularForms.MaedaGaloisFull",
+  "MathProof.ModularForms.MaedaGaloisDim6Weights",
+  "MathProof.ModularForms.MaedaGaloisDim7Weights",
+  "MathProof.ModularForms.MaedaGaloisDim8Weights",
+  "MathProof.ModularForms.MaedaGaloisDim9Weights",
+  "MathProof.ModularForms.MaedaGaloisDim10Weights",
 ]
 
 [leanOptions]
