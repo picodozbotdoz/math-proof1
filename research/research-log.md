@@ -2015,3 +2015,31 @@ re-stated entrywise (`ext` + `fin_cases` + `decide +kernel`) because
 `Matrix.decidableEq` = `Fintype.decidablePiFintype` carries a simp-built
 Iff proof (Classical).  `tauceti_audit.sh` clean on all three files.  No
 ancestor of the heavy `MaedaGalois5` chain touched.
+## Iteration 22 wave — CLOSED (2026-11-02, via `integration/iteration22-wave`)
+
+All three blueprints landed with zero descopes; the T1 (T₃-Galois dims 6–10)
+plus the wave give the iteration four results:
+
+1. **Maeda's conjecture in full for both T₂ and T₃ at every level-one weight
+   with `2 ≤ dim S_k ≤ 10`** (54 weights each): irreducibility AND
+   `Gal = Sₙ` — the T₃ half completed this iteration (T1 dims 6–10;
+   t3-galois-small dims 2–5, incl. the new `bijective_of_quadratic`).
+2. **`T₃ ∈ ℚ[T₂]` with constructive rational witnesses at all 54 weights**
+   (steering priority 1): the level-one Hecke algebra over ℚ is `ℚ[T₂]`
+   throughout the verified range (`HeckeRational*`).
+3. **Lehmer coverage quantified exactly (steering priority 2)**: τ n ≠ 0 for
+   4 291 072 962 of 4 294 967 295 n < 2³² = **99.9093 %**, uncovered = the
+   multiples of 294 618 bad primes (≡ −1 [MOD 691], > 65536), first = 70481;
+   kernel-verified anchors at 2¹⁸/2²⁰ (`LehmerCoverageCount`);
+   **131072 descoped with evidence** (~110–125 GiB ≈ 1.8× the stop-rule,
+   +0.0053 pp) — decision memo `research/iteration22/lehmer-coverage/
+   DECISION-131072.md`.
+
+Combined close-out verification: root target green (10 s / 6.69 GiB);
+combined `AxCheckDecide` 1 312 certificates, 0 beyond `propext`; tauceti
+audit clean; 44 Modal runs (≤ ~80 budget); peaks ≤ 8.4 GiB (no 16 GiB
+alerts).  New cross-cutting lessons promoted to AGENTS.md: `Nat.Prime` is
+not kernel-decidable (structural trial-division certificates instead), and
+matrix-level `decide` over `Fin n` pulls `Classical.choice` through
+`Fintype.decidablePiFintype` (use entrywise `ext/fin_cases/decide +kernel`).
+Metrics, timeline, gaps and recommendations: `research/iteration22-review.md`.
