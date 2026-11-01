@@ -90,6 +90,7 @@ jobs:
             MathProof.ModularForms.FrobeniusCycleType
             MathProof.ModularForms.JordanPrimitive
             MathProof.ModularForms.MaedaGaloisFull
+            MathProof.ModularForms.MaedaGaloisQuad
             MathProof.ModularForms.MaedaGaloisDim6Weights
             MathProof.ModularForms.MaedaGaloisDim7Weights
             MathProof.ModularForms.MaedaGaloisDim8Weights

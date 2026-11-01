@@ -1831,3 +1831,68 @@ depending on more than `propext`** (T₃-Galois adds 180).
 
 WORKLOG with the full gate-by-gate record:
 `research/iteration22-t3-galois/WORKLOG.md`.
+
+## Iteration 22, t3-galois-small — T₃-Galois for the 24 small weights: Maeda in full for T₃ at all 54 weights
+
+Orchestrator's-choice slot of the 2026-11-02 wave (blueprint
+`blueprint/t3-galois-small/BLUEPRINT.md`, probe
+`research/iteration22/probe3-t3-small-galois/FINDINGS.md`).  Branch
+`impl/iteration22/t3-galois-small` (base `569bcf0`).
+
+**Result.**  `MaedaT3WeightK.maeda_galois_full` for the remaining 24 weights
+`k ≤ 74` with `2 ≤ dim S_k ≤ 5`, completing `Gal = Sₙ` for the `T₃`
+characteristic polynomials at **every** level-one weight with
+`2 ≤ dim S_k ≤ 10` — 54 of 54.  Maeda's conjecture is now verified *in
+full* (irreducibility **and** `Gal = Sₙ`) for both `T₂` and `T₃` over the
+entire verified range.
+
+Two routes, per the probe:
+
+* **Dims 3–5 (18 weights)** — the unchanged Iteration-21 assembly
+  (`MaedaGaloisFull.bijective_of_frobenius` + `cycleType_of_cert`): a
+  Frobenius `(n−1)`-cycle prime and a transposition prime per weight, all
+  ℓ ≤ 89 (no random scans — `(n−2)! ≤ 6` here), Bézout witnesses throughout.
+  The n = 3 wrinkle resolved itself: the `{3−1}`/`{2}` defeq holds, so the
+  uniform two-certificate emission (two distinct primes, ℓ = 23…83) works
+  with no wrapper.
+* **Dim 2 (6 weights)** — certificate-free, via a new ~45-line Mathlib-only
+  module `MaedaGaloisQuad.lean`: `bijective_of_quadratic` (a monic integer
+  quadratic irreducible over ℚ has `Gal = S₂` — pretransitive action on the
+  two complex roots; the `galActionHom` image has `2 ≤ card ≤ 2!`, hence is
+  ⊤).  Mathlib at the pin has no such lemma; the nearest one demands
+  non-real roots, which Hecke eigenvalues are not.  Never formalized even
+  for T₂ (the T₂ Galois files start at dim 3).
+
+**Pipeline** (T1 discipline, byte-identity gates throughout):
+`tools/galoisfull_certs.py --small` scans the census
+`maeda_t3_small.json` with every charpoly re-anchored to the
+kernel-verified `P` literal of `MaedaT3SmallWeights.lean` (24/24 exact),
+reproducing the probe's certificate table exactly →
+`research/iteration22/data/t3_galoisfull_small_certs.json` →
+`tools/gen_galoisfull.py --prime 3 --small` emits
+`MaedaT3GaloisSmallWeights.lean` (2 230 lines) +
+`MaedaT3GaloisSmallAxCheck.lean` (opt-in).  The T₂ and T₃-dim generator
+outputs stayed byte-identical (`--check` before and after every edit).
+
+**Registration.**  `MaedaGaloisQuad` is trio-registered (root +
+defaultTargets + CI, Mathlib-only so ~free).  `MaedaT3GaloisSmallWeights`
+is root-ONLY: it imports the deliberately non-CI `MaedaT3SmallWeights`,
+and a default-target registration would drag the 125 s parent into every
+push (policy note extended in `lakefile.toml`) — exactly the parent's own
+treatment; still audited by `AxCheckDecide`.
+
+**Measured** (Modal `lean_check`, linters on, 0 err / 0 warn):
+`MaedaGaloisQuad` 34 s / 3.84 GiB; `MaedaT3GaloisSmallWeights` 34 s
+(module) / 6.62 GiB peak tree; `MaedaT3GaloisSmallAxCheck` 83 s / 4.76 GiB;
+combined root + AxCheckDecide 84 s (root 5.35 GiB).  All far under the
+16 GiB alert line.
+
+**Audits.**  Combined `AxCheckDecide`: **1 310 decide certificates, 0
+depending on more than `propext`** (+108 from this task).
+`MaedaT3GaloisSmallAxCheck`: all 24 `maeda_galois_full` theorems +
+`bijective_of_quadratic` on exactly `propext, Classical.choice,
+Quot.sound`.  `tauceti_audit.sh` clean on all three new Lean files.  No
+pre-existing Lean module edited except the `MathProof.lean` root import.
+
+WORKLOG with the full gate-by-gate record:
+`blueprint/t3-galois-small/WORKLOG.md` (branch worktree).

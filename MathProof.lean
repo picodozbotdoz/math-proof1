@@ -59,9 +59,13 @@ import MathProof.ModularForms.MaedaT3Dim10Weights
 -- light module (audited via AxCheckDecide) but deliberately NOT a
 -- defaultTargets/CI item — see the note in lakefile.toml.
 import MathProof.ModularForms.MaedaT3SmallWeights
+-- Its Galois twin (Gal = Sₙ for the T₃ charpolys of the same 24 weights) is
+-- root-only for the same reason: it imports MaedaT3SmallWeights.
+import MathProof.ModularForms.MaedaT3GaloisSmallWeights
 import MathProof.ModularForms.FrobeniusCycleType
 import MathProof.ModularForms.JordanPrimitive
 import MathProof.ModularForms.MaedaGaloisFull
+import MathProof.ModularForms.MaedaGaloisQuad
 import MathProof.ModularForms.MaedaGaloisDim6Weights
 import MathProof.ModularForms.MaedaGaloisDim7Weights
 import MathProof.ModularForms.MaedaGaloisDim8Weights
