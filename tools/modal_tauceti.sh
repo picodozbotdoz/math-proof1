@@ -18,7 +18,8 @@ USER_HOME=$(getent passwd "$MODAL_USER" | cut -d: -f6)
 MODAL_BIN=${MODAL_BIN:-$USER_HOME/xyzenv/bin/modal}
 MODAL_MIRROR=${MODAL_MIRROR:-$USER_HOME/math-proof1}
 SRC=$(git -C "$(dirname "$0")/.." rev-parse --show-toplevel)
-STAGE=${TAUCETI_STAGE:-/tmp/tauceti-stage}
+# Persistent default (survives reboots; /tmp is wiped on this machine).
+STAGE=${TAUCETI_STAGE:-/home/doz/tmp/math-proof1-temp/tauceti-stage}
 
 if [ $# -eq 0 ]; then
   mapfile -t BRANCHES < <(git -C "$CLONE" for-each-ref --format='%(refname:short)' --sort=refname 'refs/heads/pr*')

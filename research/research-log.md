@@ -1338,7 +1338,7 @@ before every top-level command, RSS bucketed between them).  Validation on
 
 Branch `dev/i18-refactor-tauCeti-rule`, commits `555491f` + `ebc69ca`
 (2026-10-30).  Goal: the light library complies with
-`external-doc/TAU-CETI_Coding_Rules.md` — **zero `set_option`** in every
+`external-doc/CODING_STANDARDS.md` — **zero `set_option`** in every
 `defaultTargets` module, comment-aware mechanical audit, options in Tier C
 modules documented with measured reasons.
 
@@ -1415,3 +1415,360 @@ round trips for this class of error.
   oleans from the CDN cache, project targets only); the Pages site remains
   the branch-deployed `docs/` folder.  The leftover docgen run on `b5d033e`
   was cancelled in the Actions UI.
+
+## Iteration 20 — Maeda's conjecture for dims 6–10 (weights 72–134)
+
+Branch `dev/iteration20-maeda-dim6-10`, implementing the `dev/blueprint`
+blueprint `iteration19-maeda-generic` (whose engines — `CharpolyEngine`,
+`RabinCert` — landed in the 2026-10-31 blueprint wave).  **Maeda's
+conjecture (the irreducibility half) is now formally verified, from the
+Hecke operator itself, for every level-one weight with `2 ≤ dim S_k ≤ 10`**:
+30 new weights `72 ≤ k ≤ 134` (`MaedaDim{6..10}Weights.lean`) on top of the
+24 weights `24–74` of Iterations 14–16.  With it, `S_k(SL(2,ℤ))` has a
+verified-irreducible `T₂` charpoly for all 54 weights `k ≤ 134` with
+`dim S_k ≥ 2` (every such weight except 26 and 132).
+
+Stages (plan `research/iteration20-plan.md`, handoff
+`research/iteration20/S3-handoff.md`):
+
+* **S1 `CharpolyDimN.lean`** (`57656b0`, ℕ-restructure `eb94f4d`): the
+  dimension-generic echelon extraction `charpoly_dimN` — the matrix of any
+  endomorphism from q-coefficient tables by downward back-substitution
+  (`coordN`/`coordsAux`).  The first, Fin-indexed shape died on
+  `omega`-opaque cast chains; ℕ-indexed hypotheses compiled first-try.
+* **S2 `tools/gen_maedan.py`**: emits one file per dim from
+  `research/iteration20/data/maeda_dim6_10.json` (census regenerates
+  byte-identically; matrices/charpolys regression-asserted against the
+  proved k = 24/48 ones).
+* **S3 dim 6** (`838fc35`): the 66-error pipeline bring-up; its 25 gotchas
+  are in the handoff and remain the reference for the hmap simp+rw chain,
+  per-entry theorems and `C (1) * X ^ n` leading-term idiom.
+* **S4 dims 7–10** (this entry): three new failure classes, all fixed in the
+  generator, never in the generated files:
+  1. *q/t statement lines over 100 chars* (dims 8–10): the RHS value now
+     wraps to a continuation line (`coeff_stmt`).
+  2. *Chunked determinant literals*: `eval_det` reduces `det (t·1 − M)` to a
+     flat numeral but cannot close `flat = c0 * 10 ^ e0 + c1 …`; chunked
+     `det_t`s get `norm_num` after `eval_det` (validated locally on the
+     exact goal shapes, incl. 4-chunk dim-10 size, before the Modal run).
+     Charpoly coefficients past 80 digits are chunked with the SAME token
+     sequence inside `P` and the hmap rewrites (`rw` matches syntactically).
+  3. *`simp only [coordsAux]` heartbeat exhaustion at the deepest
+     back-substitution rows* (dim 9: `entry_8_{4..8}`, 30 deterministic
+     timeouts): the entries are now STAGED — per (column, row-count)
+     `Lv{a}_{j} : coordsAux … j = [literal list]`, each proved from the
+     previous stage by a ONE-step unfold (`change`, never `show` —
+     `linter.style.show` rejects goal-changing `show`s) + `rw` + a
+     j-tuned simp set (j = 1: the empty sum kills `Atab`; j = 2: a
+     1-element prefix uses no `getD_cons_succ`); entries are then
+     `simp only [coordN]; rw [Lv{a}_{c+1}]; rfl`.  Staging also made every
+     file faster (dim 9: 931 s failed cascade → 413 s staged).
+
+  Verification matrix (Modal `lean_check --file`, linters on, all green with
+  ZERO warnings; build time / per-module peak RSS):
+
+  | module | lines | build | peak |
+  |---|---|---|---|
+  | `MaedaDim6Weights` | 10587 | 88 s | 6.4 GiB |
+  | `MaedaDim7Weights` | 14199 | 138 s | 7.1 GiB |
+  | `MaedaDim8Weights` | 18389 | 333 s | 8.1 GiB |
+  | `MaedaDim9Weights` | 23257 | 413 s | 9.3 GiB |
+  | `MaedaDim10Weights` | 28922 | 1167 s | 11.6 GiB |
+
+  The flagged kernel-time risk (k = 120: ~28k ZMod-muls in the Rabin block)
+  passed inside the 200 s-per-declaration kernel budget; cold full pass of
+  the five files ≈ 36 min, which CI now pays on every push.
+
+* **S5 registration + audit**: `CharpolyDimN` and the five weight files in
+  `MathProof.lean`, `defaultTargets`, CI list; `tools/tauceti_audit.sh`
+  clean (no `set_option`/`#eval`/`meta`/`native_decide` anywhere in the new
+  modules); `MathProof/AxCheckDecide.lean` on Modal: **409 decide certificates
+  audited, 0 depending on more than `propext`** (up from 109 — the five new
+  files add ~300 propext-clean certificates).
+
+* **S6 bookkeeping**: README (Maeda section: `2 ≤ dim ≤ 10`, 54 weights,
+  dims ≤ 5 keep the Galois-group statements; layout line), docs landing
+  page (card retitled "weights 24–134"), AGENTS.md layout entry with the
+  measured costs, this entry.
+
+Invariants kept: no ancestor of the heavy `MaedaGalois5Defs` chain touched;
+generated files never hand-edited (`gen_maedan.py --check` byte-identical);
+every certificate is `decide +kernel` / `norm_num` / `eval_det`, and the
+audit target stays propext-only.  Natural follow-ups, recorded as the next
+blueprints: the Galois-group half for dims 6–10 (Frobenius cycle types +
+`MaedaPermCriterion`), Hecke commutativity → "T_m is a polynomial in T₂"
+(uses these 54 irreducibilities), and the T₃ twin run.
+
+## Iteration 21 — Hecke operators commute; the Hecke algebra is generated by `T₂` (54 weights)
+
+**Status: complete (blueprint `blueprint/iteration21-hecke-commute/`, branch
+`impl/iteration21/hecke-commute`).  2026-10-31.**
+
+### The problem
+
+Two open prerequisites named by the Iteration-18b wave report:
+
+1. **Commutativity** of the level-one Hecke operators: `T_p T_q = T_q T_p` on
+   `S_k(SL(2, ℤ))` — the missing hypothesis of the (already-proved, hypothesis-
+   starved) algebra half `HeckeAlgebra.exists_aeval_of_commute_of_irreducible_charpoly`.
+2. The **upgrade instantiation**: combine commutativity with the 54 verified
+   `Irreducible (charpoly T₂)` theorems of Iterations 18/19/20 into per-weight
+   statements `T_p = aeval T₂ Q` — the Hecke algebra of `S_k` is *generated by
+   `T₂` alone*.
+
+### What is proved (three new light modules)
+
+* `MathProof/ModularForms/HeckeCommute.lean`:
+  - `heckeTP2_qExpansion_coeff` — the composed coefficient formula
+    (`heckeTP_qExpansion_coeff` unrolled twice);
+  - `heckeTP_qExpansion_coeff_commute` — the symmetric comparison, for ALL
+    primes `p q` including `p = q`: in the equal case both composed expansions
+    are syntactically the same expression, and the `p ≠ q` case is a four-way
+    `p ∣ m` / `q ∣ m` branch split (the `m/p`-integrality trap) with
+    `Nat.mul_div_cancel_left` rewrites;
+  - `heckeTP_commute : heckeTP hp (heckeTP hq f) = heckeTP hq (heckeTP hp f)`,
+    via `qExpansion_coeff_ext` — q-expansion injectivity for cusp forms
+    (Mathlib's `ModularForm.qExpansion_injective` through
+    `CuspForm.toModularFormₗ`);
+  - `heckeTPₗ_commute : Commute (heckeTPₗ k hp) (heckeTPₗ k hq)`.
+* `MathProof/ModularForms/HeckeGeneratedByT2.lean` (algebra half):
+  - `exists_aeval_of_commute_of_minpoly_eq_charpoly` — the upgrade theorem
+    restated for a *cyclic* operator.  Over `ℂ` a charpoly of degree ≥ 2 is
+    never irreducible, so the original theorem cannot be applied to
+    `S_k`-spaces; the cyclic vector comes from the PID structure theorem
+    `Module.exists_ker_toSpanSingleton_eq_annihilator` applied to the
+    `K[X]`-module `Module.AEval' T₂` (no per-weight rational structure needed);
+  - `minpoly_eq_charpoly_of_map_of_irreducible` — if `charpoly T` (over `ℂ`)
+    is `P.map ℤ→ℂ` with `P.map ℤ→ℚ` irreducible, then `minpoly ℂ T =
+    charpoly T`: irreducible over `ℚ` ⟹ separable ⟹ `deg P` distinct complex
+    roots, each root of the charpoly is an eigenvalue
+    (`Module.End.hasEigenvalue_iff_isRoot_charpoly`) hence a root of the
+    minimal polynomial (`Module.End.isRoot_of_hasEigenvalue`), and degree
+    counting finishes;
+  - wrapper `heckeTP_mem_spanT2` (weight-generic): charpoly an integer
+    polynomial irreducible over `ℚ` ⟹ every `T_p` is a polynomial in `T₂`
+    **with complex coefficients**.  (The blueprint's literal `∃ Q : ℚ[X]` is
+    type-incorrect: `S_k` is a `ℂ`-space, so `aeval T₂` consumes `ℂ[X]`.)
+* `MathProof/ModularForms/HeckeGeneratedByT2Weights.lean` (generated by
+  `tools/gen_hecke_gen_t2.py`, `--check` byte-identical): the 54 instances
+  `heckeTP_mem_spanT2_weightKK` — every even weight `24 ≤ k ≤ 134`
+  (`2 ≤ dim S_k ≤ 10`; namespaces `MaedaWeight24` … `MaedaWeight134`).
+
+### Statement of the headline result
+
+For every even weight `k = 24, 28, …, 134` and every prime `p` there is
+`Q : ℂ[X]` with `T_p = aeval T₂ Q` on `S_k(SL(2, ℤ))`: **the Hecke algebra of
+`S_k(SL(2, ℤ))` is generated by `T₂` alone in all 54 verified weights**.
+
+### Costs and verification
+
+All three modules are elaborator-cheap (no kernel decides; zero `decide`
+anywhere, so the `AxCheckDecide` audit is unchanged).  Modal (`lean_check.py`,
+linters on, 4 CPU / 32 GiB): `HeckeCommute` 32 s / 5.96 GiB peak tree RSS;
+`HeckeGeneratedByT2` 36 s / 6.03 GiB; `HeckeGeneratedByT2Weights` 50 s /
+6.30 GiB (the Maeda `Dim{6..10}Weights` oleans restored from the shared
+rolling build cache).  `tools/tauceti_audit.sh` clean (no `set_option`,
+`#eval`/`meta`/`unsafe`, `native_decide`/`sorry`); style linters clean
+(the `show`-vs-`change` and unused-section-variable pitfalls of the S3
+handoff were avoided).  All three registered in `MathProof.lean`,
+`defaultTargets`, and the CI list.
+
+### Notes for follow-ups
+
+* `Commute` is available for ALL prime pairs, so any future `T_m`
+  generalization (multiplicative Hecke operators) can reuse
+  `heckeTP_qExpansion_coeff_commute` verbatim.
+* The `ℚ`-coefficient refinement (`T_p ∈ ℚ[T₂]`) would need a rational
+  structure on `S_k`; the cyclicity route deliberately avoids it, and the
+  representing polynomial of degree `< dim S_k` is unique (minpoly degree),
+  so such an upgrade would only have to exhibit rationality.
+
+---
+
+---
+
+## Iteration 21 — Maeda's conjecture for the T₃ Hecke operator (dims 2–10): the pipeline is operator-generic
+
+**Status: complete.  2026-10-31.**
+
+### The problem
+
+Maeda's conjecture concerns the Hecke algebra, not `T₂` specifically.  The
+Iteration-20 pipeline (dimension-generic `charpoly_dimN` extraction +
+determinant interpolation + Rabin certificates, emitted by `tools/gen_maedan.py`)
+is operator-generic by construction — `heckeTPₗ` takes any prime,
+`charpoly_dimN` any endomorphism — so its claim could be tested by re-running it
+for the Hecke operator `T₃`:
+
+    Irreducible (charpoly (T₃ | S_k)) for every level-one weight with 2 ≤ dim S_k ≤ 10,
+
+i.e. the same 54 weights already verified for `T₂` (24 at dims 2–5, 30 at dims
+6–10).
+
+### What was contributed
+
+* **The p-generic coefficient lemma** `MaedaLevelOne.heckeTP_coeff`
+  (`HeckeTPCoeff.lean`, new light module): `(T_p f)_m = f_{pm} + p^{K−1} [p ∣ m]
+  f_{m/p}` for any prime `p`, one `rw` from the prime-generic
+  `heckeTP_qExpansion_coeff`.  A new module because `MaedaLevelOne` is an
+  ancestor of the heavy `MaedaGalois5` chain.
+* **Extended coefficient lists** (`MaedaCertCExt.lean`, new light module):
+  `tau22 … tau30` kernel-verified against `Ramanujan.tau` (each `tauOf_eq_getD
+  + decide`), `tauTableX`, `dCc3`, `seqPLc3`, `seqPLc3_eq` with cap `N ≤ 31` —
+  T₃ reads basis coefficients up to index `3n` = 30 at dim 10, past
+  `MaedaCertC.seqPLc`'s `N ≤ 22`.
+* **Generator mode** `tools/gen_maedan.py --prime 3 [--small]` with a separate
+  `emit_weight_t3`/`emit_small_t3` (the T₂ emitter untouched); byte-identical
+  `--check` regression for prime 2 and for `--prime 3` dims 6–9 after every
+  edit.
+* **Census** `research/iteration20/data/maeda_t3_dim6_10.json` +
+  `maeda_t3_small.json` (probe with reflected-engine sanity asserts and
+  commutation `[M₂, M₃] = 0` against the Lean-proved T₂ charpoly data of
+  iteration 20 — the tie that anchors the whole T₃ census to kernel-verified
+  facts).
+* **The blueprint's k=24 anchor was FALSE and was corrected before any code**
+  (G1 audit): the blueprint claimed `charpoly(T₃ | S₂₄) = X² − 252·X + 3²³`
+  "since S₂₄ is spanned by Δ" — but Δ ∈ S₁₂ and τ(3) = 252 is an eigenvalue of
+  T₃ on **S₁₂**, not S₂₄.  The true charpoly, confirmed by two independent
+  computations (echelon pipeline and non-echelon Cramer), is
+  `X² − 339480·X − 19020146544`; the τ(3)-anchor lives at S₁₂ where
+  `charpoly(T₃ | S₁₂) = X − 252`.
+
+### The dim-10 scale-up: two new generator lessons
+
+T₃ numerics outgrow T₂'s (charpoly coefficients to 317 digits at k = 134,
+matrix entries to 82; `3^{k−1}` to 64 digits).  The first Modal run of
+`MaedaT3Dim10Weights` failed (1255 s, 12.53 GiB) and forced two changes in the
+generator — never in the generated files:
+
+1. **Chunk exponents must respect `exponentiation.threshold`.**  60-digit
+   chunking puts k=134's top place-value exponent at 317 − 60 = 257, one past
+   Lean's default threshold (256): `norm_num` refuses to evaluate the power and
+   a light module may not raise the option — 11 unsolved goals.  Fix: the first
+   chunk grows to d − 256 when d > 316 (assert d ≤ 341), every emitted exponent
+   ≤ 256.  T₂ (≤ 245 digits) and T₃ dims 6–9 (≤ 260) never enter the branch.
+2. **Oversized cast items, and a linter trap.**  82-digit matrix entries make
+   plain `((… : ℤ) : ℂ)` items overflow the 100-char line limit.  The failed
+   build reported only 9 of 24 long lines because **Mathlib's longLine linter
+   returns early once the message log holds any error** — a failed build
+   under-reports style warnings; the clean-build standard is 0.  Fix:
+   `cast_item_lines(v, budget)` chunks oversized items across continuation
+   lines (budgets clist 92 / coordN 91 / entry 86, per-site prefix+suffix);
+   `lean_list` gained a `maxbody` parameter for the stretch file's `L{j}c`
+   lists (102–104 chars — a bare `lake env lean` does NOT apply the lakefile
+   linter options, so local "0 warnings" proves nothing about style lints).
+
+Pre-Modal validation discipline: all 600 `entry_{c}_{a}` statements of the new
+dim-10 file checked value-identical to the committed rendering (18 chunked), and
+a Mathlib-only test file certified the three new proof shapes (`norm_num` with
+`10 ^ 256` exactly at the threshold, `rfl` on chunked casts, `decide +kernel`
+on chunked `ZMod` casts).
+
+### Verification matrix (Modal `lean_check`, linters on, all 0 err / 0 warn)
+
+| module | lines | build | peak |
+|---|---|---|---|
+| `MaedaT3Dim6Weights` | 11980 | 165 s | 10.57 GiB (tree) |
+| `MaedaT3Dim7Weights` | 16128 | 209 s | 8.49 GiB |
+| `MaedaT3Dim8Weights` | 21130 | 527 s | 9.53 GiB |
+| `MaedaT3Dim9Weights` | 26916 | green (cache-validated; the pre-reboot run's telemetry was lost with /tmp) | — |
+| `MaedaT3Dim10Weights` | 33670 | 1227 s | 12.38 GiB |
+| `MaedaT3SmallWeights` (stretch) | 20283 | 125 s | 6.83 GiB |
+
+(Relative to T₂: ×1.27–1.58 build time, ×1.06 peak memory.  One dim-10 attempt
+was lost to a Modal container preemption at t ≈ 850 s — the retry restarted
+from scratch, so a preempted heavy run loses its whole progress; the cache only
+saves at the end.)
+
+### Audit and bookkeeping
+
+* `tools/tauceti_audit.sh` on all eight new modules: clean (no
+  `set_option`/`#eval`/meta/`native_decide`/bad imports).
+* `MathProof.AxCheckDecide` on Modal: **842 decide certificates audited, 0
+  depending on more than `propext`** (up from 409 — the T₃ files add 433).
+* Registration: `HeckeTPCoeff`, `MaedaCertCExt`, `MaedaT3Dim{6..10}Weights` in
+  `MathProof.lean`, `defaultTargets`, and the CI list (the CI now also pays the
+  T₃ dim files, ≈ 25 min per push).  The stretch file `MaedaT3SmallWeights` is
+  registered in the ROOT ONLY (audited via `AxCheckDecide`) and deliberately
+  kept out of `defaultTargets`/CI — bonus content behind an already doubled CI
+  bill; recorded in the lakefile note.
+* README (T₃ twin paragraph in the Maeda section), docs landing page (T₃
+  sentence in the Maeda card), AGENTS.md layout entries with the measured
+  costs, this entry.
+
+Invariants kept: no ancestor of the heavy `MaedaGalois5Defs` chain touched;
+generated files never hand-edited; T₂ mode byte-identical after every generator
+edit (`--check`); every certificate `decide +kernel` / `norm_num` / `eval_det`;
+the audit target stays propext-only.  Maeda's conjecture now has both T₂ and
+T₃ verified across all 54 level-one weights with `2 ≤ dim S_k ≤ 10` — evidence
+that the Iteration-20 pipeline is genuinely operator-generic.  Natural
+follow-ups: the Galois-group half for dims 6–10 (the T₃ charpolys feed the same
+`MaedaPermCriterion` machinery), and "T_m is a polynomial in T₂" from Hecke
+commutativity.
+
+---
+
+## Iteration 21 — Maeda in full for dims 6–10: Galois group `Sₙ` from Frobenius cycle types
+
+**Result.**  `MaedaWeightK.maeda_galois_full` for all 30 weights `72 ≤ k ≤ 134`
+(`6 ≤ dim S_k ≤ 10`): the Galois action of the charpoly of `T₂` on its complex roots
+is bijective, so together with Iterations 12–18 every level-one weight with
+`2 ≤ dim S_k ≤ 10` has irreducible `T₂` charpoly and full symmetric Galois group.
+
+* `FrobeniusCycleType.frob_cycleType_of_factorization`: Dedekind's theorem in the form
+  needed.  Mathlib's `IsArithFrobAt.exists_of_isInvariant` on the root order supplies
+  the Frobenius; separability of the reduction makes the reduced roots distinct;
+  `cycleType_of_frobenius_roots` reads the cycle type off the factor degrees.
+* `JordanPrimitive`: transitive + `(n−1)`-cycle ⟹ primitive, then Mathlib's swap
+  theorem gives `Sₙ`.  This replaces the blueprint's `p > n/2` Jordan route, which
+  needs the unformalized Wielandt 13.9 (and `JordanFor n` is false for these `n`).
+* `tools/gen_galoisfull.py` emits the per-weight certificates.
+
+**Measured.**  Modal: 65–79 s, peak 6.5–7.4 GiB per `MaedaGaloisDim{d}Weights` file
+(warm dependency cache), 0 errors, 0 warnings; `sorry`/`native_decide`/`set_option` free.
+Axiom audit (`MaedaGaloisFullAxCheck`): all 30 theorems and the three generic ones
+depend on exactly `propext, Classical.choice, Quot.sound`.
+
+**Lesson.**  `zpgcd` overflowed the kernel stack at `ℓ = 4912939` and `7403183`
+(weights 130, 134): its Fermat inverse is structural in `ℓ`.  Bézout witnesses from
+the generator avoid division altogether and are now used for every weight.
+
+Not used by the final route, still in `FrobeniusCycleType`: the Dedekind-count lemma
+`exists_frobenius_perm` and `resultant_ne_zero_of_linear_mul_irreducible`.
+
+## Iteration 21 wave — CLOSED (2026-11-01, merged via `integration/iteration21-wave`)
+
+All three blueprints landed and merged (union-resolved registrations); the
+combined light library built green on Modal through the root target
+(`MathProof`, 72 s / 6.6 GiB, zero warnings) before the master merge.
+
+Headline results, all kernel-verified from the Hecke operator itself:
+
+1. **Maeda's conjecture in full for every level-one weight with
+   `2 ≤ dim S_k ≤ 10`** (54 weights, 24–134): `T₂` charpoly irreducible AND
+   `Gal = Sₙ` — dims 6–10 by this wave (`maeda_galois_full`, Dedekind
+   cycle-type certificates + (n−1)-cycle/transposition Sₙ finish), dims 2–5
+   by Iterations 14–16.
+2. **The same for `T₃`** (irreducibility, all 54 weights) — the Iteration-20
+   pipeline is operator-generic, as designed.
+3. **The level-one Hecke algebra is generated by `T₂` alone** in all 54
+   weights (`heckeTP_commute` + cyclicity upgrade), over `ℂ`.
+
+Audit totals at close: 842 `decide` certificates (T₃ state) across the light
+library, 0 beyond `propext`; the 33 galois-full theorems rest on the standard
+three axioms only.  New cross-cutting lessons recorded in AGENTS.md /
+WAVE-TRACKING: red builds under-report style warnings;
+`exponentiation.threshold = 256` bounds chunked literals; `RabinCert.zpgcd`
+kernel stack overflow near ℓ ≈ 5·10⁶ (use Bézout witnesses);
+`modal_run.sh` cannot run from worktrees (mirror pattern); `/tmp` is wiped on
+reboot (persistent temp tree).  The galois-full branch was finished by an
+external AI session after two internal agents stalled on the instantiation
+plumbing — its log is preserved as
+`blueprint/iteration21-maeda-galois-full/CLAUDE_DEWALL_NOTES.md`, and the
+orchestrator's review of it (logs, statements, audits, registration) passed.
+
+Open follow-ups (next blueprints): ℚ-rationality of the representing
+polynomial `T_p ∈ ℚ[T₂]`; Gal = Sₙ for the T₃ charpolys (the certificates
+would feed the same `MaedaGaloisFull` assembly); multiplicative Hecke
+operators T_m; dims ≥ 11 (CI-cost scaling is now the binding constraint, not
+proof technology).

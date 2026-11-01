@@ -50,6 +50,7 @@ jobs:
             MathProof.ModularForms.LehmerWeight26
             MathProof.ModularForms.MaedaWeight24
             MathProof.ModularForms.MaedaLevelOne
+            MathProof.ModularForms.HeckeTPCoeff
             MathProof.ModularForms.MaedaSmallWeights
             MathProof.ModularForms.MaedaGalois
             MathProof.ModularForms.MaedaDim4
@@ -61,10 +62,35 @@ jobs:
             MathProof.ModularForms.MaedaGalois5Defs
             MathProof.ModularForms.HornerCert
             MathProof.ModularForms.MaedaCertC
+            MathProof.ModularForms.MaedaCertCExt
             MathProof.ModularForms.MaedaPermCriterion
             MathProof.ModularForms.CharpolyEngine
             MathProof.ModularForms.RabinCert
             MathProof.ModularForms.HeckeAlgebraQT2
+            MathProof.ModularForms.CharpolyDimN
+            MathProof.ModularForms.MaedaDim6Weights
+            MathProof.ModularForms.MaedaDim7Weights
+            MathProof.ModularForms.MaedaDim8Weights
+            MathProof.ModularForms.MaedaDim9Weights
+            MathProof.ModularForms.MaedaDim10Weights
+            MathProof.ModularForms.HeckeCommute
+            MathProof.ModularForms.HeckeGeneratedByT2
+            MathProof.ModularForms.HeckeGeneratedByT2Weights
+            MathProof.ModularForms.HeckeTPCoeff
+            MathProof.ModularForms.MaedaCertCExt
+            MathProof.ModularForms.MaedaT3Dim6Weights
+            MathProof.ModularForms.MaedaT3Dim7Weights
+            MathProof.ModularForms.MaedaT3Dim8Weights
+            MathProof.ModularForms.MaedaT3Dim9Weights
+            MathProof.ModularForms.MaedaT3Dim10Weights
+            MathProof.ModularForms.FrobeniusCycleType
+            MathProof.ModularForms.JordanPrimitive
+            MathProof.ModularForms.MaedaGaloisFull
+            MathProof.ModularForms.MaedaGaloisDim6Weights
+            MathProof.ModularForms.MaedaGaloisDim7Weights
+            MathProof.ModularForms.MaedaGaloisDim8Weights
+            MathProof.ModularForms.MaedaGaloisDim9Weights
+            MathProof.ModularForms.MaedaGaloisDim10Weights
       # NOTE: no docgen-action step.  It re-ran the whole build a second time
       # and built the doc-gen4 tool and its Mathlib dependency from source
       # (30+ min per push), and its deploy step would overwrite the

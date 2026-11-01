@@ -51,13 +51,17 @@ stages concurrently).
   `(kernel) deterministic timeout` (default 200000 ≈ 200 s of kernel work).
 
   **Memory alerts — investigation policy (since 2026-10-29).**  Every build
-  whose `lake` tree reaches **64 GiB** RSS must be investigated; "it fit in
+  whose `lake` tree reaches **16 GiB** RSS must be investigated (lowered from
+  64 on 2026-10-31 when requests were right-sized — anything above 16 GiB of
+  *actual* use now deserves a look even when it fits); "it fit in
   the container" is not an answer.  The tooling makes this mechanical:
   1. `lean_check.py` prints a `[memory]` table (peak RSS per module, from
-     the `lean` process of each module) after every run, and at ≥ 64 GiB
+     the `lean` process of each module) after every run, and at ≥ 16 GiB
      (`LEAN_CHECK_MEM_ALERT_GIB` overrides) `[memory-alert]` lines naming the
      hot modules plus the profiling command for each.
-  2. `tools/modal_run.sh` keeps every run's log (`$TMPDIR/mathproof-runs/`)
+  2. `tools/modal_run.sh` keeps every run's log
+     (`/home/doz/tmp/math-proof1-temp/mathproof-runs/` — persistent across
+     reboots, unlike `/tmp`; override with `MODAL_RUN_LOG_DIR`)
      and appends each alert to `research/memory-alerts.md` as an **OPEN**
      entry.
   3. Investigate with `LEAN_CHECK_PROFILE=<Module> tools/modal_run.sh`: it
@@ -111,7 +115,13 @@ recreate them**:
   *identically* in both scripts so the layer cache is shared. If one must
   change, change both — and expect the image rebuild to pay for `lake update`
   + `lake exe cache get` once (~15 min).
-- Per run: 4 CPUs, 32 GiB RAM, 4-hour timeout. Logs stream from `modal run`.
+- Per run: 4 CPUs, 8 GiB RAM **requested** by default, 4-hour timeout.  The
+  request is soft (Modal may grant more) but right-sized
+  (`research/iteration21/MEMORY-RIGHTSIZING.md`): `tools/modal_run.sh`
+  auto-escalates 8 → 16 → 32 GiB when a run OOMs (`lean_check.py` detects
+  peak ≥ 97 % of the request and exits 42); heavier targets pass an explicit
+  `LEAN_CHECK_MEMORY_MIB` (or `LEAN_BUILD_MEMORY_MIB` for `lean_build.py`),
+  e.g. 98304 for the `LehmerPacked`-class decides.  Logs stream from `modal run`.
 
 ### Least preferred: building on this machine
 
@@ -273,6 +283,87 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   `MaedaGalois5` — `galActionHom_bijective_of_quintic`;
   `MaedaGalois5Weights` — the six instances (generated, `tools/gen_galois5.py`);
   `MaedaGalois5AxCheck` (heavy) — `#print axioms` for every certificate.
+- `MathProof/ModularForms/CharpolyDimN.lean` (light) — the dimension-generic
+  echelon extraction `charpoly_dimN` (ℕ-indexed basis hypotheses; the
+  back-substitution matrix of any endomorphism from q-coefficient tables).
+- `MathProof/ModularForms/FrobeniusCycleType.lean` (light) — Dedekind's theorem in
+  cycle-type form, `frob_cycleType_of_factorization`: `IsArithFrobAt` on the root
+  order `ℤ[x₁…xₙ]` + the finite-field orbit lemma `cycleType_of_frobenius_roots`.
+  `JordanPrimitive.lean` (light) — transitive + `(n−1)`-cycle ⟹ primitive; with a
+  swap, `Sₙ`.  `MaedaGaloisFull.lean` (light) — `bijective_of_frobenius`,
+  `cycleType_of_cert`, Bézout Rabin test `irreducible_of_rabin_bezout`.
+  `MaedaGaloisDim{6..10}Weights.lean` (light, generated — `tools/gen_galoisfull.py`
+  from `research/iteration21/data/galoisfull_certs.json`, `--check` for
+  byte-identical regeneration) — `MaedaWeightK.maeda_galois_full` for the 30 weights
+  `72 ≤ k ≤ 134`; Modal 70–80 s / ≤ 7.5 GiB per file on a warm cache.
+  `MaedaGaloisFullAxCheck.lean` — opt-in `#print axioms` audit, not in the root.
+- `MathProof/ModularForms/MaedaDim{6,7,8,9,10}Weights.lean` (light,
+  generated — `tools/gen_maedan.py`, never hand-edit; `--check` verifies
+  byte-identical regeneration) — Maeda irreducibility for the 30 weights
+  `72 ≤ k ≤ 134` with `6 ≤ dim S_k ≤ 10`: literal T₂-matrix per weight,
+  charpoly via `CharpolyEngine` determinant interpolation, Rabin
+  irreducibility certificates (`RabinCert.irreducible_of_rabin_int`).
+  Coefficients past 80 digits are emitted as chunked `c0 * 10 ^ e0 + c1 …`
+  literals; a chunked `det_t` needs `norm_num` after `eval_det` (the tactic
+  leaves `flat = chunked`); the back-substitution is STAGED (`Lv{a}_{j}`
+  list lemmas, one-step `change` unfolds + `rw` — a full-cascade
+  `simp only [coordsAux]` exhausts the default heartbeats at dim ≥ 9, and
+  `show` is rejected by `linter.style.show`, use `change`).  Build cost on
+  Modal (staged, measured 2026-10-31): dim 6 = 88 s / 6.4 GiB, dim 7 = 138 s
+  / 7.1 GiB, dim 8 = 333 s / 8.1 GiB, dim 9 = 413 s / 9.3 GiB, dim 10 =
+  1167 s / 11.6 GiB (the k=120 Rabin decide, ~28k ZMod-muls, fits the
+  200 s kernel budget per declaration).  Cold full pass of the five files
+  ≈ 36 min — CI pays this on every push now.
+- `MathProof/ModularForms/HeckeCommute.lean` (light) — level-one Hecke
+  commutativity: `heckeTP2_qExpansion_coeff` (composed coefficient formula),
+  `heckeTP_qExpansion_coeff_commute` (all prime pairs incl. `p = q`),
+  `heckeTP_commute`, `heckeTPₗ_commute` (the `Commute` hypothesis consumed by
+  the upgrade); q-expansion injectivity for cusp forms (`qExpansion_coeff_ext`).
+- `MathProof/ModularForms/HeckeGeneratedByT2.lean` (light) — the upgrade
+  algebra: `exists_aeval_of_commute_of_minpoly_eq_charpoly` (cyclic-operator
+  form; cyclic vector from `Module.exists_ker_toSpanSingleton_eq_annihilator`
+  on `Module.AEval' T₂`),
+  `minpoly_eq_charpoly_of_map_of_irreducible` (separability + eigenvalues over
+  ℂ), weight-generic wrapper `heckeTP_mem_spanT2`.
+  `HeckeGeneratedByT2Weights.lean` (light, generated by
+  `tools/gen_hecke_gen_t2.py` — regenerate, don't hand-edit) — the 54
+  per-weight theorems `heckeTP_mem_spanT2_weightKK`: for every prime `p`,
+  `∃ Q : ℂ[X], T_p = aeval T₂ Q` on `S_k` (Hecke algebra generated by `T₂`,
+  every even weight 24–134).  Modal: ≈ 32–50 s / ≤ 6.3 GiB per module.
+- `MathProof/ModularForms/HeckeTPCoeff.lean` (light) — `heckeTP_coeff`, the
+  p-generic twin of `heckeT2_coeff` (one `rw` from
+  `heckeTP_qExpansion_coeff`); new light module because `MaedaLevelOne` is
+  an ancestor of the heavy `MaedaGalois5` chain.
+- `MathProof/ModularForms/MaedaCertCExt.lean` (light) — `tau22 … tau30`
+  (kernel-verified against `Ramanujan.tau`), `tauTableX`, `dCc3`,
+  `seqPLc3`, `seqPLc3_eq` with cap `N ≤ 31`: the T₃ coefficient formula
+  reads basis coefficients up to index `3n` (30 at dim 10), past
+  `MaedaCertC.seqPLc`'s `N ≤ 22`.
+- `MathProof/ModularForms/MaedaT3Dim{6,7,8,9,10}Weights.lean` (light,
+  generated — `tools/gen_maedan.py --prime 3`, never hand-edit) — the T₃
+  twin of the dim-6…10 run: `Irreducible (charpoly (T₃ | S_k))` for the
+  same 30 weights `72 ≤ k ≤ 134` (`MaedaT3WeightK.charpoly_T3`,
+  `MaedaT3WeightK.maeda`), same staged back-substitution + Rabin
+  certificates.  T₃ numerics outgrow T₂'s (charpoly coefficients to 317
+  digits, matrix entries to 82), which forced two generator-side changes:
+  chunked literals cap every place-value exponent at 256 (Lean's default
+  `exponentiation.threshold` — norm_num refuses `10 ^ 257` and light
+  modules may not raise the option; the first chunk grows for d > 316),
+  and oversized `((… : ℤ) : ℂ)` cast items chunk across lines
+  (`cast_item_lines` budgets; the longLine linter silently stops reporting
+  once the file has any error, so failed builds under-report style
+  warnings).  Build cost on Modal (measured 2026-10-31): dim 6 = 165 s /
+  10.57 GiB, dim 7 = 209 s / 8.49 GiB, dim 8 = 527 s / 9.53 GiB, dim 10 =
+  1227 s / 12.38 GiB (dim 9 green; its run finished just before the host
+  reboot and the telemetry was lost with /tmp).
+- `MathProof/ModularForms/MaedaT3SmallWeights.lean` (light, generated —
+  `tools/gen_maedan.py --prime 3 --small`) — the T₃ stretch: the 24
+  weights `k ≤ 74` with `2 ≤ dim S_k ≤ 5` through the same
+  dimension-generic engine (`charpoly_dimN`).  Registered in the root
+  `MathProof.lean` only (so `AxCheckDecide` audits its certificates);
+  deliberately NOT a `defaultTargets`/CI item — the T₃ dim files already
+  add ≈ 35–50 min per push and this bonus file would add more (see the
+  lakefile note).
 - `MathProof/ModularForms/HornerCert.lean` (light) — `propext`-free residue
   certificates: `hornerZ` (structural Horner over `ℤ`), `no_root_of_cert`,
   `ne_sq_of_cert`.  State "no root / non-square mod ℓ" as
@@ -282,7 +373,8 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
 - `MathProof/ModularForms/MaedaCertC.lean` (light) — `seqPLc`, the Maeda
   coefficient lists without `Finset`/`ArithmeticFunction`/`Ramanujan.tau`
   (`sigmaL`, `convLc`, `dCc`), and `seqPLc_eq` back to `seqPL`; the `L{j}c`
-  certificates of `MaedaDim{4,5}Weights` are about it.
+  certificates of `MaedaDim{4,5}Weights` and `gen_maedan.py`'s dim-6…10
+  files are about it.
 - `MathProof/AxCheckDecide.lean` (opt-in audit, imports the light root) —
   `#audit_decide_certs`: finds every `decide` certificate in the light library
   and reports those depending on more than `propext`; `#axiom_path ax n`
@@ -320,6 +412,9 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   the `.olean`s come out identical.  Put new infrastructure in a new module
   (as `HornerCert`, `MaedaCertC`), and batch unavoidable ancestor edits with
   an approved chain rebuild.
+- `RabinCert.zpgcd` inverts by a Fermat power structural in `ℓ` (`zspow`): the kernel
+  recursion depth grows with `ℓ` and overflows near `ℓ ≈ 5·10⁶`.  For large primes use
+  Bézout witnesses (`MaedaGaloisFull.irreducible_of_rabin_bezout`), never `maxRecDepth`.
 - Lakefile options: `relaxedAutoImplicit = false`, `linter.mathlibStandardSet = true`,
   Mathlib-style copyright headers disabled. No `autoImplicit` tricks.
 - `decide` / `norm_num [bernoulli]` time out on Mathlib's well-founded Bernoulli
@@ -335,7 +430,7 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   the package) must never pull the heavy kernel decides. When adding a
   module: light → add it to `defaultTargets`, `MathProof.lean`, and the CI
   list; heavy → add it to none of those, and build it explicitly on Modal.
-- **TauCeti coding rules** (`external-doc/TAU-CETI_Coding_Rules.md`) apply to
+- **Coding rules** (`external-doc/CODING_STANDARDS.md`) apply to
   every light module since iteration 18b: no `set_option` at all (no
   heartbeat/recdepth raises, no linter suppressions), no `#eval`/`meta`/
   `unsafe`, no `native_decide`/`sorry`, Mathlib-level imports only.  Check
@@ -346,3 +441,24 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   `MaedaGalois5Defs`) instead of raising `maxHeartbeats`.  Only Tier C heavy
   modules keep `set_option`, each with a measured reason
   (`research/refactor-i18-tauceti/README.md`).
+- **A red build under-reports style warnings** (2026-10-31, maeda-t3 dim-10):
+  Mathlib's linter pipeline skips every remaining command in a file after the
+  first *error*, so a failed build shows only a prefix of the real style
+  violations (observed: 24 longLine violations, 9 reported).  Never claim
+  "zero warnings" from a failed build — get the errors fixed and the build
+  green first (this is also why the Modal check treats warnings as blockers).
+- **Lean's default `exponentiation.threshold = 256`** (2026-10-31): `norm_num`
+  refuses numerals like `10 ^ 257` in light modules (where raising the option
+  is forbidden).  Big chunked literals must keep chunk exponents ≤ 256 — grow
+  the *first* chunk (≤ 341 digits total observed fine) instead of emitting
+  more chunks with bigger exponents.
+- **`tools/modal_run.sh` does not work from a git worktree** (2026-10-31):
+  the worktree's `.git` *file* dangles for the mirroring user (xyz).  Run it
+  from a normal clone, or build a standalone mirror (rsync the tree minus
+  `.git`/`.lake` into the mirror, keep a git repo there whose
+  `refs/remotes/origin/master` points at an empty-tree commit so
+  `git diff --name-only origin/master` lists every file and the overlay
+  covers the complete state — see the iteration-21 agent mirrors under
+  `/home/doz/tmp/math-proof1-temp/agent-work/`).  Local temp artifacts (run
+  logs, mirrors, scratch) go under `/home/doz/tmp/math-proof1-temp/` — `/tmp`
+  is wiped on reboot (2026-10-31 19:26 incident).
