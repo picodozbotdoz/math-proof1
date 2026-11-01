@@ -480,3 +480,15 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   `/home/doz/tmp/math-proof1-temp/agent-work/`).  Local temp artifacts (run
   logs, mirrors, scratch) go under `/home/doz/tmp/math-proof1-temp/` — `/tmp`
   is wiped on reboot (2026-10-31 19:26 incident).
+- **`Nat.Prime` is not kernel-decidable** (2026-11-02, iteration-22 lehmer
+  worker): `Nat.minFac` is well-founded recursion, so any `decide` touching
+  `.Prime` breaks in the kernel.  Use a structural trial-division
+  certificate instead (`noFactorFrom` + `prime_of_noFactorFrom` in
+  `Tau/LehmerCoverageCount.lean`).
+- **Matrix-level `decide` pulls `Classical.choice` via
+  `Fintype.decidablePiFintype`** (2026-11-02, iteration-22 hecke-rational
+  worker): deciding `∀ i : Fin n, …` or matrix equality lets the instance
+  build an `Iff` with `simp`-produced classical pieces; `AxCheckDecide`
+  flags it.  Certify entrywise (`ext i j` / `fin_cases` +
+decide +kernel`
+  per cell) so every decide stays `propext`-clean.
