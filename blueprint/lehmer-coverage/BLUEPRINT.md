@@ -103,3 +103,12 @@ Same binding set as BP1 (audit before code; exact-integer cross-checks;
 commit green; WORKLOG; inbox polls).  Plus the probe's own: never trust a
 sieve's first output — cross-check against an independently known anchor
 (here: 70481).
+
+## CORRECTIONS (implementer, 2026-11-01, evidence: G1 regeneration)
+
+- §0/§2 candidate count at 2^18 is **285** (k = 94..378), not 284; the
+  downstream numbers (17 primes, U(2^18) = 23) are unchanged.
+- FINDINGS §2.2 census cell "2^30 → 116,788 bad primes" is wrong: exact
+  **78,715** (li(2^30)/690 ≈ 78,843).  All U(B) values were and remain
+  correct; the census table in `research/iteration22/lehmer-coverage/STUDY.md`
+  §3 supersedes.

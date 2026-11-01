@@ -62,6 +62,19 @@ See `research/research-log.md` for the full log. Highlights:
   arbitrary size** has `τ p ≠ 0` (e.g. `τ 65537 ≠ 0`, `τ(2³¹ − 1) ≠ 0`),
   `τ(2 ^ a) ≠ 0` for all `a ≤ 64`, and any Lehmer counterexample `n` must
   satisfy `691 ∣ σ₁₁ n`.
+* **Exact verified coverage** (`Ramanujan.uncovered_2p18`,
+  `Ramanujan.covered_count_2p18`, in `MathProof/Tau/LehmerCoverageCount.lean`;
+  exact study in `research/iteration22/lehmer-coverage/STUDY.md`): counted
+  exactly, **`τ n ≠ 0` is verified for 4 291 072 962 of the 4 294 967 295
+  indices `1 ≤ n < 2 ^ 32` — 99.9093 %** — the uncovered 3 894 333 indices
+  are exactly the multiples (below 2³², each index of at most one) of the
+  294 618 primes `≡ −1 [MOD 691]` above 65536, none below 70481 (exactness:
+  `70481 ^ 2 > 2 ^ 32`).  The first kernel-verified *count* anchors:
+  `badPrimes2p18_filter` kernel-decides the census (285 AP candidates → the
+  17 bad primes; the 2²⁰ twin filters 1 423 → 98), and the no-overlap count
+  identity is proved structurally (`card_uncoveredSet`), giving
+  `uncovered_2p18 = 23` / `covered_count_2p18 = 262 120` of 262 143 and the
+  2²⁰ twins 227 / 1 048 348 of 1 048 575.
 * **Small-prime congruences** (`Ramanujan.tau_even_of_ne_one_mod_eight`,
   `Ramanujan.tau_zero_mod_three_of_ne_one_mod_three`): `τ n` is even unless
   `n ≡ 1 [MOD 8]`, and divisible by 3 unless `n ≡ 1 [MOD 3]` — by the
@@ -242,6 +255,7 @@ MathProof/Tau/LehmerMod.lean    # mod-P arithmetic: verified bound 512
 MathProof/Tau/LehmerPacked.lean # packed-bignum mod-P arithmetic: verified bound 65536
 MathProof/Tau/LehmerPrimeReduction.lean  # Lehmer's lemma: τ p ≠ 0 → τ(p^a) ≠ 0; conjecture ⇔ primes
 MathProof/Tau/LehmerPrimeGrand.lean      # (heavy) τ n ≠ 0 for all n < 70481; any-exponent sieve
+MathProof/Tau/LehmerCoverageCount.lean  # exact coverage: kernel bad-prime census 2^18/2^20 + first kernel-verified counts (23, 227)
 MathProof/Tau/CongruenceSmall.lean  # τ mod 2 and mod 3 gap congruences
 MathProof/Tau/Bridge.lean       # (qExpansion Δ).coeff n = τ(n)
 MathProof/ModularForms/Weight12.lean       # 691 • E₁₂ = 441 • E₄³ + 250 • E₆²

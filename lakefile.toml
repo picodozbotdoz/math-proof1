@@ -21,6 +21,7 @@ defaultTargets = [
   "MathProof.Tau.PowChain",
   "MathProof.Tau.LehmerSieve691",
   "MathProof.Tau.LehmerPrimeReduction",
+  "MathProof.Tau.LehmerCoverageCount",
   "MathProof.ModularForms.BernoulliHigh",
   "MathProof.ModularForms.EigenLevelOne",
   "MathProof.ModularForms.LehmerWeight16",

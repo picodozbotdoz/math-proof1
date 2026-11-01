@@ -230,6 +230,16 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   `LehmerPacked`) — `tau_ne_zero_of_lt_70481`,
   `tau_ne_zero_of_prime_factors_le_65536_or_mod` (supersedes the chain-based
   `LehmerGrand` at less than half the memory).
+- `MathProof/Tau/LehmerCoverageCount.lean` (light) — kernel-verified Lehmer
+  coverage anchors: structural trial-division certificate `noFactorFrom`
+  (`Nat.Prime` is NOT kernel-decidable — minFac is well-founded; never
+  `decide` a `Nat.Prime` filter), bad-prime census `badPrimes2p18_filter`
+  (285 candidates → 17 primes) / `badPrimes2p20_filter` (1423 → 98),
+  no-overlap count `card_uncoveredSet` (structural), `uncovered_2p18` = 23 /
+  `covered_count_2p18` = 262120, 2^20 twins = 227 / 1048348.  Exact study:
+  `research/iteration22/lehmer-coverage/` (STUDY.md, script, npy;
+  99.9093 % of indices below 2^32 covered; 131072 descoped —
+  DECISION-131072.md).
 - `MathProof/ModularForms/EigenLevelOne.lean` (light) — weight-generic
   `IsNormalizedRankOne k f a`: Hecke eigenform, Mordell, Lehmer prime-power
   lemma and reduction to primes for any normalized generator of a rank-one
