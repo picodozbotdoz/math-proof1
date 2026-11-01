@@ -49,7 +49,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 6, cert j • MaedaWeight72.M ^ j)
     = (50379423284454462886610945586606913479021428736 : ℤ) • MaedaT3Weight72.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 6), coordN MaedaT3Weight72.Atab
       (fun m => MaedaWeight72.Xtab i.val m) l.val
@@ -162,7 +163,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 6, cert j • MaedaWeight76.M ^ j)
     = (68864607612441690345553374495701632724439712923648 : ℤ) • MaedaT3Weight76.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 6), coordN MaedaT3Weight76.Atab
       (fun m => MaedaWeight76.Xtab i.val m) l.val
@@ -275,7 +277,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 6, cert j • MaedaWeight78.M ^ j)
     = (4922793139540138113068233519097942321355917623296 : ℤ) • MaedaT3Weight78.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 6), coordN MaedaT3Weight78.Atab
       (fun m => MaedaWeight78.Xtab i.val m) l.val
@@ -388,7 +391,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 6, cert j • MaedaWeight80.M ^ j)
     = (10547120454011546593480034230372924179563303169511391232 : ℤ) • MaedaT3Weight80.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 6), coordN MaedaT3Weight80.Atab
       (fun m => MaedaWeight80.Xtab i.val m) l.val
@@ -501,7 +505,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 6, cert j • MaedaWeight82.M ^ j)
     = (1590515290341931909249967639079590350450310607280275456 : ℤ) • MaedaT3Weight82.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 6), coordN MaedaT3Weight82.Atab
       (fun m => MaedaWeight82.Xtab i.val m) l.val
@@ -623,7 +628,8 @@ theorem scaled_id : (∑ j ∈ Finset.range 7, cert j • MaedaWeight84.M ^ j)
     = (195169026610239212886526726549901310524825045643523781139323 * 10 ^ 25
     + 1322251097814210866839552
     : ℤ) • MaedaT3Weight84.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 7), coordN MaedaT3Weight84.Atab
       (fun m => MaedaWeight84.Xtab i.val m) l.val
@@ -769,7 +775,8 @@ def cert : ℕ → ℤ
 theorem scaled_id : (∑ j ∈ Finset.range 6, cert j • MaedaWeight86.M ^ j)
     = (1256666184747086191313416661902268552210970073638836040105984 : ℤ)
     • MaedaT3Weight86.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 6), coordN MaedaT3Weight86.Atab
       (fun m => MaedaWeight86.Xtab i.val m) l.val
@@ -892,7 +899,8 @@ theorem scaled_id : (∑ j ∈ Finset.range 7, cert j • MaedaWeight88.M ^ j)
     = (166231117187635120759433507116559082058602417164999046154512 * 10 ^ 31
     + 0563625564992165697401338724352
     : ℤ) • MaedaT3Weight88.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 7), coordN MaedaT3Weight88.Atab
       (fun m => MaedaWeight88.Xtab i.val m) l.val
@@ -1044,7 +1052,8 @@ theorem scaled_id : (∑ j ∈ Finset.range 7, cert j • MaedaWeight90.M ^ j)
     = (316098883698203314902081710005117423814809814668271693942758 * 10 ^ 28
     + 7301820677394870790082527232
     : ℤ) • MaedaT3Weight90.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 7), coordN MaedaT3Weight90.Atab
       (fun m => MaedaWeight90.Xtab i.val m) l.val
@@ -1196,7 +1205,8 @@ theorem scaled_id : (∑ j ∈ Finset.range 7, cert j • MaedaWeight92.M ^ j)
     = (467283305817081298778466151648446875443499637431063258770974 * 10 ^ 35
     + 02115494828292440286361117022748672
     : ℤ) • MaedaT3Weight92.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 7), coordN MaedaT3Weight92.Atab
       (fun m => MaedaWeight92.Xtab i.val m) l.val
@@ -1348,7 +1358,8 @@ theorem scaled_id : (∑ j ∈ Finset.range 7, cert j • MaedaWeight94.M ^ j)
     = (186680708634640878507332445558041594572769526630971254936458 * 10 ^ 35
     + 63297438307041481719875871757565952
     : ℤ) • MaedaT3Weight94.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 7), coordN MaedaT3Weight94.Atab
       (fun m => MaedaWeight94.Xtab i.val m) l.val
@@ -1511,7 +1522,8 @@ theorem scaled_id : (∑ j ∈ Finset.range 8, cert j • MaedaWeight96.M ^ j)
     + 135225201185494721909515447913751960134122655001031751102784 * 10 ^ 14
     + 71754058825728
     : ℤ) • MaedaT3Weight96.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 8), coordN MaedaT3Weight96.Atab
       (fun m => MaedaWeight96.Xtab i.val m) l.val
@@ -1695,7 +1707,8 @@ theorem scaled_id : (∑ j ∈ Finset.range 7, cert j • MaedaWeight98.M ^ j)
     = (128117331453155606094541299688935463856863256306243203957832 * 10 ^ 38
     + 47139535201383602511844684241267851264
     : ℤ) • MaedaT3Weight98.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 7), coordN MaedaT3Weight98.Atab
       (fun m => MaedaWeight98.Xtab i.val m) l.val
@@ -1861,7 +1874,8 @@ theorem scaled_id : (∑ j ∈ Finset.range 8, cert j • MaedaWeight100.M ^ j)
     + 432429012685648999529911821370890274982103648444130127594305 * 10 ^ 28
     + 1476702746980298146428485632
     : ℤ) • MaedaT3Weight100.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 8), coordN MaedaT3Weight100.Atab
       (fun m => MaedaWeight100.Xtab i.val m) l.val
@@ -2056,7 +2070,8 @@ theorem scaled_id : (∑ j ∈ Finset.range 8, cert j • MaedaWeight102.M ^ j)
     + 616734015708643342306197761928784853442043803535442285644743 * 10 ^ 26
     + 18427421250297305887670272
     : ℤ) • MaedaT3Weight102.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 8), coordN MaedaT3Weight102.Atab
       (fun m => MaedaWeight102.Xtab i.val m) l.val
@@ -2253,7 +2268,8 @@ theorem scaled_id : (∑ j ∈ Finset.range 8, cert j • MaedaWeight104.M ^ j)
     + 309452696388622242859176022993667973410951634806285653506349 * 10 ^ 29
     + 05202855057483179515101315072
     : ℤ) • MaedaT3Weight104.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 8), coordN MaedaT3Weight104.Atab
       (fun m => MaedaWeight104.Xtab i.val m) l.val
@@ -2450,7 +2466,8 @@ theorem scaled_id : (∑ j ∈ Finset.range 8, cert j • MaedaWeight106.M ^ j)
     + 504512012969910438889239134935834011537238513581405053523982 * 10 ^ 34
     + 5681289702524031009185369084133376
     : ℤ) • MaedaT3Weight106.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 8), coordN MaedaT3Weight106.Atab
       (fun m => MaedaWeight106.Xtab i.val m) l.val
@@ -2661,7 +2678,8 @@ theorem scaled_id : (∑ j ∈ Finset.range 9, cert j • MaedaWeight108.M ^ j)
     + 194211588169236181924149711881611458773334830789307760117021 * 10 ^ 31
     + 7554856404688691932864261914624
     : ℤ) • MaedaT3Weight108.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 9), coordN MaedaT3Weight108.Atab
       (fun m => MaedaWeight108.Xtab i.val m) l.val
@@ -2893,7 +2911,8 @@ theorem scaled_id : (∑ j ∈ Finset.range 8, cert j • MaedaWeight110.M ^ j)
     + 612217519728471290870605296968066835754045946646545777402437 * 10 ^ 33
     + 923381039401357807912787323650048
     : ℤ) • MaedaT3Weight110.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 8), coordN MaedaT3Weight110.Atab
       (fun m => MaedaWeight110.Xtab i.val m) l.val
@@ -3105,7 +3124,8 @@ theorem scaled_id : (∑ j ∈ Finset.range 9, cert j • MaedaWeight112.M ^ j)
     + 548527812695160495241393854309890817297107653520896642906372 * 10 ^ 39
     + 490425580556662026906486342991608807424
     : ℤ) • MaedaT3Weight112.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 9), coordN MaedaT3Weight112.Atab
       (fun m => MaedaWeight112.Xtab i.val m) l.val
@@ -3352,7 +3372,8 @@ theorem scaled_id : (∑ j ∈ Finset.range 9, cert j • MaedaWeight114.M ^ j)
     + 341971292765325530360451513382535436531884941753765998610654 * 10 ^ 38
     + 27883539109496827425114069175074029568
     : ℤ) • MaedaT3Weight114.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 9), coordN MaedaT3Weight114.Atab
       (fun m => MaedaWeight114.Xtab i.val m) l.val
@@ -3602,7 +3623,8 @@ theorem scaled_id : (∑ j ∈ Finset.range 9, cert j • MaedaWeight116.M ^ j)
     + 206835368756572368092947942980194346558802104518208900436504 * 10 ^ 51
     + 533944362543939269500690925551381686604048979984384
     : ℤ) • MaedaT3Weight116.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 9), coordN MaedaT3Weight116.Atab
       (fun m => MaedaWeight116.Xtab i.val m) l.val
@@ -3850,7 +3872,8 @@ theorem scaled_id : (∑ j ∈ Finset.range 9, cert j • MaedaWeight118.M ^ j)
     + 975661436064190232235907470862380367274347705309312064623891 * 10 ^ 49
     + 3769579696524733636217908944006760991051965530112
     : ℤ) • MaedaT3Weight118.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 9), coordN MaedaT3Weight118.Atab
       (fun m => MaedaWeight118.Xtab i.val m) l.val
@@ -4116,7 +4139,8 @@ theorem scaled_id : (∑ j ∈ Finset.range 10, cert j • MaedaWeight120.M ^ j)
     + 062073544633305529317815922583489417810544630385291935828934 * 10 ^ 3
     + 656
     : ℤ) • MaedaT3Weight120.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 10), coordN MaedaT3Weight120.Atab
       (fun m => MaedaWeight120.Xtab i.val m) l.val
@@ -4406,7 +4430,8 @@ theorem scaled_id : (∑ j ∈ Finset.range 9, cert j • MaedaWeight122.M ^ j)
     + 020436793246560070438048834111737261248693250687323017771627 * 10 ^ 60
     + 657593983585732795077380643932015530221844382908407728832512
     : ℤ) • MaedaT3Weight122.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 9), coordN MaedaT3Weight122.Atab
       (fun m => MaedaWeight122.Xtab i.val m) l.val
@@ -4672,7 +4697,8 @@ theorem scaled_id : (∑ j ∈ Finset.range 10, cert j • MaedaWeight124.M ^ j)
     + 324083658318748775895371073141460369428970911167380301437587 * 10 ^ 16
     + 7578718804180992
     : ℤ) • MaedaT3Weight124.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 10), coordN MaedaT3Weight124.Atab
       (fun m => MaedaWeight124.Xtab i.val m) l.val
@@ -4978,7 +5004,8 @@ theorem scaled_id : (∑ j ∈ Finset.range 10, cert j • MaedaWeight126.M ^ j)
     + 847756287611141834771468985052950518531241353193127175084999 * 10 ^ 11
     + 12332935168
     : ℤ) • MaedaT3Weight126.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 10), coordN MaedaT3Weight126.Atab
       (fun m => MaedaWeight126.Xtab i.val m) l.val
@@ -5285,7 +5312,8 @@ theorem scaled_id : (∑ j ∈ Finset.range 10, cert j • MaedaWeight128.M ^ j)
     + 042102323714295525749924872692850266856936694549099178715897 * 10 ^ 16
     + 0955399960723456
     : ℤ) • MaedaT3Weight128.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 10), coordN MaedaT3Weight128.Atab
       (fun m => MaedaWeight128.Xtab i.val m) l.val
@@ -5593,7 +5621,8 @@ theorem scaled_id : (∑ j ∈ Finset.range 10, cert j • MaedaWeight130.M ^ j)
     + 254876121431248298853940256007302412722540224684254540093030 * 10 ^ 16
     + 4389459312902144
     : ℤ) • MaedaT3Weight130.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 10), coordN MaedaT3Weight130.Atab
       (fun m => MaedaWeight130.Xtab i.val m) l.val
@@ -5902,7 +5931,8 @@ theorem scaled_id : (∑ j ∈ Finset.range 10, cert j • MaedaWeight134.M ^ j)
     + 87550980572014831010771407890260075547663809392552768164042586730442402116) * 10 ^ 74
     + 65218648186625683154773236716832145651957001666800353722327592836546953216)
     : ℤ) • MaedaT3Weight134.M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 lemma hM2 : ∀ (i l : Fin 10), coordN MaedaT3Weight134.Atab
       (fun m => MaedaWeight134.Xtab i.val m) l.val

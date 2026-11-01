@@ -520,7 +520,8 @@ def scaled_id(n, D, m2name, m3name, docname):
         dlines.append(tail)
         arg = ["(" + Dtoks[0]] + ["  " + t for t in Dtoks[1:]] + ["  : ℤ)"]
     lines = [f"theorem {docname} : (∑ j ∈ Finset.range {n}, cert j • {m2name} ^ j)"] + dlines + [
-        "  decide +kernel"]
+        "  ext a b",
+        "  fin_cases a <;> fin_cases b <;> decide +kernel"]
     return lines, arg
 
 
@@ -618,8 +619,9 @@ def emit_small_section(w):
                 for ln in tgt_lines(i, j, 6):
                     L.append(ln)
                 L.append(f"  rw [LvT2_{i}_{j - 1}]")
-                L.append("  simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,")
-                L.append("      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]")
+                succ = "List.getD_cons_succ, " if j >= 3 else ""
+                L.append(f"  simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,")
+                L.append(f"      {succ}List.getD_cons_zero, List.nil_append, List.cons_append]")
                 L.append("  norm_num")
             L.append("")
     # entryT2 lemmas

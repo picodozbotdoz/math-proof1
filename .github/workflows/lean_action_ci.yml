@@ -87,6 +87,8 @@ jobs:
             MathProof.ModularForms.MaedaT3Dim8Weights
             MathProof.ModularForms.MaedaT3Dim9Weights
             MathProof.ModularForms.MaedaT3Dim10Weights
+            MathProof.ModularForms.HeckeRational
+            MathProof.ModularForms.HeckeRationalWeights
             MathProof.ModularForms.FrobeniusCycleType
             MathProof.ModularForms.JordanPrimitive
             MathProof.ModularForms.MaedaGaloisFull

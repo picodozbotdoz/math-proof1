@@ -1831,3 +1831,63 @@ depending on more than `propext`** (T₃-Galois adds 180).
 
 WORKLOG with the full gate-by-gate record:
 `research/iteration22-t3-galois/WORKLOG.md`.
+
+## Iteration 22, T2-worker — HeckeRational: `T₃ ∈ ℚ[T₂]`, constructive rational witnesses (54 weights)
+
+**Steering priority 1** (iteration21-review §9.2; blueprint
+`blueprint/hecke-rational/BLUEPRINT.md`, worker branch
+`impl/iteration22/hecke-rational`).
+
+**Result.**  `HeckeRatWeightK.heckeT3_eq_aeval_rat_weightKK` for **all 54
+level-one weights `24 ≤ k ≤ 134` with `2 ≤ dim S_k ≤ 10`**:
+
+    ∃ Q : ℚ[X], heckeTPₗ ((k : ℕ) : ℤ) Nat.prime_three
+      = Polynomial.aeval T₂ (Q.map (algebraMap ℚ ℂ)).
+
+This upgrades §9.2's ℂ[X] existence (`HeckeGeneratedByT2Weights`, cyclicity)
+to a *rational* witness: the Hecke algebra over ℚ is `ℚ[T₂]` at every
+verified weight (payoff: `T₃`-eigenvalues ∈ `ℚ(λ₂)` — one-line corollary for
+a later iteration).  The route is constructive and commutativity-free: a
+per-weight exact integer certificate `∑_{j<n} N_j • M₂^j = D • M₃`,
+kernel-decided entrywise, IS the proof.
+
+* **G1 audit** (`research/iteration22/hecke-rational/g1_audit.py`, data
+  `g1_data.json`): all (M₂, M₃) pairs re-derived/pinned to Lean literals —
+  M₃ for all 54 weights (== census + charpoly `P` literals), M₂ for dims
+  6–10 parsed (== census) and for dims 2–5 *re-derived* from the T₃ file's
+  q-lemma values via `heckeT2_coeff` + the `coordN` back-substitution
+  (== the T₂ files' t-lemma values, `charpoly_T2` literals, and the
+  weight-24 `toMatrix_heckeT2` literal).  T₂/T₃ dim-file `fb`/`Atab`/f-def
+  alignment verified (defeq bridge; the fb/Atab check needed a parser fix —
+  match-style defs — noted in the WORKLOG).  No descope needed: the small
+  weights were in scope all along (their T₂ matrix just had to be
+  re-derived).
+* **Generic module** `HeckeRational.lean`: `linearIndependent_dimN`,
+  `represents_dimN` (the representation sibling of `charpoly_dimN`) and
+  `exists_aeval_rat_dimN` (echelon bundle + certificate ⇒ ∃ Q : ℚ[X]; the
+  witness `∑ C (N_j/D) * X^j` is built inside, so only ℤ literals enter the
+  generated files).
+* **Generator** `tools/gen_hecke_rat.py` (self-contained re-derivation +
+  asserts + `--check` byte-identity): dims 6–10 reuse the T₂ dim files'
+  data verbatim through the defeq bridge (each weight emits only its
+  certificate + entry bridges); dims 2–5 regenerate the T₂ side fresh
+  (`Xtab2`/`hX2`/`LvT2`/`entryT2`/`M2`, the `charpoly_dimN` recipe).
+  Certificates reach 381 digits — past the flat chunk scheme's budget —
+  so `>341`-digit literals are emitted in Horner form base `10 ^ 74`
+  (every explicit power ≤ 256).
+
+**Measured** (Modal `lean_check`, 0 err / 0 warn): `HeckeRational` 37 s /
+5.95 GiB, `HeckeRationalWeights` (30 weights) 234 s / 8.40 GiB,
+`HeckeRationalSmallWeights` (24 weights) 67 s / 6.95 GiB, full
+`defaultTargets` 35 s warm, root `MathProof` 46 s / 6.64 GiB — all under
+the 16 GiB alert line.  **Registration:** `HeckeRational` +
+`HeckeRationalWeights` in `defaultTargets` + CI (≈ 4.5 min add);
+`HeckeRationalSmallWeights` root-only, following its parent
+`MaedaT3SmallWeights` (it would drag that non-CI module into CI).
+
+**Audits.**  `AxCheckDecide`: 1 202 decide certificates, **0 depending on
+more than `propext`** — the first cut's 54 matrix-level `decide`s were
+re-stated entrywise (`ext` + `fin_cases` + `decide +kernel`) because
+`Matrix.decidableEq` = `Fintype.decidablePiFintype` carries a simp-built
+Iff proof (Classical).  `tauceti_audit.sh` clean on all three files.  No
+ancestor of the heavy `MaedaGalois5` chain touched.

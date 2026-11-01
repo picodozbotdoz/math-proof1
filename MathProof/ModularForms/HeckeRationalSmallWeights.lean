@@ -91,7 +91,7 @@ theorem LvT2_0_2 : coordsAux Atab (fun m => Xtab2 0 m) 2 =
       [((696 : ℤ) : ℂ), ((20736000 : ℤ) : ℂ)]
   rw [LvT2_0_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_1_1 : coordsAux Atab (fun m => Xtab2 1 m) 1 =
@@ -107,7 +107,7 @@ theorem LvT2_1_2 : coordsAux Atab (fun m => Xtab2 1 m) 2 =
       [((1 : ℤ) : ℂ), ((384 : ℤ) : ℂ)]
   rw [LvT2_1_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem entryT2_0_0 : coordN Atab (fun m => Xtab2 0 m) 0
@@ -164,7 +164,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 2, cert j • M2 ^ j)
     = (1 : ℤ) • M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 /-- **`T₃ ∈ ℚ[T₂]` at weight 24.** -/
 theorem heckeT3_eq_aeval_rat_weight24 :
@@ -238,7 +239,7 @@ theorem LvT2_0_2 : coordsAux Atab (fun m => Xtab2 0 m) 2 =
       [((936 : ℤ) : ℂ), ((186624000 : ℤ) : ℂ)]
   rw [LvT2_0_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_1_1 : coordsAux Atab (fun m => Xtab2 1 m) 1 =
@@ -254,7 +255,7 @@ theorem LvT2_1_2 : coordsAux Atab (fun m => Xtab2 1 m) 2 =
       [((1 : ℤ) : ℂ), ((-9216 : ℤ) : ℂ)]
   rw [LvT2_1_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem entryT2_0_0 : coordN Atab (fun m => Xtab2 0 m) 0
@@ -311,7 +312,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 2, cert j • M2 ^ j)
     = (1 : ℤ) • M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 /-- **`T₃ ∈ ℚ[T₂]` at weight 28.** -/
 theorem heckeT3_eq_aeval_rat_weight28 :
@@ -385,7 +387,7 @@ theorem LvT2_0_2 : coordsAux Atab (fun m => Xtab2 0 m) 2 =
       [((192 : ℤ) : ℂ), ((456192000 : ℤ) : ℂ)]
   rw [LvT2_0_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_1_1 : coordsAux Atab (fun m => Xtab2 1 m) 1 =
@@ -401,7 +403,7 @@ theorem LvT2_1_2 : coordsAux Atab (fun m => Xtab2 1 m) 2 =
       [((1 : ℤ) : ℂ), ((8448 : ℤ) : ℂ)]
   rw [LvT2_1_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem entryT2_0_0 : coordN Atab (fun m => Xtab2 0 m) 0
@@ -458,7 +460,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 2, cert j • M2 ^ j)
     = (1 : ℤ) • M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 /-- **`T₃ ∈ ℚ[T₂]` at weight 30.** -/
 theorem heckeT3_eq_aeval_rat_weight30 :
@@ -532,7 +535,7 @@ theorem LvT2_0_2 : coordsAux Atab (fun m => Xtab2 0 m) 2 =
       [((1176 : ℤ) : ℂ), ((2280960000 : ℤ) : ℂ)]
   rw [LvT2_0_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_1_1 : coordsAux Atab (fun m => Xtab2 1 m) 1 =
@@ -548,7 +551,7 @@ theorem LvT2_1_2 : coordsAux Atab (fun m => Xtab2 1 m) 2 =
       [((1 : ℤ) : ℂ), ((38784 : ℤ) : ℂ)]
   rw [LvT2_1_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem entryT2_0_0 : coordN Atab (fun m => Xtab2 0 m) 0
@@ -605,7 +608,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 2, cert j • M2 ^ j)
     = (1 : ℤ) • M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 /-- **`T₃ ∈ ℚ[T₂]` at weight 32.** -/
 theorem heckeT3_eq_aeval_rat_weight32 :
@@ -679,7 +683,7 @@ theorem LvT2_0_2 : coordsAux Atab (fun m => Xtab2 0 m) 2 =
       [((432 : ℤ) : ℂ), ((8460288000 : ℤ) : ℂ)]
   rw [LvT2_0_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_1_1 : coordsAux Atab (fun m => Xtab2 1 m) 1 =
@@ -695,7 +699,7 @@ theorem LvT2_1_2 : coordsAux Atab (fun m => Xtab2 1 m) 2 =
       [((1 : ℤ) : ℂ), ((-122112 : ℤ) : ℂ)]
   rw [LvT2_1_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem entryT2_0_0 : coordN Atab (fun m => Xtab2 0 m) 0
@@ -752,7 +756,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 2, cert j • M2 ^ j)
     = (1 : ℤ) • M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 /-- **`T₃ ∈ ℚ[T₂]` at weight 34.** -/
 theorem heckeT3_eq_aeval_rat_weight34 :
@@ -863,7 +868,7 @@ theorem LvT2_0_2 : coordsAux Atab (fun m => Xtab2 0 m) 2 =
       [((1416 : ℤ) : ℂ), ((34629120000 : ℤ) : ℂ)]
   rw [LvT2_0_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_0_3 : coordsAux Atab (fun m => Xtab2 0 m) 3 =
@@ -890,7 +895,7 @@ theorem LvT2_1_2 : coordsAux Atab (fun m => Xtab2 1 m) 2 =
       [((1 : ℤ) : ℂ), ((144384 : ℤ) : ℂ)]
   rw [LvT2_1_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_1_3 : coordsAux Atab (fun m => Xtab2 1 m) 3 =
@@ -917,7 +922,7 @@ theorem LvT2_2_2 : coordsAux Atab (fun m => Xtab2 2 m) 2 =
       [((0 : ℤ) : ℂ), ((-72 : ℤ) : ℂ)]
   rw [LvT2_2_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_2_3 : coordsAux Atab (fun m => Xtab2 2 m) 3 =
@@ -1026,7 +1031,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 3, cert j • M2 ^ j)
     = (72 : ℤ) • M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 /-- **`T₃ ∈ ℚ[T₂]` at weight 36.** -/
 theorem heckeT3_eq_aeval_rat_weight36 :
@@ -1100,7 +1106,7 @@ theorem LvT2_0_2 : coordsAux Atab (fun m => Xtab2 0 m) 2 =
       [((672 : ℤ) : ℂ), ((137272320000 : ℤ) : ℂ)]
   rw [LvT2_0_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_1_1 : coordsAux Atab (fun m => Xtab2 1 m) 1 =
@@ -1116,7 +1122,7 @@ theorem LvT2_1_2 : coordsAux Atab (fun m => Xtab2 1 m) 2 =
       [((1 : ℤ) : ℂ), ((-195072 : ℤ) : ℂ)]
   rw [LvT2_1_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem entryT2_0_0 : coordN Atab (fun m => Xtab2 0 m) 0
@@ -1173,7 +1179,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 2, cert j • M2 ^ j)
     = (1 : ℤ) • M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 /-- **`T₃ ∈ ℚ[T₂]` at weight 38.** -/
 theorem heckeT3_eq_aeval_rat_weight38 :
@@ -1284,7 +1291,7 @@ theorem LvT2_0_2 : coordsAux Atab (fun m => Xtab2 0 m) 2 =
       [((1656 : ℤ) : ℂ), ((550229760000 : ℤ) : ℂ)]
   rw [LvT2_0_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_0_3 : coordsAux Atab (fun m => Xtab2 0 m) 3 =
@@ -1311,7 +1318,7 @@ theorem LvT2_1_2 : coordsAux Atab (fun m => Xtab2 1 m) 2 =
       [((1 : ℤ) : ℂ), ((307584 : ℤ) : ℂ)]
   rw [LvT2_1_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_1_3 : coordsAux Atab (fun m => Xtab2 1 m) 3 =
@@ -1338,7 +1345,7 @@ theorem LvT2_2_2 : coordsAux Atab (fun m => Xtab2 2 m) 2 =
       [((0 : ℤ) : ℂ), ((168 : ℤ) : ℂ)]
   rw [LvT2_2_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_2_3 : coordsAux Atab (fun m => Xtab2 2 m) 3 =
@@ -1447,7 +1454,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 3, cert j • M2 ^ j)
     = (168 : ℤ) • M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 /-- **`T₃ ∈ ℚ[T₂]` at weight 40.** -/
 theorem heckeT3_eq_aeval_rat_weight40 :
@@ -1558,7 +1566,7 @@ theorem LvT2_0_2 : coordsAux Atab (fun m => Xtab2 0 m) 2 =
       [((912 : ℤ) : ℂ), ((2198845440000 : ℤ) : ℂ)]
   rw [LvT2_0_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_0_3 : coordsAux Atab (fun m => Xtab2 0 m) 3 =
@@ -1585,7 +1593,7 @@ theorem LvT2_1_2 : coordsAux Atab (fun m => Xtab2 1 m) 2 =
       [((1 : ℤ) : ℂ), ((-210432 : ℤ) : ℂ)]
   rw [LvT2_1_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_1_3 : coordsAux Atab (fun m => Xtab2 1 m) 3 =
@@ -1612,7 +1620,7 @@ theorem LvT2_2_2 : coordsAux Atab (fun m => Xtab2 2 m) 2 =
       [((0 : ℤ) : ℂ), ((-576 : ℤ) : ℂ)]
   rw [LvT2_2_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_2_3 : coordsAux Atab (fun m => Xtab2 2 m) 3 =
@@ -1721,7 +1729,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 3, cert j • M2 ^ j)
     = (576 : ℤ) • M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 /-- **`T₃ ∈ ℚ[T₂]` at weight 42.** -/
 theorem heckeT3_eq_aeval_rat_weight42 :
@@ -1832,7 +1841,7 @@ theorem LvT2_0_2 : coordsAux Atab (fun m => Xtab2 0 m) 2 =
       [((1896 : ℤ) : ℂ), ((8796854016000 : ℤ) : ℂ)]
   rw [LvT2_0_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_0_3 : coordsAux Atab (fun m => Xtab2 0 m) 3 =
@@ -1859,7 +1868,7 @@ theorem LvT2_1_2 : coordsAux Atab (fun m => Xtab2 1 m) 2 =
       [((1 : ℤ) : ℂ), ((528384 : ℤ) : ℂ)]
   rw [LvT2_1_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_1_3 : coordsAux Atab (fun m => Xtab2 1 m) 3 =
@@ -1886,7 +1895,7 @@ theorem LvT2_2_2 : coordsAux Atab (fun m => Xtab2 2 m) 2 =
       [((0 : ℤ) : ℂ), ((408 : ℤ) : ℂ)]
   rw [LvT2_2_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_2_3 : coordsAux Atab (fun m => Xtab2 2 m) 3 =
@@ -1995,7 +2004,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 3, cert j • M2 ^ j)
     = (408 : ℤ) • M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 /-- **`T₃ ∈ ℚ[T₂]` at weight 44.** -/
 theorem heckeT3_eq_aeval_rat_weight44 :
@@ -2106,7 +2116,7 @@ theorem LvT2_0_2 : coordsAux Atab (fun m => Xtab2 0 m) 2 =
       [((1152 : ℤ) : ℂ), ((35184222720000 : ℤ) : ℂ)]
   rw [LvT2_0_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_0_3 : coordsAux Atab (fun m => Xtab2 0 m) 3 =
@@ -2133,7 +2143,7 @@ theorem LvT2_1_2 : coordsAux Atab (fun m => Xtab2 1 m) 2 =
       [((1 : ℤ) : ℂ), ((-168192 : ℤ) : ℂ)]
   rw [LvT2_1_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_1_3 : coordsAux Atab (fun m => Xtab2 1 m) 3 =
@@ -2160,7 +2170,7 @@ theorem LvT2_2_2 : coordsAux Atab (fun m => Xtab2 2 m) 2 =
       [((0 : ℤ) : ℂ), ((-336 : ℤ) : ℂ)]
   rw [LvT2_2_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_2_3 : coordsAux Atab (fun m => Xtab2 2 m) 3 =
@@ -2269,7 +2279,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 3, cert j • M2 ^ j)
     = (336 : ℤ) • M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 /-- **`T₃ ∈ ℚ[T₂]` at weight 46.** -/
 theorem heckeT3_eq_aeval_rat_weight46 :
@@ -2431,7 +2442,7 @@ theorem LvT2_0_2 : coordsAux Atab (fun m => Xtab2 0 m) 2 =
       [((2136 : ℤ) : ℂ), ((140738632704000 : ℤ) : ℂ)]
   rw [LvT2_0_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_0_3 : coordsAux Atab (fun m => Xtab2 0 m) 3 =
@@ -2471,7 +2482,7 @@ theorem LvT2_1_2 : coordsAux Atab (fun m => Xtab2 1 m) 2 =
       [((1 : ℤ) : ℂ), ((806784 : ℤ) : ℂ)]
   rw [LvT2_1_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_1_3 : coordsAux Atab (fun m => Xtab2 1 m) 3 =
@@ -2510,7 +2521,7 @@ theorem LvT2_2_2 : coordsAux Atab (fun m => Xtab2 2 m) 2 =
       [((0 : ℤ) : ℂ), ((648 : ℤ) : ℂ)]
   rw [LvT2_2_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_2_3 : coordsAux Atab (fun m => Xtab2 2 m) 3 =
@@ -2548,7 +2559,7 @@ theorem LvT2_3_2 : coordsAux Atab (fun m => Xtab2 3 m) 2 =
       [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)]
   rw [LvT2_3_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_3_3 : coordsAux Atab (fun m => Xtab2 3 m) 3 =
@@ -2726,7 +2737,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 4, cert j • M2 ^ j)
     = (7115931648 : ℤ) • M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 /-- **`T₃ ∈ ℚ[T₂]` at weight 48.** -/
 theorem heckeT3_eq_aeval_rat_weight48 :
@@ -2837,7 +2849,7 @@ theorem LvT2_0_2 : coordsAux Atab (fun m => Xtab2 0 m) 2 =
       [((1392 : ℤ) : ℂ), ((562949885952000 : ℤ) : ℂ)]
   rw [LvT2_0_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_0_3 : coordsAux Atab (fun m => Xtab2 0 m) 3 =
@@ -2864,7 +2876,7 @@ theorem LvT2_1_2 : coordsAux Atab (fun m => Xtab2 1 m) 2 =
       [((1 : ℤ) : ℂ), ((-68352 : ℤ) : ℂ)]
   rw [LvT2_1_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_1_3 : coordsAux Atab (fun m => Xtab2 1 m) 3 =
@@ -2891,7 +2903,7 @@ theorem LvT2_2_2 : coordsAux Atab (fun m => Xtab2 2 m) 2 =
       [((0 : ℤ) : ℂ), ((-96 : ℤ) : ℂ)]
   rw [LvT2_2_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_2_3 : coordsAux Atab (fun m => Xtab2 2 m) 3 =
@@ -3000,7 +3012,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 3, cert j • M2 ^ j)
     = (96 : ℤ) • M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 /-- **`T₃ ∈ ℚ[T₂]` at weight 50.** -/
 theorem heckeT3_eq_aeval_rat_weight50 :
@@ -3162,7 +3175,7 @@ theorem LvT2_0_2 : coordsAux Atab (fun m => Xtab2 0 m) 2 =
       [((2376 : ℤ) : ℂ), ((2251801451520000 : ℤ) : ℂ)]
   rw [LvT2_0_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_0_3 : coordsAux Atab (fun m => Xtab2 0 m) 3 =
@@ -3202,7 +3215,7 @@ theorem LvT2_1_2 : coordsAux Atab (fun m => Xtab2 1 m) 2 =
       [((1 : ℤ) : ℂ), ((1142784 : ℤ) : ℂ)]
   rw [LvT2_1_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_1_3 : coordsAux Atab (fun m => Xtab2 1 m) 3 =
@@ -3242,7 +3255,7 @@ theorem LvT2_2_2 : coordsAux Atab (fun m => Xtab2 2 m) 2 =
       [((0 : ℤ) : ℂ), ((888 : ℤ) : ℂ)]
   rw [LvT2_2_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_2_3 : coordsAux Atab (fun m => Xtab2 2 m) 3 =
@@ -3280,7 +3293,7 @@ theorem LvT2_3_2 : coordsAux Atab (fun m => Xtab2 3 m) 2 =
       [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)]
   rw [LvT2_3_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_3_3 : coordsAux Atab (fun m => Xtab2 3 m) 3 =
@@ -3458,7 +3471,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 4, cert j • M2 ^ j)
     = (59746885632 : ℤ) • M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 /-- **`T₃ ∈ ℚ[T₂]` at weight 52.** -/
 theorem heckeT3_eq_aeval_rat_weight52 :
@@ -3620,7 +3634,7 @@ theorem LvT2_0_2 : coordsAux Atab (fun m => Xtab2 0 m) 2 =
       [((1632 : ℤ) : ℂ), ((9007199336448000 : ℤ) : ℂ)]
   rw [LvT2_0_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_0_3 : coordsAux Atab (fun m => Xtab2 0 m) 3 =
@@ -3660,7 +3674,7 @@ theorem LvT2_1_2 : coordsAux Atab (fun m => Xtab2 1 m) 2 =
       [((1 : ℤ) : ℂ), ((89088 : ℤ) : ℂ)]
   rw [LvT2_1_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_1_3 : coordsAux Atab (fun m => Xtab2 1 m) 3 =
@@ -3699,7 +3713,7 @@ theorem LvT2_2_2 : coordsAux Atab (fun m => Xtab2 2 m) 2 =
       [((0 : ℤ) : ℂ), ((144 : ℤ) : ℂ)]
   rw [LvT2_2_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_2_3 : coordsAux Atab (fun m => Xtab2 2 m) 3 =
@@ -3737,7 +3751,7 @@ theorem LvT2_3_2 : coordsAux Atab (fun m => Xtab2 3 m) 2 =
       [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)]
   rw [LvT2_3_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_3_3 : coordsAux Atab (fun m => Xtab2 3 m) 3 =
@@ -3915,7 +3929,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 4, cert j • M2 ^ j)
     = (105556082688 : ℤ) • M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 /-- **`T₃ ∈ ℚ[T₂]` at weight 54.** -/
 theorem heckeT3_eq_aeval_rat_weight54 :
@@ -4077,7 +4092,7 @@ theorem LvT2_0_2 : coordsAux Atab (fun m => Xtab2 0 m) 2 =
       [((2616 : ℤ) : ℂ), ((36028799274240000 : ℤ) : ℂ)]
   rw [LvT2_0_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_0_3 : coordsAux Atab (fun m => Xtab2 0 m) 3 =
@@ -4117,7 +4132,7 @@ theorem LvT2_1_2 : coordsAux Atab (fun m => Xtab2 1 m) 2 =
       [((1 : ℤ) : ℂ), ((1536384 : ℤ) : ℂ)]
   rw [LvT2_1_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_1_3 : coordsAux Atab (fun m => Xtab2 1 m) 3 =
@@ -4157,7 +4172,7 @@ theorem LvT2_2_2 : coordsAux Atab (fun m => Xtab2 2 m) 2 =
       [((0 : ℤ) : ℂ), ((1128 : ℤ) : ℂ)]
   rw [LvT2_2_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_2_3 : coordsAux Atab (fun m => Xtab2 2 m) 3 =
@@ -4195,7 +4210,7 @@ theorem LvT2_3_2 : coordsAux Atab (fun m => Xtab2 3 m) 2 =
       [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)]
   rw [LvT2_3_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_3_3 : coordsAux Atab (fun m => Xtab2 3 m) 3 =
@@ -4373,7 +4388,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 4, cert j • M2 ^ j)
     = (170609983488 : ℤ) • M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 /-- **`T₃ ∈ ℚ[T₂]` at weight 56.** -/
 theorem heckeT3_eq_aeval_rat_weight56 :
@@ -4535,7 +4551,7 @@ theorem LvT2_0_2 : coordsAux Atab (fun m => Xtab2 0 m) 2 =
       [((1872 : ℤ) : ℂ), ((144115188387840000 : ℤ) : ℂ)]
   rw [LvT2_0_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_0_3 : coordsAux Atab (fun m => Xtab2 0 m) 3 =
@@ -4575,7 +4591,7 @@ theorem LvT2_1_2 : coordsAux Atab (fun m => Xtab2 1 m) 2 =
       [((1 : ℤ) : ℂ), ((304128 : ℤ) : ℂ)]
   rw [LvT2_1_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_1_3 : coordsAux Atab (fun m => Xtab2 1 m) 3 =
@@ -4615,7 +4631,7 @@ theorem LvT2_2_2 : coordsAux Atab (fun m => Xtab2 2 m) 2 =
       [((0 : ℤ) : ℂ), ((384 : ℤ) : ℂ)]
   rw [LvT2_2_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_2_3 : coordsAux Atab (fun m => Xtab2 2 m) 3 =
@@ -4653,7 +4669,7 @@ theorem LvT2_3_2 : coordsAux Atab (fun m => Xtab2 3 m) 2 =
       [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)]
   rw [LvT2_3_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_3_3 : coordsAux Atab (fun m => Xtab2 3 m) 3 =
@@ -4831,7 +4847,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 4, cert j • M2 ^ j)
     = (1331874496512 : ℤ) • M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 /-- **`T₃ ∈ ℚ[T₂]` at weight 58.** -/
 theorem heckeT3_eq_aeval_rat_weight58 :
@@ -5058,7 +5075,7 @@ theorem LvT2_0_2 : coordsAux Atab (fun m => Xtab2 0 m) 2 =
       [((2856 : ℤ) : ℂ), ((576460755313920000 : ℤ) : ℂ)]
   rw [LvT2_0_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_0_3 : coordsAux Atab (fun m => Xtab2 0 m) 3 =
@@ -5111,7 +5128,7 @@ theorem LvT2_1_2 : coordsAux Atab (fun m => Xtab2 1 m) 2 =
       [((1 : ℤ) : ℂ), ((1987584 : ℤ) : ℂ)]
   rw [LvT2_1_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_1_3 : coordsAux Atab (fun m => Xtab2 1 m) 3 =
@@ -5164,7 +5181,7 @@ theorem LvT2_2_2 : coordsAux Atab (fun m => Xtab2 2 m) 2 =
       [((0 : ℤ) : ℂ), ((1368 : ℤ) : ℂ)]
   rw [LvT2_2_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_2_3 : coordsAux Atab (fun m => Xtab2 2 m) 3 =
@@ -5215,7 +5232,7 @@ theorem LvT2_3_2 : coordsAux Atab (fun m => Xtab2 3 m) 2 =
       [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)]
   rw [LvT2_3_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_3_3 : coordsAux Atab (fun m => Xtab2 3 m) 3 =
@@ -5266,7 +5283,7 @@ theorem LvT2_4_2 : coordsAux Atab (fun m => Xtab2 4 m) 2 =
       [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)]
   rw [LvT2_4_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_4_3 : coordsAux Atab (fun m => Xtab2 4 m) 3 =
@@ -5532,7 +5549,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 5, cert j • M2 ^ j)
     = (38117391430361769050112 : ℤ) • M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 /-- **`T₃ ∈ ℚ[T₂]` at weight 60.** -/
 theorem heckeT3_eq_aeval_rat_weight60 :
@@ -5694,7 +5712,7 @@ theorem LvT2_0_2 : coordsAux Atab (fun m => Xtab2 0 m) 2 =
       [((2112 : ℤ) : ℂ), ((2305843009850880000 : ℤ) : ℂ)]
   rw [LvT2_0_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_0_3 : coordsAux Atab (fun m => Xtab2 0 m) 3 =
@@ -5734,7 +5752,7 @@ theorem LvT2_1_2 : coordsAux Atab (fun m => Xtab2 1 m) 2 =
       [((1 : ℤ) : ℂ), ((576768 : ℤ) : ℂ)]
   rw [LvT2_1_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_1_3 : coordsAux Atab (fun m => Xtab2 1 m) 3 =
@@ -5774,7 +5792,7 @@ theorem LvT2_2_2 : coordsAux Atab (fun m => Xtab2 2 m) 2 =
       [((0 : ℤ) : ℂ), ((624 : ℤ) : ℂ)]
   rw [LvT2_2_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_2_3 : coordsAux Atab (fun m => Xtab2 2 m) 3 =
@@ -5812,7 +5830,7 @@ theorem LvT2_3_2 : coordsAux Atab (fun m => Xtab2 3 m) 2 =
       [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)]
   rw [LvT2_3_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_3_3 : coordsAux Atab (fun m => Xtab2 3 m) 3 =
@@ -5991,7 +6009,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 4, cert j • M2 ^ j)
     = (7905182810112 : ℤ) • M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 /-- **`T₃ ∈ ℚ[T₂]` at weight 62.** -/
 theorem heckeT3_eq_aeval_rat_weight62 :
@@ -6218,7 +6237,7 @@ theorem LvT2_0_2 : coordsAux Atab (fun m => Xtab2 0 m) 2 =
       [((3096 : ℤ) : ℂ), ((9223372040772096000 : ℤ) : ℂ)]
   rw [LvT2_0_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_0_3 : coordsAux Atab (fun m => Xtab2 0 m) 3 =
@@ -6272,7 +6291,7 @@ theorem LvT2_1_2 : coordsAux Atab (fun m => Xtab2 1 m) 2 =
       [((1 : ℤ) : ℂ), ((2496384 : ℤ) : ℂ)]
   rw [LvT2_1_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_1_3 : coordsAux Atab (fun m => Xtab2 1 m) 3 =
@@ -6325,7 +6344,7 @@ theorem LvT2_2_2 : coordsAux Atab (fun m => Xtab2 2 m) 2 =
       [((0 : ℤ) : ℂ), ((1608 : ℤ) : ℂ)]
   rw [LvT2_2_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_2_3 : coordsAux Atab (fun m => Xtab2 2 m) 3 =
@@ -6376,7 +6395,7 @@ theorem LvT2_3_2 : coordsAux Atab (fun m => Xtab2 3 m) 2 =
       [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)]
   rw [LvT2_3_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_3_3 : coordsAux Atab (fun m => Xtab2 3 m) 3 =
@@ -6427,7 +6446,7 @@ theorem LvT2_4_2 : coordsAux Atab (fun m => Xtab2 4 m) 2 =
       [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)]
   rw [LvT2_4_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_4_3 : coordsAux Atab (fun m => Xtab2 4 m) 3 =
@@ -6692,7 +6711,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 5, cert j • M2 ^ j)
     = (24219856213912732720693248 : ℤ) • M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 /-- **`T₃ ∈ ℚ[T₂]` at weight 64.** -/
 theorem heckeT3_eq_aeval_rat_weight64 :
@@ -6919,7 +6939,7 @@ theorem LvT2_0_2 : coordsAux Atab (fun m => Xtab2 0 m) 2 =
       [((2352 : ℤ) : ℂ), ((36893488148490240000 : ℤ) : ℂ)]
   rw [LvT2_0_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_0_3 : coordsAux Atab (fun m => Xtab2 0 m) 3 =
@@ -6973,7 +6993,7 @@ theorem LvT2_1_2 : coordsAux Atab (fun m => Xtab2 1 m) 2 =
       [((1 : ℤ) : ℂ), ((907008 : ℤ) : ℂ)]
   rw [LvT2_1_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_1_3 : coordsAux Atab (fun m => Xtab2 1 m) 3 =
@@ -7026,7 +7046,7 @@ theorem LvT2_2_2 : coordsAux Atab (fun m => Xtab2 2 m) 2 =
       [((0 : ℤ) : ℂ), ((864 : ℤ) : ℂ)]
   rw [LvT2_2_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_2_3 : coordsAux Atab (fun m => Xtab2 2 m) 3 =
@@ -7077,7 +7097,7 @@ theorem LvT2_3_2 : coordsAux Atab (fun m => Xtab2 3 m) 2 =
       [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)]
   rw [LvT2_3_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_3_3 : coordsAux Atab (fun m => Xtab2 3 m) 3 =
@@ -7128,7 +7148,7 @@ theorem LvT2_4_2 : coordsAux Atab (fun m => Xtab2 4 m) 2 =
       [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)]
   rw [LvT2_4_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_4_3 : coordsAux Atab (fun m => Xtab2 4 m) 3 =
@@ -7394,7 +7414,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 5, cert j • M2 ^ j)
     = (54341788279256468246495232 : ℤ) • M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 /-- **`T₃ ∈ ℚ[T₂]` at weight 66.** -/
 theorem heckeT3_eq_aeval_rat_weight66 :
@@ -7621,7 +7642,7 @@ theorem LvT2_0_2 : coordsAux Atab (fun m => Xtab2 0 m) 2 =
       [((3336 : ℤ) : ℂ), ((147573952594665984000 : ℤ) : ℂ)]
   rw [LvT2_0_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_0_3 : coordsAux Atab (fun m => Xtab2 0 m) 3 =
@@ -7677,7 +7698,7 @@ theorem LvT2_1_2 : coordsAux Atab (fun m => Xtab2 1 m) 2 =
       [((1 : ℤ) : ℂ), ((3062784 : ℤ) : ℂ)]
   rw [LvT2_1_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_1_3 : coordsAux Atab (fun m => Xtab2 1 m) 3 =
@@ -7730,7 +7751,7 @@ theorem LvT2_2_2 : coordsAux Atab (fun m => Xtab2 2 m) 2 =
       [((0 : ℤ) : ℂ), ((1848 : ℤ) : ℂ)]
   rw [LvT2_2_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_2_3 : coordsAux Atab (fun m => Xtab2 2 m) 3 =
@@ -7781,7 +7802,7 @@ theorem LvT2_3_2 : coordsAux Atab (fun m => Xtab2 3 m) 2 =
       [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)]
   rw [LvT2_3_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_3_3 : coordsAux Atab (fun m => Xtab2 3 m) 3 =
@@ -7832,7 +7853,7 @@ theorem LvT2_4_2 : coordsAux Atab (fun m => Xtab2 4 m) 2 =
       [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)]
   rw [LvT2_4_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_4_3 : coordsAux Atab (fun m => Xtab2 4 m) 3 =
@@ -8098,7 +8119,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 5, cert j • M2 ^ j)
     = (1243058613022138069394915328 : ℤ) • M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 /-- **`T₃ ∈ ℚ[T₂]` at weight 68.** -/
 theorem heckeT3_eq_aeval_rat_weight68 :
@@ -8325,7 +8347,7 @@ theorem LvT2_0_2 : coordsAux Atab (fun m => Xtab2 0 m) 2 =
       [((2592 : ℤ) : ℂ), ((590295810360333312000 : ℤ) : ℂ)]
   rw [LvT2_0_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_0_3 : coordsAux Atab (fun m => Xtab2 0 m) 3 =
@@ -8381,7 +8403,7 @@ theorem LvT2_1_2 : coordsAux Atab (fun m => Xtab2 1 m) 2 =
       [((1 : ℤ) : ℂ), ((1294848 : ℤ) : ℂ)]
   rw [LvT2_1_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_1_3 : coordsAux Atab (fun m => Xtab2 1 m) 3 =
@@ -8434,7 +8456,7 @@ theorem LvT2_2_2 : coordsAux Atab (fun m => Xtab2 2 m) 2 =
       [((0 : ℤ) : ℂ), ((1104 : ℤ) : ℂ)]
   rw [LvT2_2_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_2_3 : coordsAux Atab (fun m => Xtab2 2 m) 3 =
@@ -8485,7 +8507,7 @@ theorem LvT2_3_2 : coordsAux Atab (fun m => Xtab2 3 m) 2 =
       [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)]
   rw [LvT2_3_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_3_3 : coordsAux Atab (fun m => Xtab2 3 m) 3 =
@@ -8536,7 +8558,7 @@ theorem LvT2_4_2 : coordsAux Atab (fun m => Xtab2 4 m) 2 =
       [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)]
   rw [LvT2_4_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_4_3 : coordsAux Atab (fun m => Xtab2 4 m) 3 =
@@ -8803,7 +8825,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 5, cert j • M2 ^ j)
     = (27618914498379285033161588736 : ℤ) • M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 /-- **`T₃ ∈ ℚ[T₂]` at weight 70.** -/
 theorem heckeT3_eq_aeval_rat_weight70 :
@@ -9030,7 +9053,7 @@ theorem LvT2_0_2 : coordsAux Atab (fun m => Xtab2 0 m) 2 =
       [((2832 : ℤ) : ℂ), ((9444732965741611008000 : ℤ) : ℂ)]
   rw [LvT2_0_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_0_3 : coordsAux Atab (fun m => Xtab2 0 m) 3 =
@@ -9087,7 +9110,7 @@ theorem LvT2_1_2 : coordsAux Atab (fun m => Xtab2 1 m) 2 =
       [((1 : ℤ) : ℂ), ((1740288 : ℤ) : ℂ)]
   rw [LvT2_1_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_1_3 : coordsAux Atab (fun m => Xtab2 1 m) 3 =
@@ -9140,7 +9163,7 @@ theorem LvT2_2_2 : coordsAux Atab (fun m => Xtab2 2 m) 2 =
       [((0 : ℤ) : ℂ), ((1344 : ℤ) : ℂ)]
   rw [LvT2_2_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_2_3 : coordsAux Atab (fun m => Xtab2 2 m) 3 =
@@ -9191,7 +9214,7 @@ theorem LvT2_3_2 : coordsAux Atab (fun m => Xtab2 3 m) 2 =
       [((0 : ℤ) : ℂ), ((1 : ℤ) : ℂ)]
   rw [LvT2_3_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_3_3 : coordsAux Atab (fun m => Xtab2 3 m) 3 =
@@ -9242,7 +9265,7 @@ theorem LvT2_4_2 : coordsAux Atab (fun m => Xtab2 4 m) 2 =
       [((0 : ℤ) : ℂ), ((0 : ℤ) : ℂ)]
   rw [LvT2_4_1]
   simp only [Atab, Xtab2, Finset.sum_range_succ, Finset.sum_range_zero,
-      List.getD_cons_succ, List.getD_cons_zero, List.nil_append, List.cons_append]
+      List.getD_cons_zero, List.nil_append, List.cons_append]
   norm_num
 
 theorem LvT2_4_3 : coordsAux Atab (fun m => Xtab2 4 m) 3 =
@@ -9509,7 +9532,8 @@ def cert : ℕ → ℤ
 
 theorem scaled_id : (∑ j ∈ Finset.range 5, cert j • M2 ^ j)
     = (9944214104392147049977479168 : ℤ) • M := by
-  decide +kernel
+  ext a b
+  fin_cases a <;> fin_cases b <;> decide +kernel
 
 /-- **`T₃ ∈ ℚ[T₂]` at weight 74.** -/
 theorem heckeT3_eq_aeval_rat_weight74 :

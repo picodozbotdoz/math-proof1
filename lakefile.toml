@@ -61,6 +61,14 @@ defaultTargets = [
   "MathProof.ModularForms.MaedaT3Dim8Weights",
   "MathProof.ModularForms.MaedaT3Dim9Weights",
   "MathProof.ModularForms.MaedaT3Dim10Weights",
+  # HeckeRational: `T₃ ∈ ℚ[T₂]` constructive witnesses.  The generic module
+  # + the 30-weight dims 6-10 file are default/CI items (37 s + 130 s on a
+  # warm Modal cache, ≈ 3 min CI add).  The 24-weight small sibling
+  # (HeckeRationalSmallWeights) follows its parent MaedaT3SmallWeights:
+  # root-only registration, NOT a default/CI item (it would drag the parent
+  # into CI; it is verified on Modal, 40 s).
+  "MathProof.ModularForms.HeckeRational",
+  "MathProof.ModularForms.HeckeRationalWeights",
   # MaedaT3SmallWeights (T₃ stretch, dims 2–5) is deliberately NOT a default
   # target / CI item: the five T₂ dim files already cost CI ≈ 36 min per push
   # and the five T₃ dim files add a comparable amount, so paying the 24-weight

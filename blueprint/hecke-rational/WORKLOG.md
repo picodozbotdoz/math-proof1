@@ -105,3 +105,58 @@ expected") — fixed by fully-typed term applications (`Int.cast_sum _ _`,
 
 Next: G3 generator + dims 6–10 (reuse T₂ dim files via the audited defeq
 bridge; small weights get the scratch's recipe).
+
+### 2026-11-02 — G3 + G4 + G5 PASSED: all 54 weights landed, audited, registered
+
+Inbox polled at each checkpoint: empty throughout.
+
+**G3** — `tools/gen_hecke_rat.py` (self-contained: re-parses all Lean
+literals, re-derives M₂ for small weights, re-asserts alignment /
+t-lemmas / charpoly / commutation / exact ℚ-solve, emits, `--check`
+byte-identity).  CORRECTION to G1's evidence: `def_bodies` in the audit
+missed match-style defs (`fb`, `Atab` have no `:=`), so the G1 fb/Atab
+alignment check had been VACUOUS (the f-defs check was real).  Fixed in
+the generator (whole-block capture); the fb/Atab bodies are indeed
+syntactically identical for all 30 big weights — the defeq bridge stands
+(now checked for real, every regeneration).
+
+Emission wrinkles (all fixed, --check green, 0 lines > 98 chars):
+chunked literals past 341 digits don't fit any line in the flat
+gen_maedan scheme (certificates reach 381 digits; D 349), so those are
+emitted in Horner form base `10 ^ 74` (all explicit powers ≤ 256, all
+numerals ≤ 80 digits — norm_num in `hD` and the kernel both handle it).
+
+- `HeckeRationalWeights.lean` (30 weights, dims 6–10): green FIRST build
+  with matrix-level decides — 130 s / 8.27 GiB (commit 761e870).
+- `HeckeRationalSmallWeights.lean` (24 weights): 84 unused-simp-arg
+  warnings (`List.getD_cons_succ` unused at j=2) — generator now includes
+  it only for j ≥ 3; green 40 s / 6.81 GiB.
+
+**G5 audit red flag and fix** — `AxCheckDecide` flagged exactly the 54
+`scaled_id` decides: `[propext, Classical.choice, Quot.sound]`.  Root
+cause: `Matrix.decidableEq` = `Fintype.decidablePiFintype` is built via
+`decidable_of_iff` with a simp-proved Iff — the axiom baggage lives in the
+instance itself.  Fix: state the scaled identities ENTRYWISE
+(`ext a b; fin_cases a <;> fin_cases b <;> decide +kernel` — Int equality,
+clean instance).  Aftermath: `HeckeRationalWeights` 234 s / 8.40 GiB,
+`HeckeRationalSmallWeights` 67 s / 6.95 GiB (both 0/0);
+**AxCheckDecide: 1 202 decide certificates, 0 > propext** (was 1 256
+audited / 54 violations).
+
+**Registration** — lakefile `defaultTargets` + CI list + root:
+`HeckeRational`, `HeckeRationalWeights` (CI add ≈ 37 s + 234 s ≈ 4.5 min,
+inside the ~10 min budget); `HeckeRationalSmallWeights` ROOT-ONLY with a
+note, following its parent `MaedaT3SmallWeights` (a trio registration
+would drag that non-CI module — "a few min" per lakefile note — into CI;
+this mirrors the established treatment; flagged to the operator in the
+final report).  Root target `MathProof` green (46 s / 6.64 GiB); full
+`defaultTargets` build green (35 s warm).
+
+**Audits** — tauceti_audit.sh: 0 set_option / #eval / native_decide /
+sorry / bad-imports on all three new files.  No memory alerts (peaks
+≤ 8.4 GiB).  No ancestor of the heavy MaedaGalois5 chain touched (the new
+modules import CharpolyDimN + the dim files + MaedaT3SmallWeights only).
+
+**Bookkeeping** — README (results section), AGENTS.md (layout + the
+matrix-decide Classical gotcha), research-log.md (iteration-22 entry),
+this WORKLOG.
