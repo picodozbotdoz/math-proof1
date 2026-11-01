@@ -56,3 +56,14 @@ integrated tree).  Combined verification on Modal: root target green
 certificates, 0 beyond `propext`**; `tauceti_audit.sh` clean on all six new
 light modules.  44 Modal check-runs total (budget ≤ ~80); no memory alerts.
 Review: `research/iteration22-review.md`.  Master merge = the operator's.
+
+## NEXT SESSION (cold-start pointer)
+Iteration 22 is CLOSED; the T2 loop continues with **Iteration 23 INIT** from
+a fresh session.  Read: research/iteration22-review.md §6–7 (open gaps +
+ranked recommendations: ℚ-rationality corollaries incl. integrality of
+witnesses, composite T_m, CI selective targets BEFORE any new trio
+registration), research/research-log.md tail, external-doc/RESEARCH-WORKFLOW.md
+§4.  Merge state: `integration/iteration22-wave` (tip 08263fe) is
+merge-ready for master (operator's action); `dev/iteration22-t3-galois` (T1)
+is independently mergeable but already contained in the integration branch
+via the trunk.  CI bill after this iteration ≈ +9–11 min/push.
