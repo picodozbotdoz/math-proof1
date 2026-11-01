@@ -26,6 +26,18 @@ charpoly is additionally pinned to the *kernel-verified* `P` literal of the
 committed `MaedaT3Dim{6..10}Weights.lean` (same parser as
 `research/iteration22-t3-galois/g1_anchor.py`) before any scanning happens.
 The prime-2 path is untouched.
+
+`--small` (Iteration 22, t3-galois-small): the 24 small weights `k ≤ 74` with
+`2 ≤ dim S_k ≤ 5` — input census `maeda_t3_small.json`, output
+`research/iteration22/data/t3_galoisfull_small_certs.json`, anchored to the
+kernel-verified `P` literals of `MaedaT3SmallWeights.lean`.  Dims 3–5 get the
+nm1/transp certificate pair (the transposition scan skips the nm1 prime so the
+n = 3 weights — whose two patterns are both `[2, 1]` — carry two distinct
+primes; an n = 3 same-prime fallback exists but never fires).  Dim 2 needs no
+Frobenius certificate at all (the Lean route is `MaedaGaloisQuad.
+bijective_of_quadratic` from irreducibility); for provenance the scan still
+records a `quad` entry — a prime where the charpoly reduces to an irreducible
+quadratic (the non-square-discriminant witness a disc-based route would need).
 """
 
 import json
@@ -62,28 +74,35 @@ def _eval_coeff(txt):
     return total
 
 
+def _parse_charpoly_file(text, ns="MaedaT3Weight"):
+    """{k: big-endian int list} from one generated namespace-per-weight file."""
+    out = {}
+    for k in sorted(int(m) for m in re.findall(rf"namespace {ns}(\d+)\b", text)):
+        block = re.search(
+            rf"namespace {ns}{k}\b(.*?)\nend {ns}{k}\b", text, re.S).group(1)
+        body = re.search(
+            r"noncomputable def P : ℤ\[X\] :=(.*?)\n\ntheorem P_natDegree", block, re.S).group(1)
+        coeffs, deg = {}, 0
+        for sign, ctext, exp in _TERM.findall(body):
+            val = _eval_coeff(ctext)
+            if sign == "-":
+                val = -val
+            e = int(exp) if exp else 0
+            assert e not in coeffs
+            coeffs[e] = val
+            deg = max(deg, e)
+        assert coeffs.get(deg) == 1, (k, "not monic")
+        out[k] = [coeffs.get(i, 0) for i in range(deg, -1, -1)]
+    return out
+
+
 def lean_t3_charpolys(here):
     """{k: big-endian int list} from the committed MaedaT3Dim files."""
     mf = os.path.join(here, "MathProof", "ModularForms")
     out = {}
     for d in range(6, 11):
-        text = open(os.path.join(mf, f"MaedaT3Dim{d}Weights.lean")).read()
-        for k in sorted(int(m) for m in re.findall(r"namespace MaedaT3Weight(\d+)\b", text)):
-            block = re.search(
-                rf"namespace MaedaT3Weight{k}\b(.*?)\nend MaedaT3Weight{k}\b", text, re.S).group(1)
-            body = re.search(
-                r"noncomputable def P : ℤ\[X\] :=(.*?)\n\ntheorem P_natDegree", block, re.S).group(1)
-            coeffs, deg = {}, 0
-            for sign, ctext, exp in _TERM.findall(body):
-                val = _eval_coeff(ctext)
-                if sign == "-":
-                    val = -val
-                e = int(exp) if exp else 0
-                assert e not in coeffs
-                coeffs[e] = val
-                deg = max(deg, e)
-            assert coeffs.get(deg) == 1, (k, "not monic")
-            out[k] = [coeffs.get(i, 0) for i in range(deg, -1, -1)]
+        out.update(_parse_charpoly_file(
+            open(os.path.join(mf, f"MaedaT3Dim{d}Weights.lean")).read()))
     return out
 
 
@@ -148,7 +167,98 @@ def try_pattern(cp, ell, want):
         return {'ell': ell, 'roots': roots, 'hbar': hbar}
 
 
+def small_main(here):
+    """The `--small` mode: 24 small weights (dims 2–5), anchored to
+    MaedaT3SmallWeights.lean (this mirrors probe3's scan_small.py exactly —
+    the emitted numbers must reproduce its table)."""
+    src = os.path.join(here, 'research', 'iteration20', 'data',
+                       'maeda_t3_small.json')
+    dst = os.path.join(here, 'research', 'iteration22', 'data')
+    census = json.load(open(src))
+    anchors = _parse_charpoly_file(open(os.path.join(
+        here, "MathProof", "ModularForms", "MaedaT3SmallWeights.lean")).read())
+    assert len(anchors) == len(census) == 24, (len(anchors), len(census))
+    out = []
+    for w in census:
+        k, n = w['k'], w['dim']
+        cp = w['charpoly']  # descending coefficients, monic
+        assert cp[0] == 1 and len(cp) == n + 1, (k, len(cp))
+        assert cp == anchors[k], (k, 'census charpoly != Lean P literal')
+        rec = {'k': k, 'dim': n, 'charpoly': cp}
+        if n == 2:
+            # a prime where P mod ell is an irreducible quadratic (the
+            # non-square-discriminant witness; the Lean n=2 route —
+            # MaedaGaloisQuad.bijective_of_quadratic — consumes none of it)
+            quad = None
+            for ell in range(5, 4000):
+                if not is_prime(ell) or n % ell == 0:
+                    continue
+                if check_squarefree(cp, ell):
+                    r = factor_full(cp, ell)
+                    if r is not None and r[0] == [2]:
+                        quad = {'ell': ell, 'gbar': r[1][0]}
+                        break
+            assert quad is not None, (k, 'quad')
+            rec['quad'] = quad
+            out.append(rec)
+            print(f"k={k}: n=2 irreducible-quadratic ell={quad['ell']}", flush=True)
+            continue
+        nm1 = None
+        for ell in range(max(2 * n, n + 3), 4000):
+            if not is_prime(ell) or n % ell == 0:
+                continue
+            try:
+                nm1 = try_pattern(cp, ell, 'nm1')
+            except AssertionError:
+                nm1 = None
+            if nm1:
+                nm1['ell'] = ell
+                break
+        tr = None
+        for ell in range(max(2 * n, n + 3), 4000):
+            if not is_prime(ell) or n % ell == 0:
+                continue
+            if nm1 and ell == nm1['ell']:
+                continue  # distinct second prime (matters only when n = 3)
+            try:
+                tr = try_pattern(cp, ell, 'transp')
+            except AssertionError:
+                tr = None
+            if tr:
+                tr['ell'] = ell
+                break
+        if tr is None and n == 3 and nm1 is not None:
+            # n = 3: the nm1 factorization IS a transposition certificate
+            # ({n-1} = {2}); never needed by the scan (distinct primes exist)
+            tr = {'ell': nm1['ell'], 'roots': [nm1['root']],
+                  'hbar': nm1['gbar'], 'same_ell': True}
+        assert nm1 is not None, (k, 'nm1')
+        assert tr is not None, (k, 'transp')
+        for cert, roots in ((nm1, [nm1['root']]), (tr, tr['roots'])):
+            trim, pmul, pmod, pdiv, pgcd, ppowx, psub = make(cert['ell'])
+            v = [1]
+            for r in roots:
+                v = pmul(v, [(-r) % cert['ell'], 1])
+            v = pmul(v, cert.get('gbar', cert.get('hbar')))
+            assert [c % cert['ell'] for c in cp[::-1]] == v, (k, cert['ell'])
+        assert (n % tr['ell']) != 0 and (n % nm1['ell']) != 0
+        rec['nm1'] = nm1
+        rec['transp'] = tr
+        out.append(rec)
+        print(f"k={k}: nm1 ell={nm1['ell']} deg gbar={len(nm1['gbar'])-1}; "
+              f"transp ell={tr['ell']} roots={tr['roots']}"
+              + (" [same ell]" if tr.get('same_ell') else ""), flush=True)
+
+    os.makedirs(dst, exist_ok=True)
+    with open(os.path.join(dst, 't3_galoisfull_small_certs.json'), 'w') as f:
+        json.dump(out, f, indent=1)
+    print(f"wrote {len(out)} weight certificates to t3_galoisfull_small_certs.json")
+
+
 def main():
+    if '--small' in sys.argv:
+        small_main(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        return
     prime = int(sys.argv[sys.argv.index('--prime') + 1]) if '--prime' in sys.argv else 2
     assert prime in (2, 3), prime
     here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

@@ -38,3 +38,23 @@ Base commit: 569bcf0 (trunk dev/iteration22-maeda-lehmer).
 * Deviations: none (blueprint shape followed; D2 wrapper not needed yet —
   the n=3 defeq question only arises at S3).
 
+### 2026-11-02 — S2 PASSED: --small scan, 24/24 anchored, reproduces probe table
+
+* `tools/galoisfull_certs.py --small` (new `small_main`, prime-2/3 paths
+  textually untouched except a pure refactor of `lean_t3_charpolys` into
+  `_parse_charpoly_file`): census `maeda_t3_small.json`, anchors = kernel-
+  verified `P` literals of `MaedaT3SmallWeights.lean` (24/24 exact), nm1 +
+  transp scans `[max(2n, n+3), 4000)` with the transp scan skipping the nm1 ℓ
+  (the probe's distinct-prime discipline for n = 3), every hit re-multiplied
+  and squarefree-checked.
+* Output `research/iteration22/data/t3_galoisfull_small_certs.json` (24
+  records): dims 3–5 in the T1 shape (`nm1`/`transp`), dim 2 carries a
+  `quad` provenance entry (irreducible-quadratic reduction ℓ; consumed by
+  nothing on the Lean side).  **Every ℓ and gbar degree reproduces FINDINGS §3
+  exactly** (nm1 23–89, transp 23–83, quad 23–41; no `same_ell` fallback fired).
+* Name note: FINDINGS §4 suggested `t3_galois_small_certs.json`; the emitted
+  name is `t3_galoisfull_small_certs.json` (mission/blueprint wording,
+  consistent with the T1 `t3_galoisfull_certs.json`).
+* Byte-identity gate after the edit: `gen_galoisfull.py --check` and
+  `--prime 3 --check` — PASS (all ten files + both axchecks).
+
