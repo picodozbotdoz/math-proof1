@@ -56,6 +56,11 @@ import MathProof.ModularForms.MaedaT3Dim7Weights
 import MathProof.ModularForms.MaedaT3Dim8Weights
 import MathProof.ModularForms.MaedaT3Dim9Weights
 import MathProof.ModularForms.MaedaT3Dim10Weights
+-- T₃ ∈ ℚ[T₂] for all 54 verified Maeda weights: the generic module and the
+-- dims 6-10 instance file are defaultTargets/CI items; the 24-weight small
+-- sibling (dims 2-5) follows its parent MaedaT3SmallWeights — root only.
+import MathProof.ModularForms.HeckeRational
+import MathProof.ModularForms.HeckeRationalWeights
 -- The T₃ stretch file (dims 2–5) is registered in the root only: it is a
 -- light module (audited via AxCheckDecide) but deliberately NOT a
 -- defaultTargets/CI item — see the note in lakefile.toml.
@@ -63,6 +68,7 @@ import MathProof.ModularForms.MaedaT3SmallWeights
 -- Its Galois twin (Gal = Sₙ for the T₃ charpolys of the same 24 weights) is
 -- root-only for the same reason: it imports MaedaT3SmallWeights.
 import MathProof.ModularForms.MaedaT3GaloisSmallWeights
+import MathProof.ModularForms.HeckeRationalSmallWeights
 import MathProof.ModularForms.FrobeniusCycleType
 import MathProof.ModularForms.JordanPrimitive
 import MathProof.ModularForms.MaedaGaloisFull

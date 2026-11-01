@@ -130,3 +130,30 @@ Blueprints are hypotheses — audit G1 before code (the false k=24 T₃ anchor);
 census data untrusted until re-derived; commit at every green milestone;
 WORKLOG everything; poll the inbox at every checkpoint; `decide +kernel`
 first when the elaborator budget trips; chunk exponents ≤ 256.
+
+## CORRECTIONS (2026-11-02, worker hecke-rational — facts found during execution)
+
+1. **§3 "expect +54 decide certs, 0 > propext" is FALSE for the §2 statement
+   form** ("the scaled integer identity … as `decide +kernel` (matrix
+   equality over `Fin n` literals)"): a matrix-equality `decide` inherits
+   `Fintype.decidablePiFintype`'s simp-built Iff proof — every one of the 54
+   certificates audited as `[propext, Classical.choice, Quot.sound]`.  Fix
+   (landed): state the identities ENTRYWISE — `ext a b; fin_cases a <;>
+   fin_cases b <;> decide +kernel` (Int equality, clean instance).  Cost:
+   HeckeRationalWeights 130 s → 234 s.  Same disease class as the ZMod
+   gotcha in AGENTS.md; recorded there.
+2. **§2 chunking note understates the sizes**: certificates reach 381 digits
+   (N) / 349 (D) — PAST the flat `c0 * 10 ^ e0 + …` scheme's line budget
+   (first chunk > 85 digits for d > 341).  Fix (landed): >341-digit
+   literals in Horner form base `10 ^ 74` (all explicit powers ≤ 256,
+   numerals ≤ 80 digits; norm_num + kernel both fine).
+3. **Registration (§3 "trio if < ~10 min")**: the measured CI add of MY two
+   files is ≈ 4.5 min, but a trio registration would drag
+   `MaedaT3SmallWeights` (the small file's parent, deliberately non-CI per
+   the lakefile note) into CI.  Landed as duo-in-CI + root-only small file
+   — mirroring the parent's treatment; flagged to the operator.
+4. **G1 tooling caveat (self-correction)**: the audit's `def_bodies` regex
+   missed match-style defs, making the fb/Atab alignment check vacuous in
+   the first G1 run (the f-defs check was real and did bind).  Fixed in
+   `tools/gen_hecke_rat.py` (whole-block capture); the alignment now holds
+   non-vacuously and is re-asserted on every regeneration.

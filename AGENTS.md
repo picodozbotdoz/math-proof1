@@ -377,6 +377,26 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   p-generic twin of `heckeT2_coeff` (one `rw` from
   `heckeTP_qExpansion_coeff`); new light module because `MaedaLevelOne` is
   an ancestor of the heavy `MaedaGalois5` chain.
+- `MathProof/ModularForms/HeckeRational.lean` (light) — the rational-witness
+  machinery: `linearIndependent_dimN` + `represents_dimN` (the representation
+  sibling of `charpoly_dimN`) and `exists_aeval_rat_dimN` (echelon bundle +
+  integer certificate `∑_{j<n} N_j • M₂^j = D • M₃` ⇒ `∃ Q : ℚ[X],
+  T₃ = aeval T₂ (Q.map (algebraMap ℚ ℂ))`; witness built internally, no
+  commutativity input).
+  `HeckeRationalWeights.lean` (light, generated — `tools/gen_hecke_rat.py`,
+  `--check` byte-identity; regenerate, don't hand-edit) — the 30 dims-6–10
+  instances `heckeT3_eq_aeval_rat_weightKK` (reuses the T₂ dim files'
+  Xtab/hX/M/entry via the audited fb/Atab defeq bridge; per weight only the
+  certificate + entry bridges are emitted; certificate literals >341 digits
+  go out in Horner form base `10 ^ 74`).  Modal 234 s / 8.4 GiB.
+  `HeckeRationalSmallWeights.lean` (light, generated) — the 24 dims-2–5
+  twins: T₂ data re-derived fresh (Xtab2/hX2 via `heckeT2_coeff` + the T₃
+  file's q-lemmas, LvT2/entryT2/M2) — root-only registration (follows its
+  parent `MaedaT3SmallWeights`), NOT a defaultTargets/CI item.  Modal 67 s /
+  7 GiB.  The scaled identities are `decide +kernel` ENTRYWISE
+  (`ext`+`fin_cases`): a matrix-level `decide` inherits
+  `Fintype.decidablePiFintype`'s simp-built Iff proof (Classical) and fails
+  the AxCheckDecide audit.
 - `MathProof/ModularForms/MaedaCertCExt.lean` (light) — `tau22 … tau30`
   (kernel-verified against `Ramanujan.tau`), `tauTableX`, `dCc3`,
   `seqPLc3`, `seqPLc3_eq` with cap `N ≤ 31`: the T₃ coefficient formula
