@@ -71,6 +71,9 @@ jobs:
             MathProof.ModularForms.MaedaDim8Weights
             MathProof.ModularForms.MaedaDim9Weights
             MathProof.ModularForms.MaedaDim10Weights
+            MathProof.ModularForms.HeckeCommute
+            MathProof.ModularForms.HeckeGeneratedByT2
+            MathProof.ModularForms.HeckeGeneratedByT2Weights
       # NOTE: no docgen-action step.  It re-ran the whole build a second time
       # and built the doc-gen4 tool and its Mathlib dependency from source
       # (30+ min per push), and its deploy step would overwrite the
