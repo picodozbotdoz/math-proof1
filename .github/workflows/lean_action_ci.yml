@@ -1,8 +1,12 @@
 name: Lean Action CI
 
+# Master only (2026-11-01): the full light build is ~1 h of runner time and
+# runs on every unfiltered push — impl/integration branches each paid it.
+# Branch verification happens on Modal (lean_check.py overlays the working
+# tree, no push needed); use workflow_dispatch for anything else.
 on:
   push:
-  pull_request:
+    branches: [master]
   workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages

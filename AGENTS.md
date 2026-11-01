@@ -423,8 +423,11 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   reducing `% P` after each operation; soundness is proved by transporting into
   `ZMod P` (mirror `L2P` as `L2PMod`). A nonzero residue mod a prime certifies
   the integer coefficient is nonzero — no magnitude bound needed.
-- CI (`.github/workflows/lean_action_ci.yml`) runs `lean-action` on
-  every push; keep `lake build` clean before committing.
+- CI (`.github/workflows/lean_action_ci.yml`) runs `lean-action` on pushes
+  to **master only** (since 2026-11-01 — the ~1 h build must not fire per
+  branch); keep `lake build` clean before merging to master.  Branches are
+  verified on Modal instead (`lean_check.py` overlays the working tree, no
+  push needed).
 - `defaultTargets` in `lakefile.toml` lists the light modules only: a bare
   `lake build` (CI, Reservoir's automated builder, downstream consumers of
   the package) must never pull the heavy kernel decides. When adding a
