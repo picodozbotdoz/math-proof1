@@ -6,6 +6,11 @@ verified* mathematics in Lean 4 + Mathlib. The standard of proof is strict: no
 `sorry`, no `native_decide`, no external CAS — computations must be verified by
 Lean's kernel alone (`decide`).
 
+## git
+master branch is managed by human user. Any changes to master branch are to be
+done by user unless the user specifically ask/instruct/allowed agent to do it.
+git push is never to be done by ai agent, even when the user ask the agent to do.
+
 ## Build
 
 Toolchain and Mathlib are pinned (`lean-toolchain`, `lakefile.toml`: Lean
