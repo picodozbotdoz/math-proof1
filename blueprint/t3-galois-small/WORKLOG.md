@@ -58,3 +58,32 @@ Base commit: 569bcf0 (trunk dev/iteration22-maeda-lehmer).
 * Byte-identity gate after the edit: `gen_galoisfull.py --check` and
   `--prime 3 --check` — PASS (all ten files + both axchecks).
 
+### 2026-11-02 — S3 PASSED: generated file green, root-only registration, audits
+
+* `tools/gen_galoisfull.py --prime 3 --small`: `--small` mode (implies
+  prime 3; prime-2 / prime-3-dim paths untouched), dim-2 branch in
+  `emit_weight` (no cP/g1/g2 blocks — the theorem is
+  `MaedaGaloisQuad.bijective_of_quadratic P_monic P_natDegree maeda`),
+  `header_small` + `emit_axcheck_small`.  Emitted
+  `MaedaT3GaloisSmallWeights.lean` (2 230 lines, 24 weights) +
+  `MaedaT3GaloisSmallAxCheck.lean` (32 lines); `--small --check`
+  byte-identical; prime-2 and prime-3 `--check` byte-identical before AND
+  after every generator edit.
+* **The n=3 `{3−1}`/`{2}` defeq holds** — no D2 wrapper needed: the uniform
+  two-block emission with the two distinct scan primes elaborates as-is.
+* Modal builds (all 0 err / 0 warn):
+  * `MaedaT3GaloisSmallWeights`: **module 34 s, wall 72 s, peak tree
+    6.62 GiB, module peak 5.38 GiB** (parent MaedaT3SmallWeights served from
+    the shared build cache).
+  * `MaedaT3GaloisSmallAxCheck`: all 24 theorems + the three infra lemmas +
+    `MaedaGaloisQuad.bijective_of_quadratic` on exactly `propext,
+    Classical.choice, Quot.sound`; 83 s / 4.76 GiB.  (One iteration: the
+    audit docstring exceeded the 100-char line limit — reflowed in the
+    generator, regenerated, rebuilt.)
+  * Combined root + `MathProof.AxCheckDecide` (root-only registration in
+    `MathProof.lean`; NOT defaultTargets/CI — the file imports the non-CI
+    `MaedaT3SmallWeights`, policy note extended in `lakefile.toml`):
+    **1 310 decide certificates audited, 0 depend on more than propext**
+    (+108 over T1's 1 202; root 5.35 GiB, AxCheckDecide 5.47 GiB, wall 84 s).
+* `tauceti_audit.sh` clean on all three new files (0/0/0/0/0).
+
