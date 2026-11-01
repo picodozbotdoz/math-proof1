@@ -1831,3 +1831,64 @@ depending on more than `propext`** (T₃-Galois adds 180).
 
 WORKLOG with the full gate-by-gate record:
 `research/iteration22-t3-galois/WORKLOG.md`.
+
+## Iteration 22, T2 — LehmerCoverage: exact 99.9093 % coverage below 2³², kernel count anchors, 131072 descoped
+
+**Steering priority 2 of the 2026-11-02 wave** (blueprint
+`blueprint/lehmer-coverage/`, branch `impl/iteration22/lehmer-coverage`;
+probe = `research/iteration22/probe2-lehmer-coverage/FINDINGS.md`).
+
+**Result.**  The Lehmer coverage story is no longer folklore numbers:
+
+* **Exact study** (`research/iteration22/lehmer-coverage/STUDY.md` +
+  `bad_prime_sieve.py` + `bad_primes_2p32.npy` — regeneration committed,
+  array-identical to the probe): `U(B) = #{1 ≤ n < B : n divisible by a bad
+  prime}` is *exactly* `Σ_{bad p < B} ⌊(B−1)/p⌋` for every `B ≤ 2³²` (the
+  smallest bad prime is 70481 — the Lean gap bound — and `70481² > 2³²`, so
+  no two bad primes divide the same `n < 2³²`; cross-checked against direct
+  marking at 2²⁴/2²⁵/2²⁶, a 12-base Miller–Rabin audit, and `li(x)/690`).
+  Headline: **`τ n ≠ 0` verified for 4 291 072 962 of the 4 294 967 295
+  indices below 2³² = 99.9093 %**; uncovered 3 894 333 = multiples of the
+  294 618 bad primes in (65536, 2³²] (first 70481, last 4 294 967 161);
+  U(2¹⁸) = 23, U(2²⁰) = 227, U(2²⁶) = 40 226.  Two FINDINGS table cells
+  corrected by regeneration: the 2³⁰ bad-prime census is 78 715 (not
+  116 788; `li(2³⁰)/690 ≈ 78 843` agrees), and the 2¹⁸ candidate count is
+  285 (not 284).
+* **Kernel-verified count anchors** — new light module
+  `MathProof/Tau/LehmerCoverageCount.lean` (registered in root +
+  `defaultTargets` + CI): `Nat.Prime` is *not* kernel-decidable (its
+  `minFac` instance is well-founded recursion), so the module carries a
+  structural trial-division certificate `noFactorFrom` (one-time
+  correctness `prime_of_noFactorFrom`) and kernel-decides the census:
+  `badPrimes2p18_filter` (285 AP candidates → the 17 bad primes) and the
+  2²⁰ twin `badPrimes2p20_filter` (1 423 → 98), each with spec
+  (every member bad) + completeness (every bad prime below the bound is
+  listed).  The no-overlap count identity is proved *structurally*
+  (`card_uncoveredSet`: disjoint multiple-sets since `65537² > 2³²`), so
+  `uncovered_2p18` (23), `covered_count_2p18` (262 120 of 262 143) and the
+  2²⁰ twins (227 / 1 048 348 of 1 048 575) are the first kernel-verified
+  coverage *counts* in the stack.
+* **131072 decision** (`research/iteration22/lehmer-coverage/
+  DECISION-131072.md`): a monolithic `decide +kernel` at d = 131072
+  projects to ~110–125 GiB kernel heap (calibration 17.46 → 62.85 GiB for
+  16384 → 65536, ≈ 0.92 MiB/entry) ≈ **1.8× the 64 GiB steering
+  stop-rule**, for only +0.0053 pp of 2³² coverage (it would eliminate
+  exactly the 5 bad primes ≤ 131072 and extend the initial segment
+  70481 → 134053).  **DESCOPED by default**; reopen only on explicit
+  steering accepting the > 64 GiB surface, or after a Bench-staged
+  digit-list-split prototype measures < 64 GiB per declaration (the
+  single-bignum intermediates — 10.5 Mbit at d = 131072 — make that split
+  unproven territory; the prototype exists to measure it).
+
+**Measured** (Modal `lean_check`, linters on, 0 err / 0 warn):
+`LehmerCoverageCount` builds in 32 s / 5.76 GiB peak (both kernel filters
+included — far under the ~120 s gate that governed including 2²⁰); local
+`lake env lean` re-elaboration of the whole file ≈ 23 s.
+
+**Audits.**  `AxCheckDecide`: 1 204 decide certificates, 0 depending on
+more than `propext` (+4 from this module).  `tauceti_audit.sh` clean (no
+`set_option`/`#eval`/`native_decide`/`sorry`, Mathlib-level imports only).
+No heavy module touched (`LehmerPacked` and its chain untouched).
+
+WORKLOG with the full gate-by-gate record:
+`blueprint/lehmer-coverage/WORKLOG.md` (in the branch).
