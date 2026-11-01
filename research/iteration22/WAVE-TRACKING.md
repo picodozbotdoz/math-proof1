@@ -22,13 +22,27 @@ dims ≥ 11; no Mathlib bump mid-iteration.
   from §4b's letter recorded here): probe1 ℚ-rationality, probe2 Lehmer
   coverage, probe3 T₃-Galois dims 2–5.
 
-Status per branch (branch = impl/iteration22/<slug>, base = <TBD>):
+Status per branch (branch = impl/iteration22/<slug>, base = 569bcf0):
 | branch | blueprint | status | result |
 |---|---|---|---|
-| (probe1) | HeckeRational (steering 1) | probing | |
-| (probe2) | LehmerCoverage (steering 2) | probing | |
-| (probe3) | T3GaloisSmall (orchestrator choice) | probing | |
+| impl/iteration22/hecke-rational | blueprint/hecke-rational | SPAWNED | |
+| impl/iteration22/lehmer-coverage | blueprint/lehmer-coverage | SPAWNED | |
+| impl/iteration22/t3-galois-small | blueprint/t3-galois-small | SPAWNED | |
+
+Blueprints committed 569bcf0 (from probe FINDINGS in research/iteration22/).
+Worktrees ready with WORKLOG seeds + standalone-mirror `mrun.sh` (each
+committed on its impl branch); mirrors under /home/xyz/<slug>.
 
 ## Incident log
+- 2026-11-02: probe-1 agent spawn rejected by operator → orchestrator ran the
+  ℚ-rationality probe inline (FINDINGS committed all the same).  Worker spawns
+  proceed normally.
+
 ## Cross-cutting lessons
 ## Integration plan
+- Merge order: t3-galois-small (no shared files with others beyond root
+  import) → lehmer-coverage (research dirs + optional new module) →
+  hecke-rational (new module + generated file + registrations).  Root
+  `MathProof.lean` / lakefile / CI list union-resolved append-shaped.
+- Combined light build + combined AxCheckDecide green on Modal before the
+  operator handover.
