@@ -87,3 +87,26 @@ Base commit: 569bcf0 (trunk dev/iteration22-maeda-lehmer).
     (+108 over T1's 1 202; root 5.35 GiB, AxCheckDecide 5.47 GiB, wall 84 s).
 * `tauceti_audit.sh` clean on all three new files (0/0/0/0/0).
 
+### 2026-11-02 — S4 PASSED: bookkeeping; TASK CLOSED
+
+* README: the "T₃ Galois twin" paragraph now states all 54 weights (both
+  generated files, the two routes, ℓ ranges, the dim-2 lemma) — "(T₃ Galois
+  dims 2–5 remain open)" removed.
+* `docs/index.html` card: "across the dim-6…10 weights" → "at every one of
+  the 54 weights … the six dim-2 weights need no certificate — an
+  irreducible quadratic already has Gal = S₂".
+* AGENTS.md layout: `MaedaGaloisQuad` + `MaedaT3GaloisSmallWeights` entries
+  with the measured Modal costs and the root-only rationale, right after
+  the T₃ dim entry.
+* research-log: "Iteration 22, t3-galois-small" entry (result, two routes,
+  pipeline, registration policy, measurements, audits).
+  WAVE-TRACKING status row → COMPLETE.
+* Inbox polled at every gate (start, Q1, S2, S3, S4): empty throughout —
+  no steering files to process.
+* Deviations from the blueprint: **none**.  D1/D2/D3 fallbacks all unused
+  (the quad lemma elaborated after two one-line Modal iterations; the n=3
+  defeq holds; the single 24-weight file builds in 34 s).  Descope-free.
+* Task state: COMPLETE on `impl/iteration22/t3-galois-small`
+  (base `569bcf0`, commits through the S4 commit); merge is the
+  operator's.
+

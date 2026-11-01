@@ -28,6 +28,7 @@ Status per branch (branch = impl/iteration22/<slug>, base = <TBD>):
 | (probe1) | HeckeRational (steering 1) | probing | |
 | (probe2) | LehmerCoverage (steering 2) | probing | |
 | (probe3) | T3GaloisSmall (orchestrator choice) | probing | |
+| impl/iteration22/t3-galois-small | T3GaloisSmall (base 569bcf0) | **COMPLETE** | `MaedaT3WeightK.maeda_galois_full` × 24 (dims 2–5, k ≤ 74): dims 3–5 via Frobenius certs (ℓ ≤ 89, Bézout), dim 2 via new `MaedaGaloisQuad.bijective_of_quadratic`; T₃ Maeda in full at all 54 weights. All Modal builds 0/0 (galois file 34 s / 6.62 GiB tree; axcheck 83 s; AxCheckDecide 1 310 certs, 0 > propext). Inbox polled every gate: empty throughout. WORKLOG: blueprint/t3-galois-small/WORKLOG.md |
 
 ## Incident log
 ## Cross-cutting lessons

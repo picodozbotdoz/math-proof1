@@ -312,6 +312,24 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   weights; Bézout witnesses throughout, transposition ℓ up to ≈ 8.7·10⁶);
   Modal 25–83 s / ≤ 6.3 GiB per file.  `MaedaT3GaloisFullAxCheck.lean` — the
   twin opt-in audit (all 30 on the standard three axioms).
+  `MaedaGaloisQuad.lean` (light, Mathlib-only infra, trio-registered) —
+  `bijective_of_quadratic`: a monic integer quadratic irreducible over ℚ has
+  `Gal = S₂` (pretransitive action on the two complex roots; the image of
+  `galActionHom` has 2 ≤ card ≤ 2!, so it is ⊤).
+  `MaedaT3GaloisSmallWeights.lean` (light, generated —
+  `tools/galoisfull_certs.py --small` +
+  `tools/gen_galoisfull.py --prime 3 --small` from
+  `research/iteration22/data/t3_galoisfull_small_certs.json`, charpolys
+  pinned to the kernel-verified `P` literals of `MaedaT3SmallWeights.lean`;
+  `--check` byte-identical, T₂/prime-3-dim modes untouched) — Gal = Sₙ for
+  the T₃ charpolys of the 24 weights `k ≤ 74` with `2 ≤ dim S_k ≤ 5`
+  (dims 3–5: the same two Frobenius certificates, all ℓ ≤ 89; dim 2: the
+  certificate-free `MaedaGaloisQuad.bijective_of_quadratic`; the n = 3
+  `{3−1}`/`{2}` defeq holds, no wrapper needed).  Completes T₃ Maeda in full
+  (all 54 weights `2 ≤ dim S_k ≤ 10`).  Root-ONLY registration (imports the
+  non-CI `MaedaT3SmallWeights` — see the lakefile note).  Modal: 34 s /
+  5.38 GiB (galois file), 83 s / 4.76 GiB (the opt-in
+  `MaedaT3GaloisSmallAxCheck.lean`, all 24 on the standard three axioms).
 - `MathProof/ModularForms/MaedaDim{6,7,8,9,10}Weights.lean` (light,
   generated — `tools/gen_maedan.py`, never hand-edit; `--check` verifies
   byte-identical regeneration) — Maeda irreducibility for the 30 weights
