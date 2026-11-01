@@ -77,6 +77,11 @@ defaultTargets = [
   "MathProof.ModularForms.MaedaGaloisDim8Weights",
   "MathProof.ModularForms.MaedaGaloisDim9Weights",
   "MathProof.ModularForms.MaedaGaloisDim10Weights",
+  "MathProof.ModularForms.MaedaT3GaloisDim6Weights",
+  "MathProof.ModularForms.MaedaT3GaloisDim7Weights",
+  "MathProof.ModularForms.MaedaT3GaloisDim8Weights",
+  "MathProof.ModularForms.MaedaT3GaloisDim9Weights",
+  "MathProof.ModularForms.MaedaT3GaloisDim10Weights",
 ]
 
 [leanOptions]
