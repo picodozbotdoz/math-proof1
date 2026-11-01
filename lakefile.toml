@@ -54,6 +54,21 @@ defaultTargets = [
   "MathProof.ModularForms.HeckeCommute",
   "MathProof.ModularForms.HeckeGeneratedByT2",
   "MathProof.ModularForms.HeckeGeneratedByT2Weights",
+  "MathProof.ModularForms.HeckeTPCoeff",
+  "MathProof.ModularForms.MaedaCertCExt",
+  "MathProof.ModularForms.MaedaT3Dim6Weights",
+  "MathProof.ModularForms.MaedaT3Dim7Weights",
+  "MathProof.ModularForms.MaedaT3Dim8Weights",
+  "MathProof.ModularForms.MaedaT3Dim9Weights",
+  "MathProof.ModularForms.MaedaT3Dim10Weights",
+  # MaedaT3SmallWeights (T₃ stretch, dims 2–5) is deliberately NOT a default
+  # target / CI item: the five T₂ dim files already cost CI ≈ 36 min per push
+  # and the five T₃ dim files add a comparable amount, so paying the 24-weight
+  # stretch file (bonus content; 125 s / 6.8 GiB on Modal, likely a few min on
+  # CI) on every push is not justified.  It IS a light module and is
+  # registered in the root `MathProof.lean` (so `AxCheckDecide` audits its
+  # decide certificates); it is verified on Modal and locally:
+  #   lake build MathProof.ModularForms.MaedaT3SmallWeights
 ]
 
 [leanOptions]

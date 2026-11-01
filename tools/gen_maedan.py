@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Generate MathProof/ModularForms/MaedaDim{6..10}Weights.lean (Iteration 20).
+"""Generate MathProof/ModularForms/MaedaDim{6..10}Weights.lean (Iteration 20)
+and MathProof/ModularForms/MaedaT3Dim{6..10}Weights.lean (Iteration 21).
 
 Per weight k with dim S_k = n in [6, 10] the generator emits one namespace
 containing:
@@ -22,7 +23,19 @@ recomputed from research/maeda-scaling-probe.py; the generator asserts the
 recomputed T2 matrices and charpolys agree with the JSON (which regresses
 against the charpolys proved in MaedaWeight24 / MaedaDim4Weights).
 
-Re-runs are byte-identical (chain-cache rule): `tools/gen_maedan.py --check`.
+`--prime 3` (Iteration 21) emits the T3 twin files MaedaT3Dim{n}Weights.lean
+from research/iteration20/data/maeda_t3_dim6_10.json (produced by
+research/iteration21/maeda_t3_probe.py; anchored at tau(3) = 252 on S_12,
+dual-route checked at k = 24, and commuting with the T2 matrices): the
+T3-image formula (T3 f)_m = f_{3m} + 3^(k-1) [3|m] f_{m/3} needs q-coefficients
+up to 3n, so N = 3n+1 (<= 31) and the lists ride MaedaCertCExt.seqPLc3 (the
+tauTableX extension to tau 30); the operator is heckeTP_l k Nat.prime_three
+with the p-generic coefficient formula heckeTP_coeff (HeckeTPCoeff.lean).
+The prime-2 mode is UNTOUCHED by the T3 code (separate emitters): re-runs
+stay byte-identical, `--check` verifies both primes.
+
+Re-runs are byte-identical (chain-cache rule): `tools/gen_maedan.py --check`
+and `tools/gen_maedan.py --prime 3 --check`.
 """
 import importlib.util
 import json
@@ -36,8 +49,18 @@ _spec = importlib.util.spec_from_file_location(
 msp = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(msp)  # runs its k=24/k=48 regression asserts
 
+_spec3 = importlib.util.spec_from_file_location(
+    "maeda_t3_probe", ROOT / "research" / "iteration21" / "maeda_t3_probe.py")
+t3p = importlib.util.module_from_spec(_spec3)
+_spec3.loader.exec_module(t3p)  # anchors only at import; census runs under __main__
+
 DATA = json.load(open(ROOT / "research/iteration20/data/maeda_dim6_10.json"))
 BY_K = {w["k"]: w for w in DATA}
+
+DATA3 = json.load(open(ROOT / "research/iteration20/data/maeda_t3_dim6_10.json"))
+BY_K3 = {w["k"]: w for w in DATA3}
+
+DATA3_SMALL = json.load(open(ROOT / "research/iteration20/data/maeda_t3_small.json"))
 
 EVAL_LEMMAS = ("Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul, "
                "Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, "
@@ -81,6 +104,19 @@ def t2_coeffs(k, n, i0, a, b, N):
     return f[:N], t
 
 
+def t3_coeffs(k, n, i0, a, b, N):
+    """(coefficients 0..N-1 of f_i, dict of T3-image coefficients 1..n).
+
+    The T3 formula reads f_{3m} for m <= n, so N = 3n+1 (dim 10: N = 31, the
+    seqPLc3 cap); seqPLc3 i a b N has length N and the q-lemmas cover
+    m <= 3n = N-1."""
+    f = series(i0, a, b, max(N, 3 * n))
+    t = {}
+    for m in range(1, n + 1):
+        t[m] = f[3 * m] + (3 ** (k - 1) * f[m // 3] if m % 3 == 0 else 0)
+    return f[:N], t
+
+
 def reflected_powmod(ell, f, e):
     """Model of RabinCert.zpxw: X^e mod f over Z/ell, little-endian lists."""
     return msp.powx(e, f, ell)
@@ -120,9 +156,11 @@ def wrap_terms(terms, cont_indent, sep=" + "):
     return ("\n" + pad).join(out)
 
 
-def lean_list(xs, indent=0):
+def lean_list(xs, indent=0, maxbody=None):
     body = ", ".join(lean_int(x) for x in xs)
-    if len(body) <= 100 - 2 * indent:
+    if maxbody is None:
+        maxbody = 100 - 2 * indent
+    if len(body) <= maxbody:
         return f"[{body}]"
     # wrap at ~90 columns
     lines, cur = [], ""
@@ -174,15 +212,56 @@ def sym_matrix_literal(M, indent=6):
 
 CHUNK = 60         # digits per chunk in decomposed big literals
 PLAIN_DIGITS = 80  # a plain (undecomposed) literal renders fine up to this
+MAX_POW = 256      # Lean's default `exponentiation.threshold`: norm_num
+# evaluates `10 ^ e` only for e ≤ 256, and a light module may not raise the
+# option — so a chunked literal's TOP place-value exponent must stay ≤ 256
+# (T₃ k=134 pushes charpoly coefficients to 317 digits: 317 − 60 = 257 > 256,
+# the dim-10 failure of 2026-10-31).
+MAX_FIRST = 85     # longest first chunk whose token still fits a WIDTH line
+
+
+def digit_sizes(d):
+    """Chunk digit-lengths for a d-digit numeral (only called for d >
+    PLAIN_DIGITS): CHUNK-blocks, except the FIRST chunk grows to d − MAX_POW
+    when plain CHUNK-blocks would put the top exponent past MAX_POW (i.e.
+    d > CHUNK + MAX_POW = 316).  None = plain CHUNK-blocks."""
+    if d - CHUNK <= MAX_POW:
+        return None
+    first = d - MAX_POW
+    assert first <= MAX_FIRST, (
+        f"{d}-digit literal needs a {first}-digit first chunk "
+        f"(> {MAX_FIRST}; its token line would overflow WIDTH)")
+    sizes = [first]
+    rem = MAX_POW
+    while rem:
+        take = min(CHUNK, rem)
+        sizes.append(take)
+        rem -= take
+    return sizes
+
+
+def slice_chunks(s):
+    """Digit-string chunks of a >PLAIN_DIGITS numeral per digit_sizes."""
+    sizes = digit_sizes(len(s))
+    if sizes is None:
+        return [s[i:i + CHUNK] for i in range(0, len(s), CHUNK)]
+    out, i = [], 0
+    for w in sizes:
+        out.append(s[i:i + w])
+        i += w
+    assert i == len(s) and all(out), (len(s), sizes)
+    return out
 
 
 def pos_chunks(x):
     """Decimal string chunks of |x| (first CHUNK digits, last maybe shorter),
-    or None when the plain literal is short enough for every emission site."""
+    or None when the plain literal is short enough for every emission site.
+    The first chunk grows (digit_sizes) so every place-value exponent stays
+    ≤ MAX_POW."""
     s = str(abs(x))
     if len(s) <= PLAIN_DIGITS:
         return None
-    return [s[i:i + CHUNK] for i in range(0, len(s), CHUNK)]
+    return slice_chunks(s)
 
 
 def term_chunks(c, suffix):
@@ -194,8 +273,7 @@ def term_chunks(c, suffix):
     body = f"C ({c})" if c >= 0 else f"- C ({-c})"
     if 6 + len(body) + len(suffix) + 2 <= WIDTH:
         return None
-    s = str(abs(c))
-    return [s[i:i + CHUNK] for i in range(0, len(s), CHUNK)]
+    return slice_chunks(str(abs(c)))
 
 
 def chunk_expr_tokens(chs):
@@ -208,6 +286,36 @@ def chunk_expr_tokens(chs):
         core = ch if e == 0 else f"{ch} * 10 ^ {e}"
         toks.append(core if j == 0 else f"+ {core}")
     return toks
+
+
+def cast_item_lines(v, budget):
+    """Physical lines of one `((v : ℤ) : ℂ)` item; `budget` = the longest
+    plain item the call site can place on one physical line (WIDTH minus the
+    site's own prefix/suffix).  Plain while `len(plain) ≤ budget`; CHUNKED
+    across continuation lines once it is not (T₃ dim-10 matrix entries reach
+    82 digits and the cast syntax around them overflows).  Chunked exponents
+    stay ≤ MAX_POW, so norm_num and the kernel evaluate the pieces.  Budgets:
+    (linter limit 100; every rendered line stays within it, and the
+    dims-6–9 files, whose entries are ≤ 71 digits, stay plain and
+    regenerate byte-identically): clist 92 (indent 6 + bracket), coordN 91
+    (6 spaces + ' = '), entry 86 ('      = ' + ' := by')."""
+    plain = f"(({v} : ℤ) : ℂ)"
+    if len(plain) <= budget:
+        return [plain]
+    chs = pos_chunks(v)
+    if chs is None:
+        # ≤ PLAIN_DIGITS digits but still line-overflowing (69…80 digits at
+        # the entry site): pos_chunks declines to engage, so split the numeral
+        # in half — two token lines always fit
+        s = str(abs(v))
+        h = (len(s) + 1) // 2
+        chs = [s[:h], s[h:]]
+    toks = chunk_expr_tokens(chs)
+    if v < 0:
+        toks = ["-" + toks[0]] + [t.replace("+ ", "- ", 1) for t in toks[1:]]
+    lines = ["((" + toks[0]] + ["    " + t for t in toks[1:]]
+    lines[-1] += " : ℤ) : ℂ)"
+    return lines
 
 
 def flat_expr_lines(v, lead, cont):
@@ -729,6 +837,480 @@ open scoped MatrixGroups
 """
 
 
+def wrap_name_t3(k):
+    return f"MaedaT3Weight{k}"
+
+
+def emit_weight_t3(w, list_maxbody=None):
+    """The T₃ twin of emit_weight: same skeleton, prime-3 data (N = 3n+1,
+    seqPLc3 lists, heckeTP_coeff / Nat.prime_three, MaedaT3Weight namespaces).
+
+    Kept as a separate function (not a parameterized emit_weight) so the
+    prime-2 code path — and its byte-identical output — cannot drift."""
+    k, n = w["k"], w["dim"]
+    M, cp = w["matrix"], w["charpoly"]
+    ell, ell2 = w["cert_ell"], w["cert2_ell"]
+    N = 3 * n + 1
+    assert N <= 31, (k, N)
+
+    # --- regression: recompute the matrix and charpoly from the T3 probe engine ---
+    d2, Mat2, cp2 = t3p.maeda_data_p(k, 3)
+    assert d2 == n and Mat2 == M and cp2 == cp, f"T3 regression failed at k={k}"
+
+    basis = []
+    coeffs = []
+    tdata = []
+    for i0 in range(n):
+        a, b = G(k - 12 * (i0 + 1))
+        f, t = t3_coeffs(k, n, i0, a, b, N)
+        basis.append((i0, a, b))
+        coeffs.append(f)
+        tdata.append(t)
+        # the leading coefficient of f_{i0} sits at index i0+1 and is 1
+        assert f[i0 + 1] == 1 and all(f[m] == 0 for m in range(0, i0 + 1)), (k, i0)
+
+    out = []
+    P = out.append
+    wname = wrap_name_t3(k)
+    kq = f"(({k} : ℕ) : ℤ)"
+
+    P(f"/-! ### Weight {k} (dim {n}) -/")
+    P(f"namespace {wname}")
+    P("")
+
+    # --- basis and coefficient machinery ---
+    for (i0, a, b), f in zip(basis, coeffs):
+        j = i0 + 1
+        P(f"/-- `Δ^{j} E₄^{a} E₆^{b}`. -/")
+        P(f"noncomputable def f{j} : CuspForm 𝒮ℒ {kq} :=")
+        P(f"  prodForm _ {i0} {a} {b} (by norm_num)")
+        P("")
+        P(f"lemma c{j} (m : ℕ) : (qExpansion 1 f{j}).coeff m = seqP {i0} {a} {b} m :=")
+        P(f"  prodForm_coeff _ _ _ _ _ m")
+        P("")
+        P(f"lemma L{j}c : seqPLc3 {i0} {a} {b} {N} =")
+        P(f"    {lean_list(f, 4, list_maxbody)} := by")
+        P("  decide +kernel")
+        P("")
+        P(f"lemma L{j} : seqPL {i0} {a} {b} {N} =")
+        P(f"    {lean_list(f, 4, list_maxbody)} := by")
+        P(f"  rw [← seqPLc3_eq (by norm_num)]")
+        P(f"  exact L{j}c")
+        P("")
+        for m in range(1, 3 * n + 1):
+            for _s in coeff_stmt(f"lemma q{j}_{m} : (qExpansion 1 f{j}).coeff {m}", f[m]):
+                P(_s)
+            P(f"  rw [c{j}, seqP_getD (N := {N}) (by norm_num), L{j}]")
+            P("  norm_num [List.getD_cons_succ, List.getD_cons_zero]")
+            P("")
+
+    # --- T3 and its image coefficients ---
+    P("/-- `T₃` on this weight. -/")
+    P(f"noncomputable def T3 := heckeTPₗ {kq} Nat.prime_three")
+    P("")
+    for (i0, a, b), t in zip(basis, tdata):
+        j = i0 + 1
+        for m in range(1, n + 1):
+            extra = f", q{j}_{m // 3}" if m % 3 == 0 else ""
+            for _s in coeff_stmt(f"lemma t{j}_{m} : (qExpansion 1 (T3 f{j})).coeff {m}", t[m]):
+                P(_s)
+            P(f"  rw [T3, heckeTP_coeff (by norm_num) Nat.prime_three]")
+            P(f"  norm_num [q{j}_{3 * m}{extra}]")
+            P("")
+
+    # --- A/X tables ---
+    P("/-- The basis as an ℕ-indexed function (concrete indices reduce by `rfl`; the")
+    P("catch-all is never used: `charpoly_dimN` only reads `fb i` for `i < n`). -/")
+    P(f"noncomputable def fb : ℕ → CuspForm 𝒮ℒ {kq}")
+    for i0 in range(n):
+        P(f"  | {i0} => f{i0 + 1}")
+    P("  | _ => 0")
+    P("")
+    P("/-- `Atab i j` = coefficient of `q^(j+1)` in `f i` for `i < j` (0 elsewhere). -/")
+    P(f"def Atab : ℕ → ℕ → ℂ")
+    for (i0, a, b), f in zip(basis, coeffs):
+        for jj in range(i0 + 1, n):
+            P(f"  | {i0}, {jj} => ({f[jj + 1]} : ℂ)")
+    P("  | _, _ => 0")
+    P("")
+    P("/-- `Xtab i m` = coefficient of `q^(m+1)` in `T₃ (f i)`. -/")
+    P(f"def Xtab : ℕ → ℕ → ℂ")
+    for i0, t in enumerate(tdata):
+        for m in range(n):
+            P(f"  | {i0}, {m} => ({t[m + 1]} : ℂ)")
+    P("  | _, _ => 0")
+    P("")
+
+    # --- finrank ---
+    P("lemma finrank_eq : Module.finrank ℂ (CuspForm 𝒮ℒ %s) = %d := by" % (kq, n))
+    P("  apply Module.finrank_eq_of_rank_eq")
+    P("  rw [CuspForm.discriminantEquiv.rank_eq]")
+    P(f"  have h := ModularForm.dimension_level_one {k - 12} (by decide)")
+    P("  norm_num [Nat.ModEq] at h")
+    P("  exact_mod_cast h")
+    P("")
+
+    P("/-- `charpoly_dimN` hypothesis: the basis is in echelon form (zeros). -/")
+    P("lemma hzero : ∀ (i m : ℕ), i < %d → 1 ≤ m → m ≤ i →" % n)
+    P(f"    (qExpansion 1 (fb i)).coeff m = (0 : ℂ) := by")
+    P("  intro i m hi h1 h2")
+    P("  interval_cases i")
+    for i0 in range(n):
+        P(f"  · simp only [fb]")
+        if i0 == 0:
+            P("    exact (by omega : False).elim")
+        else:
+            P(f"    interval_cases m")
+            for m in range(1, i0 + 1):
+                j = i0 + 1
+                P(f"    · rw [c{j}, seqP_getD (N := {N}) (by norm_num), L{j}]")
+                P("      norm_num [List.getD_cons_succ, List.getD_cons_zero]")
+    P("")
+    P("/-- `charpoly_dimN` hypothesis: the diagonal is `1`. -/")
+    P("lemma hone : ∀ i : ℕ, i < %d → (qExpansion 1 (fb i)).coeff (i + 1) = (1 : ℂ) := by" % n)
+    P("  intro i hi")
+    P("  interval_cases i")
+    for i0 in range(n):
+        j = i0 + 1
+        P(f"  · simp only [fb]")
+        P(f"    exact q{j}_{j}")
+    P("")
+    P("/-- `charpoly_dimN` hypothesis: the strict upper coefficients. -/")
+    P("lemma hA : ∀ (i j : ℕ), i < j → j < %d →" % n)
+    P("    (qExpansion 1 (fb i)).coeff (j + 1) = Atab i j := by")
+    P("  intro i j hij hjn")
+    P(f"  have hib : i < {n} := by omega")
+    P("  interval_cases i")
+    for i0 in range(n):
+        j = i0 + 1
+        P(f"  · simp only [fb]")
+        P(f"    interval_cases j")
+        for jj in range(i0 + 1, n):
+            P(f"    · rw [c{j}, seqP_getD (N := {N}) (by norm_num), L{j}]")
+            P("      norm_num [List.getD_cons_succ, List.getD_cons_zero]")
+            P("      rfl")
+    P("")
+    P("/-- `charpoly_dimN` hypothesis: the T₃-image coefficients. -/")
+    P("lemma hX : ∀ (i m : ℕ), i < %d → m < %d →" % (n, n))
+    P("    (qExpansion 1 (T3 (fb i))).coeff (m + 1) = Xtab i m := by")
+    P("  intro i m hi hm")
+    P("  interval_cases i")
+    for i0 in range(n):
+        j = i0 + 1
+        P(f"  · simp only [fb]")
+        P(f"    interval_cases m")
+        for m in range(n):
+            P(f"    · rw [t{j}_{m + 1}]")
+            P("      rfl")
+    P("")
+
+    # --- the literal matrix, P, determinants, evaluations ---
+    P("/-- The matrix of `T₃` in the echelon basis (census data, regression-checked). -/")
+    P(f"def M : Matrix (Fin {n}) (Fin {n}) ℤ :=")
+    P("      " + matrix_literal(M))
+    P("")
+    P("/-- The translated matrices `t·1 − M`, as an explicit literal (symbolic in `t`). -/")
+    P(f"def MT (t : ℤ) : Matrix (Fin {n}) (Fin {n}) ℤ :=")
+    P("      " + sym_matrix_literal(M))
+    P("")
+    P("/-- One-time symbolic bridge, reused by all determinant lemmas. -/")
+    P("theorem scalar_sub_M (t : ℤ) : Matrix.scalar (Fin %d) t - M = MT t := by" % n)
+    P("  ext a b")
+    P("  simp only [Matrix.scalar_apply, Matrix.diagonal_apply, Matrix.sub_apply, M, MT]")
+    P("  fin_cases a <;> fin_cases b <;> simp")
+    P("")
+    P("/-- The characteristic polynomial of `T₃` (descending literal). -/")
+    P("noncomputable def P : ℤ[X] :=")
+    P(f"  {p_literal(cp, n)}")
+    P("")
+    P(f"theorem P_natDegree : P.natDegree = {n} := by unfold P; compute_degree!")
+    P("")
+    P(f"theorem P_monic : P.Monic := by unfold P; monicity!")
+    P("")
+    vals = []
+    for t in range(n + 1):
+        m2 = [[(t if i == j2 else 0) - M[i][j2] for j2 in range(n)] for i in range(n)]
+        v = msp.bareiss_det(m2)
+        ev = 0
+        for c in cp:
+            ev = ev * t + c
+        assert v == ev, (k, t, v, ev)
+        vals.append(v)
+    for t, v in enumerate(vals):
+        P(f"/-- `det (t·1 − M)` at `t = {t}`, by the certified Bareiss echelon decomposition. -/")
+        head = f"theorem det_{t} : (Matrix.scalar (Fin {n}) ({t} : ℤ) - M).det"
+        if len(head) + 3 + len(str(abs(v))) + 7 <= WIDTH:
+            P(f"{head} = {v} := by")
+        else:
+            P(head)
+            ls = flat_expr_lines(v, "     = ", "      ")
+            ls[-1] += " := by"
+            for l in ls:
+                P(l)
+        P(f"  rw [scalar_sub_M]")
+        P(f"  simp only [MT]")
+        P(f"  eval_det")
+        if pos_chunks(v) is not None:
+            P(f"  norm_num")
+        P("")
+    for t, v in enumerate(vals):
+        head = f"theorem ev_{t} : P.eval ({t} : ℤ)"
+        if len(head) + 3 + len(str(abs(v))) + 7 <= WIDTH:
+            P(f"{head} = {v} := by")
+        else:
+            P(head)
+            ls = flat_expr_lines(v, "     = ", "      ")
+            ls[-1] += " := by"
+            for l in ls:
+                P(l)
+        P("  norm_num [P, Polynomial.eval_add, Polynomial.eval_sub, Polynomial.eval_mul,")
+        P("      Polynomial.eval_pow, Polynomial.eval_C, Polynomial.eval_X, Polynomial.eval_neg]")
+        P("")
+    P("/-- Assembly: the n+1 evaluation points, discharged per case. -/")
+    P("theorem hevals : ∀ i : Fin %d, P.eval ((i : ℕ) : ℤ)" % (n + 1))
+    P("      = (Matrix.scalar (Fin %d) ((i : ℕ) : ℤ) - M).det := by" % n)
+    P("  intro i")
+    P("  fin_cases i")
+    for t in range(n + 1):
+        P(f"  · change P.eval ({t} : ℤ)")
+        P(f"      = (Matrix.scalar (Fin {n}) ({t} : ℤ) - M).det")
+        P(f"    rw [ev_{t}, det_{t}]")
+    P("")
+    def clist_lines(vals, indent):
+        """A `[((v : ℤ) : ℂ), …]` literal wrapped to WIDTH (elements are
+        ~20–90 chars each; dim-10 lists need multi-line).  An item whose
+        plain rendering does not fit a physical line (T₃ k ≥ 124 matrix
+        entries reach 82 digits) is CHUNKED across its own continuation
+        lines by `cast_item_lines` (exponents ≤ MAX_POW); the single-line
+        wrap logic is untouched, so T₂ and T₃ dims 6–9 stay byte-identical."""
+        pad = " " * indent
+        items = [cast_item_lines(v, 92) for v in vals]
+        lines, cur = [], "["
+        for ls in items:
+            sep = "" if cur == "[" else ", "
+            if len(ls) == 1:
+                it = ls[0]
+                if len(pad + cur + sep + it) > WIDTH - 1 and cur != "[":
+                    lines.append(cur + ",")
+                    cur = it
+                else:
+                    cur += sep + it
+            else:
+                # multi-line item: flush the pending line, emit all but the
+                # item's last line, and leave that open for the next
+                # separator or the closing bracket
+                if cur != "[":
+                    lines.append(cur + ",")
+                for l in ls[:-1]:
+                    lines.append(l)
+                cur = ls[-1]
+        lines.append(cur + "]")
+        return [pad + lines[0]] + [pad + l for l in lines[1:]]
+
+    for a in range(n):
+        col = [M[c][a] for c in range(n)]
+        for j in range(1, n + 1):
+            ls = clist_lines(col[:j], 4)
+            P(f"theorem Lv{a}_{j} : coordsAux Atab (fun m => Xtab {a} m) {j} =")
+            for l in ls[:-1]:
+                P(l)
+            if len(ls[-1]) + 7 > WIDTH:
+                P(ls[-1])
+                P("      := by")
+            else:
+                P(ls[-1] + " := by")
+            if j == 1:
+                P("  simp only [coordsAux, Xtab, Finset.sum_range_zero, List.nil_append]")
+                P("  norm_num")
+            else:
+                P(f"  change coordsAux Atab (fun m => Xtab {a} m) {j-1}")
+                P(f"      ++ [Xtab {a} {j-1} - ∑ i ∈ Finset.range {j-1},")
+                P(f"      Atab i {j-1} * (coordsAux Atab (fun m => Xtab {a} m) {j-1}).getD i 0] =")
+                for l in clist_lines(col[:j], 6):
+                    P(l)
+                P(f"  rw [Lv{a}_{j-1}]")
+                succ = "List.getD_cons_succ, " if j >= 3 else ""
+                P("  simp only [Atab, Xtab, Finset.sum_range_succ, Finset.sum_range_zero,")
+                P(f"      {succ}List.getD_cons_zero, List.nil_append, List.cons_append]")
+                P("  norm_num")
+            P("")
+    for c in range(n):
+        for a in range(n):
+            ls = cast_item_lines(M[c][a], 86)
+            P(f"theorem entry_{c}_{a} : coordN Atab (fun m => Xtab {a} m) {c}")
+            if len(ls) == 1:
+                P(f"      = {ls[0]} := by")
+            else:
+                P(f"      = {ls[0]}")
+                for l in ls[1:-1]:
+                    P(f"          {l}")
+                P(f"          {ls[-1]} := by")
+            P("  simp only [coordN]")
+            P(f"  rw [Lv{a}_{c+1}]")
+            P("  rfl")
+            P("")
+    P("/-- **The characteristic polynomial of `T₃` on this weight.** -/")
+    P("theorem charpoly_T3 : T3.charpoly = P.map (Int.castRingHom ℂ) := by")
+    P(f"  have hdim := finrank_eq")
+    P(f"  have hn : 0 < {n} := by norm_num")
+    P(f"  rw [charpoly_dimN hn hdim fb Atab Xtab hzero hone hA T3 hX,")
+    P("      ← CharpolyEngine.charpoly_of_eval_eq M P P_natDegree hevals, ← Matrix.charpoly_map]")
+    P("  congr 1")
+    P("  ext j i")
+    P("  fin_cases j <;> fin_cases i")
+    for c in range(n):
+        for a in range(n):
+            head = f"  · change coordN Atab (fun m => Xtab {a} m) {c}"
+            tail = f" = (({M[c][a]} : ℤ) : ℂ)"
+            if len(head) + len(tail) <= WIDTH:
+                P(head + tail)
+            else:
+                ls = cast_item_lines(M[c][a], 91)
+                P(head)
+                if len(ls) == 1:
+                    P(f"      {tail}")
+                else:
+                    P(f"      = {ls[0]}")
+                    for l in ls[1:-1]:
+                        P(f"          {l}")
+                    P(f"          {ls[-1]}")
+            P(f"    exact entry_{c}_{a}")
+    P("")
+
+    # --- Rabin certificates and the irreducibility theorem ---
+    fle = [c % ell for c in cp[::-1]]
+    F = (ell ** n).bit_length()
+    assert len(fle) == n + 1 and fle[-1] == 1
+    top = reflected_powmod(ell, fle, ell ** n)
+    assert msp.pnorm(list(top)) == [0, 1], (k, ell, top)
+    h2s = []
+    for q in prime_divisors(n):
+        hq = msp.psub_x(reflected_powmod(ell, fle, ell ** (n // q)), ell)
+        g = msp.pgcd(list(fle), list(hq), ell)
+        g = msp.pnorm(list(g))
+        assert len(g) == 1, (k, q, g)
+        steps = reflected_gcd_steps(ell, fle, hq)
+        W = max(steps + 2, len(fle) + 4)
+        h2s.append((q, W))
+    fle2 = [c % ell2 for c in cp[::-1]]
+    F2 = (ell2 ** n).bit_length()
+    top2 = reflected_powmod(ell2, fle2, ell2 ** n)
+    assert msp.pnorm(list(top2)) == [0, 1], (k, ell2, top2)
+
+    P("/-- The characteristic polynomial mod the certificate prime (little-endian). -/")
+    P(f"noncomputable def fr : List ℤ := {lean_list(fle, 2)}")
+    P("")
+    P("lemma hmap : P.map (Int.castRingHom (ZMod %d)) = RabinCert.toPoly %d fr := by" % (ell, ell))
+    P("  simp only [P, RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr,")
+    P("      Polynomial.map_C, Polynomial.map_X, Polynomial.map_add, Polynomial.map_mul,")
+    P("      Polynomial.map_pow, Int.coe_castRingHom, ← Polynomial.C_neg]")
+    rw_items = []
+    for i, c in enumerate(cp):
+        if i == 0:
+            continue
+        suffix = f" * (X : ℤ[X]) ^ {n - i}" if i < n else ""
+        chs = term_chunks(c, suffix)  # SAME decision as P's literal (syntactic match)
+        if chs is None:
+            head = f"show (({c} : ℤ) : ZMod {ell})"
+            tail = f" = ({c % ell} : ZMod {ell}) from by decide +kernel"
+            if 6 + len(head) + len(tail) <= WIDTH:
+                rw_items.append(head + tail)
+            elif 6 + len(head) <= WIDTH:
+                rw_items.append(head + "\n          " + tail)
+            else:  # the coefficient literal alone nearly fills the line: split the cast
+                rw_items.append(f"show (({c} : ℤ)\n          : ZMod {ell})" + tail)
+        else:
+            toks = chunk_expr_tokens(chs)
+            op = "show ((- (" if c < 0 else "show (("
+            cl = ") : ℤ) : ZMod %d)" % ell if c < 0 else " : ℤ) : ZMod %d)" % ell
+            lines = ["      " + op + toks[0]]
+            lines += ["            " + t for t in toks[1:]]
+            lines[-1] += cl
+            lines.append("          = (%d : ZMod %d) from by decide +kernel" % (c % ell, ell))
+            rw_items.append("\n".join(lines))
+    P("  rw [" + ",\n      ".join(rw_items) + "]")
+    P("  ring_nf")
+    P("")
+    P("lemma hmon' : (RabinCert.toPoly %d fr).Monic := by" % ell)
+    P("  simp only [RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr, mul_zero, add_zero]")
+    P("  monicity!")
+    P("")
+    P(f"lemma hnd : (RabinCert.toPoly {ell} fr).natDegree = {n} := by")
+    P("  simp only [RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr, mul_zero, add_zero]")
+    P("  compute_degree!")
+    P("")
+    P(f"lemma hF : {ell} ^ {n} < 2 ^ {F} := by norm_num")
+    P("")
+    P(f"lemma h1 : RabinCert.zpxw {ell} fr (RabinCert.bitsOf {F} ({ell} ^ {n})) [1] = [0, 1] :=")
+    P("  by decide +kernel")
+    P("")
+    for q, W in h2s:
+        P(f"lemma h2_{q} : ∃ w : ℕ, RabinCert.zpgcd {ell} w fr")
+        P(f"      (RabinCert.zpxwsubX {ell} fr {F} ({ell} ^ ({n} / {q}))) = [1] :=")
+        P(f"  ⟨{W}, by decide +kernel⟩")
+        P("")
+    P("lemma h2 : ∀ q : ℕ, q.Prime → q ∣ %d → ∃ w : ℕ," % n)
+    P(f"      RabinCert.zpgcd {ell} w fr")
+    P(f"      (RabinCert.zpxwsubX {ell} fr {F} ({ell} ^ ({n} / q))) = [1] := by")
+    P("  intro q hq hq2")
+    P(f"  have hqb : q ≤ {n} := Nat.le_of_dvd (by norm_num) hq2")
+    P("  interval_cases q")
+    hq_qs = {q for q, _ in h2s}
+    for q in range(n + 1):
+        if q in hq_qs:
+            P(f"  · exact h2_{q}")
+        elif is_prime(q):
+            P("  · exact absurd hq2 (by decide)")
+        else:
+            P("  · exact absurd hq (by decide)")
+    P("")
+    P(f"/-- The second certificate prime (sanity decide, not used by `maeda`). -/")
+    P(f"noncomputable def fr2 : List ℤ := {lean_list(fle2, 2)}")
+    P("")
+    P(f"lemma h1_2 : RabinCert.zpxw {ell2} fr2 (RabinCert.bitsOf {F2} ({ell2} ^ {n})) [1]")
+    P(f"      = [0, 1] :=")
+    P("  by decide +kernel")
+    P("")
+    P("/-- **Maeda's conjecture (irreducibility) for `T₃` in this weight.** -/")
+    P("theorem maeda : Irreducible (P.map (Int.castRingHom ℚ)) :=")
+    P(f"  haveI : Fact (Nat.Prime {ell}) := ⟨by norm_num⟩")
+    P(f"  RabinCert.irreducible_of_rabin_int P_monic hmap hmon' hnd (by norm_num) hF h1 h2")
+    P("")
+    P(f"end {wname}")
+    P("")
+    return "\n".join(out)
+
+
+HEADER_T3 = """import MathProof.ModularForms.CharpolyDimN
+import MathProof.ModularForms.CharpolyEngine
+import MathProof.ModularForms.RabinCert
+import MathProof.ModularForms.HeckeTPCoeff
+import MathProof.ModularForms.MaedaCertCExt
+
+/-!
+# Maeda's conjecture (irreducibility) for `T₃`, dimension {dim}: weights {klist}
+
+Generated by `tools/gen_maedan.py --prime 3` from
+`research/iteration20/data/maeda_t3_dim6_10.json` (byte-identical re-runs; do
+not hand-edit).  For each weight the file provides the echelon basis, the
+literal T₃-matrix with its characteristic polynomial (certified `eval_det`
+determinants + interpolation through `CharpolyEngine.charpoly_of_eval_eq`),
+and Rabin irreducibility certificates (`RabinCert.irreducible_of_rabin_int`).
+
+The `T₃` q-coefficient formula is `heckeTP_coeff` (prime-generic, from
+`HeckeTPCoeff.lean`); basis coefficients run to index `3n` through
+`MaedaCertCExt.seqPLc3` (the `tauTableX` extension to `τ 30`).
+
+Everything is light: `decide +kernel` certificates, no `set_option`, and no
+module in this file is an ancestor of the heavy `MaedaGalois5Defs` chain.
+-/
+
+open UpperHalfPlane ModularForm CuspForm Polynomial MaedaLevelOne
+open scoped MatrixGroups
+
+"""
+
+
 def emit_dim(dim):
     weights = sorted(w["k"] for w in DATA if w["dim"] == dim)
     assert len(weights) == 6, (dim, weights)
@@ -738,15 +1320,72 @@ def emit_dim(dim):
     return body
 
 
+def emit_dim_t3(dim):
+    weights = sorted(w["k"] for w in DATA3 if w["dim"] == dim)
+    assert len(weights) == 6, (dim, weights)
+    body = HEADER_T3.format(dim=dim, klist=", ".join(map(str, weights)))
+    for k in weights:
+        body += emit_weight_t3(BY_K3[k])
+    return body
+
+
+HEADER_T3_SMALL = """import MathProof.ModularForms.CharpolyDimN
+import MathProof.ModularForms.CharpolyEngine
+import MathProof.ModularForms.RabinCert
+import MathProof.ModularForms.HeckeTPCoeff
+import MathProof.ModularForms.MaedaCertCExt
+
+/-!
+# Maeda's conjecture (irreducibility) for `T₃`, small weights: dims 2–5
+
+Generated by `tools/gen_maedan.py --prime 3 --small` from
+`research/iteration20/data/maeda_t3_small.json` (byte-identical re-runs; do
+not hand-edit).  Weights
+{klist} —
+the same per-weight skeleton as `MaedaT3Dim{{6..10}}Weights.lean` through the
+dimension-generic `charpoly_dimN` engine, so this file covers every
+level-one weight `k ≤ 74` with `2 ≤ dim S_k ≤ 5`.
+
+Everything is light: `decide +kernel` certificates, no `set_option`, and no
+module in this file is an ancestor of the heavy `MaedaGalois5Defs` chain.
+-/
+
+open UpperHalfPlane ModularForm CuspForm Polynomial MaedaLevelOne
+open scoped MatrixGroups
+
+"""
+
+
+def emit_small_t3():
+    weights = sorted(DATA3_SMALL, key=lambda w: w["k"])
+    dims = [w["dim"] for w in weights]
+    assert len(weights) == 24 and set(dims) == {2, 3, 4, 5}, dims
+    body = HEADER_T3_SMALL.format(klist=", ".join(str(w["k"]) for w in weights))
+    for w in weights:
+        body += emit_weight_t3(w, list_maxbody=86)
+    return body
+
+
 def main():
     check = "--check" in sys.argv
     only = None
     if "--only" in sys.argv:
         only = int(sys.argv[sys.argv.index("--only") + 1])
-    dims = [only] if only else [6, 7, 8, 9, 10]
-    for dim in dims:
-        text = emit_dim(dim)
-        path = ROOT / f"MathProof/ModularForms/MaedaDim{dim}Weights.lean"
+    prime = 2
+    if "--prime" in sys.argv:
+        prime = int(sys.argv[sys.argv.index("--prime") + 1])
+        assert prime in (2, 3), prime
+    small = "--small" in sys.argv
+    if small:
+        assert prime == 3 and not only, "--small is a prime-3 whole-file mode"
+        outs = [(emit_small_t3(), ROOT / "MathProof/ModularForms/MaedaT3SmallWeights.lean")]
+    elif prime == 2:
+        outs = [(emit_dim(d), ROOT / f"MathProof/ModularForms/MaedaDim{d}Weights.lean")
+                for d in ([only] if only else [6, 7, 8, 9, 10])]
+    else:
+        outs = [(emit_dim_t3(d), ROOT / f"MathProof/ModularForms/MaedaT3Dim{d}Weights.lean")
+                for d in ([only] if only else [6, 7, 8, 9, 10])]
+    for text, path in outs:
         if check:
             old = path.read_text() if path.exists() else ""
             if old != text:
