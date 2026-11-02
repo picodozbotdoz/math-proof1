@@ -75,6 +75,7 @@ import MathProof.ModularForms.HeckeRationalSmallWeights
 -- via AxCheckDecide, but it is not a defaultTargets/CI item — see the
 -- lakefile note).
 import MathProof.ModularForms.HeckeIndex
+import MathProof.ModularForms.HeckeIndexSmallWeights
 import MathProof.ModularForms.HeckeIndexWeights
 import MathProof.ModularForms.FrobeniusCycleType
 import MathProof.ModularForms.JordanPrimitive
