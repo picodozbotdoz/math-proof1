@@ -79,6 +79,12 @@ import MathProof.ModularForms.HeckeField
 -- HeckeRationalSmallWeights (importing it into defaultTargets would drag
 -- the non-CI MaedaT3SmallWeights chain into every push).
 import MathProof.ModularForms.HeckeFieldWeights
+-- The Hecke index (iteration 23): the generic layer is a defaultTargets/CI
+-- item; the 54-weight instance file is root-only (its decides are audited
+-- via AxCheckDecide, but it is not a defaultTargets/CI item — see the
+-- lakefile note).
+import MathProof.ModularForms.HeckeIndex
+import MathProof.ModularForms.HeckeIndexWeights
 import MathProof.ModularForms.FrobeniusCycleType
 import MathProof.ModularForms.JordanPrimitive
 import MathProof.ModularForms.MaedaGaloisFull
