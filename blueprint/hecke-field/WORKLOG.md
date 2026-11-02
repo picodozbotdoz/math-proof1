@@ -121,3 +121,81 @@ Modal runs so far: 7.
 With this, the T-Field track's *statement* exists at all 54 weights for
 m = 3; upgrading to generic m is a one-line swap per weight once b2's
 rationality lands (consume the m-generic ∃ Q instead of the m = 3 one).
+
+### 2026-11-03 (session 2) — b1 merged; G3 dim-2 integrality in flight
+
+**Session start / inbox poll**: inbox empty (only `done/` + README).
+
+**Upstream dependency merged** (commit f501431):
+`git merge impl/iteration23/hecke-tm` (082a98a, b1 G4-complete) into
+`impl/iteration23/hecke-field`.  Conflict: `mrun.sh` only (per-worktree
+paths — kept ours).  b1's exports audited on the merged tip
+(`MathProof/ModularForms/HeckeTM.lean`): `heckeTM k m` (recursive route),
+`heckeTM_zero/id/ge_two/ge_two'` (recursion), `heckeTM_qExpansion_coeff`
+(`(T_m f)_n = ∑_{d ∣ gcd m n} d^(k-1) f_{mn/d²}`), `heckeTM_one`
+(`a₁(T_m f) = a_m(f)`), `heckeTM_prime` (`T_p = heckeTPₗ k p`),
+`heckeTM_commute`/`comp_commute`, `heckeTM_mul*`.  Trio-registered upstream;
+AxCheckDecide 1312 certs / 0 > propext (b1's report).  This unblocks the
+dim-2 INTEGRALITY track (blueprint G3 pull-forward) — no b2 needed.
+
+**G3 route pinned** (audit of landed inputs, all on merged tip):
+* Span: `HeckeGeneratedByT2.heckeTP_mem_spanT2` (weight-generic, hchar/hirr)
+  → landed per weight in `HeckeGeneratedByT2Weights` (54 instances; weight 24
+  via the hand-rolled `MaedaWeight24.heckeT2` — POINTWISE `heckeTP 2` by
+  `rfl`, so a one-line bridge to `heckeTPₗ 24 2` suffices);
+  `Module.End`'s Mul IS `LinearMap.comp` definitionally (Mathlib
+  `Algebra/Module/LinearMap/End.lean:49`), so `ℂ[T₂]` is closed under ∘ₗ by
+  `map_mul` + rfl.
+* Generic-m: strong induction on `HeckeTM.heckeTM_ge_two` (b1's recursion);
+  n/n.minFac and n/minFac² < n both via `Nat.div_lt_self` — the SAME bounds
+  the def's `decreasing_by` uses.
+* Degree < 2: Cayley–Hamilton `LinearMap.aeval_self_charpoly` +
+  `Polynomial.modByMonic_add_div`/`natDegree_modByMonic_lt` +
+  `LinearMap.charpoly_natDegree` (= finrank; `Module.Free ℂ V` is automatic
+  via `Module.Free.of_divisionRing`).
+* Identification α = a_m(f₁ − a₂(f₁)•f₂), β = a_m(f₂): apply at the echelon
+  basis forms and read the FIRST q-coefficient — `heckeTM_one` (b1!) turns
+  `a₁(T_m f_j)` into `a_m(f_j)`, so the δ-values (`q1_1/q2_1/q2_2`, landed in
+  `MaedaSmallWeights`; `f1_coeff/f2_coeff` conjunctions in `MaedaWeight24`)
+  determine everything.  NO eigenforms, NO b2 duality needed.
+* Miller g₁ := f₁ − a₂(f₁)•f₂ stays SYMBOLIC (coefficient `a₂(f₁)` never
+  needed numerically for the operator theorem).  Integer corollaries ride the
+  all-m bridges `c1/c2` (`MaedaLevelOne.prodForm_coeff`, seqP ∈ ℤ) landed in
+  `MaedaSmallWeights` for 28/30/32/34/38; a₂(f₁) ∈ {936, 192, 1176, 432,
+  672}.
+* DEVIATION (minor, recorded): weight-24 gets NO all-m integer corollary —
+  `MaedaWeight24` has no seqP bridge, and bridging its basis to
+  `prodForm 24 0 3 0` (or `MaedaT3Weight24`, root-only) is disproportionate;
+  the six OPERATOR theorems (the session objective) are unaffected.
+* Registration: all imports trio/CI (`HeckeTM`, `HeckeGeneratedByT2Weights`,
+  `MaedaWeight24`, `MaedaSmallWeights`) → new file `HeckeFieldDim2.lean`
+  trio-eligible; NO `MaedaT3SmallWeights` import (stays clear of the
+  root-only parent chain).
+
+New module `MathProof/ModularForms/HeckeFieldDim2.lean` written (~460 lines):
+generic `coeff_sub_smul(_int)`, `heckeTM_mem_spanT2`,
+`exists_smul_pair_of_finrank_two`, `heckeTM_dim2` + per weight
+`dim2_weightKK` / `aM1_int_weightKK` / `aM2_int_weightKK` / `int_weightKK`.
+Zero decides, no set_option.  First Modal run next.
+
+### 2026-11-03 (session 3, operator resume) — HeckeFieldDim2 GREEN
+
+* Resumed after the OPERATOR HALT on the operator's go ("help them continue
+  iteration 23").  Compile-before-planning: the inherited unbuilt
+  `HeckeFieldDim2.lean` was Modal-compiled verbatim first.
+* Run 1 (verbatim WIP): BUILD FAILED, 12 errors (67 s, 6.31 GiB).  Causes,
+  all mechanical: `heckeTPₗ k hp` takes the PRIMALITY PROOF, not `p`
+  (hspan binders → `∀ (q) (hq : q.Prime), … heckeTPₗ k hq …`);
+  `qL k` takes the cusp form, not its coercion; `PowerSeries.coeff n P`
+  (index first) at the pin; `modByMonic_add_div` is `r + p * q = Q`
+  (rewrite with `nth_rewrite 1 [← …]` so only the LHS `Q` moves);
+  the Cayley–Hamilton remainder must be `generalize`d before `rw [hRm]`
+  or the witnesses get rewritten too; `LinearMap.id = 1` and
+  `A ∘ₗ B = A * B` close by `rfl` (Module.End mul is comp).
+* Run 2: 5 errors (`LinearMap.mul_eq_comp` does not exist at the pin —
+  use `rfl`; `rw [← h5]` direction) + unused-`q` warnings.
+* Run 3: 0 errors, 3 `linter.flexible` warnings (non-terminal `simp at`)
+  → replaced by stated `have … := by simpa … using …`.
+* Run 4: **GREEN — 0 err / 0 warn**, 45 s, 6.33 GiB.  tauceti audit clean.
+* Next: G4 registration (trio candidate — all imports are trio/CI), then
+  G2 T-Rat once b2 (hecke-index) G4 is green.
