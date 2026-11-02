@@ -151,3 +151,29 @@ resume point: make it possible to continue cold.
   01:33 run 7 (1 error), 01:44 run 8: **GREEN — 0 err / 0 warn**, 41 s,
   6.02 GiB.  715 lines; tauceti audit clean.
 * Commit: the G2-generic closure.
+
+### 2026-11-03 — G3 CLOSED (eval_det route measured and decided)
+
+* Inbox re-polled: still empty.
+* Route measurement (throwaway emitter
+  `/home/doz/tmp/math-proof1-temp/agent-work/hecke-index/emit_scratch_det.py`,
+  conventions lifted from `gen_hecke_rat.py`: Horner base 10^74, lines ≤ 98,
+  plain literals ≤ 80 digits): untracked scratch
+  `MathProof/ModularForms/HeckeIndexScratch.lean` with the WORST weight 134
+  (dim 10, A-entries ≤ 180 digits chunked, det = +462 digits chunked;
+  det(A₁₃₄) computed exactly in Python for the statement) and
+  `theorem det_A134 : A134.det = … := by simp only [A134]; eval_det; norm_num`.
+* Modal run 9 (01:57): **GREEN**, 37 s wall, peak 5.95 GiB — `eval_det`
+  (NormDet's Bareiss simp-proc) fires on the 10×10 chunked-entry literal and
+  `norm_num` closes the 462-digit Horner in seconds.  The route is CHEAP at
+  the worst case; **decision: primary `eval_det`, no CharpolyEngine
+  fallback, no det-avoiding route needed** (blueprint G3 fallbacks moot).
+* Emission facts pinned for the generator: the matrix literal needs
+  `simp only [A_def]` before `eval_det` (the simproc needs the literal);
+  entries as parenthesized Horner chunks are accepted; det-literals use the
+  nested Horner form (all exponents 74 ≤ 256); `norm_num` closes the chunked
+  RHS.  Sign: det(A) computed exactly per weight and emitted signed.
+* `den_dvd_index` (G3's second half) is already generic in `HeckeIndex.lean`
+  (G2 closure); the per-weight instantiations are G4 emissions.
+* Scratch kept untracked as the generator's reference emission; deleted at
+  G4 close.
