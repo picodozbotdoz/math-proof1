@@ -30,8 +30,8 @@ documented cross-branch merge points in b2 §4 / b3 §4):
 | branch | blueprint | status | result |
 |---|---|---|---|
 | impl/iteration23/hecke-tm | blueprint/hecke-tm | RUNNING | spawned 2026-11-02 |
-| impl/iteration23/hecke-index | blueprint/hecke-index | RUNNING | spawned 2026-11-02 (G2+ waits on hecke-tm G3 by merge) |
-| impl/iteration23/hecke-field | blueprint/hecke-field | RUNNING | spawned 2026-11-02 (T-Gal independent starter; T-Rat waits on hecke-index) |
+| impl/iteration23/hecke-index | blueprint/hecke-index | RUNNING | G1 CLOSED a8a2412: (Tmat, A, C, I_k, w') re-pinned to Lean literals at all 54 weights; Miller strategy (a) decided; in G2 |
+| impl/iteration23/hecke-field | blueprint/hecke-field | **G1 COMPLETE** (05c7ee1) | T-Gal landed (Gal = S₂ T₂ at 6 dim-2 weights, trio, 11 s/4.66 GiB — closes it22-§6.3); HeckeField generic layer (eigenvalue_mem_adjoin, trio, 28 s/3.86 GiB); m=3 T-Field slice at all 54 weights (HeckeFieldWeights, root-only, 116 s/5.29 GiB; generator gen_hecke_field.py --check). PARKED: T-Rat waits on b2, dim-2 integrality on b1 (WORKLOG numbered next steps; 7/20 Modal runs) |
 
 Wave setup (2026-11-02): worktrees under
 `/home/doz/claude-workdir/worktree/mp1/{hecke-tm,hecke-index,hecke-field}`
