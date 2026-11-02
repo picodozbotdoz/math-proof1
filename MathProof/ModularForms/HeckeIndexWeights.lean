@@ -366,9 +366,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 3, bez j * HeckeRatWeight36.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 3).map fun j => bez j * HeckeRatWeight36.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 3, bez j * HeckeRatWeight36.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -518,9 +526,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 3, bez j * HeckeRatWeight40.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 3).map fun j => bez j * HeckeRatWeight40.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 3, bez j * HeckeRatWeight40.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -622,9 +638,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 3, bez j * HeckeRatWeight42.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 3).map fun j => bez j * HeckeRatWeight42.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 3, bez j * HeckeRatWeight42.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -726,9 +750,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 3, bez j * HeckeRatWeight44.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 3).map fun j => bez j * HeckeRatWeight44.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 3, bez j * HeckeRatWeight44.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -830,9 +862,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 3, bez j * HeckeRatWeight46.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 3).map fun j => bez j * HeckeRatWeight46.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 3, bez j * HeckeRatWeight46.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -937,9 +977,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 4, bez j * HeckeRatWeight48.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 4).map fun j => bez j * HeckeRatWeight48.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 4, bez j * HeckeRatWeight48.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -1041,9 +1089,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 3, bez j * HeckeRatWeight50.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 3).map fun j => bez j * HeckeRatWeight50.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 3, bez j * HeckeRatWeight50.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -1148,9 +1204,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 4, bez j * HeckeRatWeight52.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 4).map fun j => bez j * HeckeRatWeight52.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 4, bez j * HeckeRatWeight52.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -1255,9 +1319,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 4, bez j * HeckeRatWeight54.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 4).map fun j => bez j * HeckeRatWeight54.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 4, bez j * HeckeRatWeight54.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -1362,9 +1434,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 4, bez j * HeckeRatWeight56.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 4).map fun j => bez j * HeckeRatWeight56.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 4, bez j * HeckeRatWeight56.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -1469,9 +1549,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 4, bez j * HeckeRatWeight58.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 4).map fun j => bez j * HeckeRatWeight58.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 4, bez j * HeckeRatWeight58.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -1580,9 +1668,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 5, bez j * HeckeRatWeight60.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 5).map fun j => bez j * HeckeRatWeight60.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 5, bez j * HeckeRatWeight60.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -1687,9 +1783,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 4, bez j * HeckeRatWeight62.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 4).map fun j => bez j * HeckeRatWeight62.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 4, bez j * HeckeRatWeight62.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -1798,9 +1902,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 5, bez j * HeckeRatWeight64.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 5).map fun j => bez j * HeckeRatWeight64.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 5, bez j * HeckeRatWeight64.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -1909,9 +2021,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 5, bez j * HeckeRatWeight66.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 5).map fun j => bez j * HeckeRatWeight66.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 5, bez j * HeckeRatWeight66.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -2020,9 +2140,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 5, bez j * HeckeRatWeight68.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 5).map fun j => bez j * HeckeRatWeight68.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 5, bez j * HeckeRatWeight68.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -2131,9 +2259,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 5, bez j * HeckeRatWeight70.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 5).map fun j => bez j * HeckeRatWeight70.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 5, bez j * HeckeRatWeight70.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -2247,9 +2383,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 6, bez j * HeckeRatWeight72.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 6).map fun j => bez j * HeckeRatWeight72.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 6, bez j * HeckeRatWeight72.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -2358,9 +2502,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 5, bez j * HeckeRatWeight74.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 5).map fun j => bez j * HeckeRatWeight74.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 5, bez j * HeckeRatWeight74.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -2475,9 +2627,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 6, bez j * HeckeRatWeight76.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 6).map fun j => bez j * HeckeRatWeight76.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 6, bez j * HeckeRatWeight76.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -2594,9 +2754,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 6, bez j * HeckeRatWeight78.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 6).map fun j => bez j * HeckeRatWeight78.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 6, bez j * HeckeRatWeight78.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -2713,9 +2881,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 6, bez j * HeckeRatWeight80.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 6).map fun j => bez j * HeckeRatWeight80.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 6, bez j * HeckeRatWeight80.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -2832,9 +3008,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 6, bez j * HeckeRatWeight82.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 6).map fun j => bez j * HeckeRatWeight82.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 6, bez j * HeckeRatWeight82.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -2966,9 +3150,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 7, bez j * HeckeRatWeight84.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 7).map fun j => bez j * HeckeRatWeight84.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 7, bez j * HeckeRatWeight84.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -3085,9 +3277,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 6, bez j * HeckeRatWeight86.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 6).map fun j => bez j * HeckeRatWeight86.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 6, bez j * HeckeRatWeight86.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -3220,9 +3420,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 7, bez j * HeckeRatWeight88.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 7).map fun j => bez j * HeckeRatWeight88.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 7, bez j * HeckeRatWeight88.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -3356,9 +3564,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 7, bez j * HeckeRatWeight90.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 7).map fun j => bez j * HeckeRatWeight90.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 7, bez j * HeckeRatWeight90.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -3492,9 +3708,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 7, bez j * HeckeRatWeight92.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 7).map fun j => bez j * HeckeRatWeight92.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 7, bez j * HeckeRatWeight92.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -3628,9 +3852,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 7, bez j * HeckeRatWeight94.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 7).map fun j => bez j * HeckeRatWeight94.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 7, bez j * HeckeRatWeight94.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -3783,9 +4015,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 8, bez j * HeckeRatWeight96.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 8).map fun j => bez j * HeckeRatWeight96.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 8, bez j * HeckeRatWeight96.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -3920,9 +4160,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 7, bez j * HeckeRatWeight98.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 7).map fun j => bez j * HeckeRatWeight98.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 7, bez j * HeckeRatWeight98.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -4081,9 +4329,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 8, bez j * HeckeRatWeight100.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 8).map fun j => bez j * HeckeRatWeight100.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 8, bez j * HeckeRatWeight100.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -4240,9 +4496,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 8, bez j * HeckeRatWeight102.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 8).map fun j => bez j * HeckeRatWeight102.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 8, bez j * HeckeRatWeight102.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -4401,9 +4665,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 8, bez j * HeckeRatWeight104.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 8).map fun j => bez j * HeckeRatWeight104.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 8, bez j * HeckeRatWeight104.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -4563,9 +4835,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 8, bez j * HeckeRatWeight106.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 8).map fun j => bez j * HeckeRatWeight106.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 8, bez j * HeckeRatWeight106.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -4764,9 +5044,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 9, bez j * HeckeRatWeight108.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 9).map fun j => bez j * HeckeRatWeight108.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 9, bez j * HeckeRatWeight108.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -4928,9 +5216,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 8, bez j * HeckeRatWeight110.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 8).map fun j => bez j * HeckeRatWeight110.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 8, bez j * HeckeRatWeight110.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -5131,9 +5427,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 9, bez j * HeckeRatWeight112.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 9).map fun j => bez j * HeckeRatWeight112.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 9, bez j * HeckeRatWeight112.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -5336,9 +5640,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 9, bez j * HeckeRatWeight114.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 9).map fun j => bez j * HeckeRatWeight114.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 9, bez j * HeckeRatWeight114.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -5544,9 +5856,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 9, bez j * HeckeRatWeight116.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 9).map fun j => bez j * HeckeRatWeight116.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 9, bez j * HeckeRatWeight116.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -5753,9 +6073,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 9, bez j * HeckeRatWeight118.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 9).map fun j => bez j * HeckeRatWeight118.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 9, bez j * HeckeRatWeight118.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -6006,9 +6334,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 10, bez j * HeckeRatWeight120.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 10).map fun j => bez j * HeckeRatWeight120.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 10, bez j * HeckeRatWeight120.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -6218,9 +6554,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 9, bez j * HeckeRatWeight122.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 9).map fun j => bez j * HeckeRatWeight122.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 9, bez j * HeckeRatWeight122.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -6474,9 +6818,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 10, bez j * HeckeRatWeight124.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 10).map fun j => bez j * HeckeRatWeight124.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 10, bez j * HeckeRatWeight124.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -6733,9 +7085,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 10, bez j * HeckeRatWeight126.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 10).map fun j => bez j * HeckeRatWeight126.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 10, bez j * HeckeRatWeight126.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -6993,9 +7353,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 10, bez j * HeckeRatWeight128.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 10).map fun j => bez j * HeckeRatWeight128.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 10, bez j * HeckeRatWeight128.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -7255,9 +7623,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 10, bez j * HeckeRatWeight130.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 10).map fun j => bez j * HeckeRatWeight130.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 10, bez j * HeckeRatWeight130.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=
@@ -7522,9 +7898,17 @@ def bez : ℕ → ℤ
 def bezc : ℤ :=
   0
 
-theorem hbez : ∑ j ∈ Finset.range 10, bez j * HeckeRatWeight134.cert j
+/-- The Bézout identity over a `List` sum: the kernel certificate (a
+`Finset` sum would route through `Multiset`'s quotient and pull
+`Classical.choice`/`Quot.sound` into the decide — CLAUDE.md rule). -/
+theorem hbezL : ((List.range 10).map fun j => bez j * HeckeRatWeight134.cert j).sum
     + bezc * Dn = 1 := by
   decide +kernel
+
+theorem hbez : ∑ j ∈ Finset.range 10, bez j * HeckeRatWeight134.cert j
+    + bezc * Dn = 1 := by
+  rw [MaedaLevelOne.finset_sum_range_eq_list]
+  exact hbezL
 
 /-- **The composite: the reduced denominator divides the index.** -/
 theorem D_dvd_Ik : Dn ∣ Ik :=

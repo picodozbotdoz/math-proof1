@@ -223,3 +223,18 @@ resume point: make it possible to continue cold.
   (`hecke_dual`, Cramer certificates).  CORRECTIONS-noted follow-up.
 * Pin gotchas: `LinearMap.coeFn_sum` does not exist — use
   `LinearMap.sum_apply`; `haveI` for a Prop triggers `linter.style.haveILetI`.
+
+### 2026-11-03 — combined AxCheckDecide: 48 violations found and fixed
+
+* Run 1 (`--target MathProof.AxCheckDecide`, 16 GiB, 464 s): **1360
+  certificates audited, 48 depend on more than propext** — every one a
+  per-weight `hbez` (`∑ j ∈ Finset.range n, bez j * cert j + bezc * Dn = 1 :=
+  by decide +kernel`): the `Finset` sum goes through `Multiset`'s quotient,
+  pulling `Classical.choice` + `Quot.sound` (the CLAUDE.md "List, not
+  Finset, inside certificates" rule — the G4 generator broke it).
+* Fix (generator): the decide is now `hbezL` over
+  `((List.range n).map fun j => bez j * cert j).sum`, and `hbez` is derived
+  from it by `MaedaLevelOne.finset_sum_range_eq_list` (no decide).
+  Regenerated, `--check` byte-identical.
+* Run 2: **1360 audited, 0 depend on more than propext**; build 345 s,
+  HeckeIndexWeights module peak 6.83 GiB.  G4 audits CLOSED.
