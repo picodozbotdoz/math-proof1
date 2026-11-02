@@ -90,6 +90,7 @@ private lemma idx_split {p : ℕ} (hp : 0 < p) (m j d : ℕ) :
   have h2 : p * d * (p * d) = p * (p * d * d) := by ring
   rw [h1, h2, Nat.mul_div_mul_left _ _ hp]
 
+omit [Module ℂ M] in
 /-- **Explode the second slot by `p`.**  Divisors of `gcd m (p j)` split into
 the `p`-free part of `{d : d ∣ m, d ∣ j}` and the image of `d ↦ p * d` on
 `{d : d ∣ m, p * d ∣ m, d ∣ j}`. -/
@@ -122,14 +123,15 @@ private lemma sum_mul_p {p : ℕ} (hp : p.Prime) (F : ℕ → M) (m j : ℕ) :
       have hdvd : p * (d / p) = d := Nat.mul_div_cancel' hpd'
       have h1 : p * (d / p) ∣ m := by rw [hdvd]; exact hdm
       have h3 : p * (d / p) ∣ p * j := by rw [hdvd]; exact hdj
-      refine ⟨d / p, ⟨⟨⟨Nat.dvd_trans (Nat.dvd_mul_left (d / p) p) h1, hm0⟩, ⟨h1, ?_⟩⟩, hdvd⟩
+      refine ⟨d / p, ⟨⟨Nat.dvd_trans (Nat.dvd_mul_left (d / p) p) h1, hm0⟩, ⟨h1, ?_⟩⟩, hdvd⟩
       exact Nat.dvd_of_mul_dvd_mul_left hp.pos h3
-    · rintro ⟨d', ⟨⟨⟨hd'm, hm0⟩, ⟨hpd'm, hd'j⟩⟩, rfl⟩
+    · rintro ⟨d', ⟨⟨⟨hd'm, hm0⟩, ⟨hpd'm, hd'j⟩⟩, rfl⟩⟩
       exact ⟨⟨⟨hpd'm, hm0⟩, Nat.mul_dvd_mul_left p hd'j⟩, dvd_mul_right p d'⟩
   rw [← Finset.sum_filter_add_sum_filter_not (p := fun d => p ∣ d), hpd,
     Finset.sum_image hinj, hfree]
   abel
 
+omit [Module ℂ M] in
 /-- **Explode the first slot by `p`.**  Divisors of `gcd (p m) j` split into
 the `p`-free part of `{d : d ∣ m, d ∣ j}` (a `p`-free divisor of `p * m`
 divides `m`) and the image of `d ↦ p * d` on `{d : d ∣ m, p * d ∣ j}`. -/
@@ -168,10 +170,10 @@ private lemma sum_p_mul {p : ℕ} (hp : p.Prime) (F : ℕ → M) (m j : ℕ) :
       have hdvd : p * (d / p) = d := Nat.mul_div_cancel' hpd'
       have h1 : p * (d / p) ∣ p * m := by rw [hdvd]; exact hdpjm
       have h3 : p * (d / p) ∣ j := by rw [hdvd]; exact hdj
-      refine ⟨d / p, ⟨⟨⟨Nat.dvd_of_mul_dvd_mul_left hp.pos h1, ?_⟩, h3⟩, hdvd⟩
+      refine ⟨d / p, ⟨⟨Nat.dvd_of_mul_dvd_mul_left hp.pos h1, ?_⟩, h3⟩, hdvd⟩
       intro hc
       exact hpm0 (by rw [hc]; exact Nat.mul_zero p)
-    · rintro ⟨d', ⟨⟨⟨hd'm, hm0⟩, hpd'j⟩, rfl⟩
+    · rintro ⟨d', ⟨⟨⟨hd'm, hm0⟩, hpd'j⟩, rfl⟩⟩
       refine ⟨⟨⟨Nat.mul_dvd_mul_left p hd'm, ?_⟩, hpd'j⟩, dvd_mul_right p d'⟩
       intro hc
       exact hm0 (Or.resolve_left (Nat.mul_eq_zero.mp hc) hp.pos.ne')
