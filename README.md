@@ -196,6 +196,31 @@ and `T₃` across every level-one weight with `2 ≤ dim S_k ≤ 10`.
   (e.g. `Q = 195660 − 48·X` at weight 24).  The number-theoretic payoff —
   `T₃`-eigenvalues lie in `ℚ(λ₂)` — is a one-line corollary.
 
+### The Hecke ring `𝕋` (Iteration 23: `HeckeTM`, `HeckeIndex*`, `HeckeField*`)
+
+* `HeckeTM.heckeTM` — `T_m` for **every** `m` (recursive route), with the
+  coefficient formula `(T_m f)_n = ∑_{d ∣ (m,n)} d^{k−1} f_{mn/d²}`,
+  `heckeTM_one` (`a₁(T_m f) = a_m(f)`), commutation and the full
+  multiplicativity `T_m T_n = ∑_{d ∣ (m,n)} d^{k−1} T_{mn/d²}`;
+* `HeckeIndex.hecke_dual` — **duality** `T_m = ∑_j a_m(g_j) • T_{j+1}` over
+  the Miller basis (proved pointwise from the symmetry
+  `a_l(T_m f) = a_m(T_l f)`), `hecke_independent` (`T_1 … T_n` independent),
+  and the Hecke ring `heckeRing = span_ℤ {T_1 … T_n}` ⊇ `ℤ[T₂]`;
+* `HeckeIndex{Small,}Weights` (54 weights) — the **index**
+  `I_k = |det (a_{2^i}(f_j))|` by a certified Bareiss determinant, the
+  integer certificate `∑ w′_j T₂^j = I_k • T₃`, and `D ∣ I_k` for the
+  reduced denominator `D` of the Iteration-22 witness (48 weights; `D = 1`
+  at the six dim-2 weights);
+* `HeckeFieldRat.heckeTM_eq_aeval_rat` + `HeckeFieldWeights` — **every
+  `T_m ∈ ℚ[T₂]`** at all 54 weights, no per-`m` certificate (Miller-basis
+  integrality + Cramer over the integer coordinates of `T₂^i` in `𝕋`), hence
+  every `T_m`-eigenvalue of a `T₂`-eigenform lies in `ℚ(λ₂)`
+  (`eigen_TM_mem_adjoin_weightKK`);
+* `HeckeFieldDim2` — **dim-2 integrality**: at `k = 24, 28, 30, 32, 34, 38`,
+  `T_m = a_m(g₁) • 1 + a_m(g₂) • T₂` for every `m ≥ 1`, with the coefficients
+  explicit integers (`seqP` values) at 28–38; `MaedaT2GaloisSmallWeights`
+  closes `Gal = S₂` for the six dim-2 `T₂` charpolys.
+
 ## Eisenstein series and the 691 congruence (`MathProof/ModularForms/`)
 
 * `RamanujanWeight12.E12_rel` — **Ramanujan's weight-12 identity**

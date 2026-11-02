@@ -30,8 +30,8 @@ documented cross-branch merge points in b2 §4 / b3 §4):
 | branch | blueprint | status | result |
 |---|---|---|---|
 | impl/iteration23/hecke-tm | blueprint/hecke-tm | **COMPLETE** (082a98a) | Respawn salvage verdict: SALVAGE (predecessor WIP ~70 % on-blueprint; 34 local errors fixed in 3 passes; scratch deleted). ALL 4 GATES PASS, no descopes: HeckeTM.lean 797 lines (heckeTM recursive route, heckeTM_qExpansion_coeff, heckeTM_one, full heckeTM_mul with NO new Finset reindexing, two_mul_even recurrence, commute ×3 shapes); trio-registered and build-verified (AxCheckDecide root = 8483 jobs, 1312 certs 0 > propext); tauceti clean; 13 Modal runs, peak ≤ 6.8 GiB. Deviations recorded: heckeTPow subsumed by heckeTM + prime_pow_succ; Module.End defeq (Commute-form exported). Downstream exports live |
-| impl/iteration23/hecke-index | blueprint/hecke-index | RUNNING | G1 CLOSED a8a2412 (54/54 re-pinned, Miller strategy (a)); respawned 2026-11-03: inherited WIP SALVAGED (44b642f, 4 runs to green 51 s/6.01 GiB), **G2-GENERIC CLOSED 5f7d13e** (cramer_inverse, aeval_rat_witness, aeval_div_witness, den_dvd_index wired; 715 lines, audit clean, 0/0 run 8); G2 duality/independence/subring deferred pending b1 G3 merge (non-blocking per blueprint); in G3 (dim-10 eval_det cost probe first; 8/25 runs) |
-| impl/iteration23/hecke-field | blueprint/hecke-field | **G1 COMPLETE** (05c7ee1) | T-Gal landed (Gal = S₂ T₂ at 6 dim-2 weights, trio, 11 s/4.66 GiB — closes it22-§6.3); HeckeField generic layer (eigenvalue_mem_adjoin, trio, 28 s/3.86 GiB); m=3 T-Field slice at all 54 weights (HeckeFieldWeights, root-only, 116 s/5.29 GiB; generator gen_hecke_field.py --check). PARKED: T-Rat waits on b2, dim-2 integrality on b1 (WORKLOG numbered next steps; 7/20 Modal runs) |
+| impl/iteration23/hecke-index | blueprint/hecke-index | **COMPLETE** (a733c02) — G2 Hecke quarter f8b412b (index_eq_det descoped per blueprint), G4 54 weights split by dim, audit fix 30fd179 | (earlier: G1 CLOSED a8a2412 (54/54 re-pinned, Miller strategy (a)); respawned 2026-11-03: inherited WIP SALVAGED (44b642f, 4 runs to green 51 s/6.01 GiB), **G2-GENERIC CLOSED 5f7d13e** (cramer_inverse, aeval_rat_witness, aeval_div_witness, den_dvd_index wired; 715 lines, audit clean, 0/0 run 8); G2 duality/independence/subring deferred pending b1 G3 merge (non-blocking per blueprint); in G3 (dim-10 eval_det cost probe first; 8/25 runs) |
+| impl/iteration23/hecke-field | blueprint/hecke-field | **COMPLETE** (b3fced3/6cf4846) — G3 dim-2 integrality 25c58b8, G2 T-Rat + T-Field every m 7da668a, G4 trio/root-only | (earlier: G1 05c7ee1; T-Gal landed (Gal = S₂ T₂ at 6 dim-2 weights, trio, 11 s/4.66 GiB — closes it22-§6.3); HeckeField generic layer (eigenvalue_mem_adjoin, trio, 28 s/3.86 GiB); m=3 T-Field slice at all 54 weights (HeckeFieldWeights, root-only, 116 s/5.29 GiB; generator gen_hecke_field.py --check). PARKED: T-Rat waits on b2, dim-2 integrality on b1 (WORKLOG numbered next steps; 7/20 Modal runs) |
 
 Wave setup (2026-11-02): worktrees under
 `/home/doz/claude-workdir/worktree/mp1/{hecke-tm,hecke-index,hecke-field}`
@@ -82,3 +82,9 @@ certificate file root-only (HeckeIndexWeights); selective-targets CI stays
   briefings (compile inherited WIP first — §4d compile-before-planning).
 ## Cross-cutting lessons
 ## Integration plan
+**DONE 2026-11-03** — `impl/iteration23/hecke-field` (which carries b1 and b2
+through the documented upstream merges) merged into the trunk as cc3e5fa;
+`mrun.sh` kept at the trunk's version.  Merge-step memory pass + combined
+audit on the merged tree before merging: light root 8499 jobs green at 8 GiB,
+AxCheckDecide 1360 / 0.  **Wave CLOSED.**  Pushing and the master merge are
+the operator's.

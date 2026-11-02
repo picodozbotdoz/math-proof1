@@ -397,6 +397,24 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   (`ext`+`fin_cases`): a matrix-level `decide` inherits
   `Fintype.decidablePiFintype`'s simp-built Iff proof (Classical) and fails
   the AxCheckDecide audit.
+- `MathProof/ModularForms/HeckeTM.lean` (light, trio) — `T_m` for every
+  `m` (recursive route over `minFac`), coefficient formula
+  `heckeTM_qExpansion_coeff`, `heckeTM_one`, `heckeTM_prime`, commutation,
+  full `heckeTM_mul`.  `HeckeIndex.lean` (light, trio) — Miller basis,
+  integer Cramer certificates, `den_dvd_index`, and the Hecke-ring quarter:
+  `miller_expand`, `hecke_dual` (pointwise), `hecke_independent`,
+  `heckeLattice`/`heckeRing`.  `HeckeIndexSmallWeights` (dims 2–5) /
+  `HeckeIndexWeights` (dims 6–10) (light, generated —
+  `tools/gen_hecke_index.py`, `--check` covers both; root-only): index
+  `I_k = |det A|` (`eval_det`), entrywise certificates, `D ∣ I_k`; split by
+  dim so each builds under the default 8 GiB request (69 s / 5.14 GiB and
+  336 s / 6.56 GiB).  `HeckeFieldDim2.lean` (light, trio) — dim-2
+  integrality for every `m`.  `HeckeFieldRat.lean` (light, trio) — every
+  `T_m ∈ ℚ[T₂]` from echelon data (`miller_int`, `heckeTM_eq_aeval_rat`).
+  `HeckeFieldWeights.lean` (light, generated — `tools/gen_hecke_field.py`;
+  root-only) — T-Rat + T-Field for every `m` at all 54 weights.
+  `MaedaT2GaloisSmallWeights.lean` (light, trio) — `Gal = S₂` for the six
+  dim-2 T₂ charpolys.
 - `MathProof/ModularForms/MaedaCertCExt.lean` (light) — `tau22 … tau30`
   (kernel-verified against `Ramanujan.tau`), `tauTableX`, `dCc3`,
   `seqPLc3`, `seqPLc3_eq` with cap `N ≤ 31`: the T₃ coefficient formula
@@ -550,3 +568,20 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   flags it.  Certify entrywise (`ext i j` / `fin_cases` +
 decide +kernel`
   per cell) so every decide stays `propext`-clean.
+- **`Finset` sums inside a `decide` pull `Classical.choice` + `Quot.sound`**
+  (2026-11-03, iteration-23 merge audit): a generated Bézout check
+  `∑ j ∈ Finset.range n, … = 1 := by decide +kernel` failed AxCheckDecide at
+  48 weights.  Decide the `List` sum (`((List.range n).map f).sum`) and
+  derive the `Finset` form with `MaedaLevelOne.finset_sum_range_eq_list`.
+- **`Polynomial.natDegree_map` needs `[IsSimpleRing R]`** at the pin: for
+  `ℤ → ℂ` use `natDegree_map_eq_of_injective (RingHom.injective_int _)`.
+  Also missing at the pin: `LinearMap.coeFn_sum` (use
+  `LinearMap.sum_apply`), `LinearMap.mul_eq_comp` (`Module.End` mul is comp
+  by `rfl`); `dif_pos`/`if_pos` are deprecated (`dite_eq_left`/`ite_eq_left`).
+- **Memory: generated per-weight files are import floor + retained
+  literals** (2026-11-03 profile): no single declaration dominated; the
+  54-weight `HeckeIndexWeights` tree crossed 97 % of the 8 GiB request
+  through accumulation alone.  Split such files by dimension (each half
+  imports only its own parents) rather than raising the request; and drop
+  imports kept only for superseded slices (the profile tells you: a file
+  whose declarations all show `+0.00` growth is paying only for imports).

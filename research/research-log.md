@@ -2081,3 +2081,33 @@ quadratic factor with all others of odd degree).  Correction noted in the review
 Most useful for Iteration 23: `TauCeti.qExpansion_coeff_heckeTCuspLevelOne` (all
 `T_n` at level one, the T_m sweep) and `TauCeti.qExpansion_coeff_one_heckeTCuspLevelOne`
 with `LinearMap.finite_adjoin_of_injective_pairing` (the Hecke-index duality).
+
+## Iteration 23 wave — CLOSED (2026-11-03, merged into `dev/iteration23-hecke-ring`)
+
+Theme: **the level-one Hecke ring 𝕋** (iteration22-review §6–7 + the Hecke
+index observation).  Three blueprints, all landed; the wave was halted by
+the operator mid-flight and resumed in one session (compile-before-planning
+on both checkpoints).
+
+1. **b1 hecke-tm** — `T_m` for every `m` with coefficient formula,
+   `a₁(T_m f) = a_m(f)`, commutation and full multiplicativity (`HeckeTM`).
+2. **b2 hecke-index** — duality `T_m = ∑ a_m(g_j) T_{j+1}` (proved pointwise,
+   simpler than the planned induction), independence of `T_1 … T_n`, the ring
+   `𝕋 ⊇ ℤ[T₂]`; per weight (54): `I_k = |det A|`, the certificate
+   `∑ w′_j T₂^j = I_k T₃`, and `D ∣ I_k` (48 nontrivial).  DESCOPE
+   (blueprint-provisioned): `index_eq_det` as a `Nat.card` lattice index.
+3. **b3 hecke-field** — `Gal = S₂` for the six dim-2 T₂ charpolys; **every
+   `T_m ∈ ℚ[T₂]` at all 54 weights** with no per-`m` certificate (Miller-basis
+   integrality + Cramer on the integer coordinates of `T₂^i` in `𝕋`), hence
+   every `T_m`-eigenvalue of a `T₂`-eigenform lies in `ℚ(λ₂)`; **dim-2
+   integrality**: `T_m = a_m(g₁) + a_m(g₂) T₂` for every `m` at the six dim-2
+   weights, explicit integers at 28–38 (the article's "worth formalizing").
+
+Close-out verification (merged tree): light root 8499 jobs green at the
+default 8 GiB request; combined `AxCheckDecide` **1360 certificates, 0
+beyond `propext`** (the merge audit caught 48 `Finset`-sum Bézout decides —
+fixed to `List` sums); tauceti audit clean.  Memory pass at merge: profiles
+showed import floor + retained literals, no hot declaration; the index file
+was split by dimension (no more 16 GiB escalation) and the field file
+dropped two superseded imports.  Peaks ≤ 6.6 GiB per module, no 16 GiB
+alerts.  Tracking: `research/iteration23/WAVE-TRACKING.md`.
