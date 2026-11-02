@@ -98,6 +98,10 @@ defaultTargets = [
   "MathProof.ModularForms.MaedaT3GaloisDim8Weights",
   "MathProof.ModularForms.MaedaT3GaloisDim9Weights",
   "MathProof.ModularForms.MaedaT3GaloisDim10Weights",
+  # T₂ Galois dim-2 corner (Gal = S₂ for the six dim-2 T₂ charpolys, closing
+  # iteration22-review §6.3): all parents are already default targets and the
+  # file is six three-line instances (11 s / 4.7 GiB on Modal) — trio.
+  "MathProof.ModularForms.MaedaT2GaloisSmallWeights",
 ]
 
 [leanOptions]

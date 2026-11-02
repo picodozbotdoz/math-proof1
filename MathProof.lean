@@ -73,6 +73,9 @@ import MathProof.ModularForms.FrobeniusCycleType
 import MathProof.ModularForms.JordanPrimitive
 import MathProof.ModularForms.MaedaGaloisFull
 import MathProof.ModularForms.MaedaGaloisQuad
+-- The T₂ Galois dim-2 corner (Gal = S₂ for the six dim-2 T₂ charpolys; the
+-- T₂ Gal = Sₙ run previously started at dim 3).
+import MathProof.ModularForms.MaedaT2GaloisSmallWeights
 import MathProof.ModularForms.MaedaGaloisDim6Weights
 import MathProof.ModularForms.MaedaGaloisDim7Weights
 import MathProof.ModularForms.MaedaGaloisDim8Weights

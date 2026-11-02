@@ -104,6 +104,7 @@ jobs:
             MathProof.ModularForms.MaedaT3GaloisDim8Weights
             MathProof.ModularForms.MaedaT3GaloisDim9Weights
             MathProof.ModularForms.MaedaT3GaloisDim10Weights
+            MathProof.ModularForms.MaedaT2GaloisSmallWeights
       # NOTE: no docgen-action step.  It re-ran the whole build a second time
       # and built the doc-gen4 tool and its Mathlib dependency from source
       # (30+ min per push), and its deploy step would overwrite the
