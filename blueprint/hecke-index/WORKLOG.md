@@ -114,3 +114,40 @@ resume point: make it possible to continue cold.
 * Next: G2 remainder — abstract Cramer inverse over a u-family + the
   Hecke-specific duality/independence/ring layer against b1's names
   (compiled only after the merge).
+
+### 2026-11-03 — G2 (generic layer, HeckeTM-free part) CLOSED
+
+* Added to `HeckeIndex.lean` (all weight-generic, still zero HeckeTM
+  dependency — per blueprint §4 descope: the Hecke-specific quarter waits for
+  b1's G3):
+  - `cramer_inverse` — the blueprint's Cramer inverse in signed-det form:
+    `C.det • u j = ∑_i (C.adjugate j i) • P i` from the expansion hypothesis
+    alone (Kronecker row through `cramer_scale`; no det ≠ 0 needed — the
+    |det|-packaging is the data side's business, G1 pinned the sign there).
+  - `aeval_rat_witness` — `aeval T ((∑ C (r j) X^j).map (algebraMap ℚ ℂ)) =
+    ∑ (r j) • T^j`: the entrywise-certificate → operator bridge.
+  - `aeval_div_witness` — `d • T₃ = ∑ (r j) • T₂^j → T₃ = aeval T₂
+    (∑ C (r j / d) X^j).map`: the packaging that turns BOTH per-weight
+    integer certificates (the G1-pinned `∑ w'_i M₂^i = I_k M₃` and
+    HeckeRational's `∑ N_j M₂^j = D • M₃`) into the two `aeval`
+    representations `den_dvd_index` consumes.  With these, the G4 composite
+    `D ∣ I_k` is fully wired generically.
+* Pin gotchas discovered (for the log):
+  - `map_sum`/`map_pow` are HomClass-based at the pin — `rw` with them bare
+    leaves an instance metavariable in the pattern and the match silently
+    fails ("did not find"); pass the function argument explicitly
+    (`map_sum (Polynomial.aeval T) _ _`, `map_pow (Polynomial.aeval T) X j`).
+    For polynomial.map itself use the dedicated `Polynomial.map_sum`.
+  - `algebraMap ℚ ℂ ≠ Rat.cast` syntactically (both appear); bridge:
+    `DivisionRing.toRatAlgebra`'s algebraMap is `Rat.castHom`, and
+    `Rat.coe_castHom` is `rfl` — captured as the private
+    `algebraMap_rat_eq_cast (x : ℚ) : algebraMap ℚ ℂ x = (x : ℂ) := rfl`.
+  - `smul_eq_mul` does not fire for `c • (T : Module.End ℂ V)` (algebra-smul,
+    not the mul-derived instance) — use `Algebra.smul_def` (as `←`).
+  - `Finset.sum_eq_single` subgoal hygiene: the pos-branch needs
+    `ite_eq_left rfl` + `Int.cast_one` + `one_smul` (not `smul_eq_mul`), and
+    the ℤ-coefficient variant needs `one_mul` (not `mul_one`).
+* Modal runs: 01:12 run 5 (3 errors + 4 warnings), 01:24 run 6 (1 error),
+  01:33 run 7 (1 error), 01:44 run 8: **GREEN — 0 err / 0 warn**, 41 s,
+  6.02 GiB.  715 lines; tauceti audit clean.
+* Commit: the G2-generic closure.

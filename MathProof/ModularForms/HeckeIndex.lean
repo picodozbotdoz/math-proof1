@@ -496,6 +496,37 @@ theorem cramer_scale (u : Fin n → (V →ₗ[ℂ] V))
       hcoord j]
   rw [hL, hR]
 
+/-- **The Cramer inverse** (signed-det form).  If each `P i` expands over the
+family `u` with integer coordinates `C i` (row `i`: the coefficients of
+`P i`), then `C.det • u j = ∑_i (C.adjugate j i) • P i` — with
+`I_k = |det C| ≠ 0` this exhibits `I_k • u j ∈ ℤ[P 0, …, P (n-1)]` up to the
+det sign; the per-weight data fixes the sign consistently. -/
+theorem cramer_inverse (u : Fin n → (V →ₗ[ℂ] V))
+    (C : Matrix (Fin n) (Fin n) ℤ)
+    (P : Fin n → (V →ₗ[ℂ] V)) (hP : ∀ i, P i = ∑ j : Fin n, ((C i j : ℤ) : ℂ) • u j)
+    (j : Fin n) :
+    ((C.det : ℤ) : ℂ) • u j
+      = ∑ i : Fin n, (((C.adjugate j i : ℤ)) : ℂ) • P i := by
+  have hS : u j = ∑ k : Fin n, (((if k = j then 1 else 0 : ℤ)) : ℂ) • u k := by
+    rw [Finset.sum_eq_single j]
+    · rw [ite_eq_left rfl, Int.cast_one, one_smul]
+    · intro k _ hk
+      rw [ite_eq_right hk, Int.cast_zero, zero_smul]
+    · intro h
+      exact absurd (Finset.mem_univ j) h
+  have h := cramer_scale u C P hP (fun k => if k = j then (1 : ℤ) else 0) (u j) hS
+  have hw : ∀ i : Fin n,
+      (∑ k : Fin n, (if k = j then (1 : ℤ) else 0) * C.adjugate k i) = C.adjugate j i := by
+    intro i
+    rw [Finset.sum_eq_single j]
+    · rw [ite_eq_left rfl, one_mul]
+    · intro k _ hk
+      rw [ite_eq_right hk, zero_mul]
+    · intro h
+      exact absurd (Finset.mem_univ j) h
+  simp only [hw] at h
+  exact h
+
 end Cramer
 
 /-! ### Uniqueness of representing polynomials, and `D ∣ I_k` -/
@@ -550,6 +581,60 @@ private lemma natDegree_witness_lt {n : ℕ} (R : Type*) [CommRing R] (hn : 0 < 
       Polynomial.natDegree_C_mul_X_pow_le (r j) j
     omega
   omega
+
+/-- The ℚ-algebra-map on ℂ is the coercion (`DivisionRing.toRatAlgebra` uses
+`Rat.castHom`, whose coe is the cast by `rfl`). -/
+private theorem algebraMap_rat_eq_cast (x : ℚ) : algebraMap ℚ ℂ x = (x : ℂ) := rfl
+
+/-- **The witness-expansion lemma**: `aeval T` of the witness polynomial
+`∑_{j<n} C (r j) * X ^ j` (mapped to ℂ) is the operator sum
+`∑_{j<n} (r j) • T ^ j`.  This is the bridge between the per-weight
+entrywise matrix certificates and the operator statements. -/
+theorem aeval_rat_witness (T : V →ₗ[ℂ] V) (r : ℕ → ℚ) :
+    Polynomial.aeval (T : Module.End ℂ V)
+      ((∑ j ∈ Finset.range n, C (r j) * (X : ℚ[X]) ^ j).map (algebraMap ℚ ℂ))
+      = ∑ j ∈ Finset.range n, ((r j : ℚ) : ℂ) • (T : Module.End ℂ V) ^ j := by
+  have hmap : (∑ j ∈ Finset.range n, C (r j) * (X : ℚ[X]) ^ j).map (algebraMap ℚ ℂ)
+      = ∑ j ∈ Finset.range n, C ((r j : ℚ) : ℂ) * (X : ℂ[X]) ^ j := by
+    rw [Polynomial.map_sum]
+    exact Finset.sum_congr rfl fun j _ => by
+      rw [Polynomial.map_mul, Polynomial.map_C, Polynomial.map_pow, Polynomial.map_X,
+        algebraMap_rat_eq_cast]
+  rw [hmap, map_sum (Polynomial.aeval T) _ _]
+  refine Finset.sum_congr rfl fun j _ => ?_
+  rw [Polynomial.aeval_mul, Polynomial.aeval_C,
+    map_pow (Polynomial.aeval T) (X : ℂ[X]) j, Polynomial.aeval_X, ← Algebra.smul_def]
+
+/-- **The scaled-witness packaging**: if `d • T₃ = ∑_{j<n} (r j) • T₂ ^ j` over
+ℂ with `d ≠ 0`, then `T₃` is represented by the rational witness
+`∑_{j<n} C (r j / d) * X ^ j`.  This turns the per-weight integer certificates
+(`∑ w'_i M₂^i = I_k • M₃`, and HeckeRational's `∑ N_j M₂^j = D • M₃`) into the
+two `aeval` representations consumed by `den_dvd_index`. -/
+theorem aeval_div_witness (T2 T3 : V →ₗ[ℂ] V) (r : ℕ → ℤ) (d : ℤ)
+    (hd : ((d : ℤ) : ℂ) ≠ 0)
+    (h : ((d : ℤ) : ℂ) • T3
+      = ∑ j ∈ Finset.range n, ((r j : ℤ) : ℂ) • (T2 : V →ₗ[ℂ] V) ^ j) :
+    T3 = Polynomial.aeval (T2 : Module.End ℂ V)
+      ((∑ j ∈ Finset.range n, C (((r j : ℤ) : ℚ) / ((d : ℤ) : ℚ))
+        * (X : ℚ[X]) ^ j).map (algebraMap ℚ ℂ)) := by
+  have d0 : ((d : ℤ) : ℚ) ≠ 0 := by exact_mod_cast (Int.cast_ne_zero.mp hd)
+  have hq : ∀ j : ℕ, ((d : ℤ) : ℂ) *
+      ((((r j : ℤ) : ℚ) / ((d : ℤ) : ℚ) : ℚ) : ℂ) = ((r j : ℤ) : ℂ) := by
+    intro j
+    rw [mul_comm, Rat.cast_div, Rat.cast_intCast, Rat.cast_intCast,
+      div_mul_cancel₀ _ hd]
+  have hstep : ∀ j ∈ Finset.range n,
+      ((((r j : ℤ) : ℚ) / ((d : ℤ) : ℚ) : ℚ) : ℂ) • (T2 : V →ₗ[ℂ] V) ^ j
+      = ((d : ℤ) : ℂ)⁻¹ • (((r j : ℤ) : ℂ) • (T2 : V →ₗ[ℂ] V) ^ j) := by
+    intro j _
+    rw [← hq j, mul_smul, inv_smul_smul₀ hd]
+  have haev : Polynomial.aeval (T2 : Module.End ℂ V)
+      ((∑ j ∈ Finset.range n, C (((r j : ℤ) : ℚ) / ((d : ℤ) : ℚ))
+        * (X : ℚ[X]) ^ j).map (algebraMap ℚ ℂ))
+      = ((d : ℤ) : ℂ)⁻¹ • ∑ j ∈ Finset.range n, ((r j : ℤ) : ℂ) • (T2 : V →ₗ[ℂ] V) ^ j := by
+    rw [aeval_rat_witness, Finset.sum_congr rfl hstep, ← Finset.smul_sum]
+  rw [haev, ← h]
+  exact (inv_smul_smul₀ hd T3).symm
 
 /-- **The reduced-denominator divisibility.**  If the witness polynomial
 `Q = ∑_j C (N j / D) * X ^ j` (reduced: `∑_j e j * N j + c * D = 1`) and the
