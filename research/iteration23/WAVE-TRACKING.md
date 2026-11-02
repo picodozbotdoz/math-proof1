@@ -42,6 +42,20 @@ certificate file root-only (HeckeIndexWeights); selective-targets CI stays
 [open] for the operator (iteration22-review §7.4 — WATCH).
 
 ## Incident log
+- 2026-11-03 (resume): **OPERATOR GO** — "iteration 23 stuck, help them
+  continue iteration 23".  One resume session compiled both checkpoints
+  before planning (§4d) and fixed them in place:
+  * hecke-field: `HeckeFieldDim2.lean` GREEN after 4 Modal runs (all
+    mechanical API mismatches; 0 err / 0 warn, 45 s / 6.33 GiB) →
+    **25c58b8** — dim-2 integrality (every T_m ∈ ℤ-span of 1, T₂ at the six
+    dim-2 weights; integer corollaries at 28–38, weight 24 operator-only).
+  * hecke-index: `HeckeIndexWeights.lean` GREEN after 2 runs — one cause
+    (`natDegree_map` needs `IsSimpleRing`; use
+    `natDegree_map_eq_of_injective (RingHom.injective_int _)`), 0 err /
+    0 warn, 340 s / 6.84 GiB → **1f98976** (54 weights, 48 `D ∣ I_k`).
+  Still open: hecke-index G2 Hecke-specific quarter (duality/independence/
+  subring, b1 now merged) + combined AxCheckDecide; hecke-field G2 T-Rat
+  (merge b2) + G4 registration; then integration.
 - 2026-11-03 (later): **OPERATOR HALT** — "stop execution" (§9 halt-scope).
   Both running workers (hecke-index, hecke-field session 2) were killed by
   the operator.  Checkpointed state on disk (verified read-only):
