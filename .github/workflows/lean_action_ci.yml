@@ -90,6 +90,7 @@ jobs:
             MathProof.ModularForms.MaedaT3Dim10Weights
             MathProof.ModularForms.HeckeRational
             MathProof.ModularForms.HeckeRationalWeights
+            MathProof.ModularForms.HeckeIndex
             MathProof.ModularForms.FrobeniusCycleType
             MathProof.ModularForms.JordanPrimitive
             MathProof.ModularForms.MaedaGaloisFull

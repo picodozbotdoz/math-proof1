@@ -537,7 +537,7 @@ variable {V : Type*} [AddCommGroup V] [Module ℂ V] {n : ℕ}
 
 /-- **Uniqueness of representing polynomials of degree `< n`** when the
 minimal polynomial has degree `n`. -/
-theorem aeval_inj_of_minpoly [Nontrivial V] (T : V →ₗ[ℂ] V)
+theorem aeval_inj_of_minpoly (T : V →ₗ[ℂ] V)
     (hmin : (minpoly ℂ (T : Module.End ℂ V)).natDegree = n)
     {p q : ℂ[X]} (hp : p.natDegree < n) (hq : q.natDegree < n)
     (h : Polynomial.aeval (T : Module.End ℂ V) p = Polynomial.aeval (T : Module.End ℂ V) q) :
@@ -642,7 +642,7 @@ Cramer certificate polynomial `Q' = ∑_j C (w j / Ik) * X ^ j` represent the
 same operator, and the minimal polynomial of `T₂` has degree `n`, then
 `D ∣ Ik`: the reduced denominator of any representation divides the
 denominator of every other. -/
-theorem den_dvd_index [Nontrivial V] (hn : 0 < n) (T2 T3 : V →ₗ[ℂ] V)
+theorem den_dvd_index (hn : 0 < n) (T2 T3 : V →ₗ[ℂ] V)
     (hmin : (minpoly ℂ (T2 : Module.End ℂ V)).natDegree = n)
     (N w : ℕ → ℤ) (D Ik : ℤ)
     (hD : ((D : ℤ) : ℚ) ≠ 0) (hIk : ((Ik : ℤ) : ℚ) ≠ 0)
