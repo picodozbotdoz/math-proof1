@@ -42,5 +42,14 @@ certificate file root-only (HeckeIndexWeights); selective-targets CI stays
 [open] for the operator (iteration22-review §7.4 — WATCH).
 
 ## Incident log
+- 2026-11-03 00:25: both remaining worker sessions (hecke-tm, hecke-index)
+  found DEAD with no completion notification delivered (orchestrator pings
+  returned "no active task").  hecke-tm: last Modal run 21:07 was BUILD
+  FAILED for MathProof.ModularForms.HeckeTM; untracked WIP HeckeTM.lean +
+  HeckeTMScratch.lean; WORKLOG never written (protocol miss — respawn
+  briefings now mandate a first-session WORKLOG entry).  hecke-index: G1
+  committed a8a2412; untracked WIP HeckeIndex.lean; no run after ~20:04.
+  Recovery per §6: fresh respawn on the same branches with reconstruction
+  briefings (compile inherited WIP first — §4d compile-before-planning).
 ## Cross-cutting lessons
 ## Integration plan
