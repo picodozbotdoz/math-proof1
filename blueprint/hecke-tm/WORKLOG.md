@@ -108,3 +108,108 @@ error list at the current file state, then fixing in place.
 - Scratch file verdict unchanged: delete after first green run.
 
 
+
+### 2026-11-03 (respawn session, ~01:00–02:30) — G2+G3 GREEN, full multiplicativity landed
+
+**Salvage completed → full blueprint content.**  Runs 5–12 (all
+`./mrun.sh --file MathProof/ModularForms/HeckeTM.lean`, peak ≤ 6.1 GiB,
+17–140 s wall each):
+
+- Run 5: GREEN after fix pass 2 (0 err), 2 warnings (unused section variable
+  `[Module ℂ M]` in `sum_mul_p`/`sum_p_mul` — the gotcha that a red build
+  under-reports style warnings is confirmed: these only surfaced on green).
+- Run 6: the `omit [Module ℂ M] in` placed AFTER the doc comment → parse
+  error; Run 7: omit BEFORE the doc comment → **GREEN 0 err / 0 warn**;
+  commit 573bcfb; HeckeTMScratch.lean deleted (worthless, absorbed).
+- Runs 8–12: the G2/G3 section (prime-step identity, commutation,
+  multiplicativity, T₂-recurrence) — fix iterations down from 19 errors:
+  - rintro/⟨⟩ patterns mirror the ∧-tree nesting exactly (no rcases
+    flattening of extra components; term-mode ⟨⟩ DOES flatten).
+  - `if_pos/if_neg/if_true/if_false` all deprecated at the pin →
+    `ite_eq_left (hc : c)` / `ite_eq_right (hnc : ¬c)` / `ite_true` /
+    `ite_false` (core Init/Core.lean:1172/1181).
+  - `LinearMap.mul_apply` does not exist → `Module.End.mul_apply`.
+  - `PowerSeries.coeff_add` does not exist → private `ps_coeff_add (by simp)`;
+    `PowerSeries.coeff_smul (n φ a)` exists.
+  - `show` is linter-rejected even for defeq goal-restatements → `change`
+    everywhere (per CODING_STANDARDS/AGENTS.md).
+  - `Finset.sum_eq_zero` cannot be `refine`d against a REVERSED goal
+    (`0 = ∑ …`) — the unifier leaves the AddCommMonoid-TC stuck on a
+    metavariable; use `(Finset.sum_eq_zero …).symm`.
+  - `rw [tsumF]` (bare-constant equation unfolding) got the AddCommMonoid-TC
+    stuck on the generalized implicit M in one goal → replace with explicit
+    `change`-statements of the unfolded sum.
+  - `heckeTP hp 0 = 0` needed `qExpansion 1 0 = 0` via `← qL_apply` +
+    `map_zero` (no ready-made lemma).
+  - `Nat.cast_ofNat` normalizes `((p : ℕ) : ℂ)`-vs-numeral mismatches in the
+    T₂ corollaries.
+- Run 12 (final): **0 err / 0 warn**; commit 6edcb02.
+
+**Landed exports (all in `namespace HeckeTM`, light module, no decides):**
+- `heckeTM` (recursive route at `m.minFac`), `heckeTM_zero/id/add_two/ge_two/
+  ge_two'/apply_ge_two`;
+- `heckeTM_coeff_tsumF`, `heckeTM_qExpansion_coeff` (the general-m formula),
+  `heckeTM_one` (duality ingredient `a₁(T_m f) = a_m f`);
+- `heckeTM_prime`, `heckeTM_qExpansion_coeff_prime`, `heckeTM_prime_pow_succ`;
+- `heckeTM_mul_prime_form` / `heckeTM_mul_prime` (the prime-step operator
+  identity `T_p ∘ T_m = T_{pm} + p^(k-1) • [p ∣ m] T_{m/p}`),
+  `heckeTM_mul_prime_apply` (prime-prime swap);
+- `heckeTM_commute_apply` / `heckeTM_comp_commute` / `heckeTM_commute`;
+- **`heckeTM_mul_tsumF` / `heckeTM_mul`** — the FULL all-pairs
+  multiplicativity `T_m ∘ T_n = ∑_{d ∣ gcd m n} d^(k-1) • T_{m n / d²}` (no
+  descope needed: the strong induction on `n` closes through the abstract
+  `tsumF_prime_step` applied at the operator module — no new Finset
+  reindexing was required);
+- `heckeTM_two_mul_even_form` / `heckeTM_two_mul_even` (the T₂ recurrence for
+  even m — the b2 staircase input).
+
+**Deviation notes (§4d):** (1) the blueprint's suggested separate `heckeTPow`
+family was subsumed by `heckeTM` + `heckeTM_prime_pow_succ` (the general-m
+definition covers prime powers; b2 consumes `T_{2^i}` through `heckeTM` +
+the recurrence).  (2) The Module.End-form is DEFEQ to the ℂ-linear-map form
+(`Module.End ℂ V = V →ₗ[ℂ] V`), so no separate `heckeTME` definition is
+needed — the `Commute`-form `heckeTM_commute` is exported for the
+Hecke-algebra upgrade's hypothesis shape.
+
+**G4 in progress:** trio registration done (MathProof.lean import after
+HeckeGeneratedByT2Weights; lakefile defaultTargets; CI list — same
+position).  tauceti_audit.sh clean (0/0/0/0/0, 797 lines).  AxCheckDecide
+run in flight (builds the registered light root + audits decide-certificates).
+Inbox polled at G2/G3 close: EMPTY.
+
+### 2026-11-03 (~01:50) — G4 COMPLETE: registration verified, audits clean
+
+- **AxCheckDecide on Modal** (`--file MathProof/AxCheckDecide.lean`, 65 s /
+  6.75 GiB): the registered light root `MathProof` built (8483 jobs — the
+  new HeckeTM import verified as part of the root) and the audit reports
+  **1312 decide certificates audited, 0 depend on more than propext**.
+- **tauceti_audit.sh**: clean (0 set_option / 0 eval / 0 native_decide /
+  0 sorry / 0 bad-imports; 797 lines).
+- **Trio registration**: MathProof.lean (import after
+  HeckeGeneratedByT2Weights), lakefile.toml defaultTargets, CI list — same
+  relative position in all three.
+- Inbox polled at G4 close: EMPTY (no STEER-hecke-tm-* / STEER-all-*).
+- Commit: G4 registration + this WORKLOG.
+
+**Research-log draft (for the orchestrator's trunk merge):**
+Iteration 23 / b1 hecke-tm: the level-one Hecke operators `T_m` for ALL
+`m ≥ 1` on `CuspForm 𝒮ℒ k`, defined by the recursive route (`T₁ = id`;
+`T_m = T_p ∘ T_{m/p} − p^(k-1) • [p ∣ m] T_{m/p²}` at the least prime
+factor), with the complete algebraic calculus: the general coefficient
+formula `(T_m f)_n = ∑_{d ∣ gcd m n} d^(k-1) f_{mn/d²}`, the duality
+ingredient `a₁(T_m f) = a_m f`, the prime-step identity, commutation with
+every `T_p` (pointwise, ∘ₗ, and `Commute` forms), the FULL multiplicativity
+`T_m ∘ T_n = ∑_{d ∣ gcd m n} d^(k-1) • T_{mn/d²}` (the induction closes
+through the abstract coefficient-level prime-step lemma `tsumF_prime_step`
+lifted to the operator module — no additional Finset reindexing needed), the
+prime/prime-power specializations reducing to the landed
+`heckeTP_qExpansion_coeff`, and the `T₂` two-term recurrence for even `m`.
+Light module (797 lines, Mathlib-level imports, no kernel decides, no
+`set_option`); registered in the root/defaultTargets/CI; AxCheckDecide-clean.
+Downstream: b2 hecke-index (duality + I_k) and b3 hecke-field (dim-2
+integrality) consume `heckeTM`, `heckeTM_qExpansion_coeff`, `heckeTM_one`,
+`heckeTM_mul`, `heckeTM_two_mul_even(_form)`, `heckeTM_commute`.
+
+**State at session end:** branch tip = G4 commit; gates G1–G4 all PASS;
+blueprint objective COMPLETE (no descopes); Modal runs this session: 13
+(12 × HeckeTM/AxCheckDecide + 0 wasted); no pushes; ready for the wave merge.

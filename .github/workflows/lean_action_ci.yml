@@ -81,6 +81,7 @@ jobs:
             MathProof.ModularForms.HeckeCommute
             MathProof.ModularForms.HeckeGeneratedByT2
             MathProof.ModularForms.HeckeGeneratedByT2Weights
+            MathProof.ModularForms.HeckeTM
             MathProof.ModularForms.HeckeTPCoeff
             MathProof.ModularForms.MaedaCertCExt
             MathProof.ModularForms.MaedaT3Dim6Weights
