@@ -2043,3 +2043,23 @@ not kernel-decidable (structural trial-division certificates instead), and
 matrix-level `decide` over `Fin n` pulls `Classical.choice` through
 `Fintype.decidablePiFintype` (use entrywise `ext/fin_cases/decide +kernel`).
 Metrics, timeline, gaps and recommendations: `research/iteration22-review.md`.
+
+## Discoveries articles + the Hecke index observation (2026-11-02, `docs/update-i22`)
+
+Ten standalone articles in `docs/articles/` separate what Lean proves from what
+is computed or classical.  Numbers were rechecked against the sources; the
+bad-prime census and the sieve table were recomputed by a separate script.
+
+**New observation, not formalized** (answers iteration22-review §7.1, "the
+dim-2 integer witnesses suggest a general integrality statement").  The Miller
+basis duality `T_m = Σ_j a_m(f_j) T_j` makes `T₁ … Tₙ` a ℤ-basis of the Hecke
+ring `𝕋`, so `[𝕋 : ℤ[T₂]] = |det (a_{2^i}(f_j))|` =: `I_k`, and the reduced
+denominator `D` of the `T₃` witness divides `I_k`.  In dim 2, `𝕋 = ℤ[T₂]`, so
+every `T_m` is an integer polynomial in `T₂`.  In dims 3–4, `𝕋/ℤ[T₂]` is cyclic
+on `T₃`, so `D = I_k`; in dim 3,
+`T₃ = (T₂² − 2^(k−1) − a₄(f₁) − a₄(f₂) T₂) / a₄(f₃)`.  Checked exactly at all
+54 weights against `hecke-rational/g1_data.json`
+(`research/iteration22/hecke-rational/index_check.py`, log alongside): `D ∣ I_k`
+everywhere, equality exactly at the 18 weights with `n ≤ 4`.  A candidate
+blueprint target for Iteration 23.  Write-up:
+`docs/articles/hecke-denominators.html`.

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>27 GiB per million operations: the memory law of kernel computation — MathProof</title>
+<meta name="description" content="The kernel keeps everything until a declaration ends. Once that was measured, the heaviest module dropped from 202 GiB to 13.5 GiB without changing the mathematics.">
+<link rel="stylesheet" href="article.css">
+</head>
+<body>
+<div class="bar"><div class="in">
+  <a class="brand" href="../index.html">MathProof <span>τ</span></a>
+  <nav><a href="index.html">All articles</a><a href="https://github.com/picodozbotdoz/math-proof1">GitHub</a></nav>
+</div></div>
+<main>
+<span class="kicker">Method</span>
+<h1>27 GiB per million operations: the memory law of kernel computation</h1>
+<p class="dek">The kernel keeps everything until a declaration ends. Once that was measured, the heaviest module dropped from 202 GiB to 13.5 GiB without changing the mathematics.</p>
+<div class="box proved"><span class="lbl">WHAT WAS MEASURED</span>
+<p>Peak memory of kernel <code>decide</code> grows linearly with the work done inside one declaration: about 27 GiB per million <code>Poly5</code> list operations in this code. Memory is released only when the declaration ends. These are measurements on one project, not theorems, and the constant depends on the data representation.</p></div>
+
+<p>In Iteration 18, one Lean file needed 202 GiB of memory to compile. The obvious suspects were <code>simp</code> and <code>ring</code>, and the project's improvement notes said so. Profiling each declaration showed that was wrong. <code>e3dec</code>, a single kernel decision, accounted for 18.5 GiB of a 24.5 GiB peak, while the surrounding <code>simp</code> lemmas added nothing measurable.</p>
+
+<h2>Why the kernel behaves this way</h2>
+<p>An earlier probe had already found the mechanism. A nested loop with constant live data ramped memory steadily to 9.3 GiB, and memory fell back to 4.5 GiB the moment the declaration died. The kernel evaluator is lazy and keeps intermediate terms in caches for the whole declaration. So a program with almost no live data can still use a lot of memory: what counts is how many steps it took.</p>
+
+<h2>A linear model that predicted the results</h2>
+<div class="tw"><table>
+<tr><th>Identity</th><th class="r">Work (M list ops)</th><th class="r">Measured</th><th class="r">GiB per M ops</th></tr>
+<tr><td>e2</td><td class="r">0.09</td><td class="r">+1.9 GiB</td><td class="r">21</td></tr>
+<tr><td>e3</td><td class="r">0.71</td><td class="r">+18.5 GiB</td><td class="r">26</td></tr>
+<tr><td>δ²</td><td class="r">0.56</td><td class="r">+14.6 GiB</td><td class="r">26</td></tr>
+<tr><td>e4</td><td class="r">7.40</td><td class="r">202 GiB</td><td class="r">27</td></tr>
+<tr><td>e5</td><td class="r">5.04</td><td class="r">137 GiB</td><td class="r">27</td></tr>
+<tr><td>e6</td><td class="r">5.36</td><td class="r">172 GiB</td><td class="r">32</td></tr>
+</table></div>
+<p>The model also solved a puzzle: why was <code>e4</code> heavier than <code>e6</code>? Because <code>e4</code> was computed as 15 separate products, while <code>e6</code> is a single product. Time follows a similar line, around 300 s per million operations.</p>
+
+<h2>Two levers</h2>
+<ol>
+<li><strong>Do less work.</strong> Elementary symmetric functions were computed by brute force as <span class="m">C(6,k)</span> products. The recurrence <span class="m">E<sub>j,k</sub> = E<sub>j−1,k</sub> + Θ<sub>j</sub>·E<sub>j−1,k−1</sub></span> cut the <code>e4</code> left side from 7.16 M to 0.44 M operations.</li>
+<li><strong>Reset the caches.</strong> Split one huge decision into several, each proving <code>step = literal</code>. Each literal becomes a checkpoint, and the next declaration starts clean. The generator places a checkpoint at about 0.5 M modelled operations.</li>
+</ol>
+<p>The mathematics and the theorems above the chain did not change.</p>
+<figure class="fig"><div class="legend"><span><i class="sw" style="background:var(--series-2)"></i>Before</span><span><i class="sw" style="background:var(--series-1)"></i>After</span></div><svg viewBox="0 0 540 306" role="img" aria-label="Peak memory per module before and after the rebuild, in GiB"><line x1="76.0" x2="76.0" y1="6" y2="284" stroke="var(--grid)"/><text x="76.0" y="300" text-anchor="middle">0 GiB</text><line x1="282.9" x2="282.9" y1="6" y2="284" stroke="var(--grid)"/><text x="282.9" y="300" text-anchor="middle">100 GiB</text><line x1="489.9" x2="489.9" y1="6" y2="284" stroke="var(--grid)"/><text x="489.9" y="300" text-anchor="middle">200 GiB</text><text class="v" x="66" y="33" text-anchor="end">IdBase</text><path d="M76,12h46.7a4,4 0 0 1 4,4v10a4,4 0 0 1 -4,4h-46.7z" fill="var(--series-2)" data-tip="IdBase before: 24.5 GiB" tabindex="0"/><text class="v" x="132.7" y="25">24.5</text><path d="M76,32h12.8a4,4 0 0 1 4,4v10a4,4 0 0 1 -4,4h-12.8z" fill="var(--series-1)" data-tip="IdBase after: 8.1 GiB" tabindex="0"/><text class="v" x="98.8" y="45">8.1</text><text class="v" x="66" y="92" text-anchor="end">IdE4</text><path d="M76,71h414.0a4,4 0 0 1 4,4v10a4,4 0 0 1 -4,4h-414.0z" fill="var(--series-2)" data-tip="IdE4 before: 202 GiB" tabindex="0"/><text class="v" x="500.0" y="84">202</text><path d="M76,91h23.9a4,4 0 0 1 4,4v10a4,4 0 0 1 -4,4h-23.9z" fill="var(--series-1)" data-tip="IdE4 after: 13.5 GiB" tabindex="0"/><text class="v" x="109.9" y="104">13.5</text><text class="v" x="66" y="151" text-anchor="end">IdE5</text><path d="M76,130h279.5a4,4 0 0 1 4,4v10a4,4 0 0 1 -4,4h-279.5z" fill="var(--series-2)" data-tip="IdE5 before: 137 GiB" tabindex="0"/><text class="v" x="365.5" y="143">137</text><path d="M76,150h41.5a4,4 0 0 1 4,4v10a4,4 0 0 1 -4,4h-41.5z" fill="var(--series-1)" data-tip="IdE5 after: 22.0 GiB" tabindex="0"/><text class="v" x="127.5" y="163">22.0</text><text class="v" x="66" y="210" text-anchor="end">IdE6</text><path d="M76,189h351.9a4,4 0 0 1 4,4v10a4,4 0 0 1 -4,4h-351.9z" fill="var(--series-2)" data-tip="IdE6 before: 172 GiB" tabindex="0"/><text class="v" x="437.9" y="202">172</text><path d="M76,209h67.8a4,4 0 0 1 4,4v10a4,4 0 0 1 -4,4h-67.8z" fill="var(--series-1)" data-tip="IdE6 after: 34.7 GiB" tabindex="0"/><text class="v" x="153.8" y="222">34.7</text><text class="v" x="66" y="269" text-anchor="end">Identities</text><path d="M76,248h43.6a4,4 0 0 1 4,4v10a4,4 0 0 1 -4,4h-43.6z" fill="var(--series-2)" data-tip="Identities before: 23 GiB" tabindex="0"/><text class="v" x="129.6" y="261">23</text><path d="M76,268h32.4a4,4 0 0 1 4,4v10a4,4 0 0 1 -4,4h-32.4z" fill="var(--series-1)" data-tip="Identities after: 17.6 GiB" tabindex="0"/><text class="v" x="118.4" y="281">17.6</text></svg><figcaption>Peak memory per module, in GiB, measured by the project before and after the rebuild. The numbers appear in the study table.</figcaption></figure>
+<p>The full chain went from about 2 hours to about 33 minutes. Going further has limits: a prototype with one declaration per operation gave 10.2 GiB against 24.5 GiB on <code>e3</code> but doubled the time, because large literals cost time to elaborate. The coarse split was the better trade.</p>
+
+<h2>A rule of thumb you can use</h2>
+<div class="box"><p><strong>Before writing a kernel certificate, estimate the reduction steps in the largest single declaration, and calibrate a bytes-per-step constant on a small case.</strong> If the projection is too high, split at literal checkpoints or change the representation. Do not start by asking for more memory.</p></div>
+<p>The constant depends heavily on the representation. Raw kernel steps cost about 0.6 to 4 KB each, while one <code>Poly5</code> list operation costs about 27 KB because it unfolds many instances on nested pairs.</p>
+
+<div class="box caveat"><span class="lbl">WHERE THE TRICK STOPS</span><p>Checkpoints work when intermediate results are small. For <a href="kernel-bignum.html">packed bignums</a>, an intermediate at <span class="m">d = 131072</span> is one 10.5-megabit number, so a checkpoint still puts it all in one declaration. That is partly why the project <a href="lehmer-coverage.html">declined to push past 65,536</a>: the split would have to be at digit-list level, which has not been tested.</p></div>
+<p class="src">Source: <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/research/poly5-memory-study/README.md">poly5 memory study</a>, <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/tools/gen_poly5.py">gen_poly5.py</a>, <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/MathProof/ModularForms/Poly5.lean">Poly5.lean</a>, <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/research/memory-alerts.md">memory alert log</a>. Declaration-level attribution comes from <code>LEAN_CHECK_PROFILE</code>, described in <code>AGENTS.md</code>.</p>
+<div class="pn"><span>← <a href="kernel-bignum.html">Multiplying polynomials inside a proof kernel</a></span><span><a href="axiom-leaks.html">116 of 116: how Classical.choice leaks into decide</a> →</span></div>
+</main>
+<footer>Part of <a href="../index.html">MathProof</a>, formally verified modular forms in Lean 4 and Mathlib. Source of this page: <code>docs/articles/</code>.</footer>
+<script src="article.js"></script>
+</body>
+</html>

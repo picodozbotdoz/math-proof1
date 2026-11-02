@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Multiplying polynomials inside a proof kernel — MathProof</title>
+<meta name="description" content="Packing a whole polynomial into one integer took the kernel-verified bound for τ from 512 to 65,536, a 128-fold gain, after list arithmetic had failed above 71 GB.">
+<link rel="stylesheet" href="article.css">
+</head>
+<body>
+<div class="bar"><div class="in">
+  <a class="brand" href="../index.html">MathProof <span>τ</span></a>
+  <nav><a href="index.html">All articles</a><a href="https://github.com/picodozbotdoz/math-proof1">GitHub</a></nav>
+</div></div>
+<main>
+<span class="kicker">Method</span>
+<h1>Multiplying polynomials inside a proof kernel</h1>
+<p class="dek">Packing a whole polynomial into one integer took the kernel-verified bound for τ from 512 to 65,536, a 128-fold gain, after list arithmetic had failed above 71 GB.</p>
+<div class="box proved"><span class="lbl">WHAT IS PROVED</span>
+<p><code>tau_ne_zero_of_le_65536</code>: <span class="m">τ(n) ≠ 0</span> for all <span class="m">1 ≤ n ≤ 65536</span>, by <code>decide +kernel</code>, with no <code>native_decide</code> and no external computer algebra. Run the module's <code>#print axioms</code> lines for its exact axiom list.</p></div>
+
+<p>A proof kernel is designed to be small and trustworthy, not fast. It evaluates programs by rewriting terms. Under the project's rules, every computation had to run there, so the question was practical: how far can the kernel compute coefficients of <span class="m">Δ</span>?</p>
+
+<h2>Hitting the wall</h2>
+<div class="tw"><table>
+<tr><th>Bound</th><th>Method</th><th class="r">Peak memory</th><th class="r">Time</th><th>Outcome</th></tr>
+<tr><td>128</td><td>lists over ℤ</td><td class="r">under 7 GB</td><td class="r">~2 CPU-min</td><td>passes</td></tr>
+<tr><td>512</td><td>lists mod P</td><td class="r">24.1 GiB</td><td class="r">186 s</td><td>passes, 75% of budget</td></tr>
+<tr><td>768</td><td>lists mod P</td><td class="r">&gt; 39.5 GiB</td><td class="r">&gt; 363 s</td><td>kernel timeout</td></tr>
+<tr><td>1024</td><td>lists mod P</td><td class="r">&gt; 71 GB</td><td class="r">n/a</td><td>abandoned</td></tr>
+<tr><td>16,384</td><td>packed</td><td class="r">17.46 GiB</td><td class="r">149 s</td><td>passes</td></tr>
+<tr><td><strong>65,536</strong></td><td><strong>packed</strong></td><td class="r"><strong>62.85 GiB</strong></td><td class="r"><strong>570 s</strong></td><td><strong>passes</strong></td></tr>
+</table></div>
+<p>The 16,384 and 65,536 rows include the module's earlier decisions. The bound rose 128-fold from the list method, and the last step cost far less than extrapolating that method would have.</p>
+
+<h2>Why more tuning could not help</h2>
+<p>The study tested the usual suggestions and measured each one. Strict forcing helped by a factor of 2 to 3 but could not finish. Tail recursion changes nothing, because the kernel is lazy and an unforced accumulator just builds a longer chain of suspensions. <code>UInt64</code> was a misdiagnosis, because values already fit in one machine word and the kernel's fast path is for <code>Nat</code>. The cost was the sheer number of reduction steps, each one retained until the end (<a href="kernel-memory-law.html">the memory law</a>).</p>
+<p>So the only fix was to change the data so that far fewer kernel steps were needed.</p>
+
+<h2>The idea: make one multiplication do it all</h2>
+<p>Lean's kernel has one great asset. Arithmetic on <code>Nat</code> literals is delegated to GMP, the fast bignum library. A single huge multiplication is one kernel step. So pack a whole polynomial into a single number:</p>
+<div class="eq">[c₀, c₁, c₂, …] &nbsp;⟼&nbsp; c₀ + 2⁸⁰·c₁ + 2¹⁶⁰·c₂ + …</div>
+<p>Multiplying two such numbers multiplies the polynomials, as long as coefficients do not overflow their 80-bit slots. This is the classical trick called Kronecker substitution. With coefficients below <span class="m">P = 999999937</span> and <span class="m">d ≤ 65536</span> terms, each slot stays below <span class="m">d·(P−1)² &lt; 2⁷⁶ &lt; 2⁸⁰</span>, and Lean proves that bound (<code>convSum_lt</code>). A convolution with about 4 billion terms became one <code>Nat.mul</code>.</p>
+
+<h3>Three more pieces</h3>
+<ul>
+<li><strong>Pentagonal numbers.</strong> Euler's theorem says <span class="m">∏(1 − q<sup>m</sup>)</span> has coefficients ±1 at generalized pentagonal indices and 0 elsewhere, and Mathlib has this. The whole first phase needs no multiplication.</li>
+<li><strong>Five products.</strong> The 24th power uses <span class="m">24 = 16 + 8</span>: four squarings and one product.</li>
+<li><strong>Balanced packing.</strong> Packing by divide and conquer rather than a linear walk cut isolated packing memory from 3.4 GiB to 1.0 GiB at 16,384.</li>
+</ul>
+<p>Two details are easy to miss. Core <code>Nat.sqrt</code> is defined by well-founded recursion, which the kernel cannot reduce, so the project wrote a structurally recursive Newton square root. And a nonzero residue mod a prime certifies a nonzero integer, so no size bound on <span class="m">τ</span> is ever needed.</p>
+
+<h2>The attractive certificate that would have been wrong</h2>
+<p>A cheaper-sounding plan was to check the identity by evaluating both sides at <span class="m">d</span> points. It is <strong>unsound here</strong>. Evaluating a power series truncated at degree <span class="m">d</span> aliases its coefficients, so the check would certify <span class="m">Σ<sub>k</sub> f<sub>i+kd</sub></span> rather than <span class="m">f<sub>i</sub></span>, and a zero of τ could hide behind cancellation. Convolution checking verifies the actual truncated coefficients.</p>
+
+<div class="box caveat"><span class="lbl">WHAT YOU ARE TRUSTING</span><p>The kernel's GMP acceleration is part of Lean's trusted base, so a GMP bug could in principle affect this result. That risk is much smaller than trusting a compiler with <code>native_decide</code>, but it is not zero. The verified bound is also tiny next to <a href="lehmer-coverage.html">unverified records</a>. What this article describes is a technique, and it applies to any kernel computation that reduces to large convolutions.</p></div>
+<p class="src">Source: <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/MathProof/Tau/LehmerPacked.lean">LehmerPacked.lean</a>, <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/research/lehmer-mod-scaling-study.md">scaling study</a>, <a href="https://github.com/picodozbotdoz/math-proof1/tree/master/Bench">Bench/</a> (benchmarks, including ones that fail by design). Heavy module, built on Modal and outside CI.</p>
+<div class="pn"><span>← <a href="hecke-denominators.html">T₃ as an explicit polynomial in T₂, and what its denominators measure</a></span><span><a href="kernel-memory-law.html">27 GiB per million operations: the memory law of kernel computation</a> →</span></div>
+</main>
+<footer>Part of <a href="../index.html">MathProof</a>, formally verified modular forms in Lean 4 and Mathlib. Source of this page: <code>docs/articles/</code>.</footer>
+<script src="article.js"></script>
+</body>
+</html>

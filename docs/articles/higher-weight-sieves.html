@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Five more Ramanujan congruences, and a sieve that replaces computation — MathProof</title>
+<meta name="description" content="Weights 16 to 26 get their own τ-style theory. Their large moduli let a single residue test prove nonvanishing up to 1.7 million with no dense computation at all.">
+<link rel="stylesheet" href="article.css">
+</head>
+<body>
+<div class="bar"><div class="in">
+  <a class="brand" href="../index.html">MathProof <span>τ</span></a>
+  <nav><a href="index.html">All articles</a><a href="https://github.com/picodozbotdoz/math-proof1">GitHub</a></nav>
+</div></div>
+<main>
+<span class="kicker">Classical congruences, new formal proofs</span>
+<h1>Five more Ramanujan congruences, and a sieve that replaces computation</h1>
+<p class="dek">Weights 16 to 26 get their own τ-style theory. Their large moduli let a single residue test prove nonvanishing up to 1.7 million with no dense computation at all.</p>
+<div class="box proved"><span class="lbl">WHAT IS PROVED</span>
+<p>For each of the five eigenforms below: integer coefficients, Hecke eigenform equation, Mordell multiplicativity, Lehmer's reduction to primes, a congruence with a divisor sum, and nonvanishing of every coefficient below a stated bound. All of it is in light modules, with no dense computation.</p></div>
+
+<p>The space of cusp forms <span class="m">S<sub>k</sub>(SL₂(ℤ))</span> is one-dimensional exactly for <span class="m">k = 12, 16, 18, 20, 22, 26</span>. Each has a unique normalized form, and <span class="m">Δ</span> at weight 12 is only the most famous. Lehmer's question makes sense for all six and is open for all six. Once the theory was written for a generic rank-one space (<code>EigenLevelOne</code>), each weight needed only its own congruence.</p>
+
+<h2>The results</h2>
+<div class="tw"><table>
+<tr><th>k</th><th>Form</th><th>Congruence: a(n) ≡ σ<sub>k−1</sub>(n) mod</th><th class="r">First bad prime</th><th>Check at n = 2: σ(2) − a(2)</th></tr>
+<tr><td>12</td><td>Δ</td><td>691</td><td class="r">1,381</td><td>2049 + 24 = 3 · 691</td></tr>
+<tr><td>16</td><td>ΔE₄</td><td>3617</td><td class="r">21,701</td><td>32769 − 216 = 9 · 3617</td></tr>
+<tr><td>18</td><td>ΔE₆</td><td>43867</td><td class="r">263,201</td><td>131073 + 528 = 3 · 43867</td></tr>
+<tr><td>20</td><td>ΔE₄²</td><td>174611 = 283 · 617</td><td class="r">1,746,109</td><td>524289 − 456 = 3 · 174611</td></tr>
+<tr><td>22</td><td>ΔE₄E₆</td><td>77683 = 131 · 593</td><td class="r">1,087,561</td><td>2097153 + 288 = 27 · 77683</td></tr>
+<tr><td>26</td><td>ΔE₄²E₆</td><td>657931</td><td class="r">1,315,861</td><td>33554433 + 48 = 51 · 657931</td></tr>
+</table></div>
+<p>The last column is an easy check you can do by hand. The Lean theorems for weights 16 to 26 are such as <code>a16_ne_zero_of_lt_21701</code>, and each says that every coefficient below the first bad prime is nonzero.</p>
+
+<h2>The sieve runs without computation</h2>
+<p>If <span class="m">a(n)</span> is congruent to a divisor sum and the divisor sum is not divisible by the modulus, then <span class="m">a(n) ≠ 0</span>. A prime <span class="m">p</span> escapes this test only if <span class="m">1 + p<sup>k−1</sup> ≡ 0</span>. Each initial segment then ends at the first prime in that bad class, and all smaller candidates are shown composite by <code>norm_num</code>.</p>
+<p>The moduli do all the work, and that creates a curious asymmetry. At weight 12 the modulus 691 is small, so the sieve alone stops at 1,381, and the project needed the 62.85 GiB dense computation to get to 70,481. At weight 20 the same one-line argument reaches 1,746,109 at almost no cost. The most famous weight is the one where the cheap method is weakest.</p>
+
+<h2>Two details worth a second look</h2>
+<h3>The modulus is not always the Bernoulli numerator</h3>
+<p>The common statement relates these congruences to the numerator of the Bernoulli number <span class="m">B<sub>k</sub></span>. At weights 22 and 26 the honest modulus is smaller: <span class="m">num B₂₂ = 854513 = 11 · 77683</span> and <span class="m">num B₂₆ = 8553103 = 13 · 657931</span>. The factors 11 and 13 divide <span class="m">k</span> and cancel. They really do have to go: the table's check shows the difference at <span class="m">n = 2</span> is <span class="m">27 · 77683</span>, which is not divisible by 11, so the congruence modulo the full numerator is false. The Lean moduli are the reduced numbers <span class="m">num B<sub>k</sub> / gcd(num B<sub>k</sub>, 2k·den B<sub>k</sub>)</span>, matching Swinnerton-Dyer's form.</p>
+<h3>Weight 26 has five bad classes</h3>
+<p>Everywhere else <span class="m">x<sup>k−1</sup> ≡ −1</span> has one solution, <span class="m">x ≡ −1</span>. At weight 26, <span class="m">gcd(25, 657930) = 5</span>, so there are five solutions. They are 657930, 157708, 578462, 610260 and 627364 mod 657931, and Lean pins them down through an explicit factorization of <span class="m">X⁵ − 1</span>. The first primes in the other four classes are all above 6 million, so the class <span class="m">−1</span> is still the one that ends the segment.</p>
+
+<h2>How one short argument gives each congruence</h2>
+<p>Pick an integral product <span class="m">H</span> of <span class="m">E₄</span> and <span class="m">E₆</span> with constant term 1. Then <span class="m">E<sub>k</sub> − H</span> is a cusp form, hence a multiple of the unique eigenform. Clearing the Bernoulli denominator and cancelling a unit gives the congruence. Unlike weight 12, this needs no Sturm bound and no dense computation.</p>
+
+<div class="box caveat"><span class="lbl">WHAT IS AND IS NOT NEW</span><p>The congruences themselves are classical (Ramanujan, Swinnerton-Dyer). What is new here, to our knowledge, is the formal proof, along with initial segments certified with no dense computation. We did not survey how far unverified computation has gone for these forms, so treat the bounds as formal bounds, not records.</p></div>
+<p class="src">Source: <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/MathProof/ModularForms/EigenLevelOne.lean">EigenLevelOne.lean</a>, <a href="https://github.com/picodozbotdoz/math-proof1/tree/master/MathProof/ModularForms">LehmerWeight16 … 26</a>, <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/MathProof/ModularForms/BernoulliHigh.lean">BernoulliHigh.lean</a>. The first-bad-prime column and the five classes were recomputed independently for this article.</p>
+<div class="pn"><span>← <a href="lehmer-prime-reduction.html">A zero of τ can only first appear at a prime</a></span><span><a href="maeda-54-weights.html">Maeda&#x27;s conjecture, machine-checked in 54 weights</a> →</span></div>
+</main>
+<footer>Part of <a href="../index.html">MathProof</a>, formally verified modular forms in Lean 4 and Mathlib. Source of this page: <code>docs/articles/</code>.</footer>
+<script src="article.js"></script>
+</body>
+</html>

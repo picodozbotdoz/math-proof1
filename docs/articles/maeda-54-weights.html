@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Maeda&#x27;s conjecture, machine-checked in 54 weights — MathProof</title>
+<meta name="description" content="For every level-one weight with 2 ≤ dim S_k ≤ 10, both T₂ and T₃ have irreducible characteristic polynomials with full symmetric Galois group, proved from the Hecke operator itself.">
+<link rel="stylesheet" href="article.css">
+</head>
+<body>
+<div class="bar"><div class="in">
+  <a class="brand" href="../index.html">MathProof <span>τ</span></a>
+  <nav><a href="index.html">All articles</a><a href="https://github.com/picodozbotdoz/math-proof1">GitHub</a></nav>
+</div></div>
+<main>
+<span class="kicker">Formal verification of an open conjecture&#x27;s instances</span>
+<h1>Maeda&#x27;s conjecture, machine-checked in 54 weights</h1>
+<p class="dek">For every level-one weight with 2 ≤ dim S_k ≤ 10, both T₂ and T₃ have irreducible characteristic polynomials with full symmetric Galois group, proved from the Hecke operator itself.</p>
+<div class="box proved"><span class="lbl">WHAT IS PROVED</span>
+<p>For each of the 54 level-one weights with <span class="m">2 ≤ dim S<sub>k</sub> ≤ 10</span>, and for both <span class="m">T₂</span> and <span class="m">T₃</span>: the characteristic polynomial of the actual Hecke operator on the actual space of cusp forms is irreducible over <span class="m">ℚ</span>, and its Galois group is the full symmetric group <span class="m">Sₙ</span>.</p></div>
+
+<p>Maeda's conjecture (1997) says the Hecke algebra of level-one cusp forms is as large and as disordered as it could possibly be: for every weight, the characteristic polynomial of <span class="m">T₂</span> is irreducible with Galois group <span class="m">Sₙ</span>. It would mean that eigenforms in a given weight are all conjugate to one another, and it is used as an input in several other areas. It remains open.</p>
+
+<h2>Coverage</h2>
+<div class="tw"><table>
+<tr><th>dim S<sub>k</sub></th><th>Weights</th><th><span class="m">T₂</span> irreducibility certificate</th><th><span class="m">T₂</span> Galois route</th></tr>
+<tr><td>2</td><td>24, 28, 30, 32, 34, 38</td><td>no root mod ℓ</td><td>automatic</td></tr>
+<tr><td>3</td><td>36, 40, 42, 44, 46, 50</td><td>no root mod ℓ</td><td>non-square discriminant</td></tr>
+<tr><td>4</td><td>48, 52, 54, 56, 58, 62</td><td>scan of quadratic factors</td><td>resolvent cubic</td></tr>
+<tr><td>5</td><td>60, 64, 66, 68, 70, 74</td><td>scan of quadratic factors</td><td>sextic resolvent</td></tr>
+<tr><td>6</td><td>72, 76, 78, 80, 82, 86</td><td>Rabin</td><td rowspan="5">two Frobenius elements</td></tr>
+<tr><td>7</td><td>84, 88, 90, 92, 94, 98</td><td>Rabin</td></tr>
+<tr><td>8</td><td>96, 100, 102, 104, 106, 110</td><td>Rabin</td></tr>
+<tr><td>9</td><td>108, 112, 114, 116, 118, 122</td><td>Rabin</td></tr>
+<tr><td>10</td><td>120, 124, 126, 128, 130, 134</td><td>Rabin</td></tr>
+</table></div>
+<p><span class="m">T₃</span> follows the same irreducibility pipeline, and its Galois groups use <a href="galois-certificates.html">Frobenius certificates</a> at every dimension from 3 up, with a separate quadratic lemma at dimension 2. Weight 132 has dimension 11 and lies just outside this range.</p>
+
+<h2>The smallest case, weight 24</h2>
+<p>On the two-dimensional space <span class="m">S₂₄</span>, Lean proves that <span class="m">T₂</span> has matrix <span class="m">[[696, 1], [20736000, 384]]</span> and characteristic polynomial</p>
+<div class="eq">X² − 1080 X − 20468736</div>
+<p>Its roots are <span class="m">540 ± 12√144169</span>, so the Hecke field is <span class="m">ℚ(√144169)</span>. The square-free parts for the six dimension-2 weights are 144169, 18209, 51349, 18295489, 2356201 and 63737521. <span class="m">T₃</span> on the same space has polynomial <span class="m">X² − 339480 X − 19020146544</span>.</p>
+
+<h2>Why a formal version needed a new pipeline</h2>
+<p>Computing these polynomials is easy for a computer algebra system. Making a proof checker confirm them is harder, because every link has to be proved.</p>
+<ol>
+<li><strong>From the operator to a table.</strong> <span class="m">T_p</span> is built from scratch on Mathlib's cusp forms. Its coefficient formula <span class="m">(T_p f)<sub>m</sub> = f<sub>pm</sub> + p<sup>k−1</sup>[p ∣ m] f<sub>m/p</sub></span> reads the matrix off q-expansions of the basis <span class="m">Δ<sup>i</sup>E₄<sup>a</sup>E₆<sup>b</sup></span>.</li>
+<li><strong>From the table to a matrix.</strong> <code>charpoly_dimN</code> does back-substitution for any dimension and any endomorphism. Its dimension-generic design later made <span class="m">T₃</span> a matter of one new coefficient lemma and new data.</li>
+<li><strong>From the matrix to a polynomial.</strong> Determinants are interpolated at integer points and checked by the kernel with <code>CharpolyEngine</code>.</li>
+<li><strong>From the polynomial to irreducibility.</strong> A Rabin test modulo a prime <span class="m">ℓ</span>, lifted by Gauss's lemma.</li>
+</ol>
+<p>The generated files never get edited by hand. Regenerating them reproduces each one byte for byte, which keeps the certificates auditable. The numbers get large: <span class="m">T₃</span> charpoly coefficients reach 317 digits at weight 134. The dimension 6 to 10 files are light modules, which meet the project's strict coding rules with no raised limits. Only the <span class="m">S₅</span> resolvent chain at dimension 5 is heavy and built separately.</p>
+
+<div class="box caveat"><span class="lbl">WHAT THIS IS, AND WHAT IT IS NOT</span>
+<p><strong>It does not settle Maeda's conjecture.</strong> Ordinary computation has checked <span class="m">T₂</span> up to at least weight 12,000 (<a href="https://arxiv.org/abs/1207.3480">Ghitza and McAndrew</a>), and combined with a theorem of <a href="https://arxiv.org/abs/1703.02840">Bengoechea</a> that gives all <span class="m">T_p</span> up to the same weight. So the 54 facts were not in doubt.</p>
+<p><strong>What is new is the formal chain of trust.</strong> The result starts from the analytic definition of a modular form and ends in a statement about <code>LinearMap.charpoly</code>, with no computer algebra system in the trusted base. We found no earlier formalization, and the project's review describes this as, to its knowledge, the largest formally verified fragment of the conjecture.</p></div>
+
+<h2>What the audit says</h2>
+<p>The combined audit at the close of Iteration 22 reports <strong>1,312 <code>decide</code> certificates in the light library, none depending on more than <code>propext</code></strong>. The top-level Galois theorems use the standard three axioms.</p>
+<p class="src">Source: <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/MathProof/ModularForms/CharpolyDimN.lean">CharpolyDimN.lean</a>, <a href="https://github.com/picodozbotdoz/math-proof1/tree/master/MathProof/ModularForms">MaedaDim{6..10}Weights and MaedaT3*</a>, <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/research/iteration22-review.md">Iteration 22 review</a>.</p>
+<div class="pn"><span>← <a href="higher-weight-sieves.html">Five more Ramanujan congruences, and a sieve that replaces computation</a></span><span><a href="galois-certificates.html">A Galois-group certificate that a proof kernel can check</a> →</span></div>
+</main>
+<footer>Part of <a href="../index.html">MathProof</a>, formally verified modular forms in Lean 4 and Mathlib. Source of this page: <code>docs/articles/</code>.</footer>
+<script src="article.js"></script>
+</body>
+</html>

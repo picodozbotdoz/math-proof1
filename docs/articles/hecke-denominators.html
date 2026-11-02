@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>T₃ as an explicit polynomial in T₂, and what its denominators measure — MathProof</title>
+<meta name="description" content="All 54 weights now have rational formulas such as T₃ = 195660 − 48·T₂. Their denominators are not noise: up to dimension 4 they equal the index of ℤ[T₂] in the Hecke ring.">
+<link rel="stylesheet" href="article.css">
+</head>
+<body>
+<div class="bar"><div class="in">
+  <a class="brand" href="../index.html">MathProof <span>τ</span></a>
+  <nav><a href="index.html">All articles</a><a href="https://github.com/picodozbotdoz/math-proof1">GitHub</a></nav>
+</div></div>
+<main>
+<span class="kicker">New witnesses and a new observation</span>
+<h1>T₃ as an explicit polynomial in T₂, and what its denominators measure</h1>
+<p class="dek">All 54 weights now have rational formulas such as T₃ = 195660 − 48·T₂. Their denominators are not noise: up to dimension 4 they equal the index of ℤ[T₂] in the Hecke ring.</p>
+<div class="box proved"><span class="lbl">WHAT IS PROVED IN LEAN</span>
+<p><code>heckeTP_commute</code>: Hecke operators commute, at level one, for all primes and all weights. <code>heckeT3_eq_aeval_rat_weightKK</code>, 54 theorems: <span class="m">T₃ = Q(T₂)</span> for an explicit <span class="m">Q ∈ ℚ[X]</span>, at every weight with <span class="m">2 ≤ dim S<sub>k</sub> ≤ 10</span>. Over <span class="m">ℂ</span>, every <span class="m">T_p</span> is a polynomial in <span class="m">T₂</span>.</p></div>
+<div class="box caveat"><span class="lbl">WHAT IS NOT IN LEAN</span>
+<p>The denominator formula in the second half of this article was found while writing it. It has a short classical proof and has been checked exactly at all 54 weights by a <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/research/iteration22/hecke-rational/index_check.py">committed script</a>, but it is not formalized. We do not claim it is new to the literature, since the ingredients are standard.</p></div>
+
+<h2>The theorem, and a trap in it</h2>
+<p>If <span class="m">T₂</span> has irreducible characteristic polynomial, anything commuting with it should be a polynomial in it. The first attempt to state this failed for a telling reason. <span class="m">S<sub>k</sub></span> is a complex vector space, and over <span class="m">ℂ</span> no characteristic polynomial of degree 2 or more is irreducible. The fix was indirect. Irreducibility over <span class="m">ℚ</span> gives separability, so the roots are distinct and the minimal polynomial equals the characteristic polynomial. That makes <span class="m">T₂</span> a cyclic operator, and <code>exists_aeval_of_commute_of_minpoly_eq_charpoly</code> finishes.</p>
+<p>That proof is not constructive and produces complex coefficients. Iteration 22 did something stronger and simpler for <span class="m">T₃</span>: it wrote the polynomial down. Each weight carries an integer identity</p>
+<div class="eq">Σ<sub>j&lt;n</sub> N<sub>j</sub> · M₂<sup>j</sup> = D · M₃</div>
+<p>decided entry by entry in the kernel. Commutativity is not needed at all here, since the identity is the proof. The largest numbers have 381 digits.</p>
+
+<h2>The dimension-2 formulas</h2>
+<div class="tw"><table>
+<tr><th>Weight</th><th>Proved identity on S<sub>k</sub></th></tr>
+<tr><td>24</td><td class="m">T₃ = 195660 − 48 · T₂</td></tr>
+<tr><td>28</td><td class="m">T₃ = 151740 + 192 · T₂</td></tr>
+<tr><td>30</td><td class="m">T₃ = −99180 − 552 · T₂</td></tr>
+<tr><td>32</td><td class="m">T₃ = 50220 + 432 · T₂</td></tr>
+<tr><td>34</td><td class="m">T₃ = −22140 − 312 · T₂</td></tr>
+<tr><td>38</td><td class="m">T₃ = −2700 − 72 · T₂</td></tr>
+</table></div>
+<p>All coefficients are integers. The project's Iteration 22 review noticed that and flagged it as "worth probing". The explanation turns out to be short, and it reaches well beyond dimension 2.</p>
+
+<h2>The observation: denominators measure an index</h2>
+<p>Let <span class="m">𝕋</span> be the ring generated over <span class="m">ℤ</span> by all Hecke operators on <span class="m">S<sub>k</sub></span>, and let <span class="m">f₁, …, fₙ</span> be the Miller basis, the integral forms with <span class="m">a<sub>i</sub>(f<sub>j</sub>) = δ<sub>ij</sub></span> for <span class="m">i, j ≤ n</span>. Since <span class="m">a₁(T<sub>m</sub> g) = a<sub>m</sub>(g)</span>, the classical duality between forms and Hecke operators gives</p>
+<div class="eq">T<sub>m</sub> = Σ<sub>j≤n</sub> a<sub>m</sub>(f<sub>j</sub>) · T<sub>j</sub></div>
+<p>So <span class="m">T₁, …, Tₙ</span> is a <span class="m">ℤ</span>-basis of <span class="m">𝕋</span>. The relation <span class="m">T₂ T<sub>2<sup>i</sup></sub> = T<sub>2<sup>i+1</sup></sub> + 2<sup>k−1</sup> T<sub>2<sup>i−1</sup></sub></span> shows the powers of <span class="m">T₂</span> span the same lattice as <span class="m">T₁, T₂, T₄, …, T<sub>2<sup>n−1</sup></sub></span>. The index of <span class="m">ℤ[T₂]</span> in <span class="m">𝕋</span> is therefore a determinant of q-coefficients:</p>
+<div class="eq">I<sub>k</sub> = [𝕋 : ℤ[T₂]] = | det ( a<sub>2<sup>i</sup></sub>(f<sub>j</sub>) ) |, &nbsp; 0 ≤ i &lt; n, 1 ≤ j ≤ n</div>
+<p>The reduced denominator <span class="m">D</span> of the <span class="m">T₃</span> witness is the order of <span class="m">T₃</span> in the finite group <span class="m">𝕋 / ℤ[T₂]</span>, so <span class="m">D</span> divides <span class="m">I<sub>k</sub></span>. The small dimensions follow directly:</p>
+<ul>
+<li><strong>Dimension 2.</strong> <span class="m">𝕋</span> has basis <span class="m">1, T₂</span>, so <span class="m">𝕋 = ℤ[T₂]</span>. Every <span class="m">T_m</span> is an integer polynomial in <span class="m">T₂</span>, with <span class="m">T₃ = a₃(f₁) + a₃(f₂)·T₂</span>. This explains the table above, and it holds for all <span class="m">T_m</span>, not only <span class="m">T₃</span>.</li>
+<li><strong>Dimensions 3 and 4.</strong> <span class="m">ℤ[T₂]</span> already contains <span class="m">1, T₂, T₄</span>, so the quotient is cyclic and generated by <span class="m">T₃</span>. Hence <span class="m">D = I<sub>k</sub></span> exactly.</li>
+<li><strong>Dimension 5 and up.</strong> The quotient needs <span class="m">T₃</span> and <span class="m">T₅</span>, so it need not be cyclic, and <span class="m">D</span> may be a proper divisor.</li>
+</ul>
+<p>In dimension 3, there is even a one-line closed form:</p>
+<div class="eq">T₃ = ( T₂² − 2<sup>k−1</sup> − a₄(f₁) − a₄(f₂)·T₂ ) / a₄(f₃)</div>
+<p>and <span class="m">a₄(f₃)</span> is the <span class="m">q⁴</span> coefficient of <span class="m w">Δ³E₄<sup>a</sup>E₆<sup>b</sup> = q³ + (−72 + 240a − 504b)q⁴ + …</span>. So the mysterious denominators can be read straight off that formula:</p>
+<div class="tw"><table>
+<tr><th>k</th><th>a, b</th><th>−72 + 240a − 504b</th><th class="r">Denominator in Lean data</th></tr>
+<tr><td>36</td><td>0,&nbsp;0</td><td>−72</td><td class="r">72</td></tr>
+<tr><td>40</td><td>1,&nbsp;0</td><td>168</td><td class="r">168</td></tr>
+<tr><td>42</td><td>0,&nbsp;1</td><td>−576</td><td class="r">576</td></tr>
+<tr><td>44</td><td>2,&nbsp;0</td><td>408</td><td class="r">408</td></tr>
+<tr><td>46</td><td>1,&nbsp;1</td><td>−336</td><td class="r">336</td></tr>
+<tr><td>50</td><td>2,&nbsp;1</td><td>−96</td><td class="r">96</td></tr>
+</table></div>
+
+<h2>What the check found</h2>
+<div class="tw"><table>
+<tr><th>Dimension</th><th>Weights</th><th>Result</th></tr>
+<tr><td>2</td><td>6</td><td>D = I<sub>k</sub> = 1, integer formula matches all six</td></tr>
+<tr><td>3</td><td>6</td><td>D = I<sub>k</sub>, closed form matches all six</td></tr>
+<tr><td>4</td><td>6</td><td>D = I<sub>k</sub>, e.g. 7,115,931,648 at weight 48</td></tr>
+<tr><td>5</td><td>6</td><td>D ∣ I<sub>k</sub>, ratio I<sub>k</sub>/D between 320 and 50,176</td></tr>
+<tr><td>6 to 10</td><td>30</td><td>D ∣ I<sub>k</sub>, always a proper divisor, D up to 349 digits</td></tr>
+</table></div>
+<p>The prediction that equality holds exactly through dimension 4 and fails from dimension 5 on holds at all 54 weights. The factors of <span class="m">D</span> also show large powers of 2, 3 and 7 (at weight 134: <span class="m">2¹⁷⁶ · 3¹⁷ · 7⁵</span> and more). That is expected: <span class="m">T₂</span> is highly 2-divisible on level-one forms, which makes <span class="m">ℤ[T₂]</span> a thin sublattice at 2. We have not worked out the exponent pattern.</p>
+
+<div class="box"><p><strong>Why it matters.</strong> <span class="m">I<sub>k</sub> ≠ 0</span> is exactly the statement that <span class="m">T₂</span> generates the Hecke algebra over <span class="m">ℚ</span>. The formula says how far <span class="m">T₂</span> is from generating it over <span class="m">ℤ</span>, using only finitely many q-coefficients. It also suggests one general theorem worth formalizing: integrality of the witnesses at every dimension-2 weight, instead of checking them one weight at a time.</p></div>
+<p class="src">Source: <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/MathProof/ModularForms/HeckeCommute.lean">HeckeCommute.lean</a>, <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/MathProof/ModularForms/HeckeGeneratedByT2.lean">HeckeGeneratedByT2.lean</a>, <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/MathProof/ModularForms/HeckeRational.lean">HeckeRational.lean</a>, <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/research/iteration22/hecke-rational/index_check.log">index_check.log</a>.</p>
+<div class="pn"><span>← <a href="galois-certificates.html">A Galois-group certificate that a proof kernel can check</a></span><span><a href="kernel-bignum.html">Multiplying polynomials inside a proof kernel</a> →</span></div>
+</main>
+<footer>Part of <a href="../index.html">MathProof</a>, formally verified modular forms in Lean 4 and Mathlib. Source of this page: <code>docs/articles/</code>.</footer>
+<script src="article.js"></script>
+</body>
+</html>

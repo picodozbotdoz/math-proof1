@@ -14,6 +14,11 @@ network requests.
   "The Langlands program, by example (GL₂)" (~44 KB): all CSS, JavaScript,
   and mathematics (newform coefficients, L-function, j-invariant) computed
   in the browser at load time; no cookies, analytics, or external calls.
+- **`articles/`** — ten standalone articles on the project's discoveries
+  (`index.html` is the listing), sharing `article.css` and `article.js`.
+  Static HTML with same-origin assets only: no CDN, no analytics. Math is
+  HTML and Unicode, not MathJax. Each article states what is proved in Lean,
+  what is only computed, and what is classical; keep that split when editing.
 - **`.nojekyll`** — tells Pages to serve the files verbatim instead of
   running Jekyll.
 
@@ -29,5 +34,5 @@ python3 -m http.server 8000
 # open http://localhost:8000
 ```
 
-Because both pages are self-contained, any static file server or host
+Because every page is self-contained, any static file server or host
 (nginx, Caddy, Cloudflare Pages, Netlify, S3) can serve this folder as-is.

@@ -457,6 +457,10 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   is the standalone interactive educational page (GL₂ Langlands by example),
   self-contained by design: no network requests, no CDN. Preview with
   `python3 -m http.server` from that directory.
+  `docs/articles/` holds the standalone discovery articles (`index.html`,
+  shared `article.css`/`article.js`, same-origin only, no CDN): each separates
+  what Lean proves from what is computed or classical, so update the relevant
+  article when a result it cites changes.
 
 ## Conventions and gotchas
 

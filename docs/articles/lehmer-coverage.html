@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>99.9093%: what is actually proved about τ(n) ≠ 0 below 2³² — MathProof</title>
+<meta name="description" content="Three proof routes combine into one theorem. Counted exactly, it reaches all but 3,894,333 of the 4,294,967,295 positive integers below 2³², and the gap has a precise shape.">
+<link rel="stylesheet" href="article.css">
+</head>
+<body>
+<div class="bar"><div class="in">
+  <a class="brand" href="../index.html">MathProof <span>τ</span></a>
+  <nav><a href="index.html">All articles</a><a href="https://github.com/picodozbotdoz/math-proof1">GitHub</a></nav>
+</div></div>
+<main>
+<span class="kicker">New exact count</span>
+<h1>99.9093%: what is actually proved about τ(n) ≠ 0 below 2³²</h1>
+<p class="dek">Three proof routes combine into one theorem. Counted exactly, it reaches all but 3,894,333 of the 4,294,967,295 positive integers below 2³², and the gap has a precise shape.</p>
+<div class="box proved"><span class="lbl">WHAT IS PROVED</span>
+<p><code>τ n ≠ 0</code> for every <code>n ≥ 1</code> whose prime factors are each at most 65,536 or not congruent to −1 mod 691, with no bound on <code>n</code> and any exponents. This is a Lean theorem. The count of 4,291,072,962 below 2³² is an exact computation with a kernel-verified count only at the anchors 2¹⁸ and 2²⁰.</p></div>
+
+<p>Lehmer asked in 1947 whether the Ramanujan function <span class="m">τ(n)</span>, defined by <span class="m">q ∏<sub>m≥1</sub>(1 − q<sup>m</sup>)<sup>24</sup> = Σ τ(n) q<sup>n</sup></span>, ever vanishes. It is still open. Over many iterations this project built several separate routes to nonvanishing, and the natural summary was vague: "almost all 32-bit indices". This article replaces that phrase with an exact count.</p>
+
+<h2>Three routes, one theorem</h2>
+<p>The Lean statement below is the fusion. It reads almost like a plain sentence:</p>
+<pre><code>theorem tau_ne_zero_of_prime_factors_le_65536_or_mod {n : ℕ} (hn : 0 &lt; n)
+    (h : ∀ p : ℕ, p.Prime → p ∣ n → p ≤ 65536 ∨ p % 691 ≠ 690) : tau n ≠ 0</code></pre>
+<ul>
+<li><strong>Dense computation.</strong> Lean's kernel checks <span class="m">τ(n) ≠ 0</span> for all <span class="m">n ≤ 65536</span> by evaluating the coefficients modulo a prime (<a href="kernel-bignum.html">how that fits in a kernel</a>).</li>
+<li><strong>The 691 sieve.</strong> Ramanujan's congruence gives <span class="m">τ(n) ≡ σ₁₁(n) (mod 691)</span>, so <span class="m">691 ∤ σ₁₁(n)</span> forces <span class="m">τ(n) ≠ 0</span>. For a prime, <span class="m">691 ∣ 1 + p¹¹</span> happens only when <span class="m">p ≡ −1 (mod 691)</span>, so every other prime of any size is settled by one residue test.</li>
+<li><strong>Multiplicativity and Lehmer's lemma.</strong> Mordell's theorem combines coprime factors, and <a href="lehmer-prime-reduction.html">Lehmer's reduction</a> removes exponents. Only primes matter.</li>
+</ul>
+<p>So a prime is out of reach only if it is <em>bad</em>: larger than 65,536 and congruent to −1 mod 691. The smallest bad prime is 70,481, and that gives the second headline theorem, <code>tau_ne_zero_of_lt_70481</code>: <span class="m">τ(n) ≠ 0</span> for every <span class="m">0 &lt; n &lt; 70481</span>, past the dense bound with no extra computation.</p>
+
+<h2>The counting trick</h2>
+<p>Counting integers with a bad prime factor usually needs inclusion-exclusion. Here it does not, because of one inequality:</p>
+<div class="eq">70481² = 4,967,571,361 &gt; 2³²</div>
+<p>Every <span class="m">n &lt; 2³²</span> therefore has at most one bad prime factor, to the first power. The multiples of different bad primes never overlap, and the uncovered count is a plain sum:</p>
+<div class="eq">U(B) = Σ<sub>bad p &lt; B</sub> ⌊(B − 1) / p⌋ &nbsp; for all B ≤ 2³²</div>
+
+<h2>The exact numbers</h2>
+<figure class="fig"><svg viewBox="0 0 540 250" role="img" aria-label="Share of integers below B not covered, rising slowly from 0.009 percent at 2 to the 18 to 0.091 percent at 2 to the 32"><line x1="54" x2="468" y1="220.0" y2="220.0" stroke="var(--grid)"/><text x="46" y="224.0" text-anchor="end">0.000%</text><line x1="54" x2="468" y1="168.5" y2="168.5" stroke="var(--grid)"/><text x="46" y="172.5" text-anchor="end">0.025%</text><line x1="54" x2="468" y1="117.0" y2="117.0" stroke="var(--grid)"/><text x="46" y="121.0" text-anchor="end">0.050%</text><line x1="54" x2="468" y1="65.5" y2="65.5" stroke="var(--grid)"/><text x="46" y="69.5" text-anchor="end">0.075%</text><line x1="54" x2="468" y1="14.0" y2="14.0" stroke="var(--grid)"/><text x="46" y="18.0" text-anchor="end">0.100%</text><text x="54.0" y="240" text-anchor="middle">2<tspan dy="-4" font-size="9">18</tspan></text><text x="172.3" y="240" text-anchor="middle">2<tspan dy="-4" font-size="9">22</tspan></text><text x="290.6" y="240" text-anchor="middle">2<tspan dy="-4" font-size="9">26</tspan></text><text x="408.9" y="240" text-anchor="middle">2<tspan dy="-4" font-size="9">30</tspan></text><text x="468.0" y="240" text-anchor="middle">2<tspan dy="-4" font-size="9">32</tspan></text><polyline fill="none" stroke="var(--series-1)" stroke-width="2" stroke-linejoin="round" points="54.0,201.9 113.1,175.4 142.7,161.2 231.4,121.1 261.0,108.5 290.6,96.5 320.1,85.1 349.7,74.0 379.3,63.2 408.9,52.9 438.4,42.9 468.0,33.2"/><circle cx="54.0" cy="201.9" r="4" fill="var(--series-1)" stroke="var(--bg)" stroke-width="2"/><circle cx="54.0" cy="201.9" r="13" fill="transparent" data-tip="Below 2^18: 0.008774% not covered" tabindex="0"/><circle cx="113.1" cy="175.4" r="4" fill="var(--series-1)" stroke="var(--bg)" stroke-width="2"/><circle cx="113.1" cy="175.4" r="13" fill="transparent" data-tip="Below 2^20: 0.021648% not covered" tabindex="0"/><circle cx="142.7" cy="161.2" r="4" fill="var(--series-1)" stroke="var(--bg)" stroke-width="2"/><circle cx="142.7" cy="161.2" r="13" fill="transparent" data-tip="Below 2^21: 0.028563% not covered" tabindex="0"/><circle cx="231.4" cy="121.1" r="4" fill="var(--series-1)" stroke="var(--bg)" stroke-width="2"/><circle cx="231.4" cy="121.1" r="13" fill="transparent" data-tip="Below 2^24: 0.048012% not covered" tabindex="0"/><circle cx="261.0" cy="108.5" r="4" fill="var(--series-1)" stroke="var(--bg)" stroke-width="2"/><circle cx="261.0" cy="108.5" r="13" fill="transparent" data-tip="Below 2^25: 0.054115% not covered" tabindex="0"/><circle cx="290.6" cy="96.5" r="4" fill="var(--series-1)" stroke="var(--bg)" stroke-width="2"/><circle cx="290.6" cy="96.5" r="13" fill="transparent" data-tip="Below 2^26: 0.059941% not covered" tabindex="0"/><circle cx="320.1" cy="85.1" r="4" fill="var(--series-1)" stroke="var(--bg)" stroke-width="2"/><circle cx="320.1" cy="85.1" r="13" fill="transparent" data-tip="Below 2^27: 0.065468% not covered" tabindex="0"/><circle cx="349.7" cy="74.0" r="4" fill="var(--series-1)" stroke="var(--bg)" stroke-width="2"/><circle cx="349.7" cy="74.0" r="13" fill="transparent" data-tip="Below 2^28: 0.070858% not covered" tabindex="0"/><circle cx="379.3" cy="63.2" r="4" fill="var(--series-1)" stroke="var(--bg)" stroke-width="2"/><circle cx="379.3" cy="63.2" r="13" fill="transparent" data-tip="Below 2^29: 0.076101% not covered" tabindex="0"/><circle cx="408.9" cy="52.9" r="4" fill="var(--series-1)" stroke="var(--bg)" stroke-width="2"/><circle cx="408.9" cy="52.9" r="13" fill="transparent" data-tip="Below 2^30: 0.081109% not covered" tabindex="0"/><circle cx="438.4" cy="42.9" r="4" fill="var(--series-1)" stroke="var(--bg)" stroke-width="2"/><circle cx="438.4" cy="42.9" r="13" fill="transparent" data-tip="Below 2^31: 0.085969% not covered" tabindex="0"/><circle cx="468.0" cy="33.2" r="4" fill="var(--series-1)" stroke="var(--bg)" stroke-width="2"/><circle cx="468.0" cy="33.2" r="13" fill="transparent" data-tip="Below 2^32: 0.090672% not covered" tabindex="0"/><text class="v" x="477.0" y="37.2">0.0907%</text></svg><figcaption>Share of integers below B that the theorem does not reach. It grows very slowly, like a double logarithm.</figcaption></figure>
+<div class="tw"><table>
+<tr><th>Below B</th><th class="r">Bad primes</th><th class="r">Not covered</th><th class="r">Covered</th><th class="r">Coverage</th></tr>
+<tr><td>2¹⁸</td><td class="r">17</td><td class="r">23</td><td class="r">262,120</td><td class="r">99.991226%</td></tr>
+<tr><td>2²⁰</td><td class="r">98</td><td class="r">227</td><td class="r">1,048,348</td><td class="r">99.978352%</td></tr>
+<tr><td>2²⁴</td><td class="r">1,520</td><td class="r">8,055</td><td class="r">16,769,160</td><td class="r">99.951988%</td></tr>
+<tr><td>2²⁸</td><td class="r">21,125</td><td class="r">190,208</td><td class="r">268,245,247</td><td class="r">99.929142%</td></tr>
+<tr><td>2³⁰</td><td class="r">78,715</td><td class="r">870,897</td><td class="r">1,072,870,926</td><td class="r">99.918891%</td></tr>
+<tr><td><strong>2³²</strong></td><td class="r"><strong>294,618</strong></td><td class="r"><strong>3,894,333</strong></td><td class="r"><strong>4,291,072,962</strong></td><td class="r"><strong>99.909328%</strong></td></tr>
+</table></div>
+<p>The gap is spread thinly. The prime 70,481 alone accounts for 60,937 uncovered integers, the first five bad primes for 5.9%, and the first thousand for 53%. The last bad prime below 2³² is 4,294,967,161.</p>
+
+<div class="tool">
+<label for="cov-n">Is τ(n) ≠ 0 covered by the theorem? Enter any n up to 2⁵³</label>
+<div class="row"><input id="cov-n" inputmode="numeric" autocomplete="off" value="4294967295"><button data-n="65537">65537</button><button data-n="70481">70481</button><button data-n="140962">140962</button><button data-n="9007199254740991">2⁵³ − 1</button></div>
+<output id="cov-out" aria-live="polite"></output>
+</div>
+
+<h2>Why the next doubling was refused</h2>
+<p>Raising the dense bound to 131,072 was the obvious next move, and the project declined it on evidence. It would remove exactly five bad primes (70481, 92593, 96739, 105031, 120233), add 0.0053 percentage points of coverage below 2³², and extend the initial segment to 134,053. The projected cost is 110 to 125 GiB of kernel memory for one declaration. The exact census made that trade visible, since the remaining gap sits in 294,613 larger primes that no dense computation near this scale can reach.</p>
+
+<h2>In context</h2>
+<div class="box caveat"><span class="lbl">READ THIS AS A STATEMENT ABOUT PROOF, NOT ABOUT THE RECORD</span>
+<p>Ordinary computations go far beyond this. Derickx, van Hoeij and Zeng report <span class="m">τ(n) ≠ 0</span> for all <span class="m">n</span> below about 8.16·10²³ (<a href="https://arxiv.org/abs/1312.6819">arXiv:1312.6819</a>; the bound is as cited by <a href="https://personal.math.ubc.ca/~bennett/BeGhPaSi-MathAnn-2022.pdf">Bennett et al., 2022</a>). Nobody suspects the 3,894,333 "uncovered" integers. They are simply the ones this particular Lean theorem does not reach. The new thing here is a precise account of what a proof checker has confirmed.</p></div>
+
+<h2>How the numbers were checked</h2>
+<p>The study script is committed with its data. For this article the census was recomputed from scratch by a separate sieve, which reproduced the 294,618 primes byte for byte and every row of the table. In Lean, <code>uncovered_2p18</code> and <code>uncovered_2p20</code> prove the counts 23 and 227 in the kernel, with the no-overlap identity proved structurally as <code>card_uncoveredSet</code>. The full 2³² count remains an exact Python computation, not a Lean theorem.</p>
+<p class="src">Source: <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/MathProof/Tau/LehmerPrimeGrand.lean">LehmerPrimeGrand.lean</a>, <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/MathProof/Tau/LehmerCoverageCount.lean">LehmerCoverageCount.lean</a>, <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/research/iteration22/lehmer-coverage/STUDY.md">coverage study</a>, <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/research/iteration22/lehmer-coverage/DECISION-131072.md">131072 decision memo</a>.</p>
+<script>
+(function(){
+var inp=document.getElementById("cov-n"),out=document.getElementById("cov-out");
+function fac(n){var f=[],p=2;while(p*p<=n){if(n%p===0){f.push(p);while(n%p===0)n=n/p;}p+=(p===2)?1:2;}if(n>1)f.push(n);return f;}
+function run(){
+  var s=inp.value.replace(/[\s,_]/g,"");
+  if(!/^[0-9]+$/.test(s)||s==="0"){out.textContent="Enter a positive whole number.";return;}
+  var n=Number(s);
+  if(!Number.isSafeInteger(n)){out.textContent="That is above 2⁵³ − 1, too large for this page to factor exactly.";return;}
+  if(n===1){out.textContent="τ(1) = 1.";return;}
+  var ps=fac(n),bad=ps.filter(function(p){return p>65536&&p%691===690;});
+  var list=ps.map(function(p){return p.toLocaleString("en-US")+(p<=65536?" (≤ 65536)":p%691===690?" (bad: ≡ −1 mod 691)":" (residue "+(p%691)+" mod 691)");}).join(", ");
+  out.textContent=(bad.length?"Not covered by this theorem. ":"Covered: τ(n) ≠ 0 is proved for this n. ")+"Prime factors: "+list+".";
+}
+inp.addEventListener("input",run);
+document.querySelectorAll(".tool button").forEach(function(b){b.addEventListener("click",function(){inp.value=b.getAttribute("data-n");run();});});
+run();
+})();
+</script>
+<div class="pn"><span></span><span><a href="lehmer-prime-reduction.html">A zero of τ can only first appear at a prime</a> →</span></div>
+</main>
+<footer>Part of <a href="../index.html">MathProof</a>, formally verified modular forms in Lean 4 and Mathlib. Source of this page: <code>docs/articles/</code>.</footer>
+<script src="article.js"></script>
+</body>
+</html>

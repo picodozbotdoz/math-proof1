@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>A zero of τ can only first appear at a prime — MathProof</title>
+<meta name="description" content="Lehmer&#x27;s 1947 reduction removes every exponent from the problem. The formal proof needs no Deligne bound, just a two-way case split on how divisible τ(p) is by p.">
+<link rel="stylesheet" href="article.css">
+</head>
+<body>
+<div class="bar"><div class="in">
+  <a class="brand" href="../index.html">MathProof <span>τ</span></a>
+  <nav><a href="index.html">All articles</a><a href="https://github.com/picodozbotdoz/math-proof1">GitHub</a></nav>
+</div></div>
+<main>
+<span class="kicker">Classical theorem, new formal proof</span>
+<h1>A zero of τ can only first appear at a prime</h1>
+<p class="dek">Lehmer&#x27;s 1947 reduction removes every exponent from the problem. The formal proof needs no Deligne bound, just a two-way case split on how divisible τ(p) is by p.</p>
+<div class="box proved"><span class="lbl">WHAT IS PROVED</span>
+<p><code>tau_prime_pow_ne_zero</code>: if <span class="m">τ(p) ≠ 0</span> then <span class="m">τ(p<sup>a</sup>) ≠ 0</span> for every exponent. <code>lehmerConjecture_iff_primes</code>: Lehmer's conjecture holds if and only if <span class="m">τ(p) ≠ 0</span> for all primes <span class="m">p</span>. The theorem is Lehmer's. To our knowledge this formal proof is new.</p></div>
+
+<p>Before this result, the project could only reach prime powers with a very expensive computation: one kernel decision walking 65,535 recursion chains, at 143.8 GiB of memory, stopping at <span class="m">p<sup>a</sup> ≤ 2³²</span>. Lehmer's lemma made all of that unnecessary. After it landed, a strictly stronger theorem needed less than half the memory.</p>
+
+<h2>The problem in one line</h2>
+<p>Hecke theory gives a two-term recurrence for <span class="m">u<sub>a</sub> = τ(p<sup>a</sup>)</span>, with <span class="m">t = τ(p)</span>:</p>
+<div class="eq">u<sub>a+2</sub> = t·u<sub>a+1</sub> − p¹¹·u<sub>a</sub>, &nbsp; u₀ = 1, &nbsp; u₁ = t</div>
+<p>A linear recurrence like this can hit zero in general. The task is to show that it cannot here, given only <span class="m">t ≠ 0</span>. A modern shortcut would use Deligne's bound, a very deep theorem that is not in Mathlib. The formal proof avoids it with a single question: is <span class="m">t</span> divisible by <span class="m">p⁶</span>?</p>
+
+<h2>Regime 1: p⁶ does not divide t</h2>
+<p>Write <span class="m">t = p<sup>v</sup> s</span> with <span class="m">p ∤ s</span> and <span class="m">v ≤ 5</span>. Since <span class="m">2v &lt; 11</span>, the term <span class="m">p¹¹u<sub>a</sub></span> is always more divisible by <span class="m">p</span> than <span class="m">t·u<sub>a+1</sub></span>, so it cannot cancel it. Induction gives the exact shape:</p>
+<div class="eq">u<sub>a</sub> = p<sup>a·v</sup> · w, &nbsp; where w ≡ s<sup>a</sup> (mod p)</div>
+<p>Because <span class="m">p ∤ s</span>, we get <span class="m">p ∤ w</span>, so <span class="m">w ≠ 0</span> and <span class="m">u<sub>a</sub> ≠ 0</span>. This is <code>rec_ne_zero_of_valuation</code>.</p>
+
+<h2>Regime 2: p⁶ divides t</h2>
+<p>Now <span class="m">t</span> is large: being nonzero and a multiple of <span class="m">p⁶</span>, it satisfies <span class="m">t² ≥ p¹²</span>. The values <span class="m">τ(2) = −24</span> and <span class="m">τ(3) = 252</span> rule out <span class="m">p = 2, 3</span>, so <span class="m">p ≥ 5</span> and</p>
+<div class="eq">t² ≥ p¹² ≥ 4·p¹¹</div>
+<p>This is the condition for real, same-sign roots. For <span class="m">t &gt; 0</span>, induction shows <span class="m">u<sub>a</sub> &gt; 0</span> together with <span class="m">t·u<sub>a</sub> ≤ 2·u<sub>a+1</sub></span>, and the case <span class="m">t &lt; 0</span> follows by flipping signs. The sequence never reaches zero. This is <code>rec_ne_zero_of_sq_ge</code>.</p>
+
+<div class="box"><p>Deligne's theorem in fact says Regime 2 never occurs, since it gives <span class="m">t² ≤ 4p¹¹</span>, which is below <span class="m">p¹²</span> for <span class="m">p ≥ 5</span>. The proof does not need to know that. It disposes of a case that is really empty using elementary arithmetic, and that is what makes it provable in Lean today.</p></div>
+
+<h2>What it unlocked</h2>
+<ul>
+<li><span class="m">τ(2<sup>a</sup>) ≠ 0</span> for <em>every</em> <span class="m">a</span> (<code>tau_two_pow_ne_zero</code>). Earlier routes stopped at <span class="m">a ≤ 64</span>.</li>
+<li>Every exponent restriction in the Lehmer stack disappeared, giving the <a href="lehmer-coverage.html">coverage theorem</a>.</li>
+<li><code>LehmerPrimeGrand</code> proves more than the earlier grand theorem at 481 s and 62.85 GiB, against 1,759 s and 143.8 GiB.</li>
+<li>The lemma generalizes as written. The recurrence lemmas take an arbitrary exponent <span class="m">K</span> in place of 11, and <code>EigenLevelOne</code> reuses them for the <a href="higher-weight-sieves.html">higher-weight eigenforms</a>.</li>
+</ul>
+<div class="box caveat"><span class="lbl">LIMITS</span><p>This reduces Lehmer's conjecture to primes. It does not prove it for any new prime, and nothing here says that <span class="m">τ(p) = 0</span> is impossible for large <span class="m">p</span>.</p></div>
+<p class="src">Source: <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/MathProof/Tau/LehmerPrimeReduction.lean">LehmerPrimeReduction.lean</a>. Axioms: the standard three (<code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code>).</p>
+<div class="pn"><span>← <a href="lehmer-coverage.html">99.9093%: what is actually proved about τ(n) ≠ 0 below 2³²</a></span><span><a href="higher-weight-sieves.html">Five more Ramanujan congruences, and a sieve that replaces computation</a> →</span></div>
+</main>
+<footer>Part of <a href="../index.html">MathProof</a>, formally verified modular forms in Lean 4 and Mathlib. Source of this page: <code>docs/articles/</code>.</footer>
+<script src="article.js"></script>
+</body>
+</html>

@@ -6,7 +6,10 @@ An autonomous research workspace: each iteration of the loop picks an open
 problem connected to modular forms / the Langlands program, and contributes
 *formally verified* mathematics toward it using Lean 4 + Mathlib.
 
-See `research/research-log.md` for the full log. Highlights:
+See `research/research-log.md` for the full log, and the
+[Discoveries articles](https://picodozbotdoz.github.io/math-proof1/articles/index.html)
+(`docs/articles/`) for readable accounts of what was found, what is proved
+and what is classical. Highlights:
 
 ## The Ramanujan tau function (`MathProof/Tau/`)
 
@@ -284,7 +287,7 @@ MathProof/ModularForms/HeckeCommute.lean, HeckeGeneratedByT2*.lean
 MathProof/ModularForms/Poly5.lean          # kernel-checkable sparse polynomials in 5 variables
 MathProof/ModularForms/Congruence691.lean  # τ(n) ≡ σ₁₁(n) mod 691
 research/research-log.md        # the research loop log
-docs/                           # GitHub Pages root: project landing page + interactive Langlands page
+docs/                           # GitHub Pages root: landing page, interactive Langlands page, articles/ (discoveries)
 research/outreach-kit/          # making this work discoverable: GitHub metadata, Reservoir, Zenodo, Zulip post
 ```
 

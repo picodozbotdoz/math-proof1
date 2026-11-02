@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>116 of 116: how Classical.choice leaks into decide — MathProof</title>
+<meta name="description" content="The first project-wide audit found that every computational certificate broke the project&#x27;s own axiom rule. Here are the causes, the fixes and a recipe for other Lean projects.">
+<link rel="stylesheet" href="article.css">
+</head>
+<body>
+<div class="bar"><div class="in">
+  <a class="brand" href="../index.html">MathProof <span>τ</span></a>
+  <nav><a href="index.html">All articles</a><a href="https://github.com/picodozbotdoz/math-proof1">GitHub</a></nav>
+</div></div>
+<main>
+<span class="kicker">Method</span>
+<h1>116 of 116: how Classical.choice leaks into decide</h1>
+<p class="dek">The first project-wide audit found that every computational certificate broke the project&#x27;s own axiom rule. Here are the causes, the fixes and a recipe for other Lean projects.</p>
+<div class="box proved"><span class="lbl">WHAT WAS FOUND</span>
+<p>The project required computational theorems to depend on <code>propext</code> only. The first project-wide audit found 116 <code>decide</code> certificates, and all 116 depended on <code>propext</code>, <code>Classical.choice</code> and <code>Quot.sound</code>. Today the same audit covers 1,312 certificates and none goes beyond <code>propext</code>.</p></div>
+
+<p>Nothing was wrong with those proofs, and the three axioms are standard in Mathlib. The point of the rule is different: a statement like "this finite computation returns true" should rest on the computation, not on classical logic. The surprise is that the rule was stated, believed, and false for the entire library, and only a mechanical audit could show that.</p>
+
+<h2>One statement, four sets of axioms</h2>
+<p>A small probe pinned down the cause. Here is the same fact, "this polynomial has no root mod 37", phrased in different ways:</p>
+<div class="tw"><table>
+<tr><th>Shape of the <code>decide</code></th><th>Axioms</th></tr>
+<tr><td><code>∀ x : ZMod 37, …</code></td><td><code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code></td></tr>
+<tr><td>Only evaluating a <code>ZMod</code> function</td><td><code>propext</code>, <code>Quot.sound</code></td></tr>
+<tr><td><code>∀ x : Fin 37, …</code></td><td><code>propext</code></td></tr>
+<tr><td><code>∀ y : ℕ, y &lt; 37 → … % 37 ≠ 0</code>, arithmetic in <code>ℤ</code></td><td><strong>none</strong></td></tr>
+</table></div>
+
+<h2>Where they come from</h2>
+<ul>
+<li><strong><code>Fintype</code> quantifiers.</strong> <code>∀ x : ZMod ℓ</code> is decided through <code>Fintype.decidableForallFintype</code>, which goes through <code>Finset</code> and <code>Multiset</code> and picks up choice.</li>
+<li><strong><code>ZMod</code>'s ring instance.</strong> It uses <code>funext</code>, which needs <code>Quot.sound</code>.</li>
+<li><strong><code>Finset.sum</code>, <code>Finset.range</code> and <code>ArithmeticFunction.sigma</code></strong> inside a computed definition.</li>
+<li><strong>Innocent operators.</strong> <code>!=</code> on <code>ℤ</code> routes through <code>Int.instLinearOrderPackage</code>.</li>
+<li><strong>Matrices</strong> (found later, in Iteration 22). <code>decide</code> on a matrix equality uses <code>Fintype.decidablePiFintype</code>, whose proof part carries a classical <code>Iff</code>.</li>
+</ul>
+
+<h2>The recipe</h2>
+<ol>
+<li><strong>State certificates over <code>ℕ</code> and <code>ℤ</code>, with bounded quantifiers.</strong> Prove once, by hand, that this implies the <code>ZMod</code> statement. The project's <code>HornerCert</code> module does this with a structural Horner evaluation.</li>
+<li><strong>Compute with <code>List</code>, not <code>Finset</code>.</strong> Then prove once that the list version equals the Mathlib one. <code>MaedaCertC</code> does this for all Maeda coefficient tables.</li>
+<li><strong>Decide matrices entrywise:</strong> <code>ext a b; fin_cases a &lt;;&gt; fin_cases b &lt;;&gt; decide +kernel</code>.</li>
+<li><strong>Audit mechanically, on every release.</strong></li>
+</ol>
+<p>The classical axioms can stay in the bridge lemma. The aim is for the computation itself to be clean.</p>
+<pre><code>theorem scaled_id : (∑ j ∈ Finset.range 2, cert j • M2 ^ j)
+    = (1 : ℤ) • M := by
+  ext a b
+  fin_cases a &lt;;&gt; fin_cases b &lt;;&gt; decide +kernel</code></pre>
+
+<h2>The audit tool</h2>
+<p><code>MathProof/AxCheckDecide.lean</code> adds two commands. <code>#audit_decide_certs</code> finds every <code>decide</code> certificate in the light library and reports those depending on more than <code>propext</code>. <code>#axiom_path ax n</code> prints the chain of constants that pulls axiom <code>ax</code> into <code>n</code>, which turns a mystery into a fix.</p>
+<div class="tw"><table>
+<tr><th>When</th><th class="r">Certificates audited</th><th class="r">Beyond <code>propext</code></th></tr>
+<tr><td>First audit</td><td class="r">116</td><td class="r">116</td></tr>
+<tr><td>After fixing 97</td><td class="r">110</td><td class="r">19</td></tr>
+<tr><td>After the chain rebuild</td><td class="r">109</td><td class="r">0</td></tr>
+<tr><td>Iteration 20</td><td class="r">409</td><td class="r">0</td></tr>
+<tr><td>Iteration 21</td><td class="r">1,022</td><td class="r">0</td></tr>
+<tr><td>Iteration 22</td><td class="r">1,312</td><td class="r">0</td></tr>
+</table></div>
+
+<h2>Two related kernel facts</h2>
+<ul>
+<li><strong><code>Nat.Prime</code> is not kernel-decidable,</strong> because <code>minFac</code> uses well-founded recursion. A plan with <code>.Prime</code> filters inside a <code>decide</code> could not work as written. <code>LehmerCoverageCount</code> uses a structural trial-division check, <code>noFactorFrom</code>, with one correctness lemma.</li>
+<li><strong>Structural recursion matters generally.</strong> A definition that compiles to well-founded recursion stops the kernel from reducing it, often with no warning at the definition.</li>
+</ul>
+<div class="box caveat"><span class="lbl">SCOPE</span><p>The audit counts <code>decide</code> certificates in the light library. Heavy modules carry their own <code>#print axioms</code> lines, and analytic theorems use the standard three axioms by design. The clean certificates do not make the top-level theorems constructive.</p></div>
+<p class="src">Source: <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/MathProof/AxCheckDecide.lean">AxCheckDecide.lean</a>, <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/MathProof/ModularForms/HornerCert.lean">HornerCert.lean</a>, <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/MathProof/ModularForms/MaedaCertC.lean">MaedaCertC.lean</a>.</p>
+<div class="pn"><span>← <a href="kernel-memory-law.html">27 GiB per million operations: the memory law of kernel computation</a></span><span><a href="what-the-checks-caught.html">What the checks caught: a catalogue of confident mistakes</a> →</span></div>
+</main>
+<footer>Part of <a href="../index.html">MathProof</a>, formally verified modular forms in Lean 4 and Mathlib. Source of this page: <code>docs/articles/</code>.</footer>
+<script src="article.js"></script>
+</body>
+</html>
