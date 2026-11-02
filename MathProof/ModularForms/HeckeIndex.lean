@@ -1,4 +1,5 @@
 import MathProof.ModularForms.HeckeRational
+import MathProof.ModularForms.HeckeTM
 
 /-!
 # HeckeIndex: the Miller basis, Cramer certificates, and reduced denominators
@@ -35,6 +36,19 @@ calculus (b1): everything is built from the landed prime theory
   `∑ N_j X^j / D` (reduced, certified by a Bézout combination
   `∑ e_j N_j + c D = 1`) and the new certificate `∑ w_j X^j / I_k` represent
   the same operator, then `D ∣ I_k`.
+
+The second half rides the `T_m` calculus of `HeckeTM` (b1):
+
+* `miller_expand` — a normalized independent family of `dim S_k` forms is a
+  basis, and every form is `∑_j a_{j+1}(f) • g_j`;
+* `hecke_dual` — the **duality** `T_m = ∑_j a_m(g_j) • T_{j+1}` for every
+  `m ≥ 1`, proved pointwise from the symmetry `a_l(T_m f) = a_m(T_l f)` of
+  the coefficient formula (no induction on `m`);
+* `hecke_independent` — `T_1, …, T_n` are ℂ-linearly independent (dual
+  functionals `T ↦ a₁(T g_i)`);
+* `heckeLattice` / `heckeRing` — `𝕋 = span_ℤ {T_1, …, T_n}` contains every
+  `T_m` and is a subring of `End(S_k)` when the Miller coefficients are
+  integers (closure from `heckeTM_mul`); it contains `ℤ[T₂]`.
 
 Nothing here is an ancestor of the heavy `MaedaGalois5` chain.
 -/
@@ -711,5 +725,193 @@ theorem den_dvd_index (hn : 0 < n) (T2 T3 : V →ₗ[ℂ] V)
   exact Dvd.intro _ hfin.symm
 
 end Reduced
+
+/-! ### The Hecke-specific quarter: duality, independence, the Hecke ring -/
+
+section Duality
+
+open HeckeTM
+
+variable {k : ℤ} {n : ℕ}
+
+/-- The symmetry of the `T_m` coefficient formula: `a_l(T_m f) = a_m(T_l f)`. -/
+theorem coeff_heckeTM_symm (f : CuspForm 𝒮ℒ k) {m l : ℕ} (hm : 1 ≤ m) (hl : 1 ≤ l) :
+    (qExpansion 1 (heckeTM k m f)).coeff l = (qExpansion 1 (heckeTM k l f)).coeff m := by
+  rw [heckeTM_qExpansion_coeff f hm l, heckeTM_qExpansion_coeff f hl m, Nat.gcd_comm m l,
+    Nat.mul_comm m l]
+
+/-- **Miller expansion.**  A linearly independent family `g` of `n = dim S_k`
+cusp forms normalized by `a_{m+1}(g_j) = δ_{mj}` (`m, j < n`) is a basis, and
+every cusp form is the combination of it with its own first `n` coefficients. -/
+theorem miller_expand (g : ℕ → CuspForm 𝒮ℒ k) (hn : 0 < n)
+    (hg : LinearIndependent ℂ (fun i : Fin n => g i.val))
+    (hdim : Module.finrank ℂ (CuspForm 𝒮ℒ k) = n)
+    (hδ : ∀ j m : ℕ, j < n → m < n →
+      (qExpansion 1 (g j)).coeff (m + 1) = if m = j then 1 else 0)
+    (x : CuspForm 𝒮ℒ k) :
+    x = ∑ j : Fin n, (qExpansion 1 x).coeff (j.val + 1) • g j.val := by
+  have : Nonempty (Fin n) := ⟨⟨0, hn⟩⟩
+  have htop := hg.span_eq_top_of_card_eq_finrank (by rw [Fintype.card_fin, hdim])
+  have hx : x ∈ Submodule.span ℂ (Set.range fun i : Fin n => g i.val) := by
+    rw [htop]
+    exact Submodule.mem_top
+  obtain ⟨c, hc⟩ := (Submodule.mem_span_range_iff_exists_fun ℂ).mp hx
+  have hcoef : ∀ l : Fin n, (qExpansion 1 x).coeff (l.val + 1) = c l := by
+    intro l
+    rw [← hc, coeff_sum Finset.univ c (fun i : Fin n => g i.val) (l.val + 1),
+      Finset.sum_eq_single l]
+    · rw [hδ l.val l.val l.isLt l.isLt, ite_eq_left rfl, mul_one]
+    · intro b _ hb
+      rw [hδ b.val l.val b.isLt l.isLt, ite_eq_right (fun h => hb (Fin.val_inj.mp h.symm)),
+        mul_zero]
+    · intro h
+      exact absurd (Finset.mem_univ l) h
+  conv_lhs => rw [← hc]
+  exact Finset.sum_congr rfl fun l _ => by rw [hcoef l]
+
+/-- Forms are determined by their first `n` coefficients (Miller coordinates). -/
+theorem eq_of_miller_coeff (g : ℕ → CuspForm 𝒮ℒ k) (hn : 0 < n)
+    (hg : LinearIndependent ℂ (fun i : Fin n => g i.val))
+    (hdim : Module.finrank ℂ (CuspForm 𝒮ℒ k) = n)
+    (hδ : ∀ j m : ℕ, j < n → m < n →
+      (qExpansion 1 (g j)).coeff (m + 1) = if m = j then 1 else 0)
+    (x y : CuspForm 𝒮ℒ k)
+    (h : ∀ l : ℕ, l < n → (qExpansion 1 x).coeff (l + 1) = (qExpansion 1 y).coeff (l + 1)) :
+    x = y := by
+  rw [miller_expand g hn hg hdim hδ x, miller_expand g hn hg hdim hδ y]
+  exact Finset.sum_congr rfl fun l _ => by rw [h l.val l.isLt]
+
+/-- **Duality.**  With `g` the Miller basis, every Hecke operator is the
+combination `T_m = ∑_{j < n} a_m(g_j) • T_{j+1}` (`m ≥ 1`). -/
+theorem hecke_dual (g : ℕ → CuspForm 𝒮ℒ k) (hn : 0 < n)
+    (hg : LinearIndependent ℂ (fun i : Fin n => g i.val))
+    (hdim : Module.finrank ℂ (CuspForm 𝒮ℒ k) = n)
+    (hδ : ∀ j m : ℕ, j < n → m < n →
+      (qExpansion 1 (g j)).coeff (m + 1) = if m = j then 1 else 0)
+    (m : ℕ) (hm : 1 ≤ m) :
+    heckeTM k m = ∑ j : Fin n, (qExpansion 1 (g j.val)).coeff m • heckeTM k (j.val + 1) := by
+  refine LinearMap.ext fun f => ?_
+  refine eq_of_miller_coeff g hn hg hdim hδ _ _ fun l hl => ?_
+  simp only [LinearMap.sum_apply, LinearMap.smul_apply]
+  rw [coeff_sum, coeff_heckeTM_symm f hm (by omega : 1 ≤ l + 1)]
+  have hsym : ∀ j : Fin n, (qExpansion 1 (heckeTM k (j.val + 1) f)).coeff (l + 1)
+      = (qExpansion 1 (heckeTM k (l + 1) f)).coeff (j.val + 1) :=
+    fun j => coeff_heckeTM_symm f (by omega) (by omega)
+  simp only [hsym]
+  conv_lhs => rw [miller_expand g hn hg hdim hδ (heckeTM k (l + 1) f)]
+  rw [coeff_sum]
+  exact Finset.sum_congr rfl fun j _ => mul_comm _ _
+
+/-- **Independence.**  `T_1, …, T_n` are ℂ-linearly independent: the dual
+functionals `T ↦ a₁(T g_i)` evaluate to `δ_{ij}` on them (`heckeTM_one`). -/
+theorem hecke_independent (g : ℕ → CuspForm 𝒮ℒ k)
+    (hδ : ∀ j m : ℕ, j < n → m < n →
+      (qExpansion 1 (g j)).coeff (m + 1) = if m = j then 1 else 0) :
+    LinearIndependent ℂ (fun j : Fin n => heckeTM k (j.val + 1)) := by
+  rw [Fintype.linearIndependent_iff]
+  intro γ hγ i
+  have happ := LinearMap.congr_fun hγ (g i.val)
+  simp only [LinearMap.sum_apply, LinearMap.smul_apply, LinearMap.zero_apply] at happ
+  have h1 := congrArg (fun x : CuspForm 𝒮ℒ k => (qExpansion 1 x).coeff 1) happ
+  have hzc : (qExpansion 1 ⇑(0 : CuspForm 𝒮ℒ k)).coeff 1 = (0 : ℂ) := by
+    rw [← qL_apply (0 : CuspForm 𝒮ℒ k), map_zero]
+    simp
+  rw [coeff_sum, hzc] at h1
+  have hterm : ∀ j : Fin n,
+      γ j * (qExpansion 1 (heckeTM k (j.val + 1) (g i.val))).coeff 1
+        = if j = i then γ j else 0 := by
+    intro j
+    rw [heckeTM_one (g i.val) (by omega : 1 ≤ j.val + 1), hδ i.val j.val i.isLt j.isLt]
+    by_cases h : j = i
+    · subst h
+      simp
+    · rw [ite_eq_right h, ite_eq_right (fun hh => h (Fin.val_inj.mp hh)), mul_zero]
+  rw [Finset.sum_congr rfl fun j _ => hterm j, Finset.sum_ite_eq' Finset.univ i (fun j => γ j),
+    ite_eq_left (Finset.mem_univ i)] at h1
+  exact h1
+
+/-- The Hecke lattice `𝕋 = span_ℤ {T_1, …, T_n}` inside `End(S_k)`. -/
+noncomputable def heckeLattice (k : ℤ) (n : ℕ) :
+    Submodule ℤ (Module.End ℂ (CuspForm 𝒮ℒ k)) :=
+  Submodule.span ℤ (Set.range fun j : Fin n => heckeTM k (j.val + 1))
+
+/-- With integer Miller coefficients, every `T_m` (`m ≥ 1`) lies in `𝕋`. -/
+theorem heckeTM_mem_lattice (g : ℕ → CuspForm 𝒮ℒ k) (hn : 0 < n)
+    (hg : LinearIndependent ℂ (fun i : Fin n => g i.val))
+    (hdim : Module.finrank ℂ (CuspForm 𝒮ℒ k) = n)
+    (hδ : ∀ j m : ℕ, j < n → m < n →
+      (qExpansion 1 (g j)).coeff (m + 1) = if m = j then 1 else 0)
+    (hint : ∀ j m : ℕ, j < n → ∃ z : ℤ, (qExpansion 1 (g j)).coeff m = (z : ℂ))
+    (m : ℕ) (hm : 1 ≤ m) : heckeTM k m ∈ heckeLattice k n := by
+  rw [hecke_dual g hn hg hdim hδ m hm]
+  refine Submodule.sum_mem _ fun j _ => ?_
+  obtain ⟨z, hz⟩ := hint j.val m j.isLt
+  rw [hz, Int.cast_smul_eq_zsmul ℂ]
+  exact Submodule.smul_mem _ z (Submodule.subset_span ⟨j, rfl⟩)
+
+/-- With integer Miller coefficients and `k ≥ 1`, `𝕋` is closed under
+multiplication (= composition): `T_a T_b = ∑_{d ∣ (a,b)} d^(k-1) T_{ab/d²}`. -/
+theorem heckeLattice_mul_mem (g : ℕ → CuspForm 𝒮ℒ k) (hn : 0 < n)
+    (hg : LinearIndependent ℂ (fun i : Fin n => g i.val))
+    (hdim : Module.finrank ℂ (CuspForm 𝒮ℒ k) = n)
+    (hδ : ∀ j m : ℕ, j < n → m < n →
+      (qExpansion 1 (g j)).coeff (m + 1) = if m = j then 1 else 0)
+    (hint : ∀ j m : ℕ, j < n → ∃ z : ℤ, (qExpansion 1 (g j)).coeff m = (z : ℂ))
+    (hk : 1 ≤ k) {x y : Module.End ℂ (CuspForm 𝒮ℒ k)}
+    (hx : x ∈ heckeLattice k n) (hy : y ∈ heckeLattice k n) : x * y ∈ heckeLattice k n := by
+  have core : ∀ a b : ℕ, 1 ≤ a → 1 ≤ b → heckeTM k a * heckeTM k b ∈ heckeLattice k n := by
+    intro a b ha hb
+    change heckeTM k a ∘ₗ heckeTM k b ∈ _
+    rw [heckeTM_mul]
+    refine Submodule.sum_mem _ fun d hd => ?_
+    obtain ⟨hdg, -⟩ := Nat.mem_divisors.mp hd
+    obtain ⟨hda, hdb⟩ := Nat.dvd_gcd_iff.mp hdg
+    have hd0 : 0 < d := Nat.pos_of_mem_divisors hd
+    have hq : 1 ≤ a * b / (d * d) :=
+      Nat.div_pos (Nat.le_of_dvd (by positivity) (Nat.mul_dvd_mul hda hdb)) (by positivity)
+    obtain ⟨e, he⟩ : ∃ e : ℕ, k - 1 = (e : ℤ) := ⟨(k - 1).toNat, by omega⟩
+    rw [he, zpow_natCast, ← Nat.cast_pow, Nat.cast_smul_eq_nsmul ℂ]
+    exact Submodule.smul_of_tower_mem _ _
+      (heckeTM_mem_lattice g hn hg hdim hδ hint _ hq)
+  obtain ⟨u, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun ℤ).mp hx
+  obtain ⟨v, rfl⟩ := (Submodule.mem_span_range_iff_exists_fun ℤ).mp hy
+  rw [Finset.sum_mul]
+  refine Submodule.sum_mem _ fun i _ => ?_
+  rw [Finset.mul_sum]
+  refine Submodule.sum_mem _ fun j _ => ?_
+  rw [smul_mul_assoc, mul_smul_comm]
+  exact Submodule.smul_mem _ _ (Submodule.smul_mem _ _ (core _ _ (by omega) (by omega)))
+
+/-- **The Hecke ring** `𝕋 = span_ℤ {T_1, …, T_n}` as a subring of `End(S_k)`
+(integer Miller coefficients, `k ≥ 1`). -/
+noncomputable def heckeRing (g : ℕ → CuspForm 𝒮ℒ k) (hn : 0 < n)
+    (hg : LinearIndependent ℂ (fun i : Fin n => g i.val))
+    (hdim : Module.finrank ℂ (CuspForm 𝒮ℒ k) = n)
+    (hδ : ∀ j m : ℕ, j < n → m < n →
+      (qExpansion 1 (g j)).coeff (m + 1) = if m = j then 1 else 0)
+    (hint : ∀ j m : ℕ, j < n → ∃ z : ℤ, (qExpansion 1 (g j)).coeff m = (z : ℂ))
+    (hk : 1 ≤ k) : Subring (Module.End ℂ (CuspForm 𝒮ℒ k)) where
+  carrier := heckeLattice k n
+  mul_mem' hx hy := heckeLattice_mul_mem g hn hg hdim hδ hint hk hx hy
+  one_mem' := by
+    have h1 := heckeTM_mem_lattice g hn hg hdim hδ hint 1 le_rfl
+    rw [heckeTM_id] at h1
+    exact h1
+  add_mem' hx hy := (heckeLattice k n).add_mem hx hy
+  zero_mem' := (heckeLattice k n).zero_mem
+  neg_mem' hx := (heckeLattice k n).neg_mem hx
+
+/-- `ℤ[T₂] ⊆ 𝕋`: every power of `T₂` lies in the Hecke ring. -/
+theorem T2_pow_mem_heckeRing (g : ℕ → CuspForm 𝒮ℒ k) (hn : 0 < n)
+    (hg : LinearIndependent ℂ (fun i : Fin n => g i.val))
+    (hdim : Module.finrank ℂ (CuspForm 𝒮ℒ k) = n)
+    (hδ : ∀ j m : ℕ, j < n → m < n →
+      (qExpansion 1 (g j)).coeff (m + 1) = if m = j then 1 else 0)
+    (hint : ∀ j m : ℕ, j < n → ∃ z : ℤ, (qExpansion 1 (g j)).coeff m = (z : ℂ))
+    (hk : 1 ≤ k) (i : ℕ) :
+    heckeTM k 2 ^ i ∈ heckeRing g hn hg hdim hδ hint hk :=
+  Subring.pow_mem _ (heckeTM_mem_lattice g hn hg hdim hδ hint 2 (by norm_num)) i
+
+end Duality
 
 end HeckeIndex

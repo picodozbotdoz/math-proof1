@@ -198,3 +198,28 @@ resume point: make it possible to continue cold.
 * Scratch `HeckeIndexScratch.lean` deleted (G3 reference emission, absorbed).
 * Remaining for G4: combined `AxCheckDecide` on the merged root; research-log
   draft.
+
+### 2026-11-03 — G2 Hecke-specific quarter CLOSED (b1 merged)
+
+* Added to `HeckeIndex.lean` (imports `HeckeTM` now; 3 Modal runs, run 3
+  **GREEN 0 err / 0 warn**, 44 s, module peak 4.80 GiB = the import floor):
+  - `coeff_heckeTM_symm` — `a_l(T_m f) = a_m(T_l f)` straight from the
+    symmetric coefficient formula (`gcd_comm`, `mul_comm`);
+  - `miller_expand` / `eq_of_miller_coeff` — a normalized independent family
+    of `dim S_k` forms is a basis; forms are determined by `a_1 … a_n`;
+  - `hecke_dual` — `T_m = ∑_j a_m(g_j) • T_{j+1}` for every `m ≥ 1`.
+    DEVIATION (simplification): proved POINTWISE, not by strong induction on
+    `m` — compare Miller coordinates; `a_{l+1}(T_m f) = a_m(T_{l+1} f)` turns
+    both sides into the Miller expansion of `T_{l+1} f` read at `q^m`;
+  - `hecke_independent` — dual functionals `T ↦ a₁(T g_i)` (`heckeTM_one`);
+  - `heckeLattice` (`span_ℤ {T_1…T_n}`), `heckeTM_mem_lattice`,
+    `heckeLattice_mul_mem` (closure from `heckeTM_mul`; needs `k ≥ 1`),
+    `heckeRing : Subring (End S_k)`, `T2_pow_mem_heckeRing` (ℤ[T₂] ⊆ 𝕋).
+    The ring layer takes an integrality hypothesis `hint` on the Miller
+    coefficients (all `m`) — generic; per-weight discharge is not part of G4.
+* DESCOPE (blueprint-provisioned, G2): `index_eq_det` (the `Nat.card`
+  lattice-index packaging) not formalized; the mathematical content stands
+  as `I_k = |det A| ≠ 0` (per-weight `det_A`) + the two spanning families
+  (`hecke_dual`, Cramer certificates).  CORRECTIONS-noted follow-up.
+* Pin gotchas: `LinearMap.coeFn_sum` does not exist — use
+  `LinearMap.sum_apply`; `haveI` for a Prop triggers `linter.style.haveILetI`.
