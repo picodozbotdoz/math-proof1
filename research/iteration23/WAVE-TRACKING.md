@@ -30,7 +30,7 @@ documented cross-branch merge points in b2 §4 / b3 §4):
 | branch | blueprint | status | result |
 |---|---|---|---|
 | impl/iteration23/hecke-tm | blueprint/hecke-tm | RUNNING | spawned 2026-11-02 |
-| impl/iteration23/hecke-index | blueprint/hecke-index | RUNNING | G1 CLOSED a8a2412: (Tmat, A, C, I_k, w') re-pinned to Lean literals at all 54 weights; Miller strategy (a) decided; in G2 |
+| impl/iteration23/hecke-index | blueprint/hecke-index | RUNNING | G1 CLOSED a8a2412 (54/54 re-pinned, Miller strategy (a)); respawned 2026-11-03: inherited WIP SALVAGED (44b642f, 4 runs to green 51 s/6.01 GiB), **G2-GENERIC CLOSED 5f7d13e** (cramer_inverse, aeval_rat_witness, aeval_div_witness, den_dvd_index wired; 715 lines, audit clean, 0/0 run 8); G2 duality/independence/subring deferred pending b1 G3 merge (non-blocking per blueprint); in G3 (dim-10 eval_det cost probe first; 8/25 runs) |
 | impl/iteration23/hecke-field | blueprint/hecke-field | **G1 COMPLETE** (05c7ee1) | T-Gal landed (Gal = S₂ T₂ at 6 dim-2 weights, trio, 11 s/4.66 GiB — closes it22-§6.3); HeckeField generic layer (eigenvalue_mem_adjoin, trio, 28 s/3.86 GiB); m=3 T-Field slice at all 54 weights (HeckeFieldWeights, root-only, 116 s/5.29 GiB; generator gen_hecke_field.py --check). PARKED: T-Rat waits on b2, dim-2 integrality on b1 (WORKLOG numbered next steps; 7/20 Modal runs) |
 
 Wave setup (2026-11-02): worktrees under
