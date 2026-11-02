@@ -102,6 +102,9 @@ defaultTargets = [
   # iteration22-review §6.3): all parents are already default targets and the
   # file is six three-line instances (11 s / 4.7 GiB on Modal) — trio.
   "MathProof.ModularForms.MaedaT2GaloisSmallWeights",
+  # HeckeField: the generic eigenvalue-containment layer (every T₂-eigenvalue
+  # carries T-eigenvalues into ℚ(μ)) — Mathlib-only imports, 28 s / 3.9 GiB.
+  "MathProof.ModularForms.HeckeField",
 ]
 
 [leanOptions]

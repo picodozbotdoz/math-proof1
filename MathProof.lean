@@ -69,6 +69,9 @@ import MathProof.ModularForms.MaedaT3SmallWeights
 -- root-only for the same reason: it imports MaedaT3SmallWeights.
 import MathProof.ModularForms.MaedaT3GaloisSmallWeights
 import MathProof.ModularForms.HeckeRationalSmallWeights
+-- The generic eigenvalue-containment layer (rational polynomials in T₂ act
+-- on T₂-eigenlines with eigenvalues in ℚ(μ) = adjoin ℚ {μ}).
+import MathProof.ModularForms.HeckeField
 import MathProof.ModularForms.FrobeniusCycleType
 import MathProof.ModularForms.JordanPrimitive
 import MathProof.ModularForms.MaedaGaloisFull
