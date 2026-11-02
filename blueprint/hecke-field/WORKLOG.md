@@ -98,3 +98,26 @@ green) + this counts against the ≤20 budget.
    coeff lemma `a_m(f_j) = ...` that is integer-valued; audit which shape
    b1 exports first).
 3. G4: AxCheckDecide run over the enlarged root + research-log draft.
+
+**Bonus landed same session (T-Field m = 3 slice)** (commits follow): the
+realization that the m-generic eigen-containment is NOT needed for a first
+T-Field deliverable — the m = 3 rationality input is already landed at all
+54 weights (`heckeT3_eq_aeval_rat_weightKK`).  New generated file
+`MathProof/ModularForms/HeckeFieldWeights.lean` +
+`tools/gen_hecke_field.py` (`--check` byte-identity; asserts its weight
+tables against the landed `HeckeRatWeightKK` sections and the canonical-T2
+defeq bridge): 54 instances
+`HeckeFieldWeightKK.eigen_T3_mem_adjoin_weightKK : {v}
+(hv : v ≠ 0) (hμ : heckeTPₗ k 2 v = μ • v) → ∃ w ∈ adjoin ℚ {μ},
+heckeTPₗ k 3 v = w • v`.  ZERO decides, no literal tables (only weight
+numbers).  Root-only registration (parent HeckeRationalSmallWeights is
+deliberately non-CI — same policy note in the root import).  Two failed
+Modal runs on the way (`𝒮ℒ` is `scoped[MatrixGroups]` — needs
+`open scoped MatrixGroups`; the generator's section regex needed
+`\(dim (\d+)\)` for dim 10).  Modal: file 116 s / 5.29 GiB; enlarged root
+rebuild 97 s / 5.46 GiB.  tauceti_audit clean (729 lines).
+Modal runs so far: 7.
+
+With this, the T-Field track's *statement* exists at all 54 weights for
+m = 3; upgrading to generic m is a one-line swap per weight once b2's
+rationality lands (consume the m-generic ∃ Q instead of the m = 3 one).
