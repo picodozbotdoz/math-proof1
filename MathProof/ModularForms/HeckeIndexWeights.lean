@@ -6,7 +6,7 @@ import MathProof.ModularForms.MaedaSmallWeights
 import MathProof.ModularForms.MaedaDim4Weights
 import MathProof.ModularForms.MaedaDim5Weights
 
-open HeckeIndex Polynomial
+open HeckeIndex Polynomial MaedaLevelOne
 open scoped MatrixGroups
 
 /-!
@@ -48,8 +48,9 @@ def A : Matrix (Fin 2) (Fin 2) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -95,8 +96,9 @@ def A : Matrix (Fin 2) (Fin 2) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -142,8 +144,9 @@ def A : Matrix (Fin 2) (Fin 2) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -189,8 +192,9 @@ def A : Matrix (Fin 2) (Fin 2) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -236,8 +240,9 @@ def A : Matrix (Fin 2) (Fin 2) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -284,8 +289,9 @@ def A : Matrix (Fin 3) (Fin 3) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = -Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -342,9 +348,11 @@ theorem hrepI : MaedaT3Weight36.T3 = Polynomial.aeval HeckeRatWeight36.T2
   aeval_div_witness HeckeRatWeight36.T2 MaedaT3Weight36.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight36.T2).natDegree = 3 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight36.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((36 : ℕ) : ℤ)))).natDegree = 3 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight36.charpoly_T2 MaedaWeight36.maeda, Polynomial.natDegree_map]
+    MaedaWeight36.charpoly_T2 MaedaWeight36.maeda, MaedaWeight36.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   unfold MaedaWeight36.P; compute_degree!
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -384,8 +392,9 @@ def A : Matrix (Fin 2) (Fin 2) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -432,8 +441,9 @@ def A : Matrix (Fin 3) (Fin 3) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -490,9 +500,11 @@ theorem hrepI : MaedaT3Weight40.T3 = Polynomial.aeval HeckeRatWeight40.T2
   aeval_div_witness HeckeRatWeight40.T2 MaedaT3Weight40.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight40.T2).natDegree = 3 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight40.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((40 : ℕ) : ℤ)))).natDegree = 3 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight40.charpoly_T2 MaedaWeight40.maeda, Polynomial.natDegree_map]
+    MaedaWeight40.charpoly_T2 MaedaWeight40.maeda, MaedaWeight40.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   unfold MaedaWeight40.P; compute_degree!
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -533,8 +545,9 @@ def A : Matrix (Fin 3) (Fin 3) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = -Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -591,9 +604,11 @@ theorem hrepI : MaedaT3Weight42.T3 = Polynomial.aeval HeckeRatWeight42.T2
   aeval_div_witness HeckeRatWeight42.T2 MaedaT3Weight42.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight42.T2).natDegree = 3 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight42.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((42 : ℕ) : ℤ)))).natDegree = 3 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight42.charpoly_T2 MaedaWeight42.maeda, Polynomial.natDegree_map]
+    MaedaWeight42.charpoly_T2 MaedaWeight42.maeda, MaedaWeight42.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   unfold MaedaWeight42.P; compute_degree!
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -634,8 +649,9 @@ def A : Matrix (Fin 3) (Fin 3) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -692,9 +708,11 @@ theorem hrepI : MaedaT3Weight44.T3 = Polynomial.aeval HeckeRatWeight44.T2
   aeval_div_witness HeckeRatWeight44.T2 MaedaT3Weight44.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight44.T2).natDegree = 3 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight44.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((44 : ℕ) : ℤ)))).natDegree = 3 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight44.charpoly_T2 MaedaWeight44.maeda, Polynomial.natDegree_map]
+    MaedaWeight44.charpoly_T2 MaedaWeight44.maeda, MaedaWeight44.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   unfold MaedaWeight44.P; compute_degree!
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -735,8 +753,9 @@ def A : Matrix (Fin 3) (Fin 3) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = -Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -793,9 +812,11 @@ theorem hrepI : MaedaT3Weight46.T3 = Polynomial.aeval HeckeRatWeight46.T2
   aeval_div_witness HeckeRatWeight46.T2 MaedaT3Weight46.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight46.T2).natDegree = 3 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight46.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((46 : ℕ) : ℤ)))).natDegree = 3 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight46.charpoly_T2 MaedaWeight46.maeda, Polynomial.natDegree_map]
+    MaedaWeight46.charpoly_T2 MaedaWeight46.maeda, MaedaWeight46.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   unfold MaedaWeight46.P; compute_degree!
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -837,8 +858,9 @@ def A : Matrix (Fin 4) (Fin 4) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = -Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -896,9 +918,11 @@ theorem hrepI : MaedaT3Weight48.T3 = Polynomial.aeval HeckeRatWeight48.T2
   aeval_div_witness HeckeRatWeight48.T2 MaedaT3Weight48.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight48.T2).natDegree = 4 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight48.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((48 : ℕ) : ℤ)))).natDegree = 4 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight48.charpoly_T2 MaedaWeight48.maeda, Polynomial.natDegree_map]
+    MaedaWeight48.charpoly_T2 MaedaWeight48.maeda, MaedaWeight48.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   unfold MaedaWeight48.P; compute_degree!
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -940,8 +964,9 @@ def A : Matrix (Fin 3) (Fin 3) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = -Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -998,9 +1023,11 @@ theorem hrepI : MaedaT3Weight50.T3 = Polynomial.aeval HeckeRatWeight50.T2
   aeval_div_witness HeckeRatWeight50.T2 MaedaT3Weight50.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight50.T2).natDegree = 3 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight50.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((50 : ℕ) : ℤ)))).natDegree = 3 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight50.charpoly_T2 MaedaWeight50.maeda, Polynomial.natDegree_map]
+    MaedaWeight50.charpoly_T2 MaedaWeight50.maeda, MaedaWeight50.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   unfold MaedaWeight50.P; compute_degree!
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -1042,8 +1069,9 @@ def A : Matrix (Fin 4) (Fin 4) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -1101,9 +1129,11 @@ theorem hrepI : MaedaT3Weight52.T3 = Polynomial.aeval HeckeRatWeight52.T2
   aeval_div_witness HeckeRatWeight52.T2 MaedaT3Weight52.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight52.T2).natDegree = 4 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight52.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((52 : ℕ) : ℤ)))).natDegree = 4 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight52.charpoly_T2 MaedaWeight52.maeda, Polynomial.natDegree_map]
+    MaedaWeight52.charpoly_T2 MaedaWeight52.maeda, MaedaWeight52.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   unfold MaedaWeight52.P; compute_degree!
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -1146,8 +1176,9 @@ def A : Matrix (Fin 4) (Fin 4) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = -Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -1205,9 +1236,11 @@ theorem hrepI : MaedaT3Weight54.T3 = Polynomial.aeval HeckeRatWeight54.T2
   aeval_div_witness HeckeRatWeight54.T2 MaedaT3Weight54.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight54.T2).natDegree = 4 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight54.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((54 : ℕ) : ℤ)))).natDegree = 4 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight54.charpoly_T2 MaedaWeight54.maeda, Polynomial.natDegree_map]
+    MaedaWeight54.charpoly_T2 MaedaWeight54.maeda, MaedaWeight54.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   unfold MaedaWeight54.P; compute_degree!
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -1250,8 +1283,9 @@ def A : Matrix (Fin 4) (Fin 4) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = -Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -1309,9 +1343,11 @@ theorem hrepI : MaedaT3Weight56.T3 = Polynomial.aeval HeckeRatWeight56.T2
   aeval_div_witness HeckeRatWeight56.T2 MaedaT3Weight56.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight56.T2).natDegree = 4 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight56.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((56 : ℕ) : ℤ)))).natDegree = 4 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight56.charpoly_T2 MaedaWeight56.maeda, Polynomial.natDegree_map]
+    MaedaWeight56.charpoly_T2 MaedaWeight56.maeda, MaedaWeight56.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   unfold MaedaWeight56.P; compute_degree!
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -1354,8 +1390,9 @@ def A : Matrix (Fin 4) (Fin 4) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -1413,9 +1450,11 @@ theorem hrepI : MaedaT3Weight58.T3 = Polynomial.aeval HeckeRatWeight58.T2
   aeval_div_witness HeckeRatWeight58.T2 MaedaT3Weight58.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight58.T2).natDegree = 4 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight58.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((58 : ℕ) : ℤ)))).natDegree = 4 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight58.charpoly_T2 MaedaWeight58.maeda, Polynomial.natDegree_map]
+    MaedaWeight58.charpoly_T2 MaedaWeight58.maeda, MaedaWeight58.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   unfold MaedaWeight58.P; compute_degree!
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -1460,8 +1499,9 @@ def A : Matrix (Fin 5) (Fin 5) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -1520,9 +1560,11 @@ theorem hrepI : MaedaT3Weight60.T3 = Polynomial.aeval HeckeRatWeight60.T2
   aeval_div_witness HeckeRatWeight60.T2 MaedaT3Weight60.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight60.T2).natDegree = 5 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight60.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((60 : ℕ) : ℤ)))).natDegree = 5 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight60.charpoly_T2 MaedaWeight60.maeda, Polynomial.natDegree_map]
+    MaedaWeight60.charpoly_T2 MaedaWeight60.maeda, MaedaWeight60.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   unfold MaedaWeight60.P; compute_degree!
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -1566,8 +1608,9 @@ def A : Matrix (Fin 4) (Fin 4) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -1625,9 +1668,11 @@ theorem hrepI : MaedaT3Weight62.T3 = Polynomial.aeval HeckeRatWeight62.T2
   aeval_div_witness HeckeRatWeight62.T2 MaedaT3Weight62.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight62.T2).natDegree = 4 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight62.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((62 : ℕ) : ℤ)))).natDegree = 4 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight62.charpoly_T2 MaedaWeight62.maeda, Polynomial.natDegree_map]
+    MaedaWeight62.charpoly_T2 MaedaWeight62.maeda, MaedaWeight62.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   unfold MaedaWeight62.P; compute_degree!
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -1672,8 +1717,9 @@ def A : Matrix (Fin 5) (Fin 5) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = -Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -1732,9 +1778,11 @@ theorem hrepI : MaedaT3Weight64.T3 = Polynomial.aeval HeckeRatWeight64.T2
   aeval_div_witness HeckeRatWeight64.T2 MaedaT3Weight64.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight64.T2).natDegree = 5 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight64.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((64 : ℕ) : ℤ)))).natDegree = 5 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight64.charpoly_T2 MaedaWeight64.maeda, Polynomial.natDegree_map]
+    MaedaWeight64.charpoly_T2 MaedaWeight64.maeda, MaedaWeight64.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   unfold MaedaWeight64.P; compute_degree!
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -1780,8 +1828,9 @@ def A : Matrix (Fin 5) (Fin 5) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = -Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -1840,9 +1889,11 @@ theorem hrepI : MaedaT3Weight66.T3 = Polynomial.aeval HeckeRatWeight66.T2
   aeval_div_witness HeckeRatWeight66.T2 MaedaT3Weight66.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight66.T2).natDegree = 5 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight66.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((66 : ℕ) : ℤ)))).natDegree = 5 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight66.charpoly_T2 MaedaWeight66.maeda, Polynomial.natDegree_map]
+    MaedaWeight66.charpoly_T2 MaedaWeight66.maeda, MaedaWeight66.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   unfold MaedaWeight66.P; compute_degree!
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -1888,8 +1939,9 @@ def A : Matrix (Fin 5) (Fin 5) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -1948,9 +2000,11 @@ theorem hrepI : MaedaT3Weight68.T3 = Polynomial.aeval HeckeRatWeight68.T2
   aeval_div_witness HeckeRatWeight68.T2 MaedaT3Weight68.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight68.T2).natDegree = 5 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight68.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((68 : ℕ) : ℤ)))).natDegree = 5 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight68.charpoly_T2 MaedaWeight68.maeda, Polynomial.natDegree_map]
+    MaedaWeight68.charpoly_T2 MaedaWeight68.maeda, MaedaWeight68.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   unfold MaedaWeight68.P; compute_degree!
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -1996,8 +2050,9 @@ def A : Matrix (Fin 5) (Fin 5) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = -Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -2056,9 +2111,11 @@ theorem hrepI : MaedaT3Weight70.T3 = Polynomial.aeval HeckeRatWeight70.T2
   aeval_div_witness HeckeRatWeight70.T2 MaedaT3Weight70.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight70.T2).natDegree = 5 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight70.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((70 : ℕ) : ℤ)))).natDegree = 5 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight70.charpoly_T2 MaedaWeight70.maeda, Polynomial.natDegree_map]
+    MaedaWeight70.charpoly_T2 MaedaWeight70.maeda, MaedaWeight70.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   unfold MaedaWeight70.P; compute_degree!
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -2107,8 +2164,9 @@ def A : Matrix (Fin 6) (Fin 6) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = -Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -2168,9 +2226,11 @@ theorem hrepI : MaedaT3Weight72.T3 = Polynomial.aeval MaedaWeight72.T2
   aeval_div_witness MaedaWeight72.T2 MaedaT3Weight72.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight72.T2).natDegree = 6 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight72.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((72 : ℕ) : ℤ)))).natDegree = 6 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight72.charpoly_T2 MaedaWeight72.maeda, Polynomial.natDegree_map]
+    MaedaWeight72.charpoly_T2 MaedaWeight72.maeda, MaedaWeight72.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight72.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -2217,8 +2277,9 @@ def A : Matrix (Fin 5) (Fin 5) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = -Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -2277,9 +2338,11 @@ theorem hrepI : MaedaT3Weight74.T3 = Polynomial.aeval HeckeRatWeight74.T2
   aeval_div_witness HeckeRatWeight74.T2 MaedaT3Weight74.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight74.T2).natDegree = 5 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight74.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((74 : ℕ) : ℤ)))).natDegree = 5 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight74.charpoly_T2 MaedaWeight74.maeda, Polynomial.natDegree_map]
+    MaedaWeight74.charpoly_T2 MaedaWeight74.maeda, MaedaWeight74.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   unfold MaedaWeight74.P; compute_degree!
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -2329,8 +2392,9 @@ def A : Matrix (Fin 6) (Fin 6) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -2390,9 +2454,11 @@ theorem hrepI : MaedaT3Weight76.T3 = Polynomial.aeval MaedaWeight76.T2
   aeval_div_witness MaedaWeight76.T2 MaedaT3Weight76.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight76.T2).natDegree = 6 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight76.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((76 : ℕ) : ℤ)))).natDegree = 6 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight76.charpoly_T2 MaedaWeight76.maeda, Polynomial.natDegree_map]
+    MaedaWeight76.charpoly_T2 MaedaWeight76.maeda, MaedaWeight76.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight76.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -2444,8 +2510,9 @@ def A : Matrix (Fin 6) (Fin 6) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -2506,9 +2573,11 @@ theorem hrepI : MaedaT3Weight78.T3 = Polynomial.aeval MaedaWeight78.T2
   aeval_div_witness MaedaWeight78.T2 MaedaT3Weight78.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight78.T2).natDegree = 6 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight78.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((78 : ℕ) : ℤ)))).natDegree = 6 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight78.charpoly_T2 MaedaWeight78.maeda, Polynomial.natDegree_map]
+    MaedaWeight78.charpoly_T2 MaedaWeight78.maeda, MaedaWeight78.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight78.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -2560,8 +2629,9 @@ def A : Matrix (Fin 6) (Fin 6) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = -Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -2622,9 +2692,11 @@ theorem hrepI : MaedaT3Weight80.T3 = Polynomial.aeval MaedaWeight80.T2
   aeval_div_witness MaedaWeight80.T2 MaedaT3Weight80.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight80.T2).natDegree = 6 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight80.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((80 : ℕ) : ℤ)))).natDegree = 6 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight80.charpoly_T2 MaedaWeight80.maeda, Polynomial.natDegree_map]
+    MaedaWeight80.charpoly_T2 MaedaWeight80.maeda, MaedaWeight80.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight80.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -2676,8 +2748,9 @@ def A : Matrix (Fin 6) (Fin 6) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = -Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -2738,9 +2811,11 @@ theorem hrepI : MaedaT3Weight82.T3 = Polynomial.aeval MaedaWeight82.T2
   aeval_div_witness MaedaWeight82.T2 MaedaT3Weight82.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight82.T2).natDegree = 6 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight82.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((82 : ℕ) : ℤ)))).natDegree = 6 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight82.charpoly_T2 MaedaWeight82.maeda, Polynomial.natDegree_map]
+    MaedaWeight82.charpoly_T2 MaedaWeight82.maeda, MaedaWeight82.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight82.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -2800,8 +2875,9 @@ def A : Matrix (Fin 7) (Fin 7) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -2867,9 +2943,11 @@ theorem hrepI : MaedaT3Weight84.T3 = Polynomial.aeval MaedaWeight84.T2
   aeval_div_witness MaedaWeight84.T2 MaedaT3Weight84.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight84.T2).natDegree = 7 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight84.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((84 : ℕ) : ℤ)))).natDegree = 7 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight84.charpoly_T2 MaedaWeight84.maeda, Polynomial.natDegree_map]
+    MaedaWeight84.charpoly_T2 MaedaWeight84.maeda, MaedaWeight84.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight84.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -2923,8 +3001,9 @@ def A : Matrix (Fin 6) (Fin 6) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = -Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -2985,9 +3064,11 @@ theorem hrepI : MaedaT3Weight86.T3 = Polynomial.aeval MaedaWeight86.T2
   aeval_div_witness MaedaWeight86.T2 MaedaT3Weight86.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight86.T2).natDegree = 6 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight86.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((86 : ℕ) : ℤ)))).natDegree = 6 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight86.charpoly_T2 MaedaWeight86.maeda, Polynomial.natDegree_map]
+    MaedaWeight86.charpoly_T2 MaedaWeight86.maeda, MaedaWeight86.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight86.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -3047,8 +3128,9 @@ def A : Matrix (Fin 7) (Fin 7) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -3115,9 +3197,11 @@ theorem hrepI : MaedaT3Weight88.T3 = Polynomial.aeval MaedaWeight88.T2
   aeval_div_witness MaedaWeight88.T2 MaedaT3Weight88.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight88.T2).natDegree = 7 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight88.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((88 : ℕ) : ℤ)))).natDegree = 7 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight88.charpoly_T2 MaedaWeight88.maeda, Polynomial.natDegree_map]
+    MaedaWeight88.charpoly_T2 MaedaWeight88.maeda, MaedaWeight88.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight88.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -3180,8 +3264,9 @@ def A : Matrix (Fin 7) (Fin 7) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = -Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -3248,9 +3333,11 @@ theorem hrepI : MaedaT3Weight90.T3 = Polynomial.aeval MaedaWeight90.T2
   aeval_div_witness MaedaWeight90.T2 MaedaT3Weight90.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight90.T2).natDegree = 7 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight90.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((90 : ℕ) : ℤ)))).natDegree = 7 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight90.charpoly_T2 MaedaWeight90.maeda, Polynomial.natDegree_map]
+    MaedaWeight90.charpoly_T2 MaedaWeight90.maeda, MaedaWeight90.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight90.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -3313,8 +3400,9 @@ def A : Matrix (Fin 7) (Fin 7) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -3381,9 +3469,11 @@ theorem hrepI : MaedaT3Weight92.T3 = Polynomial.aeval MaedaWeight92.T2
   aeval_div_witness MaedaWeight92.T2 MaedaT3Weight92.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight92.T2).natDegree = 7 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight92.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((92 : ℕ) : ℤ)))).natDegree = 7 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight92.charpoly_T2 MaedaWeight92.maeda, Polynomial.natDegree_map]
+    MaedaWeight92.charpoly_T2 MaedaWeight92.maeda, MaedaWeight92.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight92.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -3446,8 +3536,9 @@ def A : Matrix (Fin 7) (Fin 7) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = -Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -3514,9 +3605,11 @@ theorem hrepI : MaedaT3Weight94.T3 = Polynomial.aeval MaedaWeight94.T2
   aeval_div_witness MaedaWeight94.T2 MaedaT3Weight94.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight94.T2).natDegree = 7 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight94.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((94 : ℕ) : ℤ)))).natDegree = 7 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight94.charpoly_T2 MaedaWeight94.maeda, Polynomial.natDegree_map]
+    MaedaWeight94.charpoly_T2 MaedaWeight94.maeda, MaedaWeight94.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight94.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -3590,8 +3683,9 @@ def A : Matrix (Fin 8) (Fin 8) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = -Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -3666,9 +3760,11 @@ theorem hrepI : MaedaT3Weight96.T3 = Polynomial.aeval MaedaWeight96.T2
   aeval_div_witness MaedaWeight96.T2 MaedaT3Weight96.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight96.T2).natDegree = 8 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight96.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((96 : ℕ) : ℤ)))).natDegree = 8 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight96.charpoly_T2 MaedaWeight96.maeda, Polynomial.natDegree_map]
+    MaedaWeight96.charpoly_T2 MaedaWeight96.maeda, MaedaWeight96.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight96.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -3732,8 +3828,9 @@ def A : Matrix (Fin 7) (Fin 7) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -3800,9 +3897,11 @@ theorem hrepI : MaedaT3Weight98.T3 = Polynomial.aeval MaedaWeight98.T2
   aeval_div_witness MaedaWeight98.T2 MaedaT3Weight98.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight98.T2).natDegree = 7 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight98.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((98 : ℕ) : ℤ)))).natDegree = 7 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight98.charpoly_T2 MaedaWeight98.maeda, Polynomial.natDegree_map]
+    MaedaWeight98.charpoly_T2 MaedaWeight98.maeda, MaedaWeight98.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight98.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -3878,8 +3977,9 @@ def A : Matrix (Fin 8) (Fin 8) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = -Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -3955,9 +4055,11 @@ theorem hrepI : MaedaT3Weight100.T3 = Polynomial.aeval MaedaWeight100.T2
   aeval_div_witness MaedaWeight100.T2 MaedaT3Weight100.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight100.T2).natDegree = 8 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight100.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((100 : ℕ) : ℤ)))).natDegree = 8 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight100.charpoly_T2 MaedaWeight100.maeda, Polynomial.natDegree_map]
+    MaedaWeight100.charpoly_T2 MaedaWeight100.maeda, MaedaWeight100.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight100.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -4037,8 +4139,9 @@ def A : Matrix (Fin 8) (Fin 8) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = -Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -4114,9 +4217,11 @@ theorem hrepI : MaedaT3Weight102.T3 = Polynomial.aeval MaedaWeight102.T2
   aeval_div_witness MaedaWeight102.T2 MaedaT3Weight102.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight102.T2).natDegree = 8 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight102.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((102 : ℕ) : ℤ)))).natDegree = 8 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight102.charpoly_T2 MaedaWeight102.maeda, Polynomial.natDegree_map]
+    MaedaWeight102.charpoly_T2 MaedaWeight102.maeda, MaedaWeight102.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight102.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -4193,8 +4298,9 @@ def A : Matrix (Fin 8) (Fin 8) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -4271,9 +4377,11 @@ theorem hrepI : MaedaT3Weight104.T3 = Polynomial.aeval MaedaWeight104.T2
   aeval_div_witness MaedaWeight104.T2 MaedaT3Weight104.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight104.T2).natDegree = 8 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight104.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((104 : ℕ) : ℤ)))).natDegree = 8 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight104.charpoly_T2 MaedaWeight104.maeda, Polynomial.natDegree_map]
+    MaedaWeight104.charpoly_T2 MaedaWeight104.maeda, MaedaWeight104.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight104.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -4351,8 +4459,9 @@ def A : Matrix (Fin 8) (Fin 8) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -4430,9 +4539,11 @@ theorem hrepI : MaedaT3Weight106.T3 = Polynomial.aeval MaedaWeight106.T2
   aeval_div_witness MaedaWeight106.T2 MaedaT3Weight106.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight106.T2).natDegree = 8 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight106.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((106 : ℕ) : ℤ)))).natDegree = 8 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight106.charpoly_T2 MaedaWeight106.maeda, Polynomial.natDegree_map]
+    MaedaWeight106.charpoly_T2 MaedaWeight106.maeda, MaedaWeight106.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight106.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -4531,8 +4642,9 @@ def A : Matrix (Fin 9) (Fin 9) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -4622,9 +4734,11 @@ theorem hrepI : MaedaT3Weight108.T3 = Polynomial.aeval MaedaWeight108.T2
   aeval_div_witness MaedaWeight108.T2 MaedaT3Weight108.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight108.T2).natDegree = 9 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight108.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((108 : ℕ) : ℤ)))).natDegree = 9 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight108.charpoly_T2 MaedaWeight108.maeda, Polynomial.natDegree_map]
+    MaedaWeight108.charpoly_T2 MaedaWeight108.maeda, MaedaWeight108.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight108.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -4709,8 +4823,9 @@ def A : Matrix (Fin 8) (Fin 8) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -4789,9 +4904,11 @@ theorem hrepI : MaedaT3Weight110.T3 = Polynomial.aeval MaedaWeight110.T2
   aeval_div_witness MaedaWeight110.T2 MaedaT3Weight110.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight110.T2).natDegree = 8 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight110.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((110 : ℕ) : ℤ)))).natDegree = 8 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight110.charpoly_T2 MaedaWeight110.maeda, Polynomial.natDegree_map]
+    MaedaWeight110.charpoly_T2 MaedaWeight110.maeda, MaedaWeight110.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight110.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -4891,8 +5008,9 @@ def A : Matrix (Fin 9) (Fin 9) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -4983,9 +5101,11 @@ theorem hrepI : MaedaT3Weight112.T3 = Polynomial.aeval MaedaWeight112.T2
   aeval_div_witness MaedaWeight112.T2 MaedaT3Weight112.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight112.T2).natDegree = 9 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight112.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((112 : ℕ) : ℤ)))).natDegree = 9 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight112.charpoly_T2 MaedaWeight112.maeda, Polynomial.natDegree_map]
+    MaedaWeight112.charpoly_T2 MaedaWeight112.maeda, MaedaWeight112.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight112.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -5092,8 +5212,9 @@ def A : Matrix (Fin 9) (Fin 9) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = -Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -5185,9 +5306,11 @@ theorem hrepI : MaedaT3Weight114.T3 = Polynomial.aeval MaedaWeight114.T2
   aeval_div_witness MaedaWeight114.T2 MaedaT3Weight114.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight114.T2).natDegree = 9 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight114.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((114 : ℕ) : ℤ)))).natDegree = 9 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight114.charpoly_T2 MaedaWeight114.maeda, Polynomial.natDegree_map]
+    MaedaWeight114.charpoly_T2 MaedaWeight114.maeda, MaedaWeight114.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight114.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -5296,8 +5419,9 @@ def A : Matrix (Fin 9) (Fin 9) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = -Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -5390,9 +5514,11 @@ theorem hrepI : MaedaT3Weight116.T3 = Polynomial.aeval MaedaWeight116.T2
   aeval_div_witness MaedaWeight116.T2 MaedaT3Weight116.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight116.T2).natDegree = 9 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight116.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((116 : ℕ) : ℤ)))).natDegree = 9 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight116.charpoly_T2 MaedaWeight116.maeda, Polynomial.natDegree_map]
+    MaedaWeight116.charpoly_T2 MaedaWeight116.maeda, MaedaWeight116.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight116.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -5501,8 +5627,9 @@ def A : Matrix (Fin 9) (Fin 9) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = -Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -5596,9 +5723,11 @@ theorem hrepI : MaedaT3Weight118.T3 = Polynomial.aeval MaedaWeight118.T2
   aeval_div_witness MaedaWeight118.T2 MaedaT3Weight118.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight118.T2).natDegree = 9 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight118.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((118 : ℕ) : ℤ)))).natDegree = 9 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight118.charpoly_T2 MaedaWeight118.maeda, Polynomial.natDegree_map]
+    MaedaWeight118.charpoly_T2 MaedaWeight118.maeda, MaedaWeight118.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight118.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -5734,8 +5863,9 @@ def A : Matrix (Fin 10) (Fin 10) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = -Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -5847,9 +5977,11 @@ theorem hrepI : MaedaT3Weight120.T3 = Polynomial.aeval MaedaWeight120.T2
   aeval_div_witness MaedaWeight120.T2 MaedaT3Weight120.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight120.T2).natDegree = 10 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight120.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((120 : ℕ) : ℤ)))).natDegree = 10 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight120.charpoly_T2 MaedaWeight120.maeda, Polynomial.natDegree_map]
+    MaedaWeight120.charpoly_T2 MaedaWeight120.maeda, MaedaWeight120.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight120.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -5960,8 +6092,9 @@ def A : Matrix (Fin 9) (Fin 9) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -6055,9 +6188,11 @@ theorem hrepI : MaedaT3Weight122.T3 = Polynomial.aeval MaedaWeight122.T2
   aeval_div_witness MaedaWeight122.T2 MaedaT3Weight122.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight122.T2).natDegree = 9 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight122.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((122 : ℕ) : ℤ)))).natDegree = 9 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight122.charpoly_T2 MaedaWeight122.maeda, Polynomial.natDegree_map]
+    MaedaWeight122.charpoly_T2 MaedaWeight122.maeda, MaedaWeight122.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight122.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -6195,8 +6330,9 @@ def A : Matrix (Fin 10) (Fin 10) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -6309,9 +6445,11 @@ theorem hrepI : MaedaT3Weight124.T3 = Polynomial.aeval MaedaWeight124.T2
   aeval_div_witness MaedaWeight124.T2 MaedaT3Weight124.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight124.T2).natDegree = 10 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight124.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((124 : ℕ) : ℤ)))).natDegree = 10 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight124.charpoly_T2 MaedaWeight124.maeda, Polynomial.natDegree_map]
+    MaedaWeight124.charpoly_T2 MaedaWeight124.maeda, MaedaWeight124.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight124.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -6449,8 +6587,9 @@ def A : Matrix (Fin 10) (Fin 10) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = -Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -6565,9 +6704,11 @@ theorem hrepI : MaedaT3Weight126.T3 = Polynomial.aeval MaedaWeight126.T2
   aeval_div_witness MaedaWeight126.T2 MaedaT3Weight126.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight126.T2).natDegree = 10 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight126.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((126 : ℕ) : ℤ)))).natDegree = 10 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight126.charpoly_T2 MaedaWeight126.maeda, Polynomial.natDegree_map]
+    MaedaWeight126.charpoly_T2 MaedaWeight126.maeda, MaedaWeight126.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight126.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -6705,8 +6846,9 @@ def A : Matrix (Fin 10) (Fin 10) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -6822,9 +6964,11 @@ theorem hrepI : MaedaT3Weight128.T3 = Polynomial.aeval MaedaWeight128.T2
   aeval_div_witness MaedaWeight128.T2 MaedaT3Weight128.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight128.T2).natDegree = 10 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight128.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((128 : ℕ) : ℤ)))).natDegree = 10 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight128.charpoly_T2 MaedaWeight128.maeda, Polynomial.natDegree_map]
+    MaedaWeight128.charpoly_T2 MaedaWeight128.maeda, MaedaWeight128.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight128.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -6964,8 +7108,9 @@ def A : Matrix (Fin 10) (Fin 10) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -7081,9 +7226,11 @@ theorem hrepI : MaedaT3Weight130.T3 = Polynomial.aeval MaedaWeight130.T2
   aeval_div_witness MaedaWeight130.T2 MaedaT3Weight130.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight130.T2).natDegree = 10 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight130.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((130 : ℕ) : ℤ)))).natDegree = 10 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight130.charpoly_T2 MaedaWeight130.maeda, Polynomial.natDegree_map]
+    MaedaWeight130.charpoly_T2 MaedaWeight130.maeda, MaedaWeight130.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight130.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/
@@ -7226,8 +7373,9 @@ def A : Matrix (Fin 10) (Fin 10) ℤ := !![
 
 /-- `det A = ±I_k` (the signed G1 value; certified Bareiss `eval_det`). -/
 theorem det_A : A.det = Ik := by
-  simp only [A, Ik]
-  eval_det <;> norm_num
+  simp only [A]
+  eval_det
+  norm_num [Ik]
 
 theorem hIkq : ((Ik : ℤ) : ℚ) ≠ 0 := by norm_num [Ik]
 theorem hIkc : ((Ik : ℤ) : ℂ) ≠ 0 := by norm_num [Ik]
@@ -7345,9 +7493,11 @@ theorem hrepI : MaedaT3Weight134.T3 = Polynomial.aeval MaedaWeight134.T2
   aeval_div_witness MaedaWeight134.T2 MaedaT3Weight134.T3 wp Ik hIkc op_id.symm
 
 /-- `minpoly ℂ T₂` has degree `n` (the charpoly is irreducible). -/
-theorem minpoly_nd : (minpoly ℂ MaedaWeight134.T2).natDegree = 10 := by
+theorem minpoly_nd : (minpoly ℂ (MaedaWeight134.T2 : Module.End ℂ
+    (CuspForm 𝒮ℒ ((134 : ℕ) : ℤ)))).natDegree = 10 := by
   rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
-    MaedaWeight134.charpoly_T2 MaedaWeight134.maeda, Polynomial.natDegree_map]
+    MaedaWeight134.charpoly_T2 MaedaWeight134.maeda, MaedaWeight134.charpoly_T2,
+    Polynomial.natDegree_map_eq_of_injective (RingHom.injective_int _)]
   exact MaedaWeight134.P_natDegree
 
 /-- The Bézout witness `∑ bez j * N j + bezc * D = 1` (balanced extgcd tree, G1 strategy). -/

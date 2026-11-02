@@ -177,3 +177,24 @@ resume point: make it possible to continue cold.
   (G2 closure); the per-weight instantiations are G4 emissions.
 * Scratch kept untracked as the generator's reference emission; deleted at
   G4 close.
+
+### 2026-11-03 — operator resume: G4 weights file GREEN
+
+* Resumed after the OPERATOR HALT on the operator's go.  Compile-before-
+  planning: the inherited uncommitted generator + regenerated
+  `HeckeIndexWeights.lean` (the predecessor's in-flight fixes for the
+  minpoly_nd rw-chain / dim-2 det_A / T2 names / imports) were built
+  verbatim first.
+* Run 1 (8 GiB request): 48 errors, ONE cause — `Polynomial.natDegree_map`
+  needs `[IsSimpleRing R]` at the pin, and ℤ is not; every other inherited
+  fix held.  (Peak tree 7.99 GiB tripped the OOM flag, exit 42; module
+  itself 6.74 GiB.)  488 s.
+* Fix (generator): `Polynomial.natDegree_map_eq_of_injective
+  (RingHom.injective_int _)`; regenerated, `--check` byte-identical,
+  48-line diff.
+* Run 2 (16 GiB request): **GREEN — 0 err / 0 warn**, 340 s, module peak
+  6.84 GiB (tree 8.07 GiB; below the 16 GiB alert line).  54 weights,
+  48 full `D ∣ I_k` composites.  tauceti audit clean.
+* Scratch `HeckeIndexScratch.lean` deleted (G3 reference emission, absorbed).
+* Remaining for G4: combined `AxCheckDecide` on the merged root; research-log
+  draft.
