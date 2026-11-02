@@ -108,6 +108,8 @@ jobs:
             MathProof.ModularForms.MaedaT3GaloisDim10Weights
             MathProof.ModularForms.MaedaT2GaloisSmallWeights
             MathProof.ModularForms.HeckeField
+            MathProof.ModularForms.HeckeFieldDim2
+            MathProof.ModularForms.HeckeFieldRat
       # NOTE: no docgen-action step.  It re-ran the whole build a second time
       # and built the doc-gen4 tool and its Mathlib dependency from source
       # (30+ min per push), and its deploy step would overwrite the

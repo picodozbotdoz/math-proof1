@@ -112,6 +112,11 @@ defaultTargets = [
   # HeckeField: the generic eigenvalue-containment layer (every T₂-eigenvalue
   # carries T-eigenvalues into ℚ(μ)) — Mathlib-only imports, 28 s / 3.9 GiB.
   "MathProof.ModularForms.HeckeField",
+  # Iteration 23 b3: dim-2 integrality (every T_m an integer polynomial in T₂
+  # at the six dim-2 weights; 45 s / 6.3 GiB) and the generic T-Rat layer
+  # (every T_m ∈ ℚ[T₂]; 46 s / 4.7 GiB) — all parents are default targets.
+  "MathProof.ModularForms.HeckeFieldDim2",
+  "MathProof.ModularForms.HeckeFieldRat",
 ]
 
 [leanOptions]

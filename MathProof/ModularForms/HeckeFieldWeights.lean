@@ -1,14 +1,26 @@
 import MathProof.ModularForms.HeckeField
+import MathProof.ModularForms.HeckeFieldRat
+import MathProof.ModularForms.HeckeGeneratedByT2Weights
 import MathProof.ModularForms.HeckeRationalWeights
 import MathProof.ModularForms.HeckeRationalSmallWeights
 
 /-!
-# Hecke fields: per-weight eigenvalue containment `K ⊆ ℚ(λ₂)`
+# Hecke fields: per-weight rationality and eigenvalue containment
 
-The m = 3 slice of the T-Field track: for each of the 54 verified Maeda
-weights, every nonzero `T₂`-eigenform with eigenvalue `λ₂` is a `T₃`-
-eigenform whose eigenvalue lies in the eigenfield
-`IntermediateField.adjoin ℚ ({λ₂} : Set ℂ)` (read: `ℚ(λ₂)`).
+For each of the 54 verified Maeda weights:
+
+* **T-Rat** (`heckeTM_rat_weightKK`): for every `m ≥ 1`, `T_m` is a
+  rational polynomial in `T₂` — `HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon`
+  on the landed echelon data of `MaedaT3WeightKK` (`fb`, `Atab`, `hzero`,
+  `hone`, `hA`, `finrank_eq`), with the two per-weight inputs `hfi` (the
+  echelon basis has integer coefficients for all `m`: the landed `c_i`
+  `seqP` bridges) and `hmin` (`minpoly T₂` has degree `dim S_k`: the landed
+  charpoly + Maeda irreducibility of `HeckeGeneratedByT2Weights`'s parents);
+* **T-Field** (`eigen_TM_mem_adjoin_weightKK`): every nonzero
+  `T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform (every `m ≥ 1`)
+  with eigenvalue in the eigenfield `IntermediateField.adjoin ℚ ({λ₂} : Set ℂ)`
+  (read: `ℚ(λ₂)`);
+* the earlier m = 3 slice (`eigen_T3_mem_adjoin_weightKK`), kept as landed.
 
 Each instance is the generic spectral lemma
 `HeckeField.eigenvalue_mem_adjoin` applied to the landed rationality
@@ -38,6 +50,43 @@ theorem eigen_T3_mem_adjoin_weight24 {v : CuspForm 𝒮ℒ ((24 : ℕ) : ℤ)} (
       heckeTPₗ ((24 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight24.heckeT3_eq_aeval_rat_weight24 hv hμ
 
+/-- The echelon basis at weight 24 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 2 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight24.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight24.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight24.c2 m⟩
+  | _ + 2, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_24 = 2` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((24 : ℕ) : ℤ) 2)).natDegree = 2 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight24.heckeT2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((24 : ℕ) : ℤ)))).natDegree = 2
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight24.charpoly_heckeT2
+    MaedaWeight24.maeda_weight24,
+    LinearMap.charpoly_natDegree, MaedaT3Weight24.finrank_eq]
+
+/-- **T-Rat at weight 24**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight24 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((24 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((24 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight24.finrank_eq
+    MaedaT3Weight24.fb MaedaT3Weight24.Atab MaedaT3Weight24.hzero MaedaT3Weight24.hone
+    MaedaT3Weight24.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 24, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight24 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((24 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((24 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((24 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight24 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
+
 end HeckeFieldWeight24
 
 /-! ### Weight 28 (dim 2) -/
@@ -50,6 +99,43 @@ theorem eigen_T3_mem_adjoin_weight28 {v : CuspForm 𝒮ℒ ((28 : ℕ) : ℤ)} (
     ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
       heckeTPₗ ((28 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight28.heckeT3_eq_aeval_rat_weight28 hv hμ
+
+/-- The echelon basis at weight 28 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 2 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight28.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight28.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight28.c2 m⟩
+  | _ + 2, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_28 = 2` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((28 : ℕ) : ℤ) 2)).natDegree = 2 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight28.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((28 : ℕ) : ℤ)))).natDegree = 2
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight28.charpoly_T2
+    MaedaWeight28.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight28.finrank_eq]
+
+/-- **T-Rat at weight 28**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight28 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((28 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((28 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight28.finrank_eq
+    MaedaT3Weight28.fb MaedaT3Weight28.Atab MaedaT3Weight28.hzero MaedaT3Weight28.hone
+    MaedaT3Weight28.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 28, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight28 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((28 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((28 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((28 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight28 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
 
 end HeckeFieldWeight28
 
@@ -64,6 +150,43 @@ theorem eigen_T3_mem_adjoin_weight30 {v : CuspForm 𝒮ℒ ((30 : ℕ) : ℤ)} (
       heckeTPₗ ((30 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight30.heckeT3_eq_aeval_rat_weight30 hv hμ
 
+/-- The echelon basis at weight 30 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 2 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight30.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight30.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight30.c2 m⟩
+  | _ + 2, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_30 = 2` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((30 : ℕ) : ℤ) 2)).natDegree = 2 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight30.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((30 : ℕ) : ℤ)))).natDegree = 2
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight30.charpoly_T2
+    MaedaWeight30.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight30.finrank_eq]
+
+/-- **T-Rat at weight 30**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight30 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((30 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((30 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight30.finrank_eq
+    MaedaT3Weight30.fb MaedaT3Weight30.Atab MaedaT3Weight30.hzero MaedaT3Weight30.hone
+    MaedaT3Weight30.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 30, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight30 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((30 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((30 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((30 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight30 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
+
 end HeckeFieldWeight30
 
 /-! ### Weight 32 (dim 2) -/
@@ -76,6 +199,43 @@ theorem eigen_T3_mem_adjoin_weight32 {v : CuspForm 𝒮ℒ ((32 : ℕ) : ℤ)} (
     ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
       heckeTPₗ ((32 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight32.heckeT3_eq_aeval_rat_weight32 hv hμ
+
+/-- The echelon basis at weight 32 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 2 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight32.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight32.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight32.c2 m⟩
+  | _ + 2, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_32 = 2` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((32 : ℕ) : ℤ) 2)).natDegree = 2 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight32.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((32 : ℕ) : ℤ)))).natDegree = 2
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight32.charpoly_T2
+    MaedaWeight32.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight32.finrank_eq]
+
+/-- **T-Rat at weight 32**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight32 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((32 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((32 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight32.finrank_eq
+    MaedaT3Weight32.fb MaedaT3Weight32.Atab MaedaT3Weight32.hzero MaedaT3Weight32.hone
+    MaedaT3Weight32.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 32, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight32 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((32 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((32 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((32 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight32 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
 
 end HeckeFieldWeight32
 
@@ -90,6 +250,43 @@ theorem eigen_T3_mem_adjoin_weight34 {v : CuspForm 𝒮ℒ ((34 : ℕ) : ℤ)} (
       heckeTPₗ ((34 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight34.heckeT3_eq_aeval_rat_weight34 hv hμ
 
+/-- The echelon basis at weight 34 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 2 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight34.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight34.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight34.c2 m⟩
+  | _ + 2, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_34 = 2` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((34 : ℕ) : ℤ) 2)).natDegree = 2 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight34.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((34 : ℕ) : ℤ)))).natDegree = 2
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight34.charpoly_T2
+    MaedaWeight34.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight34.finrank_eq]
+
+/-- **T-Rat at weight 34**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight34 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((34 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((34 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight34.finrank_eq
+    MaedaT3Weight34.fb MaedaT3Weight34.Atab MaedaT3Weight34.hzero MaedaT3Weight34.hone
+    MaedaT3Weight34.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 34, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight34 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((34 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((34 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((34 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight34 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
+
 end HeckeFieldWeight34
 
 /-! ### Weight 36 (dim 3) -/
@@ -102,6 +299,44 @@ theorem eigen_T3_mem_adjoin_weight36 {v : CuspForm 𝒮ℒ ((36 : ℕ) : ℤ)} (
     ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
       heckeTPₗ ((36 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight36.heckeT3_eq_aeval_rat_weight36 hv hμ
+
+/-- The echelon basis at weight 36 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 3 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight36.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight36.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight36.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight36.c3 m⟩
+  | _ + 3, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_36 = 3` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((36 : ℕ) : ℤ) 2)).natDegree = 3 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight36.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((36 : ℕ) : ℤ)))).natDegree = 3
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight36.charpoly_T2
+    MaedaWeight36.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight36.finrank_eq]
+
+/-- **T-Rat at weight 36**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight36 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((36 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((36 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight36.finrank_eq
+    MaedaT3Weight36.fb MaedaT3Weight36.Atab MaedaT3Weight36.hzero MaedaT3Weight36.hone
+    MaedaT3Weight36.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 36, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight36 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((36 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((36 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((36 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight36 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
 
 end HeckeFieldWeight36
 
@@ -116,6 +351,43 @@ theorem eigen_T3_mem_adjoin_weight38 {v : CuspForm 𝒮ℒ ((38 : ℕ) : ℤ)} (
       heckeTPₗ ((38 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight38.heckeT3_eq_aeval_rat_weight38 hv hμ
 
+/-- The echelon basis at weight 38 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 2 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight38.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight38.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight38.c2 m⟩
+  | _ + 2, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_38 = 2` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((38 : ℕ) : ℤ) 2)).natDegree = 2 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight38.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((38 : ℕ) : ℤ)))).natDegree = 2
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight38.charpoly_T2
+    MaedaWeight38.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight38.finrank_eq]
+
+/-- **T-Rat at weight 38**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight38 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((38 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((38 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight38.finrank_eq
+    MaedaT3Weight38.fb MaedaT3Weight38.Atab MaedaT3Weight38.hzero MaedaT3Weight38.hone
+    MaedaT3Weight38.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 38, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight38 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((38 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((38 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((38 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight38 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
+
 end HeckeFieldWeight38
 
 /-! ### Weight 40 (dim 3) -/
@@ -128,6 +400,44 @@ theorem eigen_T3_mem_adjoin_weight40 {v : CuspForm 𝒮ℒ ((40 : ℕ) : ℤ)} (
     ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
       heckeTPₗ ((40 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight40.heckeT3_eq_aeval_rat_weight40 hv hμ
+
+/-- The echelon basis at weight 40 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 3 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight40.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight40.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight40.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight40.c3 m⟩
+  | _ + 3, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_40 = 3` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((40 : ℕ) : ℤ) 2)).natDegree = 3 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight40.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((40 : ℕ) : ℤ)))).natDegree = 3
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight40.charpoly_T2
+    MaedaWeight40.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight40.finrank_eq]
+
+/-- **T-Rat at weight 40**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight40 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((40 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((40 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight40.finrank_eq
+    MaedaT3Weight40.fb MaedaT3Weight40.Atab MaedaT3Weight40.hzero MaedaT3Weight40.hone
+    MaedaT3Weight40.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 40, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight40 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((40 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((40 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((40 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight40 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
 
 end HeckeFieldWeight40
 
@@ -142,6 +452,44 @@ theorem eigen_T3_mem_adjoin_weight42 {v : CuspForm 𝒮ℒ ((42 : ℕ) : ℤ)} (
       heckeTPₗ ((42 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight42.heckeT3_eq_aeval_rat_weight42 hv hμ
 
+/-- The echelon basis at weight 42 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 3 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight42.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight42.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight42.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight42.c3 m⟩
+  | _ + 3, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_42 = 3` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((42 : ℕ) : ℤ) 2)).natDegree = 3 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight42.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((42 : ℕ) : ℤ)))).natDegree = 3
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight42.charpoly_T2
+    MaedaWeight42.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight42.finrank_eq]
+
+/-- **T-Rat at weight 42**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight42 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((42 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((42 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight42.finrank_eq
+    MaedaT3Weight42.fb MaedaT3Weight42.Atab MaedaT3Weight42.hzero MaedaT3Weight42.hone
+    MaedaT3Weight42.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 42, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight42 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((42 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((42 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((42 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight42 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
+
 end HeckeFieldWeight42
 
 /-! ### Weight 44 (dim 3) -/
@@ -154,6 +502,44 @@ theorem eigen_T3_mem_adjoin_weight44 {v : CuspForm 𝒮ℒ ((44 : ℕ) : ℤ)} (
     ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
       heckeTPₗ ((44 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight44.heckeT3_eq_aeval_rat_weight44 hv hμ
+
+/-- The echelon basis at weight 44 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 3 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight44.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight44.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight44.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight44.c3 m⟩
+  | _ + 3, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_44 = 3` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((44 : ℕ) : ℤ) 2)).natDegree = 3 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight44.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((44 : ℕ) : ℤ)))).natDegree = 3
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight44.charpoly_T2
+    MaedaWeight44.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight44.finrank_eq]
+
+/-- **T-Rat at weight 44**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight44 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((44 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((44 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight44.finrank_eq
+    MaedaT3Weight44.fb MaedaT3Weight44.Atab MaedaT3Weight44.hzero MaedaT3Weight44.hone
+    MaedaT3Weight44.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 44, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight44 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((44 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((44 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((44 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight44 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
 
 end HeckeFieldWeight44
 
@@ -168,6 +554,44 @@ theorem eigen_T3_mem_adjoin_weight46 {v : CuspForm 𝒮ℒ ((46 : ℕ) : ℤ)} (
       heckeTPₗ ((46 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight46.heckeT3_eq_aeval_rat_weight46 hv hμ
 
+/-- The echelon basis at weight 46 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 3 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight46.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight46.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight46.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight46.c3 m⟩
+  | _ + 3, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_46 = 3` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((46 : ℕ) : ℤ) 2)).natDegree = 3 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight46.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((46 : ℕ) : ℤ)))).natDegree = 3
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight46.charpoly_T2
+    MaedaWeight46.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight46.finrank_eq]
+
+/-- **T-Rat at weight 46**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight46 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((46 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((46 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight46.finrank_eq
+    MaedaT3Weight46.fb MaedaT3Weight46.Atab MaedaT3Weight46.hzero MaedaT3Weight46.hone
+    MaedaT3Weight46.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 46, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight46 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((46 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((46 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((46 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight46 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
+
 end HeckeFieldWeight46
 
 /-! ### Weight 48 (dim 4) -/
@@ -180,6 +604,45 @@ theorem eigen_T3_mem_adjoin_weight48 {v : CuspForm 𝒮ℒ ((48 : ℕ) : ℤ)} (
     ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
       heckeTPₗ ((48 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight48.heckeT3_eq_aeval_rat_weight48 hv hμ
+
+/-- The echelon basis at weight 48 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 4 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight48.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight48.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight48.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight48.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight48.c4 m⟩
+  | _ + 4, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_48 = 4` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((48 : ℕ) : ℤ) 2)).natDegree = 4 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight48.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((48 : ℕ) : ℤ)))).natDegree = 4
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight48.charpoly_T2
+    MaedaWeight48.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight48.finrank_eq]
+
+/-- **T-Rat at weight 48**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight48 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((48 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((48 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight48.finrank_eq
+    MaedaT3Weight48.fb MaedaT3Weight48.Atab MaedaT3Weight48.hzero MaedaT3Weight48.hone
+    MaedaT3Weight48.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 48, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight48 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((48 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((48 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((48 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight48 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
 
 end HeckeFieldWeight48
 
@@ -194,6 +657,44 @@ theorem eigen_T3_mem_adjoin_weight50 {v : CuspForm 𝒮ℒ ((50 : ℕ) : ℤ)} (
       heckeTPₗ ((50 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight50.heckeT3_eq_aeval_rat_weight50 hv hμ
 
+/-- The echelon basis at weight 50 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 3 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight50.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight50.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight50.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight50.c3 m⟩
+  | _ + 3, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_50 = 3` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((50 : ℕ) : ℤ) 2)).natDegree = 3 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight50.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((50 : ℕ) : ℤ)))).natDegree = 3
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight50.charpoly_T2
+    MaedaWeight50.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight50.finrank_eq]
+
+/-- **T-Rat at weight 50**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight50 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((50 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((50 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight50.finrank_eq
+    MaedaT3Weight50.fb MaedaT3Weight50.Atab MaedaT3Weight50.hzero MaedaT3Weight50.hone
+    MaedaT3Weight50.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 50, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight50 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((50 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((50 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((50 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight50 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
+
 end HeckeFieldWeight50
 
 /-! ### Weight 52 (dim 4) -/
@@ -206,6 +707,45 @@ theorem eigen_T3_mem_adjoin_weight52 {v : CuspForm 𝒮ℒ ((52 : ℕ) : ℤ)} (
     ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
       heckeTPₗ ((52 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight52.heckeT3_eq_aeval_rat_weight52 hv hμ
+
+/-- The echelon basis at weight 52 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 4 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight52.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight52.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight52.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight52.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight52.c4 m⟩
+  | _ + 4, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_52 = 4` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((52 : ℕ) : ℤ) 2)).natDegree = 4 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight52.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((52 : ℕ) : ℤ)))).natDegree = 4
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight52.charpoly_T2
+    MaedaWeight52.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight52.finrank_eq]
+
+/-- **T-Rat at weight 52**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight52 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((52 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((52 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight52.finrank_eq
+    MaedaT3Weight52.fb MaedaT3Weight52.Atab MaedaT3Weight52.hzero MaedaT3Weight52.hone
+    MaedaT3Weight52.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 52, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight52 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((52 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((52 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((52 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight52 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
 
 end HeckeFieldWeight52
 
@@ -220,6 +760,45 @@ theorem eigen_T3_mem_adjoin_weight54 {v : CuspForm 𝒮ℒ ((54 : ℕ) : ℤ)} (
       heckeTPₗ ((54 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight54.heckeT3_eq_aeval_rat_weight54 hv hμ
 
+/-- The echelon basis at weight 54 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 4 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight54.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight54.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight54.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight54.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight54.c4 m⟩
+  | _ + 4, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_54 = 4` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((54 : ℕ) : ℤ) 2)).natDegree = 4 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight54.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((54 : ℕ) : ℤ)))).natDegree = 4
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight54.charpoly_T2
+    MaedaWeight54.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight54.finrank_eq]
+
+/-- **T-Rat at weight 54**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight54 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((54 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((54 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight54.finrank_eq
+    MaedaT3Weight54.fb MaedaT3Weight54.Atab MaedaT3Weight54.hzero MaedaT3Weight54.hone
+    MaedaT3Weight54.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 54, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight54 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((54 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((54 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((54 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight54 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
+
 end HeckeFieldWeight54
 
 /-! ### Weight 56 (dim 4) -/
@@ -232,6 +811,45 @@ theorem eigen_T3_mem_adjoin_weight56 {v : CuspForm 𝒮ℒ ((56 : ℕ) : ℤ)} (
     ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
       heckeTPₗ ((56 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight56.heckeT3_eq_aeval_rat_weight56 hv hμ
+
+/-- The echelon basis at weight 56 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 4 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight56.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight56.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight56.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight56.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight56.c4 m⟩
+  | _ + 4, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_56 = 4` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((56 : ℕ) : ℤ) 2)).natDegree = 4 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight56.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((56 : ℕ) : ℤ)))).natDegree = 4
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight56.charpoly_T2
+    MaedaWeight56.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight56.finrank_eq]
+
+/-- **T-Rat at weight 56**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight56 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((56 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((56 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight56.finrank_eq
+    MaedaT3Weight56.fb MaedaT3Weight56.Atab MaedaT3Weight56.hzero MaedaT3Weight56.hone
+    MaedaT3Weight56.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 56, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight56 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((56 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((56 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((56 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight56 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
 
 end HeckeFieldWeight56
 
@@ -246,6 +864,45 @@ theorem eigen_T3_mem_adjoin_weight58 {v : CuspForm 𝒮ℒ ((58 : ℕ) : ℤ)} (
       heckeTPₗ ((58 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight58.heckeT3_eq_aeval_rat_weight58 hv hμ
 
+/-- The echelon basis at weight 58 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 4 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight58.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight58.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight58.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight58.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight58.c4 m⟩
+  | _ + 4, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_58 = 4` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((58 : ℕ) : ℤ) 2)).natDegree = 4 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight58.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((58 : ℕ) : ℤ)))).natDegree = 4
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight58.charpoly_T2
+    MaedaWeight58.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight58.finrank_eq]
+
+/-- **T-Rat at weight 58**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight58 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((58 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((58 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight58.finrank_eq
+    MaedaT3Weight58.fb MaedaT3Weight58.Atab MaedaT3Weight58.hzero MaedaT3Weight58.hone
+    MaedaT3Weight58.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 58, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight58 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((58 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((58 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((58 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight58 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
+
 end HeckeFieldWeight58
 
 /-! ### Weight 60 (dim 5) -/
@@ -258,6 +915,46 @@ theorem eigen_T3_mem_adjoin_weight60 {v : CuspForm 𝒮ℒ ((60 : ℕ) : ℤ)} (
     ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
       heckeTPₗ ((60 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight60.heckeT3_eq_aeval_rat_weight60 hv hμ
+
+/-- The echelon basis at weight 60 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 5 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight60.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight60.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight60.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight60.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight60.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight60.c5 m⟩
+  | _ + 5, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_60 = 5` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((60 : ℕ) : ℤ) 2)).natDegree = 5 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight60.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((60 : ℕ) : ℤ)))).natDegree = 5
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight60.charpoly_T2
+    MaedaWeight60.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight60.finrank_eq]
+
+/-- **T-Rat at weight 60**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight60 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((60 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((60 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight60.finrank_eq
+    MaedaT3Weight60.fb MaedaT3Weight60.Atab MaedaT3Weight60.hzero MaedaT3Weight60.hone
+    MaedaT3Weight60.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 60, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight60 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((60 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((60 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((60 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight60 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
 
 end HeckeFieldWeight60
 
@@ -272,6 +969,45 @@ theorem eigen_T3_mem_adjoin_weight62 {v : CuspForm 𝒮ℒ ((62 : ℕ) : ℤ)} (
       heckeTPₗ ((62 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight62.heckeT3_eq_aeval_rat_weight62 hv hμ
 
+/-- The echelon basis at weight 62 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 4 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight62.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight62.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight62.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight62.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight62.c4 m⟩
+  | _ + 4, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_62 = 4` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((62 : ℕ) : ℤ) 2)).natDegree = 4 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight62.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((62 : ℕ) : ℤ)))).natDegree = 4
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight62.charpoly_T2
+    MaedaWeight62.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight62.finrank_eq]
+
+/-- **T-Rat at weight 62**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight62 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((62 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((62 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight62.finrank_eq
+    MaedaT3Weight62.fb MaedaT3Weight62.Atab MaedaT3Weight62.hzero MaedaT3Weight62.hone
+    MaedaT3Weight62.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 62, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight62 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((62 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((62 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((62 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight62 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
+
 end HeckeFieldWeight62
 
 /-! ### Weight 64 (dim 5) -/
@@ -284,6 +1020,46 @@ theorem eigen_T3_mem_adjoin_weight64 {v : CuspForm 𝒮ℒ ((64 : ℕ) : ℤ)} (
     ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
       heckeTPₗ ((64 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight64.heckeT3_eq_aeval_rat_weight64 hv hμ
+
+/-- The echelon basis at weight 64 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 5 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight64.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight64.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight64.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight64.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight64.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight64.c5 m⟩
+  | _ + 5, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_64 = 5` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((64 : ℕ) : ℤ) 2)).natDegree = 5 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight64.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((64 : ℕ) : ℤ)))).natDegree = 5
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight64.charpoly_T2
+    MaedaWeight64.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight64.finrank_eq]
+
+/-- **T-Rat at weight 64**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight64 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((64 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((64 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight64.finrank_eq
+    MaedaT3Weight64.fb MaedaT3Weight64.Atab MaedaT3Weight64.hzero MaedaT3Weight64.hone
+    MaedaT3Weight64.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 64, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight64 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((64 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((64 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((64 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight64 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
 
 end HeckeFieldWeight64
 
@@ -298,6 +1074,46 @@ theorem eigen_T3_mem_adjoin_weight66 {v : CuspForm 𝒮ℒ ((66 : ℕ) : ℤ)} (
       heckeTPₗ ((66 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight66.heckeT3_eq_aeval_rat_weight66 hv hμ
 
+/-- The echelon basis at weight 66 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 5 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight66.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight66.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight66.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight66.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight66.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight66.c5 m⟩
+  | _ + 5, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_66 = 5` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((66 : ℕ) : ℤ) 2)).natDegree = 5 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight66.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((66 : ℕ) : ℤ)))).natDegree = 5
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight66.charpoly_T2
+    MaedaWeight66.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight66.finrank_eq]
+
+/-- **T-Rat at weight 66**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight66 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((66 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((66 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight66.finrank_eq
+    MaedaT3Weight66.fb MaedaT3Weight66.Atab MaedaT3Weight66.hzero MaedaT3Weight66.hone
+    MaedaT3Weight66.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 66, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight66 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((66 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((66 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((66 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight66 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
+
 end HeckeFieldWeight66
 
 /-! ### Weight 68 (dim 5) -/
@@ -310,6 +1126,46 @@ theorem eigen_T3_mem_adjoin_weight68 {v : CuspForm 𝒮ℒ ((68 : ℕ) : ℤ)} (
     ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
       heckeTPₗ ((68 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight68.heckeT3_eq_aeval_rat_weight68 hv hμ
+
+/-- The echelon basis at weight 68 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 5 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight68.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight68.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight68.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight68.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight68.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight68.c5 m⟩
+  | _ + 5, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_68 = 5` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((68 : ℕ) : ℤ) 2)).natDegree = 5 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight68.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((68 : ℕ) : ℤ)))).natDegree = 5
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight68.charpoly_T2
+    MaedaWeight68.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight68.finrank_eq]
+
+/-- **T-Rat at weight 68**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight68 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((68 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((68 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight68.finrank_eq
+    MaedaT3Weight68.fb MaedaT3Weight68.Atab MaedaT3Weight68.hzero MaedaT3Weight68.hone
+    MaedaT3Weight68.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 68, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight68 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((68 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((68 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((68 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight68 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
 
 end HeckeFieldWeight68
 
@@ -324,6 +1180,46 @@ theorem eigen_T3_mem_adjoin_weight70 {v : CuspForm 𝒮ℒ ((70 : ℕ) : ℤ)} (
       heckeTPₗ ((70 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight70.heckeT3_eq_aeval_rat_weight70 hv hμ
 
+/-- The echelon basis at weight 70 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 5 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight70.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight70.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight70.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight70.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight70.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight70.c5 m⟩
+  | _ + 5, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_70 = 5` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((70 : ℕ) : ℤ) 2)).natDegree = 5 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight70.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((70 : ℕ) : ℤ)))).natDegree = 5
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight70.charpoly_T2
+    MaedaWeight70.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight70.finrank_eq]
+
+/-- **T-Rat at weight 70**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight70 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((70 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((70 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight70.finrank_eq
+    MaedaT3Weight70.fb MaedaT3Weight70.Atab MaedaT3Weight70.hzero MaedaT3Weight70.hone
+    MaedaT3Weight70.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 70, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight70 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((70 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((70 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((70 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight70 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
+
 end HeckeFieldWeight70
 
 /-! ### Weight 72 (dim 6) -/
@@ -336,6 +1232,47 @@ theorem eigen_T3_mem_adjoin_weight72 {v : CuspForm 𝒮ℒ ((72 : ℕ) : ℤ)} (
     ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
       heckeTPₗ ((72 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight72.heckeT3_eq_aeval_rat_weight72 hv hμ
+
+/-- The echelon basis at weight 72 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 6 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight72.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight72.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight72.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight72.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight72.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight72.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight72.c6 m⟩
+  | _ + 6, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_72 = 6` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((72 : ℕ) : ℤ) 2)).natDegree = 6 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight72.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((72 : ℕ) : ℤ)))).natDegree = 6
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight72.charpoly_T2
+    MaedaWeight72.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight72.finrank_eq]
+
+/-- **T-Rat at weight 72**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight72 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((72 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((72 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight72.finrank_eq
+    MaedaT3Weight72.fb MaedaT3Weight72.Atab MaedaT3Weight72.hzero MaedaT3Weight72.hone
+    MaedaT3Weight72.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 72, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight72 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((72 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((72 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((72 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight72 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
 
 end HeckeFieldWeight72
 
@@ -350,6 +1287,46 @@ theorem eigen_T3_mem_adjoin_weight74 {v : CuspForm 𝒮ℒ ((74 : ℕ) : ℤ)} (
       heckeTPₗ ((74 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight74.heckeT3_eq_aeval_rat_weight74 hv hμ
 
+/-- The echelon basis at weight 74 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 5 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight74.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight74.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight74.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight74.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight74.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight74.c5 m⟩
+  | _ + 5, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_74 = 5` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((74 : ℕ) : ℤ) 2)).natDegree = 5 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight74.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((74 : ℕ) : ℤ)))).natDegree = 5
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight74.charpoly_T2
+    MaedaWeight74.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight74.finrank_eq]
+
+/-- **T-Rat at weight 74**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight74 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((74 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((74 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight74.finrank_eq
+    MaedaT3Weight74.fb MaedaT3Weight74.Atab MaedaT3Weight74.hzero MaedaT3Weight74.hone
+    MaedaT3Weight74.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 74, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight74 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((74 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((74 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((74 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight74 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
+
 end HeckeFieldWeight74
 
 /-! ### Weight 76 (dim 6) -/
@@ -362,6 +1339,47 @@ theorem eigen_T3_mem_adjoin_weight76 {v : CuspForm 𝒮ℒ ((76 : ℕ) : ℤ)} (
     ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
       heckeTPₗ ((76 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight76.heckeT3_eq_aeval_rat_weight76 hv hμ
+
+/-- The echelon basis at weight 76 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 6 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight76.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight76.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight76.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight76.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight76.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight76.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight76.c6 m⟩
+  | _ + 6, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_76 = 6` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((76 : ℕ) : ℤ) 2)).natDegree = 6 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight76.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((76 : ℕ) : ℤ)))).natDegree = 6
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight76.charpoly_T2
+    MaedaWeight76.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight76.finrank_eq]
+
+/-- **T-Rat at weight 76**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight76 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((76 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((76 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight76.finrank_eq
+    MaedaT3Weight76.fb MaedaT3Weight76.Atab MaedaT3Weight76.hzero MaedaT3Weight76.hone
+    MaedaT3Weight76.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 76, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight76 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((76 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((76 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((76 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight76 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
 
 end HeckeFieldWeight76
 
@@ -376,6 +1394,47 @@ theorem eigen_T3_mem_adjoin_weight78 {v : CuspForm 𝒮ℒ ((78 : ℕ) : ℤ)} (
       heckeTPₗ ((78 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight78.heckeT3_eq_aeval_rat_weight78 hv hμ
 
+/-- The echelon basis at weight 78 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 6 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight78.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight78.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight78.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight78.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight78.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight78.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight78.c6 m⟩
+  | _ + 6, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_78 = 6` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((78 : ℕ) : ℤ) 2)).natDegree = 6 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight78.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((78 : ℕ) : ℤ)))).natDegree = 6
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight78.charpoly_T2
+    MaedaWeight78.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight78.finrank_eq]
+
+/-- **T-Rat at weight 78**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight78 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((78 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((78 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight78.finrank_eq
+    MaedaT3Weight78.fb MaedaT3Weight78.Atab MaedaT3Weight78.hzero MaedaT3Weight78.hone
+    MaedaT3Weight78.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 78, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight78 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((78 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((78 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((78 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight78 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
+
 end HeckeFieldWeight78
 
 /-! ### Weight 80 (dim 6) -/
@@ -388,6 +1447,47 @@ theorem eigen_T3_mem_adjoin_weight80 {v : CuspForm 𝒮ℒ ((80 : ℕ) : ℤ)} (
     ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
       heckeTPₗ ((80 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight80.heckeT3_eq_aeval_rat_weight80 hv hμ
+
+/-- The echelon basis at weight 80 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 6 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight80.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight80.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight80.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight80.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight80.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight80.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight80.c6 m⟩
+  | _ + 6, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_80 = 6` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((80 : ℕ) : ℤ) 2)).natDegree = 6 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight80.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((80 : ℕ) : ℤ)))).natDegree = 6
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight80.charpoly_T2
+    MaedaWeight80.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight80.finrank_eq]
+
+/-- **T-Rat at weight 80**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight80 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((80 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((80 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight80.finrank_eq
+    MaedaT3Weight80.fb MaedaT3Weight80.Atab MaedaT3Weight80.hzero MaedaT3Weight80.hone
+    MaedaT3Weight80.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 80, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight80 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((80 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((80 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((80 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight80 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
 
 end HeckeFieldWeight80
 
@@ -402,6 +1502,47 @@ theorem eigen_T3_mem_adjoin_weight82 {v : CuspForm 𝒮ℒ ((82 : ℕ) : ℤ)} (
       heckeTPₗ ((82 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight82.heckeT3_eq_aeval_rat_weight82 hv hμ
 
+/-- The echelon basis at weight 82 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 6 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight82.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight82.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight82.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight82.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight82.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight82.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight82.c6 m⟩
+  | _ + 6, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_82 = 6` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((82 : ℕ) : ℤ) 2)).natDegree = 6 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight82.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((82 : ℕ) : ℤ)))).natDegree = 6
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight82.charpoly_T2
+    MaedaWeight82.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight82.finrank_eq]
+
+/-- **T-Rat at weight 82**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight82 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((82 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((82 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight82.finrank_eq
+    MaedaT3Weight82.fb MaedaT3Weight82.Atab MaedaT3Weight82.hzero MaedaT3Weight82.hone
+    MaedaT3Weight82.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 82, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight82 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((82 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((82 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((82 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight82 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
+
 end HeckeFieldWeight82
 
 /-! ### Weight 84 (dim 7) -/
@@ -414,6 +1555,48 @@ theorem eigen_T3_mem_adjoin_weight84 {v : CuspForm 𝒮ℒ ((84 : ℕ) : ℤ)} (
     ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
       heckeTPₗ ((84 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight84.heckeT3_eq_aeval_rat_weight84 hv hμ
+
+/-- The echelon basis at weight 84 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 7 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight84.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight84.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight84.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight84.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight84.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight84.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight84.c6 m⟩
+  | 6, _, m => ⟨_, MaedaT3Weight84.c7 m⟩
+  | _ + 7, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_84 = 7` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((84 : ℕ) : ℤ) 2)).natDegree = 7 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight84.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((84 : ℕ) : ℤ)))).natDegree = 7
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight84.charpoly_T2
+    MaedaWeight84.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight84.finrank_eq]
+
+/-- **T-Rat at weight 84**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight84 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((84 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((84 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight84.finrank_eq
+    MaedaT3Weight84.fb MaedaT3Weight84.Atab MaedaT3Weight84.hzero MaedaT3Weight84.hone
+    MaedaT3Weight84.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 84, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight84 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((84 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((84 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((84 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight84 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
 
 end HeckeFieldWeight84
 
@@ -428,6 +1611,47 @@ theorem eigen_T3_mem_adjoin_weight86 {v : CuspForm 𝒮ℒ ((86 : ℕ) : ℤ)} (
       heckeTPₗ ((86 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight86.heckeT3_eq_aeval_rat_weight86 hv hμ
 
+/-- The echelon basis at weight 86 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 6 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight86.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight86.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight86.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight86.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight86.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight86.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight86.c6 m⟩
+  | _ + 6, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_86 = 6` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((86 : ℕ) : ℤ) 2)).natDegree = 6 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight86.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((86 : ℕ) : ℤ)))).natDegree = 6
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight86.charpoly_T2
+    MaedaWeight86.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight86.finrank_eq]
+
+/-- **T-Rat at weight 86**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight86 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((86 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((86 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight86.finrank_eq
+    MaedaT3Weight86.fb MaedaT3Weight86.Atab MaedaT3Weight86.hzero MaedaT3Weight86.hone
+    MaedaT3Weight86.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 86, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight86 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((86 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((86 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((86 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight86 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
+
 end HeckeFieldWeight86
 
 /-! ### Weight 88 (dim 7) -/
@@ -440,6 +1664,48 @@ theorem eigen_T3_mem_adjoin_weight88 {v : CuspForm 𝒮ℒ ((88 : ℕ) : ℤ)} (
     ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
       heckeTPₗ ((88 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight88.heckeT3_eq_aeval_rat_weight88 hv hμ
+
+/-- The echelon basis at weight 88 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 7 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight88.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight88.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight88.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight88.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight88.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight88.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight88.c6 m⟩
+  | 6, _, m => ⟨_, MaedaT3Weight88.c7 m⟩
+  | _ + 7, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_88 = 7` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((88 : ℕ) : ℤ) 2)).natDegree = 7 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight88.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((88 : ℕ) : ℤ)))).natDegree = 7
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight88.charpoly_T2
+    MaedaWeight88.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight88.finrank_eq]
+
+/-- **T-Rat at weight 88**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight88 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((88 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((88 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight88.finrank_eq
+    MaedaT3Weight88.fb MaedaT3Weight88.Atab MaedaT3Weight88.hzero MaedaT3Weight88.hone
+    MaedaT3Weight88.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 88, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight88 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((88 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((88 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((88 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight88 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
 
 end HeckeFieldWeight88
 
@@ -454,6 +1720,48 @@ theorem eigen_T3_mem_adjoin_weight90 {v : CuspForm 𝒮ℒ ((90 : ℕ) : ℤ)} (
       heckeTPₗ ((90 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight90.heckeT3_eq_aeval_rat_weight90 hv hμ
 
+/-- The echelon basis at weight 90 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 7 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight90.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight90.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight90.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight90.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight90.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight90.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight90.c6 m⟩
+  | 6, _, m => ⟨_, MaedaT3Weight90.c7 m⟩
+  | _ + 7, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_90 = 7` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((90 : ℕ) : ℤ) 2)).natDegree = 7 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight90.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((90 : ℕ) : ℤ)))).natDegree = 7
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight90.charpoly_T2
+    MaedaWeight90.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight90.finrank_eq]
+
+/-- **T-Rat at weight 90**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight90 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((90 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((90 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight90.finrank_eq
+    MaedaT3Weight90.fb MaedaT3Weight90.Atab MaedaT3Weight90.hzero MaedaT3Weight90.hone
+    MaedaT3Weight90.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 90, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight90 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((90 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((90 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((90 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight90 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
+
 end HeckeFieldWeight90
 
 /-! ### Weight 92 (dim 7) -/
@@ -466,6 +1774,48 @@ theorem eigen_T3_mem_adjoin_weight92 {v : CuspForm 𝒮ℒ ((92 : ℕ) : ℤ)} (
     ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
       heckeTPₗ ((92 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight92.heckeT3_eq_aeval_rat_weight92 hv hμ
+
+/-- The echelon basis at weight 92 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 7 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight92.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight92.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight92.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight92.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight92.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight92.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight92.c6 m⟩
+  | 6, _, m => ⟨_, MaedaT3Weight92.c7 m⟩
+  | _ + 7, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_92 = 7` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((92 : ℕ) : ℤ) 2)).natDegree = 7 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight92.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((92 : ℕ) : ℤ)))).natDegree = 7
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight92.charpoly_T2
+    MaedaWeight92.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight92.finrank_eq]
+
+/-- **T-Rat at weight 92**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight92 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((92 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((92 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight92.finrank_eq
+    MaedaT3Weight92.fb MaedaT3Weight92.Atab MaedaT3Weight92.hzero MaedaT3Weight92.hone
+    MaedaT3Weight92.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 92, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight92 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((92 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((92 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((92 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight92 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
 
 end HeckeFieldWeight92
 
@@ -480,6 +1830,48 @@ theorem eigen_T3_mem_adjoin_weight94 {v : CuspForm 𝒮ℒ ((94 : ℕ) : ℤ)} (
       heckeTPₗ ((94 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight94.heckeT3_eq_aeval_rat_weight94 hv hμ
 
+/-- The echelon basis at weight 94 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 7 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight94.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight94.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight94.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight94.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight94.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight94.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight94.c6 m⟩
+  | 6, _, m => ⟨_, MaedaT3Weight94.c7 m⟩
+  | _ + 7, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_94 = 7` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((94 : ℕ) : ℤ) 2)).natDegree = 7 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight94.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((94 : ℕ) : ℤ)))).natDegree = 7
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight94.charpoly_T2
+    MaedaWeight94.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight94.finrank_eq]
+
+/-- **T-Rat at weight 94**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight94 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((94 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((94 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight94.finrank_eq
+    MaedaT3Weight94.fb MaedaT3Weight94.Atab MaedaT3Weight94.hzero MaedaT3Weight94.hone
+    MaedaT3Weight94.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 94, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight94 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((94 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((94 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((94 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight94 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
+
 end HeckeFieldWeight94
 
 /-! ### Weight 96 (dim 8) -/
@@ -492,6 +1884,49 @@ theorem eigen_T3_mem_adjoin_weight96 {v : CuspForm 𝒮ℒ ((96 : ℕ) : ℤ)} (
     ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
       heckeTPₗ ((96 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight96.heckeT3_eq_aeval_rat_weight96 hv hμ
+
+/-- The echelon basis at weight 96 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 8 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight96.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight96.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight96.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight96.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight96.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight96.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight96.c6 m⟩
+  | 6, _, m => ⟨_, MaedaT3Weight96.c7 m⟩
+  | 7, _, m => ⟨_, MaedaT3Weight96.c8 m⟩
+  | _ + 8, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_96 = 8` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((96 : ℕ) : ℤ) 2)).natDegree = 8 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight96.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((96 : ℕ) : ℤ)))).natDegree = 8
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight96.charpoly_T2
+    MaedaWeight96.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight96.finrank_eq]
+
+/-- **T-Rat at weight 96**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight96 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((96 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((96 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight96.finrank_eq
+    MaedaT3Weight96.fb MaedaT3Weight96.Atab MaedaT3Weight96.hzero MaedaT3Weight96.hone
+    MaedaT3Weight96.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 96, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight96 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((96 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((96 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((96 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight96 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
 
 end HeckeFieldWeight96
 
@@ -506,6 +1941,48 @@ theorem eigen_T3_mem_adjoin_weight98 {v : CuspForm 𝒮ℒ ((98 : ℕ) : ℤ)} (
       heckeTPₗ ((98 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight98.heckeT3_eq_aeval_rat_weight98 hv hμ
 
+/-- The echelon basis at weight 98 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 7 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight98.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight98.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight98.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight98.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight98.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight98.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight98.c6 m⟩
+  | 6, _, m => ⟨_, MaedaT3Weight98.c7 m⟩
+  | _ + 7, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_98 = 7` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((98 : ℕ) : ℤ) 2)).natDegree = 7 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight98.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((98 : ℕ) : ℤ)))).natDegree = 7
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight98.charpoly_T2
+    MaedaWeight98.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight98.finrank_eq]
+
+/-- **T-Rat at weight 98**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight98 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((98 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((98 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight98.finrank_eq
+    MaedaT3Weight98.fb MaedaT3Weight98.Atab MaedaT3Weight98.hzero MaedaT3Weight98.hone
+    MaedaT3Weight98.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 98, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight98 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((98 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((98 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((98 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight98 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
+
 end HeckeFieldWeight98
 
 /-! ### Weight 100 (dim 8) -/
@@ -518,6 +1995,49 @@ theorem eigen_T3_mem_adjoin_weight100 {v : CuspForm 𝒮ℒ ((100 : ℕ) : ℤ)}
     ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
       heckeTPₗ ((100 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight100.heckeT3_eq_aeval_rat_weight100 hv hμ
+
+/-- The echelon basis at weight 100 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 8 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight100.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight100.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight100.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight100.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight100.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight100.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight100.c6 m⟩
+  | 6, _, m => ⟨_, MaedaT3Weight100.c7 m⟩
+  | 7, _, m => ⟨_, MaedaT3Weight100.c8 m⟩
+  | _ + 8, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_100 = 8` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((100 : ℕ) : ℤ) 2)).natDegree = 8 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight100.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((100 : ℕ) : ℤ)))).natDegree = 8
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight100.charpoly_T2
+    MaedaWeight100.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight100.finrank_eq]
+
+/-- **T-Rat at weight 100**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight100 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((100 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((100 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight100.finrank_eq
+    MaedaT3Weight100.fb MaedaT3Weight100.Atab MaedaT3Weight100.hzero MaedaT3Weight100.hone
+    MaedaT3Weight100.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 100, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight100 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((100 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((100 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((100 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight100 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
 
 end HeckeFieldWeight100
 
@@ -532,6 +2052,49 @@ theorem eigen_T3_mem_adjoin_weight102 {v : CuspForm 𝒮ℒ ((102 : ℕ) : ℤ)}
       heckeTPₗ ((102 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight102.heckeT3_eq_aeval_rat_weight102 hv hμ
 
+/-- The echelon basis at weight 102 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 8 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight102.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight102.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight102.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight102.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight102.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight102.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight102.c6 m⟩
+  | 6, _, m => ⟨_, MaedaT3Weight102.c7 m⟩
+  | 7, _, m => ⟨_, MaedaT3Weight102.c8 m⟩
+  | _ + 8, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_102 = 8` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((102 : ℕ) : ℤ) 2)).natDegree = 8 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight102.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((102 : ℕ) : ℤ)))).natDegree = 8
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight102.charpoly_T2
+    MaedaWeight102.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight102.finrank_eq]
+
+/-- **T-Rat at weight 102**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight102 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((102 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((102 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight102.finrank_eq
+    MaedaT3Weight102.fb MaedaT3Weight102.Atab MaedaT3Weight102.hzero MaedaT3Weight102.hone
+    MaedaT3Weight102.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 102, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight102 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((102 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((102 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((102 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight102 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
+
 end HeckeFieldWeight102
 
 /-! ### Weight 104 (dim 8) -/
@@ -544,6 +2107,49 @@ theorem eigen_T3_mem_adjoin_weight104 {v : CuspForm 𝒮ℒ ((104 : ℕ) : ℤ)}
     ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
       heckeTPₗ ((104 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight104.heckeT3_eq_aeval_rat_weight104 hv hμ
+
+/-- The echelon basis at weight 104 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 8 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight104.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight104.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight104.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight104.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight104.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight104.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight104.c6 m⟩
+  | 6, _, m => ⟨_, MaedaT3Weight104.c7 m⟩
+  | 7, _, m => ⟨_, MaedaT3Weight104.c8 m⟩
+  | _ + 8, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_104 = 8` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((104 : ℕ) : ℤ) 2)).natDegree = 8 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight104.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((104 : ℕ) : ℤ)))).natDegree = 8
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight104.charpoly_T2
+    MaedaWeight104.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight104.finrank_eq]
+
+/-- **T-Rat at weight 104**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight104 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((104 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((104 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight104.finrank_eq
+    MaedaT3Weight104.fb MaedaT3Weight104.Atab MaedaT3Weight104.hzero MaedaT3Weight104.hone
+    MaedaT3Weight104.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 104, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight104 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((104 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((104 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((104 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight104 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
 
 end HeckeFieldWeight104
 
@@ -558,6 +2164,49 @@ theorem eigen_T3_mem_adjoin_weight106 {v : CuspForm 𝒮ℒ ((106 : ℕ) : ℤ)}
       heckeTPₗ ((106 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight106.heckeT3_eq_aeval_rat_weight106 hv hμ
 
+/-- The echelon basis at weight 106 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 8 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight106.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight106.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight106.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight106.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight106.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight106.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight106.c6 m⟩
+  | 6, _, m => ⟨_, MaedaT3Weight106.c7 m⟩
+  | 7, _, m => ⟨_, MaedaT3Weight106.c8 m⟩
+  | _ + 8, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_106 = 8` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((106 : ℕ) : ℤ) 2)).natDegree = 8 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight106.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((106 : ℕ) : ℤ)))).natDegree = 8
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight106.charpoly_T2
+    MaedaWeight106.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight106.finrank_eq]
+
+/-- **T-Rat at weight 106**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight106 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((106 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((106 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight106.finrank_eq
+    MaedaT3Weight106.fb MaedaT3Weight106.Atab MaedaT3Weight106.hzero MaedaT3Weight106.hone
+    MaedaT3Weight106.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 106, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight106 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((106 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((106 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((106 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight106 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
+
 end HeckeFieldWeight106
 
 /-! ### Weight 108 (dim 9) -/
@@ -570,6 +2219,50 @@ theorem eigen_T3_mem_adjoin_weight108 {v : CuspForm 𝒮ℒ ((108 : ℕ) : ℤ)}
     ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
       heckeTPₗ ((108 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight108.heckeT3_eq_aeval_rat_weight108 hv hμ
+
+/-- The echelon basis at weight 108 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 9 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight108.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight108.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight108.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight108.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight108.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight108.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight108.c6 m⟩
+  | 6, _, m => ⟨_, MaedaT3Weight108.c7 m⟩
+  | 7, _, m => ⟨_, MaedaT3Weight108.c8 m⟩
+  | 8, _, m => ⟨_, MaedaT3Weight108.c9 m⟩
+  | _ + 9, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_108 = 9` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((108 : ℕ) : ℤ) 2)).natDegree = 9 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight108.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((108 : ℕ) : ℤ)))).natDegree = 9
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight108.charpoly_T2
+    MaedaWeight108.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight108.finrank_eq]
+
+/-- **T-Rat at weight 108**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight108 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((108 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((108 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight108.finrank_eq
+    MaedaT3Weight108.fb MaedaT3Weight108.Atab MaedaT3Weight108.hzero MaedaT3Weight108.hone
+    MaedaT3Weight108.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 108, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight108 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((108 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((108 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((108 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight108 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
 
 end HeckeFieldWeight108
 
@@ -584,6 +2277,49 @@ theorem eigen_T3_mem_adjoin_weight110 {v : CuspForm 𝒮ℒ ((110 : ℕ) : ℤ)}
       heckeTPₗ ((110 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight110.heckeT3_eq_aeval_rat_weight110 hv hμ
 
+/-- The echelon basis at weight 110 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 8 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight110.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight110.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight110.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight110.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight110.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight110.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight110.c6 m⟩
+  | 6, _, m => ⟨_, MaedaT3Weight110.c7 m⟩
+  | 7, _, m => ⟨_, MaedaT3Weight110.c8 m⟩
+  | _ + 8, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_110 = 8` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((110 : ℕ) : ℤ) 2)).natDegree = 8 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight110.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((110 : ℕ) : ℤ)))).natDegree = 8
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight110.charpoly_T2
+    MaedaWeight110.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight110.finrank_eq]
+
+/-- **T-Rat at weight 110**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight110 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((110 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((110 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight110.finrank_eq
+    MaedaT3Weight110.fb MaedaT3Weight110.Atab MaedaT3Weight110.hzero MaedaT3Weight110.hone
+    MaedaT3Weight110.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 110, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight110 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((110 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((110 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((110 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight110 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
+
 end HeckeFieldWeight110
 
 /-! ### Weight 112 (dim 9) -/
@@ -596,6 +2332,50 @@ theorem eigen_T3_mem_adjoin_weight112 {v : CuspForm 𝒮ℒ ((112 : ℕ) : ℤ)}
     ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
       heckeTPₗ ((112 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight112.heckeT3_eq_aeval_rat_weight112 hv hμ
+
+/-- The echelon basis at weight 112 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 9 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight112.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight112.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight112.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight112.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight112.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight112.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight112.c6 m⟩
+  | 6, _, m => ⟨_, MaedaT3Weight112.c7 m⟩
+  | 7, _, m => ⟨_, MaedaT3Weight112.c8 m⟩
+  | 8, _, m => ⟨_, MaedaT3Weight112.c9 m⟩
+  | _ + 9, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_112 = 9` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((112 : ℕ) : ℤ) 2)).natDegree = 9 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight112.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((112 : ℕ) : ℤ)))).natDegree = 9
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight112.charpoly_T2
+    MaedaWeight112.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight112.finrank_eq]
+
+/-- **T-Rat at weight 112**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight112 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((112 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((112 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight112.finrank_eq
+    MaedaT3Weight112.fb MaedaT3Weight112.Atab MaedaT3Weight112.hzero MaedaT3Weight112.hone
+    MaedaT3Weight112.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 112, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight112 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((112 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((112 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((112 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight112 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
 
 end HeckeFieldWeight112
 
@@ -610,6 +2390,50 @@ theorem eigen_T3_mem_adjoin_weight114 {v : CuspForm 𝒮ℒ ((114 : ℕ) : ℤ)}
       heckeTPₗ ((114 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight114.heckeT3_eq_aeval_rat_weight114 hv hμ
 
+/-- The echelon basis at weight 114 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 9 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight114.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight114.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight114.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight114.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight114.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight114.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight114.c6 m⟩
+  | 6, _, m => ⟨_, MaedaT3Weight114.c7 m⟩
+  | 7, _, m => ⟨_, MaedaT3Weight114.c8 m⟩
+  | 8, _, m => ⟨_, MaedaT3Weight114.c9 m⟩
+  | _ + 9, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_114 = 9` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((114 : ℕ) : ℤ) 2)).natDegree = 9 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight114.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((114 : ℕ) : ℤ)))).natDegree = 9
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight114.charpoly_T2
+    MaedaWeight114.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight114.finrank_eq]
+
+/-- **T-Rat at weight 114**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight114 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((114 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((114 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight114.finrank_eq
+    MaedaT3Weight114.fb MaedaT3Weight114.Atab MaedaT3Weight114.hzero MaedaT3Weight114.hone
+    MaedaT3Weight114.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 114, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight114 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((114 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((114 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((114 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight114 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
+
 end HeckeFieldWeight114
 
 /-! ### Weight 116 (dim 9) -/
@@ -622,6 +2446,50 @@ theorem eigen_T3_mem_adjoin_weight116 {v : CuspForm 𝒮ℒ ((116 : ℕ) : ℤ)}
     ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
       heckeTPₗ ((116 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight116.heckeT3_eq_aeval_rat_weight116 hv hμ
+
+/-- The echelon basis at weight 116 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 9 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight116.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight116.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight116.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight116.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight116.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight116.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight116.c6 m⟩
+  | 6, _, m => ⟨_, MaedaT3Weight116.c7 m⟩
+  | 7, _, m => ⟨_, MaedaT3Weight116.c8 m⟩
+  | 8, _, m => ⟨_, MaedaT3Weight116.c9 m⟩
+  | _ + 9, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_116 = 9` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((116 : ℕ) : ℤ) 2)).natDegree = 9 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight116.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((116 : ℕ) : ℤ)))).natDegree = 9
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight116.charpoly_T2
+    MaedaWeight116.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight116.finrank_eq]
+
+/-- **T-Rat at weight 116**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight116 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((116 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((116 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight116.finrank_eq
+    MaedaT3Weight116.fb MaedaT3Weight116.Atab MaedaT3Weight116.hzero MaedaT3Weight116.hone
+    MaedaT3Weight116.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 116, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight116 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((116 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((116 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((116 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight116 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
 
 end HeckeFieldWeight116
 
@@ -636,6 +2504,50 @@ theorem eigen_T3_mem_adjoin_weight118 {v : CuspForm 𝒮ℒ ((118 : ℕ) : ℤ)}
       heckeTPₗ ((118 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight118.heckeT3_eq_aeval_rat_weight118 hv hμ
 
+/-- The echelon basis at weight 118 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 9 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight118.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight118.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight118.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight118.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight118.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight118.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight118.c6 m⟩
+  | 6, _, m => ⟨_, MaedaT3Weight118.c7 m⟩
+  | 7, _, m => ⟨_, MaedaT3Weight118.c8 m⟩
+  | 8, _, m => ⟨_, MaedaT3Weight118.c9 m⟩
+  | _ + 9, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_118 = 9` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((118 : ℕ) : ℤ) 2)).natDegree = 9 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight118.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((118 : ℕ) : ℤ)))).natDegree = 9
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight118.charpoly_T2
+    MaedaWeight118.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight118.finrank_eq]
+
+/-- **T-Rat at weight 118**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight118 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((118 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((118 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight118.finrank_eq
+    MaedaT3Weight118.fb MaedaT3Weight118.Atab MaedaT3Weight118.hzero MaedaT3Weight118.hone
+    MaedaT3Weight118.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 118, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight118 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((118 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((118 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((118 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight118 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
+
 end HeckeFieldWeight118
 
 /-! ### Weight 120 (dim 10) -/
@@ -648,6 +2560,51 @@ theorem eigen_T3_mem_adjoin_weight120 {v : CuspForm 𝒮ℒ ((120 : ℕ) : ℤ)}
     ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
       heckeTPₗ ((120 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight120.heckeT3_eq_aeval_rat_weight120 hv hμ
+
+/-- The echelon basis at weight 120 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 10 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight120.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight120.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight120.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight120.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight120.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight120.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight120.c6 m⟩
+  | 6, _, m => ⟨_, MaedaT3Weight120.c7 m⟩
+  | 7, _, m => ⟨_, MaedaT3Weight120.c8 m⟩
+  | 8, _, m => ⟨_, MaedaT3Weight120.c9 m⟩
+  | 9, _, m => ⟨_, MaedaT3Weight120.c10 m⟩
+  | _ + 10, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_120 = 10` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((120 : ℕ) : ℤ) 2)).natDegree = 10 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight120.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((120 : ℕ) : ℤ)))).natDegree = 10
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight120.charpoly_T2
+    MaedaWeight120.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight120.finrank_eq]
+
+/-- **T-Rat at weight 120**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight120 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((120 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((120 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight120.finrank_eq
+    MaedaT3Weight120.fb MaedaT3Weight120.Atab MaedaT3Weight120.hzero MaedaT3Weight120.hone
+    MaedaT3Weight120.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 120, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight120 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((120 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((120 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((120 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight120 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
 
 end HeckeFieldWeight120
 
@@ -662,6 +2619,50 @@ theorem eigen_T3_mem_adjoin_weight122 {v : CuspForm 𝒮ℒ ((122 : ℕ) : ℤ)}
       heckeTPₗ ((122 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight122.heckeT3_eq_aeval_rat_weight122 hv hμ
 
+/-- The echelon basis at weight 122 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 9 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight122.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight122.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight122.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight122.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight122.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight122.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight122.c6 m⟩
+  | 6, _, m => ⟨_, MaedaT3Weight122.c7 m⟩
+  | 7, _, m => ⟨_, MaedaT3Weight122.c8 m⟩
+  | 8, _, m => ⟨_, MaedaT3Weight122.c9 m⟩
+  | _ + 9, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_122 = 9` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((122 : ℕ) : ℤ) 2)).natDegree = 9 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight122.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((122 : ℕ) : ℤ)))).natDegree = 9
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight122.charpoly_T2
+    MaedaWeight122.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight122.finrank_eq]
+
+/-- **T-Rat at weight 122**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight122 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((122 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((122 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight122.finrank_eq
+    MaedaT3Weight122.fb MaedaT3Weight122.Atab MaedaT3Weight122.hzero MaedaT3Weight122.hone
+    MaedaT3Weight122.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 122, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight122 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((122 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((122 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((122 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight122 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
+
 end HeckeFieldWeight122
 
 /-! ### Weight 124 (dim 10) -/
@@ -674,6 +2675,51 @@ theorem eigen_T3_mem_adjoin_weight124 {v : CuspForm 𝒮ℒ ((124 : ℕ) : ℤ)}
     ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
       heckeTPₗ ((124 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight124.heckeT3_eq_aeval_rat_weight124 hv hμ
+
+/-- The echelon basis at weight 124 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 10 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight124.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight124.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight124.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight124.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight124.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight124.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight124.c6 m⟩
+  | 6, _, m => ⟨_, MaedaT3Weight124.c7 m⟩
+  | 7, _, m => ⟨_, MaedaT3Weight124.c8 m⟩
+  | 8, _, m => ⟨_, MaedaT3Weight124.c9 m⟩
+  | 9, _, m => ⟨_, MaedaT3Weight124.c10 m⟩
+  | _ + 10, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_124 = 10` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((124 : ℕ) : ℤ) 2)).natDegree = 10 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight124.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((124 : ℕ) : ℤ)))).natDegree = 10
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight124.charpoly_T2
+    MaedaWeight124.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight124.finrank_eq]
+
+/-- **T-Rat at weight 124**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight124 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((124 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((124 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight124.finrank_eq
+    MaedaT3Weight124.fb MaedaT3Weight124.Atab MaedaT3Weight124.hzero MaedaT3Weight124.hone
+    MaedaT3Weight124.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 124, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight124 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((124 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((124 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((124 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight124 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
 
 end HeckeFieldWeight124
 
@@ -688,6 +2734,51 @@ theorem eigen_T3_mem_adjoin_weight126 {v : CuspForm 𝒮ℒ ((126 : ℕ) : ℤ)}
       heckeTPₗ ((126 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight126.heckeT3_eq_aeval_rat_weight126 hv hμ
 
+/-- The echelon basis at weight 126 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 10 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight126.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight126.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight126.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight126.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight126.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight126.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight126.c6 m⟩
+  | 6, _, m => ⟨_, MaedaT3Weight126.c7 m⟩
+  | 7, _, m => ⟨_, MaedaT3Weight126.c8 m⟩
+  | 8, _, m => ⟨_, MaedaT3Weight126.c9 m⟩
+  | 9, _, m => ⟨_, MaedaT3Weight126.c10 m⟩
+  | _ + 10, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_126 = 10` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((126 : ℕ) : ℤ) 2)).natDegree = 10 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight126.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((126 : ℕ) : ℤ)))).natDegree = 10
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight126.charpoly_T2
+    MaedaWeight126.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight126.finrank_eq]
+
+/-- **T-Rat at weight 126**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight126 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((126 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((126 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight126.finrank_eq
+    MaedaT3Weight126.fb MaedaT3Weight126.Atab MaedaT3Weight126.hzero MaedaT3Weight126.hone
+    MaedaT3Weight126.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 126, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight126 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((126 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((126 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((126 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight126 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
+
 end HeckeFieldWeight126
 
 /-! ### Weight 128 (dim 10) -/
@@ -700,6 +2791,51 @@ theorem eigen_T3_mem_adjoin_weight128 {v : CuspForm 𝒮ℒ ((128 : ℕ) : ℤ)}
     ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
       heckeTPₗ ((128 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight128.heckeT3_eq_aeval_rat_weight128 hv hμ
+
+/-- The echelon basis at weight 128 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 10 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight128.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight128.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight128.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight128.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight128.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight128.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight128.c6 m⟩
+  | 6, _, m => ⟨_, MaedaT3Weight128.c7 m⟩
+  | 7, _, m => ⟨_, MaedaT3Weight128.c8 m⟩
+  | 8, _, m => ⟨_, MaedaT3Weight128.c9 m⟩
+  | 9, _, m => ⟨_, MaedaT3Weight128.c10 m⟩
+  | _ + 10, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_128 = 10` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((128 : ℕ) : ℤ) 2)).natDegree = 10 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight128.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((128 : ℕ) : ℤ)))).natDegree = 10
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight128.charpoly_T2
+    MaedaWeight128.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight128.finrank_eq]
+
+/-- **T-Rat at weight 128**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight128 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((128 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((128 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight128.finrank_eq
+    MaedaT3Weight128.fb MaedaT3Weight128.Atab MaedaT3Weight128.hzero MaedaT3Weight128.hone
+    MaedaT3Weight128.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 128, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight128 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((128 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((128 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((128 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight128 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
 
 end HeckeFieldWeight128
 
@@ -714,6 +2850,51 @@ theorem eigen_T3_mem_adjoin_weight130 {v : CuspForm 𝒮ℒ ((130 : ℕ) : ℤ)}
       heckeTPₗ ((130 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight130.heckeT3_eq_aeval_rat_weight130 hv hμ
 
+/-- The echelon basis at weight 130 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 10 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight130.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight130.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight130.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight130.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight130.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight130.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight130.c6 m⟩
+  | 6, _, m => ⟨_, MaedaT3Weight130.c7 m⟩
+  | 7, _, m => ⟨_, MaedaT3Weight130.c8 m⟩
+  | 8, _, m => ⟨_, MaedaT3Weight130.c9 m⟩
+  | 9, _, m => ⟨_, MaedaT3Weight130.c10 m⟩
+  | _ + 10, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_130 = 10` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((130 : ℕ) : ℤ) 2)).natDegree = 10 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight130.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((130 : ℕ) : ℤ)))).natDegree = 10
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight130.charpoly_T2
+    MaedaWeight130.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight130.finrank_eq]
+
+/-- **T-Rat at weight 130**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight130 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((130 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((130 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight130.finrank_eq
+    MaedaT3Weight130.fb MaedaT3Weight130.Atab MaedaT3Weight130.hzero MaedaT3Weight130.hone
+    MaedaT3Weight130.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 130, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight130 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((130 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((130 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((130 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight130 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
+
 end HeckeFieldWeight130
 
 /-! ### Weight 134 (dim 10) -/
@@ -726,5 +2907,50 @@ theorem eigen_T3_mem_adjoin_weight134 {v : CuspForm 𝒮ℒ ((134 : ℕ) : ℤ)}
     ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
       heckeTPₗ ((134 : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight134.heckeT3_eq_aeval_rat_weight134 hv hμ
+
+/-- The echelon basis at weight 134 has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < 10 → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight134.fb i)).coeff m = (z : ℂ)
+  | 0, _, m => ⟨_, MaedaT3Weight134.c1 m⟩
+  | 1, _, m => ⟨_, MaedaT3Weight134.c2 m⟩
+  | 2, _, m => ⟨_, MaedaT3Weight134.c3 m⟩
+  | 3, _, m => ⟨_, MaedaT3Weight134.c4 m⟩
+  | 4, _, m => ⟨_, MaedaT3Weight134.c5 m⟩
+  | 5, _, m => ⟨_, MaedaT3Weight134.c6 m⟩
+  | 6, _, m => ⟨_, MaedaT3Weight134.c7 m⟩
+  | 7, _, m => ⟨_, MaedaT3Weight134.c8 m⟩
+  | 8, _, m => ⟨_, MaedaT3Weight134.c9 m⟩
+  | 9, _, m => ⟨_, MaedaT3Weight134.c10 m⟩
+  | _ + 10, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_134 = 10` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM ((134 : ℕ) : ℤ) 2)).natDegree = 10 := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ (MaedaWeight134.T2 :
+    Module.End ℂ (CuspForm 𝒮ℒ ((134 : ℕ) : ℤ)))).natDegree = 10
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    MaedaWeight134.charpoly_T2
+    MaedaWeight134.maeda,
+    LinearMap.charpoly_natDegree, MaedaT3Weight134.finrank_eq]
+
+/-- **T-Rat at weight 134**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight134 (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM ((134 : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM ((134 : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight134.finrank_eq
+    MaedaT3Weight134.fb MaedaT3Weight134.Atab MaedaT3Weight134.hzero MaedaT3Weight134.hone
+    MaedaT3Weight134.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight 134, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight134 (m : ℕ) (hm : 1 ≤ m)
+    {v : CuspForm 𝒮ℒ ((134 : ℕ) : ℤ)} (hv : v ≠ 0)
+    {μ : ℂ} (hμ : heckeTPₗ ((134 : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({μ} : Set ℂ),
+      HeckeTM.heckeTM ((134 : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight134 m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
 
 end HeckeFieldWeight134

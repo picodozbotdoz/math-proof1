@@ -199,3 +199,34 @@ Zero decides, no set_option.  First Modal run next.
 * Run 4: **GREEN — 0 err / 0 warn**, 45 s, 6.33 GiB.  tauceti audit clean.
 * Next: G4 registration (trio candidate — all imports are trio/CI), then
   G2 T-Rat once b2 (hecke-index) G4 is green.
+
+### 2026-11-03 (session 3, cont.) — G2 T-Rat + G3 T-Field (all m) + G4 CLOSED
+
+* Merged b2 (`impl/iteration23/hecke-index`, e3f1e55 then a32ebd9 for its
+  audit fix) — the documented upstream dependency (blueprint G2).
+  Conflicts: `mrun.sh` (ours), `MathProof.lean` (union).
+* NEW `HeckeFieldRat.lean` (generic, 230 lines; 3 runs → GREEN 0/0, 46 s,
+  4.74 GiB): `millerTop_int`/`miller_int` (integer echelon coefficients ⇒
+  integer Miller coefficients; the reduction table is read off the family
+  via `hA`, so no separate table integrality), `heckeTM_eq_aeval_rat`
+  (every `T_m ∈ ℚ[T₂]`, NO per-m certificate) and the echelon wrapper.
+  Route (DEVIATION from the blueprint's "Cramer assembly" wording only in
+  how `det Z ≠ 0` is obtained): `T₂^i ∈ 𝕋` gives an integer `Z`; the spans
+  of `{T₂^i}` and `{T_j}` coincide by dimension (`linearIndependent_pow` +
+  `hecke_independent`), so `Z` has a complex left inverse ⇒ `det Z ≠ 0`;
+  then `cramer_inverse` + `hecke_dual` + `aeval_div_witness`.
+  Pin notes: after `choose`, a `Fin n → Fin n → ℤ` has no `.det` — wrap as
+  `Matrix.of`; `dif_pos` deprecated → `dite_eq_left`.
+* `gen_hecke_field.py` extended (the blueprint's "one-line swap", done as
+  four theorems per weight): `hfi` (from the landed `c_i` seqP bridges),
+  `hmin` (charpoly + Maeda names parsed from `HeckeGeneratedByT2Weights`,
+  `charpoly_natDegree` = `finrank_eq` — uniform for all 54, no dependency on
+  `HeckeIndexWeights`), `heckeTM_rat_weightKK`, `eigen_TM_mem_adjoin_weightKK`.
+  The m = 3 slice is kept.  `--check` byte-identical.  Build run 1 GREEN
+  0/0, 45 s, 5.50 GiB.
+* G4 registration: `HeckeFieldDim2`, `HeckeFieldRat` → trio;
+  `HeckeFieldWeights` stays root-only.  tauceti audit clean (3 files);
+  combined `AxCheckDecide`: 1360 certs, 0 beyond propext (8497 jobs).
+* Blueprint objectives: T-Gal ✓ (G1), T-Rat ✓ all 54, T-Field ✓ all 54
+  (every m), dim-2 integrality ✓ (six weights; weight 24 operator form).
+  Field-equality packaging: not attempted (blueprint stretch).

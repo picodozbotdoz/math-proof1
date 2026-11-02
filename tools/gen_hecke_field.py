@@ -47,17 +47,33 @@ BIG = [(72, 6), (76, 6), (78, 6), (80, 6), (82, 6), (84, 7), (86, 6),
        (116, 9), (118, 9), (120, 10), (122, 9), (124, 10), (126, 10),
        (128, 10), (130, 10), (134, 10)]
 
+GENT2_FILE = ROOT / "MathProof/ModularForms/HeckeGeneratedByT2Weights.lean"
+T3_FILES = [ROOT / "MathProof/ModularForms/MaedaT3SmallWeights.lean"] + [
+    ROOT / f"MathProof/ModularForms/MaedaT3Dim{d}Weights.lean" for d in (6, 7, 8, 9, 10)]
+
 HEADER = """import MathProof.ModularForms.HeckeField
+import MathProof.ModularForms.HeckeFieldRat
+import MathProof.ModularForms.HeckeGeneratedByT2Weights
 import MathProof.ModularForms.HeckeRationalWeights
 import MathProof.ModularForms.HeckeRationalSmallWeights
 
 /-!
-# Hecke fields: per-weight eigenvalue containment `K ⊆ ℚ(λ₂)`
+# Hecke fields: per-weight rationality and eigenvalue containment
 
-The m = 3 slice of the T-Field track: for each of the 54 verified Maeda
-weights, every nonzero `T₂`-eigenform with eigenvalue `λ₂` is a `T₃`-
-eigenform whose eigenvalue lies in the eigenfield
-`IntermediateField.adjoin ℚ ({λ₂} : Set ℂ)` (read: `ℚ(λ₂)`).
+For each of the 54 verified Maeda weights:
+
+* **T-Rat** (`heckeTM_rat_weightKK`): for every `m ≥ 1`, `T_m` is a
+  rational polynomial in `T₂` — `HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon`
+  on the landed echelon data of `MaedaT3WeightKK` (`fb`, `Atab`, `hzero`,
+  `hone`, `hA`, `finrank_eq`), with the two per-weight inputs `hfi` (the
+  echelon basis has integer coefficients for all `m`: the landed `c_i`
+  `seqP` bridges) and `hmin` (`minpoly T₂` has degree `dim S_k`: the landed
+  charpoly + Maeda irreducibility of `HeckeGeneratedByT2Weights`'s parents);
+* **T-Field** (`eigen_TM_mem_adjoin_weightKK`): every nonzero
+  `T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform (every `m ≥ 1`)
+  with eigenvalue in the eigenfield `IntermediateField.adjoin ℚ ({λ₂} : Set ℂ)`
+  (read: `ℚ(λ₂)`);
+* the earlier m = 3 slice (`eigen_T3_mem_adjoin_weightKK`), kept as landed.
 
 Each instance is the generic spectral lemma
 `HeckeField.eigenvalue_mem_adjoin` applied to the landed rationality
@@ -89,8 +105,79 @@ theorem eigen_T3_mem_adjoin_weight{w} {{v : CuspForm 𝒮ℒ (({w} : ℕ) : ℤ)
       heckeTPₗ (({w} : ℕ) : ℤ) Nat.prime_three v = w • v :=
   HeckeField.eigenvalue_mem_adjoin HeckeRatWeight{w}.heckeT3_eq_aeval_rat_weight{w} hv hμ
 
+/-- The echelon basis at weight {w} has integer `q`-coefficients (all `m`). -/
+theorem hfi : ∀ i : ℕ, i < {d} → ∀ m : ℕ,
+    ∃ z : ℤ, (qExpansion 1 (MaedaT3Weight{w}.fb i)).coeff m = (z : ℂ)
+{hfi_cases}
+  | _ + {d}, h, _ => absurd h (by omega)
+
+/-- `minpoly T₂` has degree `dim S_{w} = {d}` (Maeda: charpoly irreducible). -/
+theorem hmin : (minpoly ℂ (HeckeTM.heckeTM (({w} : ℕ) : ℤ) 2)).natDegree = {d} := by
+  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]
+  change (minpoly ℂ ({t2} :
+    Module.End ℂ (CuspForm 𝒮ℒ (({w} : ℕ) : ℤ)))).natDegree = {d}
+  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible
+    {cp}
+    {mae},
+    LinearMap.charpoly_natDegree, MaedaT3Weight{w}.finrank_eq]
+
+/-- **T-Rat at weight {w}**: every `T_m` (`m ≥ 1`) is a rational polynomial in
+`T₂`. -/
+theorem heckeTM_rat_weight{w} (m : ℕ) (hm : 1 ≤ m) :
+    ∃ Q : ℚ[X], HeckeTM.heckeTM (({w} : ℕ) : ℤ) m
+      = Polynomial.aeval (HeckeTM.heckeTM (({w} : ℕ) : ℤ) 2) (Q.map (algebraMap ℚ ℂ)) :=
+  HeckeFieldRat.heckeTM_eq_aeval_rat_of_echelon (by norm_num) MaedaT3Weight{w}.finrank_eq
+    MaedaT3Weight{w}.fb MaedaT3Weight{w}.Atab MaedaT3Weight{w}.hzero MaedaT3Weight{w}.hone
+    MaedaT3Weight{w}.hA hfi (by norm_num) hmin m hm
+
+/-- **Eigenvalue containment at weight {w}, every `m`**: a nonzero
+`T₂`-eigenform with eigenvalue `λ₂` is a `T_m`-eigenform with eigenvalue in
+`ℚ(λ₂)`. -/
+theorem eigen_TM_mem_adjoin_weight{w} (m : ℕ) (hm : 1 ≤ m)
+    {{v : CuspForm 𝒮ℒ (({w} : ℕ) : ℤ)}} (hv : v ≠ 0)
+    {{μ : ℂ}} (hμ : heckeTPₗ (({w} : ℕ) : ℤ) Nat.prime_two v = μ • v) :
+    ∃ w ∈ IntermediateField.adjoin ℚ ({{μ}} : Set ℂ),
+      HeckeTM.heckeTM (({w} : ℕ) : ℤ) m v = w • v :=
+  HeckeField.eigenvalue_mem_adjoin (heckeTM_rat_weight{w} m hm) hv
+    (by rw [HeckeTM.heckeTM_prime _ Nat.prime_two]; exact hμ)
+
 end HeckeFieldWeight{w}
 """
+
+
+def gent2_names():
+    """weight -> (T2 name, charpoly lemma, maeda lemma) from HeckeGeneratedByT2Weights."""
+    text = GENT2_FILE.read_text()
+    out = {}
+    for m in re.finditer(
+            r"theorem heckeTP_mem_spanT2_weight(\d+) \(hp : p\.Prime\) :\n"
+            r"\s+∃ Q : ℂ\[X\], heckeTPₗ \(\(\d+ : ℕ\) : ℤ\) hp = Polynomial\.aeval (\S+) Q :=\n"
+            r"\s+HeckeGeneratedByT2\.heckeTP_mem_spanT2 (\S+) (\S+)", text):
+        out[int(m.group(1))] = (m.group(2), m.group(3), m.group(4))
+    return out
+
+
+def c_lemmas():
+    """weight -> number of `c_i` all-m coefficient bridges in its MaedaT3 namespace."""
+    out = {}
+    for f in T3_FILES:
+        text = f.read_text()
+        parts = re.split(r"^namespace MaedaT3Weight(\d+)$", text, flags=re.M)
+        for i in range(1, len(parts), 2):
+            w = int(parts[i])
+            body = parts[i + 1].split(f"end MaedaT3Weight{w}")[0]
+            cs = sorted(int(x) for x in re.findall(r"^lemma c(\d+) \(m : ℕ\)", body, re.M))
+            assert cs == list(range(1, len(cs) + 1)), f"weight {w}: c lemmas {cs}"
+            out[w] = len(cs)
+    return out
+
+
+def block(w, d, gt, cl):
+    assert cl[w] == d, f"weight {w}: {cl[w]} c lemmas for dim {d}"
+    t2, cp, mae = gt[w]
+    hfi_cases = "\n".join(
+        f"  | {i}, _, m => ⟨_, MaedaT3Weight{w}.c{i + 1} m⟩" for i in range(d))
+    return BLOCK.format(w=w, d=d, t2=t2, cp=cp, mae=mae, hfi_cases=hfi_cases)
 
 
 def landed_namespaces(path):
@@ -126,8 +213,10 @@ def main():
         assert re.search(
             rf"noncomputable def T2 := heckeTPₗ \(\({w} : ℕ\) : ℤ\) Nat\.prime_two",
             dim_text), f"non-canonical T2 def for weight {w} (dim files)"
-    body = HEADER + "\n".join(
-        BLOCK.format(w=w, d=d) for w, d in sorted(SMALL + BIG))
+    gt = gent2_names()
+    cl = c_lemmas()
+    assert sorted(gt) == sorted(w for w, _ in SMALL + BIG), "HeckeGeneratedByT2Weights drifted"
+    body = HEADER + "\n".join(block(w, d, gt, cl) for w, d in sorted(SMALL + BIG))
     if check:
         current = OUT.read_text()
         if current != body:
