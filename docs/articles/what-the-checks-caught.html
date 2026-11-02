@@ -17,7 +17,7 @@
 <span class="kicker">Negative results</span>
 <h1>What the checks caught: a catalogue of confident mistakes</h1>
 <p class="dek">False anchors, an unsound certificate scheme, a false group-theory lemma and a theorem Mathlib already had. Each was stated with confidence, and each was stopped by a check.</p>
-<p>This project is run largely by AI agents, and much of the work starts from written plans. The plans were often wrong, in confident and plausible ways. Nothing false reached the proof library, because of the layers of checks around it. The list below is the record, in the project's own logs, of what those checks stopped. We think it is more useful than a list of successes.</p>
+<p>This project is run largely by AI agents, and much of the work starts from written plans. The plans were often wrong, in confident and plausible ways. Nothing false reached the proof library, because of the layers of checks around it. The list below is the record of what those checks stopped, mostly from the project's own logs, plus one thing they did not stop. We think it is more useful than a list of successes.</p>
 
 <h2>Mathematics that was false</h2>
 <div class="tw"><table>
@@ -33,6 +33,7 @@
 <div class="tw"><table>
 <tr><th>The belief</th><th>What was true</th><th>Caught by</th></tr>
 <tr><td>"Mathlib has no Dedekind theorem"</td><td>It does, as <code>IsArithFrobAt.exists_of_isInvariant</code>. Searching by name fails.</td><td>Reading the file, after 258 lines of substitute were written</td></tr>
+<tr><td>"TauCeti has no Frobenius-cycle-type content" (Iteration 21 review)</td><td>It already had Dedekind's theorem, Jordan's theorem and the same <span class="m">Sₙ</span> criterion, <a href="galois-certificates.html#tauceti">at the commit the project had checked out</a>.</td><td><strong>Nothing.</strong> Found later, while writing these articles, by searching on concepts</td></tr>
 <tr><td>Memory goes to <code>simp</code> and <code>ring</code></td><td>Kernel <code>decide</code> accounted for nearly all of it.</td><td>Per-declaration <a href="kernel-memory-law.html">profiling</a></td></tr>
 <tr><td>All computational theorems use <code>propext</code> only</td><td><a href="axiom-leaks.html">116 of 116</a> did not.</td><td>The first automated audit</td></tr>
 <tr><td>"Zero warnings"</td><td>After an error, Mathlib's linter stops reporting. One failed build showed 9 of 24 violations.</td><td>Comparing against the eventual green build</td></tr>
@@ -63,12 +64,17 @@
 <li><strong>Compile the artifact before believing the document.</strong></li>
 <li><strong>Treat blueprints as hypotheses to test, not plans to execute.</strong></li>
 <li><strong>Treat probe and census data as untrusted input</strong> to a check, never as ground truth. Re-derive it by a second route.</li>
-<li><strong>Search by concept, not by name,</strong> before building anything large that a library "probably lacks".</li>
+<li><strong>Search by concept, not by name,</strong> before building anything large that a library "probably lacks". That goes for neighbouring libraries too, and a survey is only as good as its date.</li>
 <li><strong>Claim "clean" only from a green build.</strong></li>
 <li><strong>Start fresh agents on documented plans</strong> rather than continuing exhausted ones.</li>
 </ol>
 </div>
-<div class="box caveat"><span class="lbl">THE LIMIT OF ALL THIS</span><p>Checks catch what they check. Lean guarantees that the proof proves the stated theorem. It does not guarantee that the prose around it is right, and that includes this site. Every claim of "first formalization" here is a judgment, not a theorem. Numbers in these articles were rechecked against the source and in some cases recomputed, but only the Lean statements have the kernel's guarantee.</p></div>
+<div class="box caveat"><span class="lbl">THE LIMIT OF ALL THIS</span><p>Checks catch what they check. The TauCeti entry above shows the gap: no check fires when a statement about <em>what does not exist</em> is wrong, and it only cost duplicated work. Lean guarantees that the proof proves the stated theorem. It does not guarantee that the prose around it is right, and that includes this site. Every claim of "first formalization" here is a judgment, not a theorem. Numbers in these articles were rechecked against the source and in some cases recomputed, but only the Lean statements have the kernel's guarantee.</p></div>
+<h2 id="tauceti">In TauCeti</h2>
+<p class="src"><a href="index.html#tauceti">TauCeti</a> pointers for readers who want to go further. Statements were read at a pinned commit. Nothing here depends on them.</p>
+<ul class="tc">
+<li><a href="https://github.com/TauCetiProject/TauCeti/blob/0d44ef6b12dc7ee1038d029a7e9e0533b9667c92/TauCeti/GroupTheory/Perm/Jordan/Counterexamples.lean"><code>TauCeti.not_forall_alternatingGroup_le_of_isPreprimitive_of_isCycle_mem_of_card_support_add_one_eq</code></a> <span class="rel">Related</span><br>Formal counterexamples at the edge of Jordan's theorem, AGL(1,5) and AGL(1,8). These are close kin of the false Jordan variant in the first table, in Lean.</li>
+</ul>
 <p class="src">Source: <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/research/iteration21-review.md">Iteration 21 review</a>, <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/research/iteration22-review.md">Iteration 22 review</a>, <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/research/research-log.md">research log</a>, <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/research/iteration22/lehmer-coverage/STUDY.md">coverage study</a>.</p>
 <div class="pn"><span>← <a href="axiom-leaks.html">116 of 116: how Classical.choice leaks into decide</a></span><span></span></div>
 </main>

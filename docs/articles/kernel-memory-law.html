@@ -51,6 +51,9 @@
 <p>The constant depends heavily on the representation. Raw kernel steps cost about 0.6 to 4 KB each, while one <code>Poly5</code> list operation costs about 27 KB because it unfolds many instances on nested pairs.</p>
 
 <div class="box caveat"><span class="lbl">WHERE THE TRICK STOPS</span><p>Checkpoints work when intermediate results are small. For <a href="kernel-bignum.html">packed bignums</a>, an intermediate at <span class="m">d = 131072</span> is one 10.5-megabit number, so a checkpoint still puts it all in one declaration. That is partly why the project <a href="lehmer-coverage.html">declined to push past 65,536</a>: the split would have to be at digit-list level, which has not been tested.</p></div>
+<h2 id="tauceti">In TauCeti</h2>
+<p class="src"><a href="index.html#tauceti">About this section</a>.</p>
+<p>Nothing relevant. This is a measurement of Lean's kernel, not mathematics. TauCeti's CI bans <code>maxHeartbeats</code> overrides, which is why the project's heavy modules cannot go there.</p>
 <p class="src">Source: <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/research/poly5-memory-study/README.md">poly5 memory study</a>, <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/tools/gen_poly5.py">gen_poly5.py</a>, <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/MathProof/ModularForms/Poly5.lean">Poly5.lean</a>, <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/research/memory-alerts.md">memory alert log</a>. Declaration-level attribution comes from <code>LEAN_CHECK_PROFILE</code>, described in <code>AGENTS.md</code>.</p>
 <div class="pn"><span>← <a href="kernel-bignum.html">Multiplying polynomials inside a proof kernel</a></span><span><a href="axiom-leaks.html">116 of 116: how Classical.choice leaks into decide</a> →</span></div>
 </main>

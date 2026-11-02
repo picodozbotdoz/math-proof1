@@ -47,6 +47,16 @@
 <li>The lemma generalizes as written. The recurrence lemmas take an arbitrary exponent <span class="m">K</span> in place of 11, and <code>EigenLevelOne</code> reuses them for the <a href="higher-weight-sieves.html">higher-weight eigenforms</a>.</li>
 </ul>
 <div class="box caveat"><span class="lbl">LIMITS</span><p>This reduces Lehmer's conjecture to primes. It does not prove it for any new prime, and nothing here says that <span class="m">τ(p) = 0</span> is impossible for large <span class="m">p</span>.</p></div>
+<h2 id="tauceti">In TauCeti</h2>
+<p class="src"><a href="index.html#tauceti">TauCeti</a> pointers for readers who want to go further. Statements were read at a pinned commit. Nothing here depends on them.</p>
+<ul class="tc">
+<li><a href="https://github.com/TauCetiProject/TauCeti/blob/0d44ef6b12dc7ee1038d029a7e9e0533b9667c92/TauCeti/NumberTheory/ModularForms/LevelOne/DiscriminantEigenform.lean"><code>TauCeti.ModularForm.discriminant_qExpansion_coeff_prime_pow_add_two</code></a> <span class="rel">Same result</span><br>The recurrence this article starts from, for the q-coefficients of Δ.</li>
+<li><a href="https://github.com/TauCetiProject/TauCeti/blob/0d44ef6b12dc7ee1038d029a7e9e0533b9667c92/TauCeti/NumberTheory/HeckeRing/GL2/Recurrence.lean"><code>HeckeRing.GL2.heckeT_prime_pow_recurrence</code></a> <span class="rel">More general</span><br>The same recurrence at operator level, in the GL₂ Hecke ring (Shimura, Theorem 3.24).</li>
+<li><a href="https://github.com/TauCetiProject/TauCeti/blob/0d44ef6b12dc7ee1038d029a7e9e0533b9667c92/TauCeti/Algebra/LinearRecurrence/OrderTwo.lean"><code>TauCeti.linearRec₂_mul_eq_sum_pow_mul</code></a> <span class="rel">Related</span><br>Product identities for exactly this kind of sequence, d(r+2) = D·d(r+1) − S·d(r). It says nothing about vanishing.</li>
+<li><a href="https://github.com/TauCetiProject/TauCeti/blob/0d44ef6b12dc7ee1038d029a7e9e0533b9667c92/TauCeti/Algebra/LinearRecurrence/Nondegenerate.lean"><code>LinearRecurrence.IsNondegenerate</code></a> <span class="rel">Related</span><br>Defines "no quotient of characteristic roots is a root of unity", the classical way to phrase this problem. Regime 1 and 2 avoid it entirely.</li>
+<li><a href="https://github.com/TauCetiProject/TauCeti/blob/0d44ef6b12dc7ee1038d029a7e9e0533b9667c92/TauCeti/NumberTheory/ModularForms/Newforms/Satake.lean"><code>HeckeRing.GL2.Newform.satakeParameters_eq_exp_satakeAngle</code></a> <span class="rel">Related</span><br>Satake parameters. The Ramanujan–Deligne bound appears here as an explicit hypothesis, "not proved here", which fits this article: the bound is not available to rely on.</li>
+</ul>
+<p>Not in TauCeti: Lehmer's lemma τ(p) ≠ 0 ⇒ τ(pᵃ) ≠ 0 and the reduction to primes.</p>
 <p class="src">Source: <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/MathProof/Tau/LehmerPrimeReduction.lean">LehmerPrimeReduction.lean</a>. Axioms: the standard three (<code>propext</code>, <code>Classical.choice</code>, <code>Quot.sound</code>).</p>
 <div class="pn"><span>← <a href="lehmer-coverage.html">99.9093%: what is actually proved about τ(n) ≠ 0 below 2³²</a></span><span><a href="higher-weight-sieves.html">Five more Ramanujan congruences, and a sieve that replaces computation</a> →</span></div>
 </main>

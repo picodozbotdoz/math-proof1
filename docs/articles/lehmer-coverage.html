@@ -67,6 +67,15 @@
 
 <h2>How the numbers were checked</h2>
 <p>The study script is committed with its data. For this article the census was recomputed from scratch by a separate sieve, which reproduced the 294,618 primes byte for byte and every row of the table. In Lean, <code>uncovered_2p18</code> and <code>uncovered_2p20</code> prove the counts 23 and 227 in the kernel, with the no-overlap identity proved structurally as <code>card_uncoveredSet</code>. The full 2³² count remains an exact Python computation, not a Lean theorem.</p>
+<h2 id="tauceti">In TauCeti</h2>
+<p class="src"><a href="index.html#tauceti">TauCeti</a> pointers for readers who want to go further. Statements were read at a pinned commit. Nothing here depends on them.</p>
+<ul class="tc">
+<li><a href="https://github.com/TauCetiProject/TauCeti/blob/0d44ef6b12dc7ee1038d029a7e9e0533b9667c92/TauCeti/NumberTheory/ModularForms/LevelOne/DiscriminantEigenform.lean"><code>TauCeti.ModularForm.discriminant_qExpansion_coeff_mul</code></a> <span class="rel">Same result</span><br>Mordell multiplicativity for the q-coefficients of Δ on coprime indices.</li>
+<li><a href="https://github.com/TauCetiProject/TauCeti/blob/0d44ef6b12dc7ee1038d029a7e9e0533b9667c92/TauCeti/NumberTheory/ModularForms/LevelOne/QExpansion.lean"><code>TauCeti.ModularForm.exists_discriminant_qExpansion_coeff_eq_intCast</code></a> <span class="rel">Ingredient</span><br>Every q-coefficient of Δ is an integer. TauCeti names the values at 2 and 3 only.</li>
+<li><a href="https://github.com/TauCetiProject/TauCeti/blob/0d44ef6b12dc7ee1038d029a7e9e0533b9667c92/TauCeti/NumberTheory/Chebotarev/Density/PrimesCongruent.lean"><code>NumberField.Chebotarev.primeCount_primesCongruent_sub_mul_logIntegral_isLittleO</code></a> <span class="rel">More general</span><br>Primes in a unit residue class number φ(m)⁻¹ Li(x) + o(x / log x). With m = 691 this is the asymptotic that the census matches, 294,616 predicted against 294,632 found. The project only checked that numerically.</li>
+<li><a href="https://github.com/TauCetiProject/TauCeti/blob/0d44ef6b12dc7ee1038d029a7e9e0533b9667c92/TauCeti/NumberTheory/Chebotarev/Density/PrimesCongruent.lean"><code>NumberField.Chebotarev.hasDirichletDensity_primesCongruent</code></a> <span class="rel">More general</span><br>The bad residue class has Dirichlet density 1/690 among primes.</li>
+</ul>
+<p>Not in TauCeti: No integer τ function, no 691 congruence and no nonvanishing or coverage result.</p>
 <p class="src">Source: <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/MathProof/Tau/LehmerPrimeGrand.lean">LehmerPrimeGrand.lean</a>, <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/MathProof/Tau/LehmerCoverageCount.lean">LehmerCoverageCount.lean</a>, <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/research/iteration22/lehmer-coverage/STUDY.md">coverage study</a>, <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/research/iteration22/lehmer-coverage/DECISION-131072.md">131072 decision memo</a>.</p>
 <script>
 (function(){

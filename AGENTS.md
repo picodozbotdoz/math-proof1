@@ -522,6 +522,12 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   is forbidden).  Big chunked literals must keep chunk exponents ≤ 256 — grow
   the *first* chunk (≤ 341 digits total observed fine) instead of emitting
   more chunks with bigger exponents.
+- **Surveying TauCeti** (2026-11-02): the clone at `~/zcode-workdir/tauceti` is
+  shallow and its `main` is old, so run `git fetch` and `git grep <regex>
+  origin/main -- TauCeti` without checking out, and search by concept
+  (`cycleType`, `factorDegrees`), not only by name.  A name-based survey missed
+  Dedekind, Jordan and the `Sₙ` criterion (iteration21-review §5 correction).
+  Study only: never import TauCeti.
 - **`tools/modal_run.sh` does not work from a git worktree** (2026-10-31):
   the worktree's `.git` *file* dangles for the mirroring user (xyz).  Run it
   from a normal clone, or build a standalone mirror (rsync the tree minus

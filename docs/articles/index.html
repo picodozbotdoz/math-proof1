@@ -50,6 +50,15 @@
 <tr><td>Reusable tool, Method</td><td>Techniques and measurements that apply outside this project.</td></tr>
 <tr><td>Negative results</td><td>Errors, false claims and dead ends, with what stopped them.</td></tr>
 </table></div>
+<h2 id="tauceti">Pointers to TauCeti</h2>
+<p><a href="https://github.com/TauCetiProject/TauCeti">TauCeti</a> is a separate, large Lean 4 library built on Mathlib, with extensive modular forms, Hecke and Galois theory. Each article ends with an "In TauCeti" section listing what a researcher on that topic should look at next.</p>
+<ul>
+<li><strong>Snapshot.</strong> Everything refers to commit <code>0d44ef6b</code> (2 November 2026), and links are pinned to it. TauCeti changes quickly, so check the current tree too.</li>
+<li><strong>What was checked.</strong> We read each statement and confirmed each name in the cited file. Nothing was compiled against this project, and these are statements as written in TauCeti, not results we verified.</li>
+<li><strong>No dependency.</strong> MathProof does not import TauCeti, so no result on this site relies on these pointers. TauCeti's proofs here are independent of this project's. "Not in TauCeti" means searches of that snapshot found nothing, not that a thing is impossible to find there.</li>
+<li><strong>Labels.</strong> <em>Same result</em>: essentially this project's statement. <em>More general</em>: a stronger or wider version. <em>Ingredient</em>: something the argument uses. <em>Related</em>: same topic, different statement.</li>
+</ul>
+<p>The main surprise is in <a href="galois-certificates.html#tauceti">Galois certificates</a>: TauCeti has the same criterion. The closest things to a next step are in <a href="hecke-denominators.html#tauceti">Hecke denominators</a> and <a href="maeda-54-weights.html#tauceti">Maeda</a>. TauCeti contains no τ function, Lehmer or Maeda content.</p>
 <p class="src">The record: 22 iterations between 23 October and 2 November 2026, 1,312 audited <code>decide</code> certificates, and the <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/research/research-log.md">full research log</a>. New to the mathematics? Start with <a href="../langlands.html">the Langlands program, by example</a>.</p>
 </main>
 <footer>Part of <a href="../index.html">MathProof</a>, formally verified modular forms in Lean 4 and Mathlib. Source of this page: <code>docs/articles/</code>.</footer>

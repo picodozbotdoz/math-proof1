@@ -19,6 +19,8 @@ network requests.
   Static HTML with same-origin assets only: no CDN, no analytics. Math is
   HTML and Unicode, not MathJax. Each article states what is proved in Lean,
   what is only computed, and what is classical; keep that split when editing.
+  Each also ends with an "In TauCeti" section whose links are pinned to one
+  TauCeti commit (see the note on `articles/index.html`).
 - **`.nojekyll`** — tells Pages to serve the files verbatim instead of
   running Jekyll.
 

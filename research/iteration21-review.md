@@ -143,6 +143,13 @@ Was the stuck problem already solved in Mathlib or TauCeti?
   **no** — that is ours (`frob_cycleType_of_factorization` +
   `cycleType_of_frobenius_roots` + the generic assembly).  So the wall was
   ~40% "already in Mathlib under a hard-to-find name", ~60% genuinely ours.
+* **Correction (2026-11-02): the TauCeti verdict below is wrong.**  TauCeti at
+  `821b7239`, the commit checked out here, already had Dedekind's theorem
+  (`TauCeti.NumberField.exists_gal_fullCycleType_eq_factorizationType`), Jordan's
+  theorem (`TauCeti.alternatingGroup_le_of_isPreprimitive_of_isCycle_mem`) and the
+  same `Sₙ` criterion (`TauCeti.surjective_galActionHom_of_factorDegrees`).  It also
+  has extensive Hecke and modular-forms content.  See
+  `docs/articles/galois-certificates.html`.
 * **TauCeti: no, and it was irrelevant** — greps show TauCeti has no Maeda /
   Hecke-operator / modular-forms content (its "Modular" hits are lattice
   theory) and no Frobenius-cycle-type content (only `IsDedekindDomain`

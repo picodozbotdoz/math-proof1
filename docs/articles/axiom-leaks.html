@@ -72,6 +72,9 @@
 <li><strong>Structural recursion matters generally.</strong> A definition that compiles to well-founded recursion stops the kernel from reducing it, often with no warning at the definition.</li>
 </ul>
 <div class="box caveat"><span class="lbl">SCOPE</span><p>The audit counts <code>decide</code> certificates in the light library. Heavy modules carry their own <code>#print axioms</code> lines, and analytic theorems use the standard three axioms by design. The clean certificates do not make the top-level theorems constructive.</p></div>
+<h2 id="tauceti">In TauCeti</h2>
+<p class="src"><a href="index.html#tauceti">About this section</a>.</p>
+<p>No matching audit found. The goals also differ: TauCeti's CI allows the three standard axioms in every proof, so the propext-only rule on this page is stricter than TauCeti's own, and a <code>decide</code> depending on <code>Classical.choice</code> is fine there.</p>
 <p class="src">Source: <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/MathProof/AxCheckDecide.lean">AxCheckDecide.lean</a>, <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/MathProof/ModularForms/HornerCert.lean">HornerCert.lean</a>, <a href="https://github.com/picodozbotdoz/math-proof1/blob/master/MathProof/ModularForms/MaedaCertC.lean">MaedaCertC.lean</a>.</p>
 <div class="pn"><span>← <a href="kernel-memory-law.html">27 GiB per million operations: the memory law of kernel computation</a></span><span><a href="what-the-checks-caught.html">What the checks caught: a catalogue of confident mistakes</a> →</span></div>
 </main>

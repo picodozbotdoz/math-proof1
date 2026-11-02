@@ -2063,3 +2063,21 @@ on `T₃`, so `D = I_k`; in dim 3,
 everywhere, equality exactly at the 18 weights with `n ≤ 4`.  A candidate
 blueprint target for Iteration 23.  Write-up:
 `docs/articles/hecke-denominators.html`.
+
+## TauCeti pointers in the Discoveries articles (2026-11-02, `docs/update-i22`)
+
+Each article now ends with an "In TauCeti" section: 38 declarations, each read
+and name-checked at commit `0d44ef6b` (links pinned; nothing compiled against
+this project, nothing imported).
+
+**Finding: iteration21-review §5 was wrong about TauCeti.**  The Frobenius
+cycle-type machinery, Jordan's theorem and the `(1, n−1)` + transposition `Sₙ`
+criterion were all present at `821b7239`, the local checkout at the time; the
+survey searched names (`Dedekind`, Hecke) rather than concepts.  Nothing false
+followed and `MaedaGaloisFull` stands, but `FrobeniusCycleType` and
+`JordanPrimitive` duplicate that work.  TauCeti's criterion is wider (one
+quadratic factor with all others of odd degree).  Correction noted in the review.
+
+Most useful for Iteration 23: `TauCeti.qExpansion_coeff_heckeTCuspLevelOne` (all
+`T_n` at level one, the T_m sweep) and `TauCeti.qExpansion_coeff_one_heckeTCuspLevelOne`
+with `LinearMap.finite_adjoin_of_injective_pairing` (the Hecke-index duality).
