@@ -238,3 +238,23 @@ resume point: make it possible to continue cold.
   Regenerated, `--check` byte-identical.
 * Run 2: **1360 audited, 0 depend on more than propext**; build 345 s,
   HeckeIndexWeights module peak 6.83 GiB.  G4 audits CLOSED.
+
+### 2026-11-03 — merge-step memory pass: weights file split by dimension
+
+* Profile (`LEAN_CHECK_PROFILE=…HeckeIndexWeights`, run from the merged
+  hecke-field tree): NO hot declaration — the largest per-command growth is
+  +0.08 GiB (the dim-10 `scaled` entrywise decides, ~19 s each); the cost is
+  the import floor (~5.4 GiB for the lean process once HeckeRationalWeights
+  + small/dim4/dim5 parents are loaded) plus ~1.1 GiB of retained literals
+  accumulating over the 54 blocks.  The lake tree peaked at 8.07 GiB —
+  over 97 % of the default 8 GiB request, so every run was OOM-flagged and
+  escalated to 16 GiB.
+* Fix: `gen_hecke_index.py` now emits two files with disjoint imports —
+  `HeckeIndexSmallWeights` (dims 2–5, 24 weights) and `HeckeIndexWeights`
+  (dims 6–10, 30 weights); `--check` covers both.  Root-only registration
+  for both (lakefile note updated).
+* Measured at the DEFAULT 8 GiB request: small 69 s, module 5.14 GiB (tree
+  6.38); big 336 s, module 6.56 GiB (tree 7.79, was 8.07) — no escalation.
+  Margin on the big file is thin (0.16 GiB under the 97 % line); the floor
+  is HeckeRationalWeights' own closure, which this file genuinely needs
+  (its `cert`/`hM2`/`hM3`).

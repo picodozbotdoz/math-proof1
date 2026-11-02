@@ -73,9 +73,10 @@ defaultTargets = [
   "MathProof.ModularForms.HeckeRationalWeights",
   # HeckeIndex (iteration 23): the index [𝕋 : ℤ[T₂]] — generic layer + the
   # 54-weight instance file.  The generic module is a default/CI item
-  # (~40 s on a warm Modal cache); the 54-weight file HeckeIndexWeights is
-  # root-only like its data sources' siblings (its decides ride the dim
-  # files that are already CI items; the file itself is verified on Modal).
+  # (~40 s on a warm Modal cache); the 54 weight instances, split by dim
+  # into HeckeIndexSmallWeights (2–5) / HeckeIndexWeights (6–10) so each
+  # builds under the default 8 GiB request, are root-only like their data
+  # sources' siblings (verified on Modal, audited by AxCheckDecide).
   "MathProof.ModularForms.HeckeIndex",
   # MaedaT3SmallWeights (T₃ stretch, dims 2–5) is deliberately NOT a default
   # target / CI item: the five T₂ dim files already cost CI ≈ 36 min per push
