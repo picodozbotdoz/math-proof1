@@ -81,6 +81,7 @@ jobs:
             MathProof.ModularForms.HeckeCommute
             MathProof.ModularForms.HeckeGeneratedByT2
             MathProof.ModularForms.HeckeGeneratedByT2Weights
+            MathProof.ModularForms.HeckeTM
             MathProof.ModularForms.HeckeTPCoeff
             MathProof.ModularForms.MaedaCertCExt
             MathProof.ModularForms.MaedaT3Dim6Weights
@@ -90,6 +91,7 @@ jobs:
             MathProof.ModularForms.MaedaT3Dim10Weights
             MathProof.ModularForms.HeckeRational
             MathProof.ModularForms.HeckeRationalWeights
+            MathProof.ModularForms.HeckeIndex
             MathProof.ModularForms.FrobeniusCycleType
             MathProof.ModularForms.JordanPrimitive
             MathProof.ModularForms.MaedaGaloisFull
@@ -104,6 +106,10 @@ jobs:
             MathProof.ModularForms.MaedaT3GaloisDim8Weights
             MathProof.ModularForms.MaedaT3GaloisDim9Weights
             MathProof.ModularForms.MaedaT3GaloisDim10Weights
+            MathProof.ModularForms.MaedaT2GaloisSmallWeights
+            MathProof.ModularForms.HeckeField
+            MathProof.ModularForms.HeckeFieldDim2
+            MathProof.ModularForms.HeckeFieldRat
       # NOTE: no docgen-action step.  It re-ran the whole build a second time
       # and built the doc-gen4 tool and its Mathlib dependency from source
       # (30+ min per push), and its deploy step would overwrite the

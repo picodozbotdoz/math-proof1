@@ -55,6 +55,7 @@ defaultTargets = [
   "MathProof.ModularForms.HeckeCommute",
   "MathProof.ModularForms.HeckeGeneratedByT2",
   "MathProof.ModularForms.HeckeGeneratedByT2Weights",
+  "MathProof.ModularForms.HeckeTM",
   "MathProof.ModularForms.HeckeTPCoeff",
   "MathProof.ModularForms.MaedaCertCExt",
   "MathProof.ModularForms.MaedaT3Dim6Weights",
@@ -70,6 +71,13 @@ defaultTargets = [
   # into CI; it is verified on Modal, 40 s).
   "MathProof.ModularForms.HeckeRational",
   "MathProof.ModularForms.HeckeRationalWeights",
+  # HeckeIndex (iteration 23): the index [𝕋 : ℤ[T₂]] — generic layer + the
+  # 54-weight instance file.  The generic module is a default/CI item
+  # (~40 s on a warm Modal cache); the 54 weight instances, split by dim
+  # into HeckeIndexSmallWeights (2–5) / HeckeIndexWeights (6–10) so each
+  # builds under the default 8 GiB request, are root-only like their data
+  # sources' siblings (verified on Modal, audited by AxCheckDecide).
+  "MathProof.ModularForms.HeckeIndex",
   # MaedaT3SmallWeights (T₃ stretch, dims 2–5) is deliberately NOT a default
   # target / CI item: the five T₂ dim files already cost CI ≈ 36 min per push
   # and the five T₃ dim files add a comparable amount, so paying the 24-weight
@@ -98,6 +106,18 @@ defaultTargets = [
   "MathProof.ModularForms.MaedaT3GaloisDim8Weights",
   "MathProof.ModularForms.MaedaT3GaloisDim9Weights",
   "MathProof.ModularForms.MaedaT3GaloisDim10Weights",
+  # T₂ Galois dim-2 corner (Gal = S₂ for the six dim-2 T₂ charpolys, closing
+  # iteration22-review §6.3): all parents are already default targets and the
+  # file is six three-line instances (11 s / 4.7 GiB on Modal) — trio.
+  "MathProof.ModularForms.MaedaT2GaloisSmallWeights",
+  # HeckeField: the generic eigenvalue-containment layer (every T₂-eigenvalue
+  # carries T-eigenvalues into ℚ(μ)) — Mathlib-only imports, 28 s / 3.9 GiB.
+  "MathProof.ModularForms.HeckeField",
+  # Iteration 23 b3: dim-2 integrality (every T_m an integer polynomial in T₂
+  # at the six dim-2 weights; 45 s / 6.3 GiB) and the generic T-Rat layer
+  # (every T_m ∈ ℚ[T₂]; 46 s / 4.7 GiB) — all parents are default targets.
+  "MathProof.ModularForms.HeckeFieldDim2",
+  "MathProof.ModularForms.HeckeFieldRat",
 ]
 
 [leanOptions]
