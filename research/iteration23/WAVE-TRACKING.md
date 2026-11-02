@@ -24,9 +24,22 @@ priorities, no exclusions, standard budgets.
   b3 `hecke-field` corollaries (every T_m ∈ ℚ[T₂]; HeckeField = ℚ(λ₂);
   dim-2 integrality — every T_m ∈ ℤ[T₂]).
 
-Status per branch (branch = impl/iteration23/<slug>, base = <TBD>):
+Status per branch (branch = impl/iteration23/<slug>, base = de3e387 — the
+blueprints commit; blueprints b1→b2→b3 deepen: b2 ⊨ b1, b3 ⊨ b2, with the
+documented cross-branch merge points in b2 §4 / b3 §4):
 | branch | blueprint | status | result |
 |---|---|---|---|
+| impl/iteration23/hecke-tm | blueprint/hecke-tm | RUNNING | spawned 2026-11-02 |
+| impl/iteration23/hecke-index | blueprint/hecke-index | RUNNING | spawned 2026-11-02 (G2+ waits on hecke-tm G3 by merge) |
+| impl/iteration23/hecke-field | blueprint/hecke-field | RUNNING | spawned 2026-11-02 (T-Gal independent starter; T-Rat waits on hecke-index) |
+
+Wave setup (2026-11-02): worktrees under
+`/home/doz/claude-workdir/worktree/mp1/{hecke-tm,hecke-index,hecke-field}`
+(WORKLOG + standalone-mirror `mrun.sh` seeds committed per branch);
+mirror smoke test green (hecke-tm, `--target MathProof.Tau.CongruenceSmall`,
+63 s, 0 err / 0 warn).  CI-bill plan: generic modules trio, the 54-weight
+certificate file root-only (HeckeIndexWeights); selective-targets CI stays
+[open] for the operator (iteration22-review §7.4 — WATCH).
 
 ## Incident log
 ## Cross-cutting lessons
