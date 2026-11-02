@@ -42,6 +42,21 @@ certificate file root-only (HeckeIndexWeights); selective-targets CI stays
 [open] for the operator (iteration22-review §7.4 — WATCH).
 
 ## Incident log
+- 2026-11-03 (later): **OPERATOR HALT** — "stop execution" (§9 halt-scope).
+  Both running workers (hecke-index, hecke-field session 2) were killed by
+  the operator.  Checkpointed state on disk (verified read-only):
+  * hecke-index: tip b0bd889 = merge of b1 (082a98a) + WIP commit 3e773e8
+    (G4: gen_hecke_index.py + HeckeIndexWeights.lean emitted for all 54
+    weights, build RED with documented errors: minpoly_nd rw-chain missing
+    charpoly step, dim-2 det_A dead norm_num, T2-name for dims 2–5,
+    HeckeGeneratedByT2 import/qualify, Nontrivial removal in flight) +
+    uncommitted edits (scratch, weights, generator).  G3's det-cost probe
+    outcome is in its WORKLOG.
+  * hecke-field: tip f501431 = merge of b1 + uncommitted WORKLOG edits +
+    NEW HeckeFieldDim2.lean (dim-2 integrality module, in flight, unbuilt).
+  Cold-resume path (§6): read each WORKLOG's last dated entry, compile the
+  WIP before planning (§4d), continue G3/G4 per the blueprints.  NO further
+  work until the operator says go.
 - 2026-11-03 00:25: both remaining worker sessions (hecke-tm, hecke-index)
   found DEAD with no completion notification delivered (orchestrator pings
   returned "no active task").  hecke-tm: last Modal run 21:07 was BUILD
