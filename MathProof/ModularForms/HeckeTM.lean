@@ -333,6 +333,9 @@ private lemma qL_smul (c : ℂ) (f : CuspForm 𝒮ℒ k) : qL k (c • f) = c �
 private lemma ps_coeff_sub (F G : PowerSeries ℂ) (n : ℕ) :
     (F - G).coeff n = F.coeff n - G.coeff n := by simp
 
+private lemma ps_coeff_add (F G : PowerSeries ℂ) (n : ℕ) :
+    (F + G).coeff n = F.coeff n + G.coeff n := by simp
+
 private lemma ps_coeff_smul (c : ℂ) (F : PowerSeries ℂ) (n : ℕ) :
     (c • F).coeff n = c * F.coeff n := by simp
 
@@ -563,5 +566,232 @@ theorem heckeTM_prime_pow_succ (k : ℤ) {p : ℕ} (hp : p.Prime) (r : ℕ) :
   simp only [hpd, ite_true]
 
 end PrimeSpec
+
+/-! ### The prime-step identity, commutation, and multiplicativity -/
+
+section Mul
+
+variable {k : ℤ} {p : ℕ}
+
+/-- `T_p` kills the zero cusp form. -/
+private lemma heckeTP_zero_apply (hp : p.Prime) : heckeTP hp (0 : CuspForm 𝒮ℒ k) = 0 := by
+  refine qExpansion_coeff_ext fun j => ?_
+  have h0 : qExpansion 1 (0 : CuspForm 𝒮ℒ k) = 0 := by
+    rw [← qL_apply (0 : CuspForm 𝒮ℒ k), map_zero]
+  rw [heckeTP_qExpansion_coeff hp (0 : CuspForm 𝒮ℒ k), h0]
+  simp
+
+/-- **The prime-step identity** (pointwise): `T_p (T_m f) = T_{p m} f +
+p^(k-1) • [p ∣ m] T_{m/p} f` — the coefficient-level two-term recursion
+(`tsumF_prime_step`) lifted to operators. -/
+theorem heckeTM_mul_prime_form (hp : p.Prime) (m : ℕ) (f : CuspForm 𝒮ℒ k) :
+    heckeTM k p (heckeTM k m f)
+      = heckeTM k (p * m) f
+        + (if p ∣ m then ((p : ℂ) ^ (k - 1)) • heckeTM k (m / p) f else 0) := by
+  rw [heckeTM_prime k hp]
+  change heckeTP hp (heckeTM k m f)
+    = heckeTM k (p * m) f
+      + (if p ∣ m then ((p : ℂ) ^ (k - 1)) • heckeTM k (m / p) f else 0)
+  rcases Nat.eq_zero_or_pos m with rfl | hm
+  · simp [heckeTM_zero, heckeTP_zero_apply]
+  · have hm1 : 1 ≤ p * m := Nat.mul_pos hp.pos hm
+    by_cases hpm : p ∣ m
+    · have hmp1 : 1 ≤ m / p := Nat.div_pos (Nat.le_of_dvd hm hpm) hp.pos
+      refine qExpansion_coeff_ext fun j => ?_
+      rw [ite_eq_left hpm, heckeTP_qExpansion_coeff hp (heckeTM k m f),
+        heckeTM_coeff_tsumF f m hm (p * j), heckeTM_coeff_tsumF f m hm (j / p),
+        ← qL_apply (heckeTM k (p * m) f + ((p : ℂ) ^ (k - 1)) • heckeTM k (m / p) f),
+        map_add, ps_coeff_add, qL_apply, qL_smul, PowerSeries.coeff_smul,
+        qL_apply, heckeTM_coeff_tsumF f (p * m) hm1 j, heckeTM_coeff_tsumF f (m / p) hmp1 j]
+      have key := tsumF_prime_step hp k m j (fun i => (qExpansion 1 f).coeff i)
+      simp only [smul_eq_mul, ite_eq_left hpm] at key
+      linear_combination key
+    · refine qExpansion_coeff_ext fun j => ?_
+      rw [ite_eq_right hpm, add_zero, heckeTP_qExpansion_coeff hp (heckeTM k m f),
+        heckeTM_coeff_tsumF f m hm (p * j), heckeTM_coeff_tsumF f m hm (j / p),
+        heckeTM_coeff_tsumF f (p * m) hm1 j]
+      have key := tsumF_prime_step hp k m j (fun i => (qExpansion 1 f).coeff i)
+      simp only [smul_eq_mul, ite_eq_right hpm, add_zero] at key
+      linear_combination key
+
+/-- **The prime-step identity** (operators): `T_p ∘ T_m = T_{p m} +
+p^(k-1) • [p ∣ m] T_{m/p}`. -/
+theorem heckeTM_mul_prime (hp : p.Prime) (m : ℕ) :
+    heckeTM k p ∘ₗ heckeTM k m
+      = heckeTM k (p * m)
+        + (if p ∣ m then ((p : ℂ) ^ (k - 1)) • heckeTM k (m / p) else 0) := by
+  refine LinearMap.ext fun f => ?_
+  by_cases hpm : p ∣ m
+  · rw [LinearMap.comp_apply, ite_eq_left hpm, LinearMap.add_apply, LinearMap.smul_apply,
+      heckeTM_mul_prime_form hp m f, ite_eq_left hpm]
+  · rw [LinearMap.comp_apply, ite_eq_right hpm, LinearMap.add_apply, LinearMap.zero_apply,
+      add_zero, heckeTM_mul_prime_form hp m f, ite_eq_right hpm]
+    simp
+
+/-- The prime-prime swap: `T_p (T_q g) = T_q (T_p g)`. -/
+theorem heckeTM_mul_prime_apply {p q : ℕ} (hp : p.Prime) (hq : q.Prime)
+    (g : CuspForm 𝒮ℒ k) :
+    heckeTM k p (heckeTM k q g) = heckeTM k q (heckeTM k p g) := by
+  rw [heckeTM_prime k hp, heckeTM_prime k hq]
+  change heckeTP hp (heckeTP hq g) = heckeTP hq (heckeTP hp g)
+  exact heckeTP_commute hp hq g
+
+/-- **Commutation** (pointwise): `T_m (T_p f) = T_p (T_m f)` for every prime
+`p` and every `m`, by strong induction on `m` through the defining recursion;
+the induction step only needs the prime-prime swap and linearity. -/
+theorem heckeTM_commute_apply (hp : p.Prime) (m : ℕ) (f : CuspForm 𝒮ℒ k) :
+    heckeTM k m (heckeTM k p f) = heckeTM k p (heckeTM k m f) := by
+  induction m using Nat.strongRecOn with
+  | ind m ih =>
+    rcases Nat.lt_or_ge m 2 with hm | hm
+    · rcases m with _ | m'
+      · rw [heckeTM_zero, LinearMap.zero_apply, LinearMap.zero_apply, map_zero]
+      · rw [show m' + 1 = 1 by omega, heckeTM_id, LinearMap.id_apply,
+          LinearMap.id_apply]
+    · have hmp : m.minFac.Prime := Nat.minFac_prime (show m ≠ 1 by omega)
+      have hlt1 : m / m.minFac < m := Nat.div_lt_self (by omega) hmp.one_lt
+      have hlt2 : m / m.minFac / m.minFac < m :=
+        Nat.lt_of_le_of_lt (Nat.div_le_self _ _) hlt1
+      have e : ∀ g : CuspForm 𝒮ℒ k,
+          heckeTP (Nat.minFac_prime (show m ≠ 1 by omega)) g = heckeTM k (m.minFac) g := by
+        intro g
+        rw [heckeTM_prime k hmp]
+        rfl
+      by_cases hc : m.minFac ∣ m / m.minFac
+      · rw [heckeTM_apply_ge_two hm (heckeTM k p f), ite_eq_left hc,
+          heckeTM_apply_ge_two hm f, ite_eq_left hc, e, e, map_sub, map_smul,
+          ih _ hlt1, ih _ hlt2, heckeTM_mul_prime_apply hp hmp]
+      · rw [heckeTM_apply_ge_two hm (heckeTM k p f), ite_eq_right hc,
+          heckeTM_apply_ge_two hm f, ite_eq_right hc, sub_zero, e, e, ih _ hlt1,
+          sub_zero, heckeTM_mul_prime_apply hp hmp]
+
+/-- **Commutation** (operators): `T_m ∘ T_p = T_p ∘ T_m`. -/
+theorem heckeTM_comp_commute (hp : p.Prime) (m : ℕ) :
+    heckeTM k m ∘ₗ heckeTM k p = heckeTM k p ∘ₗ heckeTM k m := by
+  refine LinearMap.ext fun f => ?_
+  rw [LinearMap.comp_apply, LinearMap.comp_apply]
+  exact heckeTM_commute_apply hp m f
+
+/-- **Commutation** in `Commute` form on the endomorphism ring. -/
+theorem heckeTM_commute (hp : p.Prime) (m : ℕ) : Commute (heckeTM k m) (heckeTM k p) :=
+  LinearMap.ext fun f => by
+    rw [Module.End.mul_apply, Module.End.mul_apply]
+    exact heckeTM_commute_apply hp m f
+
+/-- **Multiplicativity of the T-calculus** (divisor-sum form): for all `m n`,
+`T_m ∘ T_n = ∑_{d ∣ m, d ∣ n} d^(k-1) • T_{m n / d²}`.  Strong induction on
+`n` through the defining recursion; the induction step assembles the two-term
+recursion from `heckeTM_mul_prime` and `heckeTM_commute`, and the divisor
+bookkeeping is exactly the abstract `tsumF_prime_step`. -/
+theorem heckeTM_mul_tsumF (n : ℕ) : ∀ m : ℕ,
+    heckeTM k m ∘ₗ heckeTM k n
+      = (tsumF k m n (heckeTM k) : CuspForm 𝒮ℒ k →ₗ[ℂ] CuspForm 𝒮ℒ k) := by
+  induction n using Nat.strongRecOn with
+  | ind n ih =>
+    intro m
+    rcases Nat.lt_or_ge n 2 with hn | hn
+    · rcases n with _ | n'
+      · -- n = 0
+        rw [heckeTM_zero, LinearMap.comp_zero]
+        change (0 : CuspForm 𝒮ℒ k →ₗ[ℂ] CuspForm 𝒮ℒ k)
+          = ∑ d ∈ (Nat.divisors m).filter (fun d => d ∣ 0),
+              ((d : ℂ) ^ (k - 1)) • heckeTM k (m * 0 / (d * d))
+        refine (Finset.sum_eq_zero fun d _ => ?_).symm
+        rw [Nat.mul_zero, Nat.zero_div, heckeTM_zero, smul_zero]
+      · -- n = 1
+        by_cases hm : m = 0
+        · subst hm
+          rw [heckeTM_zero, LinearMap.zero_comp]
+          change (0 : CuspForm 𝒮ℒ k →ₗ[ℂ] CuspForm 𝒮ℒ k)
+            = ∑ d ∈ (Nat.divisors 0).filter (fun d => d ∣ 1),
+                ((d : ℂ) ^ (k - 1)) • heckeTM k (0 * 1 / (d * d))
+          rw [Nat.divisors_zero]
+          simp
+        · rw [show n' + 1 = 1 by omega, heckeTM_id, LinearMap.comp_id]
+          have h1 : (Nat.divisors m).filter (fun d => d ∣ 1) = {1} := by
+            ext d
+            constructor
+            · intro h
+              have hd1 : d ∣ 1 := (Finset.mem_filter.mp h).2
+              rw [Nat.eq_one_of_dvd_one hd1]
+              exact Finset.mem_singleton.mpr rfl
+            · intro h
+              rw [Finset.mem_singleton.mp h]
+              exact Finset.mem_filter.mpr
+                ⟨Nat.mem_divisors.mpr ⟨Nat.one_dvd m, hm⟩, Nat.dvd_refl 1⟩
+          change heckeTM k m
+            = ∑ d ∈ (Nat.divisors m).filter (fun d => d ∣ 1),
+                ((d : ℂ) ^ (k - 1)) • heckeTM k (m * 1 / (d * d))
+          rw [h1, Finset.sum_singleton]
+          simp
+    · -- n ≥ 2: unfold at the least prime factor and reassemble by `tsumF_prime_step`
+      have hq : n.minFac.Prime := Nat.minFac_prime (show n ≠ 1 by omega)
+      have hnlt : n / n.minFac < n := Nat.div_lt_self (by omega) hq.one_lt
+      have hnlt2 : n / n.minFac / n.minFac < n :=
+        Nat.lt_of_le_of_lt (Nat.div_le_self _ _) hnlt
+      have key := tsumF_prime_step hq k m (n / n.minFac) (heckeTM k)
+      rw [Nat.mul_div_cancel' (Nat.minFac_dvd n)] at key
+      by_cases hqm : n.minFac ∣ m
+      · by_cases hc : n.minFac ∣ n / n.minFac
+        · have hrec : heckeTM k n = heckeTPₗ k hq ∘ₗ heckeTM k (n / n.minFac)
+                - ((n.minFac : ℂ) ^ (k - 1)) • heckeTM k (n / n.minFac / n.minFac) := by
+            rw [heckeTM_ge_two k hn, ite_eq_left hc]
+          rw [hrec, LinearMap.comp_sub, LinearMap.comp_smul, ← LinearMap.comp_assoc,
+            ← heckeTM_prime k hq, heckeTM_comp_commute hq m, heckeTM_mul_prime hq m,
+            ite_eq_left hqm, LinearMap.add_comp, LinearMap.smul_comp,
+            ih _ hnlt (n.minFac * m), ih _ hnlt (m / n.minFac), ih _ hnlt2 m]
+          rw [ite_eq_left hc, ite_eq_left hqm] at key
+          exact eq_sub_of_add_eq key |>.symm
+        · have hrec : heckeTM k n = heckeTPₗ k hq ∘ₗ heckeTM k (n / n.minFac) := by
+            rw [heckeTM_ge_two k hn, ite_eq_right hc, smul_zero, sub_zero]
+          rw [hrec, ← LinearMap.comp_assoc, ← heckeTM_prime k hq,
+            heckeTM_comp_commute hq m, heckeTM_mul_prime hq m, ite_eq_left hqm,
+            LinearMap.add_comp, LinearMap.smul_comp, ih _ hnlt (n.minFac * m),
+            ih _ hnlt (m / n.minFac)]
+          rw [ite_eq_right hc, ite_eq_left hqm, smul_zero, add_zero] at key
+          exact key.symm
+      · by_cases hc : n.minFac ∣ n / n.minFac
+        · have hrec : heckeTM k n = heckeTPₗ k hq ∘ₗ heckeTM k (n / n.minFac)
+                - ((n.minFac : ℂ) ^ (k - 1)) • heckeTM k (n / n.minFac / n.minFac) := by
+            rw [heckeTM_ge_two k hn, ite_eq_left hc]
+          rw [hrec, LinearMap.comp_sub, LinearMap.comp_smul, ← LinearMap.comp_assoc,
+            ← heckeTM_prime k hq, heckeTM_comp_commute hq m, heckeTM_mul_prime hq m,
+            ite_eq_right hqm, add_zero, ih _ hnlt (n.minFac * m), ih _ hnlt2 m]
+          rw [ite_eq_left hc, ite_eq_right hqm, add_zero] at key
+          exact eq_sub_of_add_eq key |>.symm
+        · have hrec : heckeTM k n = heckeTPₗ k hq ∘ₗ heckeTM k (n / n.minFac) := by
+            rw [heckeTM_ge_two k hn, ite_eq_right hc, smul_zero, sub_zero]
+          rw [hrec, ← LinearMap.comp_assoc, ← heckeTM_prime k hq,
+            heckeTM_comp_commute hq m, heckeTM_mul_prime hq m, ite_eq_right hqm,
+            add_zero, ih _ hnlt (n.minFac * m)]
+          rw [ite_eq_right hc, ite_eq_right hqm, smul_zero, add_zero, add_zero] at key
+          exact key.symm
+
+/-- **Multiplicativity of the T-calculus**: `T_m ∘ T_n = ∑_{d ∣ gcd m n}
+d^(k-1) • T_{m n / d²}`. -/
+theorem heckeTM_mul (m n : ℕ) :
+    heckeTM k m ∘ₗ heckeTM k n
+      = ∑ d ∈ Nat.divisors (Nat.gcd m n),
+          ((d : ℂ) ^ (k - 1)) • heckeTM k (m * n / (d * d)) := by
+  rcases Nat.eq_zero_or_pos m with rfl | hm
+  · rw [heckeTM_zero, LinearMap.zero_comp]
+    exact (Finset.sum_eq_zero fun d _ => by
+      rw [Nat.zero_mul, Nat.zero_div, heckeTM_zero, smul_zero]).symm
+  · rw [heckeTM_mul_tsumF n m, tsumF_eq k hm n (heckeTM k)]
+
+/-- **The `T₂` two-term recurrence** for even `m` (pointwise): `T₂ (T_m f) =
+T_{2 m} f + 2^(k-1) • T_{m/2} f`. -/
+theorem heckeTM_two_mul_even_form (hm : 2 ∣ m) (f : CuspForm 𝒮ℒ k) :
+    heckeTM k 2 (heckeTM k m f)
+      = heckeTM k (2 * m) f + ((2 : ℂ) ^ (k - 1)) • heckeTM k (m / 2) f := by
+  rw [heckeTM_mul_prime_form Nat.prime_two m f, ite_eq_left hm, Nat.cast_ofNat]
+
+/-- **The `T₂` two-term recurrence** for even `m` (operators). -/
+theorem heckeTM_two_mul_even (hm : 2 ∣ m) :
+    heckeTM k 2 ∘ₗ heckeTM k m
+      = heckeTM k (2 * m) + ((2 : ℂ) ^ (k - 1)) • heckeTM k (m / 2) := by
+  rw [heckeTM_mul_prime Nat.prime_two m, ite_eq_left hm, Nat.cast_ofNat]
+
+end Mul
 
 end HeckeTM
