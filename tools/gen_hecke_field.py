@@ -47,7 +47,8 @@ BIG = [(72, 6), (76, 6), (78, 6), (80, 6), (82, 6), (84, 7), (86, 6),
        (116, 9), (118, 9), (120, 10), (122, 9), (124, 10), (126, 10),
        (128, 10), (130, 10), (134, 10)]
 
-GENT2_FILE = ROOT / "MathProof/ModularForms/HeckeGeneratedByT2Weights.lean"
+GENT2_FILES = [ROOT / "MathProof/ModularForms/HeckeGeneratedByT2SmallWeights.lean",
+               ROOT / "MathProof/ModularForms/HeckeGeneratedByT2Weights.lean"]
 T3_FILES = [ROOT / "MathProof/ModularForms/MaedaT3SmallWeights.lean"] + [
     ROOT / f"MathProof/ModularForms/MaedaT3Dim{d}Weights.lean" for d in (6, 7, 8, 9, 10)]
 
@@ -156,8 +157,8 @@ end HeckeFieldWeight{w}
 
 
 def gent2_names():
-    """weight -> (T2 name, charpoly lemma, maeda lemma) from HeckeGeneratedByT2Weights."""
-    text = GENT2_FILE.read_text()
+    """weight -> (T2 name, charpoly lemma, maeda lemma) from HeckeGeneratedByT2{Small,}Weights."""
+    text = "".join(f.read_text() for f in GENT2_FILES)
     out = {}
     for m in re.finditer(
             r"theorem heckeTP_mem_spanT2_weight(\d+) \(hp : p\.Prime\) :\n"

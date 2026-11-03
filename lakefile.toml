@@ -54,6 +54,7 @@ defaultTargets = [
   "MathProof.ModularForms.MaedaDim10Weights",
   "MathProof.ModularForms.HeckeCommute",
   "MathProof.ModularForms.HeckeGeneratedByT2",
+  "MathProof.ModularForms.HeckeGeneratedByT2SmallWeights",
   "MathProof.ModularForms.HeckeGeneratedByT2Weights",
   "MathProof.ModularForms.HeckeTM",
   "MathProof.ModularForms.HeckeTPCoeff",

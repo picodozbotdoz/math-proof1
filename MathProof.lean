@@ -50,6 +50,7 @@ import MathProof.ModularForms.MaedaDim9Weights
 import MathProof.ModularForms.MaedaDim10Weights
 import MathProof.ModularForms.HeckeCommute
 import MathProof.ModularForms.HeckeGeneratedByT2
+import MathProof.ModularForms.HeckeGeneratedByT2SmallWeights
 import MathProof.ModularForms.HeckeGeneratedByT2Weights
 import MathProof.ModularForms.HeckeTM
 import MathProof.ModularForms.MaedaT3Dim6Weights

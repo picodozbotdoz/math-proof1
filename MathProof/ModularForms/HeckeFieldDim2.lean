@@ -1,5 +1,5 @@
 import MathProof.ModularForms.HeckeTM
-import MathProof.ModularForms.HeckeGeneratedByT2Weights
+import MathProof.ModularForms.HeckeGeneratedByT2SmallWeights
 import MathProof.ModularForms.MaedaWeight24
 import MathProof.ModularForms.MaedaSmallWeights
 import Mathlib.Algebra.Polynomial.Div
@@ -23,7 +23,7 @@ verified for all `m ≤ 60` at all six weights).
 Proof route (generic; no per-`m` data, no new kernel decides):
 
 * `heckeTM_mem_spanT2` — every prime `T_p` is a polynomial in `T₂`
-  (`HeckeGeneratedByT2Weights`, from Maeda irreducibility + commutation), and
+  (`HeckeGeneratedByT2SmallWeights`, from Maeda irreducibility + commutation), and
   `ℂ[T₂]` is closed under the two-term recursion defining `T_m`
   (`HeckeTM.heckeTM_ge_two`) — strong induction on `m`;
 * `exists_smul_pair_of_finrank_two` — Cayley–Hamilton reduces the polynomial

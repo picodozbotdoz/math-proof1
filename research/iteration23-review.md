@@ -170,9 +170,9 @@ causes, neither of them "too many targets":
 * Two tiers derived from `defaultTargets` (single source; the hand-kept
   CI copy, which had drifted into two duplicate entries, is gone):
   **push** = default targets minus the ten full-only roots and every
-  target whose import closure reaches one (computed: 23 of 75 excluded —
+  target whose import closure reaches one (computed: 22 of 76 excluded —
   the ten roots, their ten Galois twins, `HeckeGeneratedByT2Weights`,
-  `HeckeRationalWeights`, `HeckeFieldDim2`); **full** = all 75, on a
+  `HeckeRationalWeights`); **full** = all 76, on a
   weekly schedule (Mondays 03:00 UTC — a ~2 min no-op on a warm cache) and
   on `workflow_dispatch` (default).  This bounds 2: an ancestor edit costs
   the push tier only, and the expensive families are rebuilt by the full
@@ -182,19 +182,32 @@ causes, neither of them "too many targets":
   root outside `defaultTargets` or a default target unreachable from
   `MathProof.lean`).
 
-**Verified locally**: the selector on this tree (75 / 52 / 23, exit 0),
+**Verified locally**: the selector on this tree (76 / 54 / 22, exit 0),
 both tier invocations as the workflow step runs them, a deliberate bad
 root (step fails, exit 1), and the workflow YAML parsed (js-yaml).
 **Not measured yet**: a GitHub run of the new workflow — it fires on the
 operator's next master push.  Expected: the iteration-23 merge push builds
-five new push-tier modules on a warm cache (≈ 4–6 min by Modal times);
+seven new push-tier modules on a warm cache (≈ 4–6 min by Modal times);
 a cold push-tier run is unmeasured (the expensive part of the old cold
 runs is exactly the excluded families).
 
 **Trade-off, stated**: between a push that edits an ancestor and the next
-full run (≤ 1 week, or a manual dispatch), CI does not re-check the 23
+full run (≤ 1 week, or a manual dispatch), CI does not re-check the 22
 full-only targets.  Wave merges re-verify them on Modal before the
 operator merges, so a regression there needs a master push that bypassed
-the wave close-out.  `HeckeFieldDim2` is full-only only because it imports
-the 54-weight `HeckeGeneratedByT2Weights` for six dim-2 facts; splitting
-that import would return it to the push tier (small follow-up).
+the wave close-out.
+
+**Import trim** (same day): `HeckeFieldDim2` first landed in the full-only
+set only because it imported the 54-weight `HeckeGeneratedByT2Weights` for
+six dim-2 facts.  `tools/gen_hecke_gen_t2.py` now emits two files in one
+namespace — `HeckeGeneratedByT2SmallWeights` (dims 2–5, 24 weights, push
+tier) and `HeckeGeneratedByT2Weights` (dims 6–10, 30 weights, importing
+the small file so existing importers still see all 54 names); both
+`--check` byte-identical, `gen_hecke_field.py --check` unchanged.
+`HeckeFieldDim2` imports the small file and is back in the push tier.
+Modal (light root + `AxCheckDecide`, 74 s): 8501 jobs green, 0 warnings,
+1360 certificates / 0 beyond `propext`; per-module peaks 4.83 GiB (small
+file, 16 s), 5.05 GiB (dims-6–10 file), 4.86 GiB `HeckeFieldDim2` (was
+6.33 GiB with the 54-weight import).
+Lesson: a generated all-weights instance file should be split at the
+full-only boundary so small-dimension consumers stay on the push path.
