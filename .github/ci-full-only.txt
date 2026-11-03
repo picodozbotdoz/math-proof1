@@ -1,0 +1,21 @@
+# Full-only CI roots (read by tools/ci_targets.py).
+#
+# These generated per-weight certificate files are built by the `full` CI
+# tier (weekly schedule, workflow_dispatch) but not on every master push:
+# an edit to any of their ancestors rebuilds all ten (~70 min cold on a
+# GitHub runner; Modal: 88–1227 s each).  Every default target that imports
+# one of them (their Galois twins, HeckeGeneratedByT2Weights,
+# HeckeRationalWeights, ...) is excluded from the push tier automatically.
+# They are verified on Modal at every wave merge and audited by
+# AxCheckDecide.  Add a root here only with a measured cold cost of several
+# minutes; record the reason in the module's AGENTS.md layout entry.
+MathProof.ModularForms.MaedaDim6Weights
+MathProof.ModularForms.MaedaDim7Weights
+MathProof.ModularForms.MaedaDim8Weights
+MathProof.ModularForms.MaedaDim9Weights
+MathProof.ModularForms.MaedaDim10Weights
+MathProof.ModularForms.MaedaT3Dim6Weights
+MathProof.ModularForms.MaedaT3Dim7Weights
+MathProof.ModularForms.MaedaT3Dim8Weights
+MathProof.ModularForms.MaedaT3Dim9Weights
+MathProof.ModularForms.MaedaT3Dim10Weights

@@ -1,13 +1,45 @@
 name: Lean Action CI
 
-# Master only (2026-11-01): the full light build is ~1 h of runner time and
-# runs on every unfiltered push — impl/integration branches each paid it.
-# Branch verification happens on Modal (lean_check.py overlays the working
-# tree, no push needed); use workflow_dispatch for anything else.
+# Master only (2026-11-01): branch verification happens on Modal
+# (lean_check.py overlays the working tree, no push needed).
+#
+# Selective targets (2026-11-03, iteration 23 review):
+# * push     -- the `push` tier of tools/ci_targets.py: `defaultTargets`
+#   minus the expensive per-weight certificate families listed in
+#   .github/ci-full-only.txt and everything importing them.  Bounded cost
+#   even when an ancestor edit invalidates the cache.
+# * schedule / workflow_dispatch -- the `full` tier (every default target).
+# * Pushes that touch no Lean build input (docs, research, tools) skip CI.
+# * One run at a time: a newer push queues behind the running build instead
+#   of starting in parallel from a stale cache (the 2026-11-02 docs-only
+#   push 51a5eb1 rebuilt Iteration 22 for 51 min that way).  The `.lake`
+#   cache (lean-action's GitHub cache) makes unchanged modules free; lake's
+#   traces are content-hashed, so a restored cache is always safe.
 on:
   push:
     branches: [master]
+    paths:
+      - "**/*.lean"
+      - "lakefile.toml"
+      - "lake-manifest.json"
+      - "lean-toolchain"
+      - ".github/workflows/lean_action_ci.yml"
+      - ".github/ci-full-only.txt"
+      - "tools/ci_targets.py"
+  schedule:
+    - cron: "0 3 * * 1" # Mondays 03:00 UTC: full tier (a no-op on a warm cache)
   workflow_dispatch:
+    inputs:
+      tier:
+        description: "push (selective) or full (every default target)"
+        required: true
+        default: full
+        type: choice
+        options: [full, push]
+
+concurrency:
+  group: lean-ci-${{ github.ref }}
+  cancel-in-progress: false
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -21,95 +53,22 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
-      # Build the LIGHT modules only — the same list as `defaultTargets` in
-      # lakefile.toml, kept in sync per AGENTS.md.  The heavy kernel-decide
-      # modules are excluded: MathProof.Tau.LehmerMod (~6 GB heap for its
-      # 512 decide), MathProof.Tau.LehmerPacked (~63 GiB), MathProof.Tau.
-      # LehmerPow32 (~144 GiB) and their dependents LehmerPrimePower /
-      # LehmerGrand, plus MathProof.AxCheck (imports LehmerMod) and the root
-      # MathProof.lean — all far beyond the ~7 GB a GitHub runner offers.
-      # They are verified on the Modal builder instead (see AGENTS.md):
-      # `modal run lean_check.py` / `lean_build.py`.
+      # The LIGHT modules only (`defaultTargets` in lakefile.toml, the single
+      # source of the list).  Heavy kernel-decide modules (LehmerMod,
+      # LehmerPacked, LehmerPow32, LehmerPrimePower, LehmerGrand, the
+      # MaedaGalois5 chain, AxCheck) and the root MathProof.lean are far
+      # beyond a GitHub runner and are verified on Modal (see AGENTS.md).
+      - name: Select targets
+        id: targets
+        run: |
+          tier="${{ github.event_name == 'push' && 'push' || inputs.tier || 'full' }}"
+          echo "tier=$tier"
+          python3 tools/ci_targets.py --report
+          list=$(python3 tools/ci_targets.py "$tier")
+          echo "list=$list" >> "$GITHUB_OUTPUT"
       - uses: leanprover/lean-action@v1
         with:
-          build-args: >-
-            MathProof.Tau.Basic
-            MathProof.Tau.Lehmer
-            MathProof.Tau.CongruenceSmall
-            MathProof.Tau.Bridge
-            MathProof.ModularForms.Weight12
-            MathProof.ModularForms.Congruence691
-            MathProof.ModularForms.HeckeLevelOne
-            MathProof.Tau.Mordell
-            MathProof.Tau.LehmerUnbounded
-            MathProof.Tau.PowChain
-            MathProof.Tau.LehmerSieve691
-            MathProof.Tau.LehmerPrimeReduction
-            MathProof.Tau.LehmerCoverageCount
-            MathProof.ModularForms.BernoulliHigh
-            MathProof.ModularForms.EigenLevelOne
-            MathProof.ModularForms.LehmerWeight16
-            MathProof.ModularForms.LehmerWeight18
-            MathProof.ModularForms.LehmerWeight20
-            MathProof.ModularForms.LehmerWeight22
-            MathProof.ModularForms.LehmerWeight26
-            MathProof.ModularForms.MaedaWeight24
-            MathProof.ModularForms.MaedaLevelOne
-            MathProof.ModularForms.HeckeTPCoeff
-            MathProof.ModularForms.MaedaSmallWeights
-            MathProof.ModularForms.MaedaGalois
-            MathProof.ModularForms.MaedaDim4
-            MathProof.ModularForms.MaedaDim4Weights
-            MathProof.ModularForms.MaedaGalois4
-            MathProof.ModularForms.MaedaDim5
-            MathProof.ModularForms.MaedaDim5Weights
-            MathProof.ModularForms.Poly5
-            MathProof.ModularForms.MaedaGalois5Defs
-            MathProof.ModularForms.HornerCert
-            MathProof.ModularForms.MaedaCertC
-            MathProof.ModularForms.MaedaCertCExt
-            MathProof.ModularForms.MaedaPermCriterion
-            MathProof.ModularForms.CharpolyEngine
-            MathProof.ModularForms.RabinCert
-            MathProof.ModularForms.HeckeAlgebraQT2
-            MathProof.ModularForms.CharpolyDimN
-            MathProof.ModularForms.MaedaDim6Weights
-            MathProof.ModularForms.MaedaDim7Weights
-            MathProof.ModularForms.MaedaDim8Weights
-            MathProof.ModularForms.MaedaDim9Weights
-            MathProof.ModularForms.MaedaDim10Weights
-            MathProof.ModularForms.HeckeCommute
-            MathProof.ModularForms.HeckeGeneratedByT2
-            MathProof.ModularForms.HeckeGeneratedByT2Weights
-            MathProof.ModularForms.HeckeTM
-            MathProof.ModularForms.HeckeTPCoeff
-            MathProof.ModularForms.MaedaCertCExt
-            MathProof.ModularForms.MaedaT3Dim6Weights
-            MathProof.ModularForms.MaedaT3Dim7Weights
-            MathProof.ModularForms.MaedaT3Dim8Weights
-            MathProof.ModularForms.MaedaT3Dim9Weights
-            MathProof.ModularForms.MaedaT3Dim10Weights
-            MathProof.ModularForms.HeckeRational
-            MathProof.ModularForms.HeckeRationalWeights
-            MathProof.ModularForms.HeckeIndex
-            MathProof.ModularForms.FrobeniusCycleType
-            MathProof.ModularForms.JordanPrimitive
-            MathProof.ModularForms.MaedaGaloisFull
-            MathProof.ModularForms.MaedaGaloisQuad
-            MathProof.ModularForms.MaedaGaloisDim6Weights
-            MathProof.ModularForms.MaedaGaloisDim7Weights
-            MathProof.ModularForms.MaedaGaloisDim8Weights
-            MathProof.ModularForms.MaedaGaloisDim9Weights
-            MathProof.ModularForms.MaedaGaloisDim10Weights
-            MathProof.ModularForms.MaedaT3GaloisDim6Weights
-            MathProof.ModularForms.MaedaT3GaloisDim7Weights
-            MathProof.ModularForms.MaedaT3GaloisDim8Weights
-            MathProof.ModularForms.MaedaT3GaloisDim9Weights
-            MathProof.ModularForms.MaedaT3GaloisDim10Weights
-            MathProof.ModularForms.MaedaT2GaloisSmallWeights
-            MathProof.ModularForms.HeckeField
-            MathProof.ModularForms.HeckeFieldDim2
-            MathProof.ModularForms.HeckeFieldRat
+          build-args: ${{ steps.targets.outputs.list }}
       # NOTE: no docgen-action step.  It re-ran the whole build a second time
       # and built the doc-gen4 tool and its Mathlib dependency from source
       # (30+ min per push), and its deploy step would overwrite the

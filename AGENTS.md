@@ -509,15 +509,31 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   `ZMod P` (mirror `L2P` as `L2PMod`). A nonzero residue mod a prime certifies
   the integer coefficient is nonzero — no magnitude bound needed.
 - CI (`.github/workflows/lean_action_ci.yml`) runs `lean-action` on pushes
-  to **master only** (since 2026-11-01 — the ~1 h build must not fire per
-  branch); keep `lake build` clean before merging to master.  Branches are
-  verified on Modal instead (`lean_check.py` overlays the working tree, no
-  push needed).
+  to **master only** (since 2026-11-01); keep `lake build` clean before
+  merging to master.  Branches are verified on Modal instead
+  (`lean_check.py` overlays the working tree, no push needed).
+  **Selective targets (since 2026-11-03, iteration23-review §8)**:
+  `tools/ci_targets.py` derives the targets from `defaultTargets` (single
+  source — no CI copy to sync).  A master push builds the *push* tier:
+  every default target except the expensive per-weight certificate roots
+  in `.github/ci-full-only.txt` (the T₂/T₃ dim-6–10 Maeda files) and
+  everything importing them (computed from the import graph — 23 of 75
+  today).  The weekly schedule and `workflow_dispatch` (default) build the
+  *full* tier.  Pushes touching no Lean build input (docs, research,
+  tools) skip CI, and runs queue (`concurrency`, no cancel) so a newer push
+  restores the finished build's `.lake` cache instead of a stale one.
+  Before CI's first push of a new module, check `tools/ci_targets.py
+  --report` (exit 1 on a full-only root outside `defaultTargets` or a
+  default target unreachable from `MathProof.lean`).  A new expensive
+  generated family (cold cost of several minutes) goes into
+  `ci-full-only.txt` with the reason in its layout entry.
 - `defaultTargets` in `lakefile.toml` lists the light modules only: a bare
   `lake build` (CI, Reservoir's automated builder, downstream consumers of
   the package) must never pull the heavy kernel decides. When adding a
-  module: light → add it to `defaultTargets`, `MathProof.lean`, and the CI
-  list; heavy → add it to none of those, and build it explicitly on Modal.
+  module: light → add it to `defaultTargets` and `MathProof.lean` (CI
+  follows `defaultTargets`); heavy → add it to neither, and build it
+  explicitly on Modal.  ("Trio" in older notes = these two + the former CI
+  list.)
 - **Coding rules** (`external-doc/CODING_STANDARDS.md`) apply to
   every light module since iteration 18b: no `set_option` at all (no
   heartbeat/recdepth raises, no linter suppressions), no `#eval`/`meta`/

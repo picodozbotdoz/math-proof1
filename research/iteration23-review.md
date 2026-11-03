@@ -99,7 +99,7 @@ cc3e5fa → close-out docs c2c7c25.
 | decide certificates (combined) | 1 360, 0 beyond `propext` (was 1 312) |
 | new light modules | 9: 6 trio/CI (`HeckeTM`, `HeckeIndex`, `HeckeField`, `HeckeFieldDim2`, `HeckeFieldRat`, `MaedaT2GaloisSmallWeights`) + 3 root-only (`HeckeIndexSmallWeights`, `HeckeIndexWeights`, `HeckeFieldWeights`) |
 | new generators | `tools/gen_hecke_index.py`, `tools/gen_hecke_field.py` (both `--check` byte-identical) |
-| CI bill added | ≈ +4–5 min/push (the six trio modules, 11–140 s each on a warm cache) — CI now ≈ 1 h 15 min; WATCH |
+| CI bill added | six trio modules (11–140 s each on Modal); the per-push bill is now bounded by the selective push tier (§8) |
 | lines added | ≈ 24.9 k vs master (14.4 k Lean + tools, of which ≈ 11 k generated) |
 | light root | 8 499 jobs, green, 0 err / 0 warn; tauceti audit clean |
 
@@ -115,17 +115,17 @@ cc3e5fa → close-out docs c2c7c25.
 3. **Integrality beyond dim 2**: at dim 2, `I_k = 1` and every `T_m` is an
    integer polynomial in `T₂` (`HeckeFieldDim2`); the general statement
    `𝕋 = ℤ[T₂] ⟺ I_k = 1` is not formalized.
-4. **CI selective targets** — [open] since Iteration 21, recommended as a
-   precondition in iteration22-review §7.4, and Iteration 23 still added six
-   default targets.
+4. ~~**CI selective targets**~~ — [open] since Iteration 21; **resolved in
+   this review** (§8).
 5. 131072 Lehmer (descoped in Iteration 22; unchanged).
 6. Worker liveness: no completion/failure signal for dead workers.
 
 ## 7. Recommendations for Iteration 24
 
-1. **CI selective targets first** (operator decision on the mechanism) —
-   before any further `defaultTargets` module.  Each iteration adds
-   minutes per master push, and the bill is now above an hour.
+1. **Watch the first master pushes under §8**: the iteration-23 merge push
+   (push tier) and the first weekly full run give the measured numbers the
+   estimates in §8 lack; move a family into `ci-full-only.txt` if a push
+   tier run exceeds ~15 min.
 2. **Close the index** (§6.1–6.3): with the duality and independence now
    in Lean, `index_eq_det` is a `Submodule`/`Basis` index computation; with
    it, `D = I_k` at dims 3–4 and `𝕋 = ℤ[T₂] ⟺ I_k = 1` would turn the 54
@@ -138,3 +138,63 @@ cc3e5fa → close-out docs c2c7c25.
    notification.
 4. Keep the merge-step memory pass + combined `AxCheckDecide` in the
    standard close-out; both earned their place this iteration.
+
+## 8. CI selective targets (resolved in this review, 2026-11-03)
+
+Operator steering: "resolve CI selective targets as part of current
+Iteration 23 review.  we can't have CI run for too long."
+
+**Diagnosis** (public GitHub API, `lean_action_ci.yml` run history).  The
+`.lake` cache (lean-action's GitHub cache, ≈ 2.1 GiB) already makes CI
+incremental: runs on a warm cache take **1 min 25 s – 2 min 09 s** (seven
+measured, e.g. 4eaf528, 5760f02, 46f4e4d, b5380e9).  The long runs had two
+causes, neither of them "too many targets":
+
+1. **Overlapping pushes restore a stale cache.**  51a5eb1 (docs only)
+   started at 03:56, while cb7dbba's build was still running (cache saved
+   04:15); it restored the Oct-31 cache and rebuilt all of Iteration 22:
+   **51 min for a docs commit**.  Several Nov-1 runs were cancelled the
+   same way.
+2. **Ancestor edits invalidate the expensive certificate families.**  The
+   generated dim-6–10 Maeda files (T₂ and T₃, 88–1227 s each on Modal) and
+   their 13 dependents rebuild whenever an ancestor changes: cb7dbba (the
+   Iteration-22 merge) took **77 min**; earlier cold runs 1 h 03 – 1 h 56.
+
+**Design** (`.github/workflows/lean_action_ci.yml`, `tools/ci_targets.py`,
+`.github/ci-full-only.txt`):
+
+* `concurrency` group per ref, `cancel-in-progress: false` — a newer push
+  queues behind the running build and restores *its* cache (fixes 1).
+* `paths` filter — pushes touching no Lean build input (`*.lean`,
+  lakefile, manifest, toolchain, the CI files) do not run at all.
+* Two tiers derived from `defaultTargets` (single source; the hand-kept
+  CI copy, which had drifted into two duplicate entries, is gone):
+  **push** = default targets minus the ten full-only roots and every
+  target whose import closure reaches one (computed: 23 of 75 excluded —
+  the ten roots, their ten Galois twins, `HeckeGeneratedByT2Weights`,
+  `HeckeRationalWeights`, `HeckeFieldDim2`); **full** = all 75, on a
+  weekly schedule (Mondays 03:00 UTC — a ~2 min no-op on a warm cache) and
+  on `workflow_dispatch` (default).  This bounds 2: an ancestor edit costs
+  the push tier only, and the expensive families are rebuilt by the full
+  tier off the push path.  They stay Modal-verified at every wave merge
+  and audited by `AxCheckDecide`.
+* `ci_targets.py --report` is a sanity gate (fails the run on a full-only
+  root outside `defaultTargets` or a default target unreachable from
+  `MathProof.lean`).
+
+**Verified locally**: the selector on this tree (75 / 52 / 23, exit 0),
+both tier invocations as the workflow step runs them, a deliberate bad
+root (step fails, exit 1), and the workflow YAML parsed (js-yaml).
+**Not measured yet**: a GitHub run of the new workflow — it fires on the
+operator's next master push.  Expected: the iteration-23 merge push builds
+five new push-tier modules on a warm cache (≈ 4–6 min by Modal times);
+a cold push-tier run is unmeasured (the expensive part of the old cold
+runs is exactly the excluded families).
+
+**Trade-off, stated**: between a push that edits an ancestor and the next
+full run (≤ 1 week, or a manual dispatch), CI does not re-check the 23
+full-only targets.  Wave merges re-verify them on Modal before the
+operator merges, so a regression there needs a master push that bypassed
+the wave close-out.  `HeckeFieldDim2` is full-only only because it imports
+the 54-weight `HeckeGeneratedByT2Weights` for six dim-2 facts; splitting
+that import would return it to the push tier (small follow-up).

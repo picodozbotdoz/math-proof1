@@ -66,9 +66,10 @@ A module is *heavy* if it (transitively) imports a large kernel decide:
 `MaedaGalois5Defs`, `HornerCert` and `MaedaCertC` are light. Everything else is light.
 
 When adding a module:
-- **light** → add it to all three of `defaultTargets` in `lakefile.toml`,
-  the imports in `MathProof.lean`, and `build-args` in
-  `.github/workflows/lean_action_ci.yml` (these lists must stay in sync);
+- **light** → add it to `defaultTargets` in `lakefile.toml` and the
+  imports in `MathProof.lean` (CI derives its targets from `defaultTargets`
+  via `tools/ci_targets.py`; a module importing a root listed in
+  `.github/ci-full-only.txt` is built only by the weekly/dispatch full tier);
 - **heavy** → add it to none of them; verify with `lean_check.py --file …`
   (raise `LEAN_CHECK_MEMORY_MIB` if needed) and set `maxHeartbeats` for long
   kernel decides.

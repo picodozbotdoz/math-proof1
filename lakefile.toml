@@ -1,8 +1,8 @@
 name = "MathProof"
 version = "0.1.0"
 keywords = ["math"]
-# Default targets = the light modules only (kept in sync with the CI build
-# list in .github/workflows/lean_action_ci.yml): a bare `lake build` (CI,
+# Default targets = the light modules only (CI reads this list through
+# tools/ci_targets.py — there is no separate CI copy): a bare `lake build` (CI,
 # Reservoir's automated builder, downstream consumers) must never pull the
 # heavy kernel-decide modules (MathProof.Tau.LehmerMod ~6 GB, LehmerPacked
 # ~63 GiB, LehmerPow32 ~144 GiB and their dependents) nor the root
