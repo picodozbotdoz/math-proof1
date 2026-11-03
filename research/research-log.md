@@ -2110,4 +2110,5 @@ fixed to `List` sums); tauceti audit clean.  Memory pass at merge: profiles
 showed import floor + retained literals, no hot declaration; the index file
 was split by dimension (no more 16 GiB escalation) and the field file
 dropped two superseded imports.  Peaks ≤ 6.6 GiB per module, no 16 GiB
-alerts.  Tracking: `research/iteration23/WAVE-TRACKING.md`.
+alerts.  Tracking: `research/iteration23/WAVE-TRACKING.md`; review (gaps, metrics,
+Iteration-24 recommendations): `research/iteration23-review.md`.
