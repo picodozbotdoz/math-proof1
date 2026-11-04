@@ -67,9 +67,15 @@ for slug in $(slug_list "$@"); do
   tip_ct=$(git -C "$wt" log -1 --format=%ct HEAD 2>/dev/null || echo 0)
   dirty=$(git -C "$wt" status --porcelain 2>/dev/null | wc -l || true)
 
-  # heartbeat: newest WORKLOG under blueprint/*/ (missing WORKLOG is itself
-  # a signal — the hecke-tm lesson: a worker that never wrote one)
-  wl_file=$(ls -1 "$wt"/blueprint/*/WORKLOG.md 2>/dev/null | head -1 || true)
+  # heartbeat: the worker's OWN worklog — prefer the slug match, else the
+  # NEWEST by mtime under blueprint/*/ (iteration-24 lesson: worktrees carry
+  # the whole trunk blueprint/ dir, so alphabetical-first picks a previous
+  # iteration's committed WORKLOG).  Missing WORKLOG is itself a signal —
+  # the hecke-tm lesson: a worker that never wrote one.
+  wl_file="$wt/blueprint/$slug/WORKLOG.md"
+  if [ ! -f "$wl_file" ]; then
+    wl_file=$(ls -1t "$wt"/blueprint/*/WORKLOG.md 2>/dev/null | head -1 || true)
+  fi
   wl_ct=0; wl_entry="-"
   if [ -n "$wl_file" ]; then
     wl_ct=$(stat -c %Y "$wl_file" 2>/dev/null || echo 0)
