@@ -2116,3 +2116,65 @@ Iteration-24 recommendations): `research/iteration23-review.md`.
 `defaultTargets`-derived tier without the dim-6–10 certificate families
 (`tools/ci_targets.py`, `.github/ci-full-only.txt`); full tier weekly /
 on dispatch; docs-only pushes skip CI; runs queue instead of overlapping.
+
+## Stuck-worker protocol — orchestrator-side liveness, terminate, fresh respawn (2026-11-04, `dev/zai`)
+
+Operator-directed loop infrastructure (no Lean changes, no Modal runs
+needed — documentation + one ops tool only).  Motivation: Iteration 23 lost
+two wave workers *silently* (found dead at 00:25 with no completion
+notification delivered; one had never written its WORKLOG) and a third
+stall needed an operator-initiated rescue session ("iteration 23 stuck,
+help them continue").  iteration23-review §6.6 recorded the gap ("no
+completion/failure signal for dead workers") and §7.3 recommended a
+liveness protocol; the operator extended it: **the main agent must detect,
+terminate, and fresh-respawn a stuck subagent itself** — external help only
+after the respawn budget is spent.
+
+Delivered:
+
+1. **`external-doc/RESEARCH-WORKFLOW.md` v1.1** — new §6 subsection
+   "Stuck-worker protocol — liveness → terminate → salvage → respawn":
+   liveness-signal table (task poll / WORKLOG heartbeat / checkpoint
+   commits / streaming run logs / newest worktree file), the worker
+   heartbeat convention (first-session entry, every §9 checkpoint,
+   before/after any > 10 min run — workers are killable at any instant),
+   stall classification DEAD / HUNG (60 min) / LOOPING (90 min) /
+   OVERDUE RUN (3× stated wall-clock), orchestrator watchdog cadence
+   (bounded blocking wait ≈ 15–20 min + watchdog pass; never idle on
+   notifications alone), terminate mechanics (task stop + orphaned
+   modal-client cleanup matched by the worktree's mirror path), salvage
+   (`salvage:` checkpoint commit, worktree preserved), fresh-respawn
+   briefing contents, and the escalation ladder: two auto-respawns per
+   (branch × gate) — the second with a changed-strategy note — third stall
+   parks the branch for the operator.  §1 roles, §4d orchestrator duties,
+   §8 progress markers (watchdog output added), §10 adopted list and the
+   Appendix-A WAVE-TRACKING template (watchdog block: task-ID registry +
+   threshold overrides) updated; incident ledger row appended.
+2. **`tools/wave_watchdog.sh`** — one-command artifact-side liveness
+   report per worktree (branch/tip age, dirty count, WORKLOG heartbeat +
+   last dated entry, newest artifact mtime, newest mirror run-log age,
+   live modal-client count matched by that worktree's own `mrun.sh`
+   mirror path).  Explicit slugs = active set (stale ⇒ STALLED, exit 3);
+   no args = cold survey (IDLE, exit 0); `WAVE_WATCHDOG_STALL_MIN`
+   overrides the 60 min default.  Tested live against the three
+   iteration-23 worktrees: survey mode IDLE/exit 0 with tips matching
+   WAVE-TRACKING (082a98a / a733c02 / 6cf4846); explicit-slug + low
+   threshold ⇒ STALLED/exit 3; decoy modal client ⇒ LIVE `modal(1)`;
+   missing slug ⇒ MISSING/exit 3; CWD-independent; pipefail-safe.
+3. **`external-doc/ENTRY-PROMPTS.md`** — T2 template's WAVE step now
+   carries the watchdog/terminate/respawn duty; the worker spawn briefing
+   mandates the heartbeat convention and states the killability contract
+   ("a hung worker is terminated and respawned from its artifacts, not
+   waited on"); "report when" updated (say so when you hit a wall — the
+   orchestrator respawns fresh rather than letting you drain).
+4. **`external-doc/CURRENT_PROMPT.md`** — the live T2 prompt's WAVE step
+   and Resilience paragraph now point at the protocol, so the next cold
+   session of the running loop picks it up.
+5. **`AGENTS.md`** — `tools/wave_watchdog.sh` layout entry + the
+   conventions bullet "a stuck wave worker is the orchestrator's to
+   resolve, autonomously" (evidence: the Iteration-23 incidents).
+
+No sections were renumbered — every existing § cross-reference in
+CURRENT_PROMPT / ENTRY-PROMPTS / reviews still resolves.  Verification was
+behavioral (script exercised against real worktrees as above); no `.lean`
+file was touched, so no Modal build and no `tauceti_audit` run.

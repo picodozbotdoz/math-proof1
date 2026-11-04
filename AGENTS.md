@@ -471,6 +471,15 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
 - `research/research-log.md` — the research loop log. Each iteration is recorded
   here (problem, contributions, next steps); update it (and `README.md`)
   when completing an iteration.
+- `tools/wave_watchdog.sh` — wave-worker liveness report, the artifact side
+  of the stuck-worker protocol (`external-doc/RESEARCH-WORKFLOW.md` §6):
+  per worktree under `worktree/mp1/` — branch/tip age, dirty count, WORKLOG
+  heartbeat age + last dated entry, newest artifact mtime, newest mirror
+  run-log age, live modal-client count (matched by that worktree's own
+  `mrun.sh` mirror path, never a sibling's).  Explicit slugs = the wave's
+  active set (all signals stale ⇒ STALLED, exit 3); no args = cold survey
+  (stale ⇒ IDLE, exit 0).  `WAVE_WATCHDOG_STALL_MIN` overrides the 60 min
+  default; `WAVE_WT_ROOT` the worktree root.
 - `docs/` — the GitHub Pages source folder (`/docs`, deploy-from-branch),
   serving `https://picodozbotdoz.github.io/math-proof1/`: `docs/index.html`
   is the project landing page (results, verified τ values — keep in sync
@@ -577,6 +586,17 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   `/home/doz/tmp/math-proof1-temp/agent-work/`).  Local temp artifacts (run
   logs, mirrors, scratch) go under `/home/doz/tmp/math-proof1-temp/` — `/tmp`
   is wiped on reboot (2026-10-31 19:26 incident).
+- **A stuck wave worker is the orchestrator's to resolve, autonomously**
+  (2026-11-04; iteration23-review §6.6 — two workers died silently with the
+  completion notifications lost, and a third stall needed an operator
+  rescue): detect via `tools/wave_watchdog.sh` + background-task polls
+  (never idle on notifications alone), then terminate → salvage (`salvage:`
+  commit on the worker's own `impl/` branch, worktree preserved) → fresh
+  respawn with a reconstruction briefing; two stalls on one gate →
+  changed-strategy respawn, third → park + report to the operator.  Workers
+  treat their WORKLOG as a heartbeat (first session, every §9 checkpoint,
+  before/after any > 10 min run).  Full protocol: `external-doc/
+  RESEARCH-WORKFLOW.md` §6 "Stuck-worker protocol".
 - **`Nat.Prime` is not kernel-decidable** (2026-11-02, iteration-22 lehmer
   worker): `Nat.minFac` is well-founded recursion, so any `decide` touching
   `.Prime` breaks in the kernel.  Use a structural trial-division
