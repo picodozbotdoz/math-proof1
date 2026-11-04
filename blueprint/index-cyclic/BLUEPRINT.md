@@ -114,3 +114,25 @@ Same standing list as b1 (entrywise decides, List sums, heartbeat,
 compile-before-planning, deviation protocol).  Add: G1 parses are the only
 trust channel for landed literals; a mismatch is a CORRECTIONS event, not
 a local workaround.
+
+## CORRECTIONS (deviation protocol §4d; worker b2, on branch impl/iteration24/index-cyclic)
+
+**2026-11-04 — G2 built without importing `HeckeLatticeIndex`.**  b1 had
+not landed at G2 time; rather than developing against a stub, the generic
+module defines its own `HeckeCyclic.t2Span T2 n :=
+span ℤ (range fun j : Fin n => T₂^j)` — **definitionally identical** to
+the b1 contract's `HeckeLatticeIndex.t2Lattice` (checked against b1's
+in-flight G2 WIP on 2026-11-04: same body verbatim), so adoption is a
+`rfl`.  This keeps G2 free of any uncommitted dependency and G3's wiring
+absorbs the (rfl) bridge.  Consequence recorded in the WORKLOG: G3's
+per-weight `D_eq_Ik` currently takes the index cardinality as an explicit
+`hcard` hypothesis; b1's `index_card_hecke_natCard` (their WIP form,
+2026-11-04) concludes the *same* quotient-cardinality statement, so the
+plug-in is: rewrite `t2Span → t2Lattice` (rfl) and `T₂ → heckeTM k 2`
+(`heckeTM_prime`), then apply their per-weight fact.
+
+**2026-11-04 — order minimality off the critical path (G1 audit
+consequence).**  `D = I_k` needs only `card_dvd_of_generator` (cyclicity
++ `D • [T₃] = 0` ⟹ `I_k ∣ D`) plus the landed `D ∣ I_k`; the Bézout
+minimality (`order_minimal`, proved in full) is not load-bearing —
+anticipated by the pre-authorized descope ladder, taken proactively.

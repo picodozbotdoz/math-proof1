@@ -104,3 +104,24 @@ b1 status at this checkpoint: index-card branch at their G1 commit
 is the committed state (blueprint's b1-slippage fallback; plug-in plan:
 when b1 lands, regenerate dropping the hcard binder and pass b1's
 index-card facts — one generator flag + re-verify).
+
+**2026-11-04 14:40 UTC — session 1 END. All gates closed to the b1-free maximum.**
+- G1 CLOSED (commit 3122493): audit 0 failures, API pins.
+- G2 CLOSED (commit 3acaa0b): HeckeCyclic.lean green + trio-registered.
+- G3 PHASE 1 CLOSED (commit 3725374 + this one): HeckeCyclicWeights.lean
+  (18 weights) generated, green, root-registered, all audits pass.
+- G3 PHASE 2 (PENDING b1): drop the `hcard` hypothesis from the 12
+  dims-3-4 `D_eq_Ik`/`heckeLattice_ne_t2Span` theorems and pass b1's
+  landed per-weight index-card facts. Plug-in recipe VERIFIED against
+  b1's in-flight WIP (read-only peek 2026-11-04): their
+  `HeckeLatticeIndex.index_card_hecke_natCard` concludes exactly my
+  hcard shape over `t2Lattice (heckeTM k 2)`; their `t2Lattice` def is
+  verbatim my `t2Span` (rfl bridge), T₂ identified via `heckeTM_prime`.
+  Implementation at adoption: add a `--plugged` mode to
+  tools/gen_hecke_cyclic.py emitting the hcard-free form + a per-weight
+  bridge have; re-verify file + root + AxCheckDecide on Modal; commit.
+  b1's branch was at their G1 commit (2f400f4) at 14:35 UTC, G2 WIP
+  uncommitted. Do NOT block on polling; resume from this entry.
+Final session state: branch impl/iteration24/index-cyclic at 4 commits
+(base + G1 + G2 + G3p1 [+ corrections]); nothing uncommitted except this
+WORKLOG/bundle; inbox clean; no memory alerts (all peaks ≤ 6.8 GiB).
