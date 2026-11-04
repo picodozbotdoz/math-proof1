@@ -84,3 +84,23 @@ card_dvd_of_generator (hNL, hD) as genuinely unused.
 Registration: defaultTargets + MathProof.lean + AGENTS.md entry (committed).
 Trunk check: b1 STILL not landed (orchestrator housekeeping only) → G3
 waits for b1's per-weight index_card facts; generator skeleton prepared next.
+
+**2026-11-04 14:20 UTC — G3 (phase 1) green: HeckeCyclicWeights.lean generated + audited.**
+tools/gen_hecke_cyclic.py emits the 18-weight file (1133 lines, --check
+byte-identity, no >100-col lines). Verification (mrun.sh):
+- file: wall 80 s / peak 6.17 GiB — GREEN ON FIRST RUN.
+- root MathProof (with the new root-only import): 68 s / 6.73 GiB.
+- ci_targets --report: exit 0 (77 default targets unchanged — the weights
+  file is root-only like its parents).
+- AxCheckDecide: 1360 certificates, 0 beyond propext (no new decides —
+  the file's only computations are norm_num over literals).
+- tauceti: 0/0/0/0/0 on both the file and the generator.
+Content: dims 3-4 (12 weights): hfi (c1..cn arms), op_id (int_poly_of_dimN
+over cert/Dn/scaled_idN), Dn_smul_mem (D • T₃ ∈ ℤ[T₂]), D_eq_Ik + ne
+instances with the index cardinality as EXPLICIT hcard HYPOTHESIS; dim 2
+(6 weights): unconditional 𝕋 = ℤ[T₂] equality instances.
+b1 status at this checkpoint: index-card branch at their G1 commit
+(2f400f4) — G2 in flight, NOT landed on the trunk → the hypothesis-form
+is the committed state (blueprint's b1-slippage fallback; plug-in plan:
+when b1 lands, regenerate dropping the hcard binder and pass b1's
+index-card facts — one generator flag + re-verify).
