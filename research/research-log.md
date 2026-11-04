@@ -2178,3 +2178,20 @@ No sections were renumbered — every existing § cross-reference in
 CURRENT_PROMPT / ENTRY-PROMPTS / reviews still resolves.  Verification was
 behavioral (script exercised against real worktrees as above); no `.lean`
 file was touched, so no Modal build and no `tauceti_audit` run.
+
+## Iteration 24 — IN PROGRESS, mid-wave session handoff (2026-11-04 ~22:15)
+
+Theme: close the Hecke index (iteration23-review §6.1–6.3 → §7.2).  INIT +
+recon (stay at `v4.36.0-rc1`; CI push tier measured **2.0 min** on master,
+rec 1 satisfied), probes 1–3 (`research/iteration24/FINDINGS.md`: dims ≤ 4
+quotient cyclic D = I_k; dims 5–10 non-cyclic, T₃ carries almost all,
+**𝕋 = ℤ[T₂,T₃,T₅(,T₇)] generically for n ≤ 10 certificate-free**; Mathlib
+`relIndex` API confirmed at pin), three blueprints committed (f7628f6),
+wave spawned (9357338).  Workers progressed (index-card G1 green;
+index-cyclic G1+G2+G3-phase1 green incl. AxCheckDecide 1360/0;
+hecke-ring-gens G1 measurement nearly done, tiny-certificate route found)
+before the operator wrapped the session up.  All state salvage-committed;
+worktrees preserved.  **Resume: `research/iteration24/WAVE-TRACKING.md`
+(§ incident log 2026-11-04 ~22:15) — re-enter stage (d), fresh-respawn per
+§6.**  No master contact; trunk `dev/iteration24-hecke-index` is
+self-contained.
