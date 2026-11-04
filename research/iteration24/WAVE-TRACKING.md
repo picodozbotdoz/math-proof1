@@ -21,12 +21,19 @@ every spawn briefing):
 
 | worker | task id | spawned | stalls (branch × gate) | parked? |
 |---|---|---|---|---|
-| index-card | — | — | 0 | no |
-| index-cyclic | — | — | 0 | no |
-| hecke-ring-gens | — | — | 0 | no |
+| index-card | agent_c7cc1c8f (spawned 2026-11-04 ~17:30) | 2026-11-04 | 0 | no |
+| index-cyclic | agent_c2624ee1 (spawned 2026-11-04 ~17:30) | 2026-11-04 | 0 | no |
+| hecke-ring-gens | agent_d9d751ff (spawned 2026-11-04 ~17:30) | 2026-11-04 | 0 | no |
 
 ## Incident log
 (dated; reboots, stalls, terminations/respawns with signals, escalations)
+
+### 2026-11-04 ~17:30 — wave spawned
+3 workers from base f7628f6 (worktrees + WORKLOGs + seeded mrun.sh runners
+under /home/doz/tmp/math-proof1-temp/agent-work/<slug>/runs/).  Note: the
+three iteration-23 worktrees (hecke-tm/index/field) remain under
+worktree/mp1/ — clean, to be removed at this iteration's close-out
+(§4f leftover).
 
 ## Cross-cutting lessons
 (to be promoted to AGENTS.md)
