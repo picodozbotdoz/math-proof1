@@ -90,6 +90,9 @@ import MathProof.ModularForms.HeckeFieldWeights
 import MathProof.ModularForms.HeckeIndex
 import MathProof.ModularForms.HeckeIndexSmallWeights
 import MathProof.ModularForms.HeckeIndexWeights
+-- Generic cyclicity of the Hecke quotient 𝕋 ⧸ ℤ[T₂] at dim ≤ 4 and the
+-- D = I_k packaging (iteration 24 b2; a defaultTargets/CI item).
+import MathProof.ModularForms.HeckeCyclic
 import MathProof.ModularForms.FrobeniusCycleType
 import MathProof.ModularForms.JordanPrimitive
 import MathProof.ModularForms.MaedaGaloisFull

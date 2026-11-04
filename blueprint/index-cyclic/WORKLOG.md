@@ -41,3 +41,46 @@ Next: G2 HeckeCyclic.lean WITHOUT any b1 import (own `t2Span` in the exact
 contract form `span ℤ (range fun j : Fin n => T₂^j)`; at b1-adoption either
 rfl-identical or a one-line span bridge — deviation recorded at next entry).
 No stub needed for G2; G3 waits for b1's per-weight card facts.
+
+**2026-11-04 13:10 UTC — G2 in progress: first Modal run of HeckeCyclic.lean.**
+Module written (~400 lines, no set_option, Mathlib imports only:
+HeckeIndex + Mathlib.RingTheory.PowerBasis for linearIndependent_pow).
+Contents: zmulHom, card_dvd_of_generator (ZMod.lift + Lagrange),
+card_quotient_eq_one_iff, t2Span + pow_mem, heckeTM_four_mem_t2Span
+(T4 = T2^2 - 2^(k-1) T1 membership), heckeLattice_le_sup_t3 (the
+quotient_span_of_le_four lattice form), quotient_generated, 
+t2Span_le_heckeLattice, linearIndependent_pow_z, order_minimal (Bezout
+route), D_eq_Ik_of_cyclic, heckeLattice_eq_t2Span_iff,
+heckeLattice_eq_t2Span_two (dim-2 equality, Miller-free).
+No b1 dependency (own t2Span in the exact contract form; adoption later
+via rfl bridge). Expected run: warm ~2-4 min (new module + one import
+layer HeckeIndex already built). Target: MathProof.ModularForms.HeckeCyclic.
+
+**2026-11-04 13:55 UTC — G2 CLOSED (green, committed).**
+`MathProof/ModularForms/HeckeCyclic.lean` (442 lines) builds 0/0 on Modal
+after 6 fix iterations. Verification runs (mrun.sh, 8 GiB request, no
+escalation, no memory alerts):
+- module target: wall 33 s / peak tree RSS 5.96 GiB / module peak 4.75 GiB.
+- root `MathProof` (new import): wall 54 s / peak 6.70 GiB.
+- ci_targets --report: exit 0 (77 default targets, push tier 55).
+- tauceti audit: 0 set_option / 0 #eval / 0 native_decide / 0 sorry.
+Contents as planned: zmulHom, card_dvd_of_generator (ZMod.lift + Lagrange
+via AddSubgroup.card_eq_card_quotient_mul_card_addSubgroup +
+quotientKerEquivOfSurjective), card_quotient_eq_one_iff (rfl on
+AddSubgroup.index), t2Span + pow_mem, heckeTM_four_mem_t2Span (T₄ =
+T₂²−2^(k−1)·T₁ membership), heckeLattice_le_sup_t3 (blueprint's
+quotient_span_of_le_four), quotient_generated, t2Span_le_heckeLattice,
+linearIndependent_pow_z (Mathlib's PowerBasis.linearIndependent_pow +
+restrict_scalars'), order_minimal (Bézout route, full), D_eq_Ik_of_cyclic,
+heckeLattice_eq_t2Span_iff, heckeLattice_eq_t2Span_two (dim-2 equality,
+needs only heckeTM_id). API corrections vs plan (Mathlib-at-pin): additive
+subgroupOf is `AddSubgroup.addSubgroupOf` (NOT .subgroupOf);
+`Nat.card_zmod` replaces the ZMod.card+haveI dance (haveI trips
+linter.style.haveILetI); `Module.End.one_eq_id`/`mul_eq_comp`;
+QuotientAddGroup.eq is stated via `-a + b`; `mul_add`+`Finset.mul_sum` for
+the d-distribution; linter.style.show rejects tactic `show` (use `change`)
+— all recorded for future modules. Two hypotheses dropped from
+card_dvd_of_generator (hNL, hD) as genuinely unused.
+Registration: defaultTargets + MathProof.lean + AGENTS.md entry (committed).
+Trunk check: b1 STILL not landed (orchestrator housekeeping only) → G3
+waits for b1's per-weight index_card facts; generator skeleton prepared next.
