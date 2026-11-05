@@ -65,16 +65,38 @@ def C : Matrix (Fin 2) (Fin 2) ℤ := !![
 1, 0;
 0, 1]
 
-/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
-is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
-theorem hcheck : cardCheck atab HeckeRatWeight24.M2 C = true := by
+/-- The landed `T₂` matrix `HeckeRatWeight24.M2` as an integer table. -/
+def m2tab : ℕ → ℕ → ℤ
+  | 0, 0 => 696
+  | 0, 1 => 1
+  | 1, 0 => 20736000
+  | 1, 1 => 384
+  | _, _ => 0
+
+theorem hM2tab : ∀ i j : Fin 2, HeckeRatWeight24.M2 i j = m2tab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The matrix `C` as an integer table. -/
+def ctab : ℕ → ℕ → ℤ
+  | 0, 0 => 1
+  | 1, 1 => 1
+  | _, _ => 0
+
+theorem hCtab : ∀ i j : Fin 2, C i j = ctab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only):
+every cell of `C` is the Miller-conjugated row 0 of the powers of `T₂`. -/
+theorem hcheck : cardCheck atab m2tab ctab 2 = true := by
   decide +kernel
 
 /-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 2 =>
     ∑ c : Fin 2, millerCoeff atab 2 j.val c.val
       * (HeckeRatWeight24.M2 ^ (i : ℕ)) 0 c) = C :=
-  hcard_of_check atab HeckeRatWeight24.M2 C hcheck
+  hcard_of_check atab HeckeRatWeight24.M2 C m2tab ctab hM2tab hCtab hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight24.Ik := by
@@ -138,16 +160,38 @@ def C : Matrix (Fin 2) (Fin 2) ℤ := !![
 1, 0;
 0, 1]
 
-/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
-is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
-theorem hcheck : cardCheck atab HeckeRatWeight28.M2 C = true := by
+/-- The landed `T₂` matrix `HeckeRatWeight28.M2` as an integer table. -/
+def m2tab : ℕ → ℕ → ℤ
+  | 0, 0 => 936
+  | 0, 1 => 1
+  | 1, 0 => 186624000
+  | 1, 1 => -9216
+  | _, _ => 0
+
+theorem hM2tab : ∀ i j : Fin 2, HeckeRatWeight28.M2 i j = m2tab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The matrix `C` as an integer table. -/
+def ctab : ℕ → ℕ → ℤ
+  | 0, 0 => 1
+  | 1, 1 => 1
+  | _, _ => 0
+
+theorem hCtab : ∀ i j : Fin 2, C i j = ctab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only):
+every cell of `C` is the Miller-conjugated row 0 of the powers of `T₂`. -/
+theorem hcheck : cardCheck atab m2tab ctab 2 = true := by
   decide +kernel
 
 /-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 2 =>
     ∑ c : Fin 2, millerCoeff atab 2 j.val c.val
       * (HeckeRatWeight28.M2 ^ (i : ℕ)) 0 c) = C :=
-  hcard_of_check atab HeckeRatWeight28.M2 C hcheck
+  hcard_of_check atab HeckeRatWeight28.M2 C m2tab ctab hM2tab hCtab hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight28.Ik := by
@@ -211,16 +255,38 @@ def C : Matrix (Fin 2) (Fin 2) ℤ := !![
 1, 0;
 0, 1]
 
-/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
-is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
-theorem hcheck : cardCheck atab HeckeRatWeight30.M2 C = true := by
+/-- The landed `T₂` matrix `HeckeRatWeight30.M2` as an integer table. -/
+def m2tab : ℕ → ℕ → ℤ
+  | 0, 0 => 192
+  | 0, 1 => 1
+  | 1, 0 => 456192000
+  | 1, 1 => 8448
+  | _, _ => 0
+
+theorem hM2tab : ∀ i j : Fin 2, HeckeRatWeight30.M2 i j = m2tab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The matrix `C` as an integer table. -/
+def ctab : ℕ → ℕ → ℤ
+  | 0, 0 => 1
+  | 1, 1 => 1
+  | _, _ => 0
+
+theorem hCtab : ∀ i j : Fin 2, C i j = ctab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only):
+every cell of `C` is the Miller-conjugated row 0 of the powers of `T₂`. -/
+theorem hcheck : cardCheck atab m2tab ctab 2 = true := by
   decide +kernel
 
 /-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 2 =>
     ∑ c : Fin 2, millerCoeff atab 2 j.val c.val
       * (HeckeRatWeight30.M2 ^ (i : ℕ)) 0 c) = C :=
-  hcard_of_check atab HeckeRatWeight30.M2 C hcheck
+  hcard_of_check atab HeckeRatWeight30.M2 C m2tab ctab hM2tab hCtab hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight30.Ik := by
@@ -284,16 +350,38 @@ def C : Matrix (Fin 2) (Fin 2) ℤ := !![
 1, 0;
 0, 1]
 
-/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
-is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
-theorem hcheck : cardCheck atab HeckeRatWeight32.M2 C = true := by
+/-- The landed `T₂` matrix `HeckeRatWeight32.M2` as an integer table. -/
+def m2tab : ℕ → ℕ → ℤ
+  | 0, 0 => 1176
+  | 0, 1 => 1
+  | 1, 0 => 2280960000
+  | 1, 1 => 38784
+  | _, _ => 0
+
+theorem hM2tab : ∀ i j : Fin 2, HeckeRatWeight32.M2 i j = m2tab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The matrix `C` as an integer table. -/
+def ctab : ℕ → ℕ → ℤ
+  | 0, 0 => 1
+  | 1, 1 => 1
+  | _, _ => 0
+
+theorem hCtab : ∀ i j : Fin 2, C i j = ctab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only):
+every cell of `C` is the Miller-conjugated row 0 of the powers of `T₂`. -/
+theorem hcheck : cardCheck atab m2tab ctab 2 = true := by
   decide +kernel
 
 /-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 2 =>
     ∑ c : Fin 2, millerCoeff atab 2 j.val c.val
       * (HeckeRatWeight32.M2 ^ (i : ℕ)) 0 c) = C :=
-  hcard_of_check atab HeckeRatWeight32.M2 C hcheck
+  hcard_of_check atab HeckeRatWeight32.M2 C m2tab ctab hM2tab hCtab hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight32.Ik := by
@@ -357,16 +445,38 @@ def C : Matrix (Fin 2) (Fin 2) ℤ := !![
 1, 0;
 0, 1]
 
-/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
-is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
-theorem hcheck : cardCheck atab HeckeRatWeight34.M2 C = true := by
+/-- The landed `T₂` matrix `HeckeRatWeight34.M2` as an integer table. -/
+def m2tab : ℕ → ℕ → ℤ
+  | 0, 0 => 432
+  | 0, 1 => 1
+  | 1, 0 => 8460288000
+  | 1, 1 => -122112
+  | _, _ => 0
+
+theorem hM2tab : ∀ i j : Fin 2, HeckeRatWeight34.M2 i j = m2tab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The matrix `C` as an integer table. -/
+def ctab : ℕ → ℕ → ℤ
+  | 0, 0 => 1
+  | 1, 1 => 1
+  | _, _ => 0
+
+theorem hCtab : ∀ i j : Fin 2, C i j = ctab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only):
+every cell of `C` is the Miller-conjugated row 0 of the powers of `T₂`. -/
+theorem hcheck : cardCheck atab m2tab ctab 2 = true := by
   decide +kernel
 
 /-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 2 =>
     ∑ c : Fin 2, millerCoeff atab 2 j.val c.val
       * (HeckeRatWeight34.M2 ^ (i : ℕ)) 0 c) = C :=
-  hcard_of_check atab HeckeRatWeight34.M2 C hcheck
+  hcard_of_check atab HeckeRatWeight34.M2 C m2tab ctab hM2tab hCtab hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight34.Ik := by
@@ -432,16 +542,45 @@ def C : Matrix (Fin 3) (Fin 3) ℤ := !![
 0, 1, 0;
 34416831456, 194184, -72]
 
-/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
-is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
-theorem hcheck : cardCheck atab HeckeRatWeight36.M2 C = true := by
+/-- The landed `T₂` matrix `HeckeRatWeight36.M2` as an integer table. -/
+def m2tab : ℕ → ℕ → ℤ
+  | 0, 0 => 1416
+  | 0, 1 => 1
+  | 1, 0 => 34629120000
+  | 1, 1 => 144384
+  | 1, 2 => -72
+  | 2, 0 => -17915904000000
+  | 2, 1 => -331776000
+  | 2, 2 => -6144
+  | _, _ => 0
+
+theorem hM2tab : ∀ i j : Fin 3, HeckeRatWeight36.M2 i j = m2tab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The matrix `C` as an integer table. -/
+def ctab : ℕ → ℕ → ℤ
+  | 0, 0 => 1
+  | 1, 1 => 1
+  | 2, 0 => 34416831456
+  | 2, 1 => 194184
+  | 2, 2 => -72
+  | _, _ => 0
+
+theorem hCtab : ∀ i j : Fin 3, C i j = ctab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only):
+every cell of `C` is the Miller-conjugated row 0 of the powers of `T₂`. -/
+theorem hcheck : cardCheck atab m2tab ctab 3 = true := by
   decide +kernel
 
 /-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 3 =>
     ∑ c : Fin 3, millerCoeff atab 3 j.val c.val
       * (HeckeRatWeight36.M2 ^ (i : ℕ)) 0 c) = C :=
-  hcard_of_check atab HeckeRatWeight36.M2 C hcheck
+  hcard_of_check atab HeckeRatWeight36.M2 C m2tab ctab hM2tab hCtab hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = -HeckeIndexWeight36.Ik := by
@@ -506,16 +645,38 @@ def C : Matrix (Fin 2) (Fin 2) ℤ := !![
 1, 0;
 0, 1]
 
-/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
-is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
-theorem hcheck : cardCheck atab HeckeRatWeight38.M2 C = true := by
+/-- The landed `T₂` matrix `HeckeRatWeight38.M2` as an integer table. -/
+def m2tab : ℕ → ℕ → ℤ
+  | 0, 0 => 672
+  | 0, 1 => 1
+  | 1, 0 => 137272320000
+  | 1, 1 => -195072
+  | _, _ => 0
+
+theorem hM2tab : ∀ i j : Fin 2, HeckeRatWeight38.M2 i j = m2tab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The matrix `C` as an integer table. -/
+def ctab : ℕ → ℕ → ℤ
+  | 0, 0 => 1
+  | 1, 1 => 1
+  | _, _ => 0
+
+theorem hCtab : ∀ i j : Fin 2, C i j = ctab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only):
+every cell of `C` is the Miller-conjugated row 0 of the powers of `T₂`. -/
+theorem hcheck : cardCheck atab m2tab ctab 2 = true := by
   decide +kernel
 
 /-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 2 =>
     ∑ c : Fin 2, millerCoeff atab 2 j.val c.val
       * (HeckeRatWeight38.M2 ^ (i : ℕ)) 0 c) = C :=
-  hcard_of_check atab HeckeRatWeight38.M2 C hcheck
+  hcard_of_check atab HeckeRatWeight38.M2 C m2tab ctab hM2tab hCtab hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight38.Ik := by
@@ -581,16 +742,45 @@ def C : Matrix (Fin 3) (Fin 3) ℤ := !![
 0, 1, 0;
 549775105056, 156024, 168]
 
-/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
-is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
-theorem hcheck : cardCheck atab HeckeRatWeight40.M2 C = true := by
+/-- The landed `T₂` matrix `HeckeRatWeight40.M2` as an integer table. -/
+def m2tab : ℕ → ℕ → ℤ
+  | 0, 0 => 1656
+  | 0, 1 => 1
+  | 1, 0 => 550229760000
+  | 1, 1 => 307584
+  | 1, 2 => 168
+  | 2, 0 => -483729408000000
+  | 2, 1 => 1990656000
+  | 2, 2 => 239616
+  | _, _ => 0
+
+theorem hM2tab : ∀ i j : Fin 3, HeckeRatWeight40.M2 i j = m2tab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The matrix `C` as an integer table. -/
+def ctab : ℕ → ℕ → ℤ
+  | 0, 0 => 1
+  | 1, 1 => 1
+  | 2, 0 => 549775105056
+  | 2, 1 => 156024
+  | 2, 2 => 168
+  | _, _ => 0
+
+theorem hCtab : ∀ i j : Fin 3, C i j = ctab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only):
+every cell of `C` is the Miller-conjugated row 0 of the powers of `T₂`. -/
+theorem hcheck : cardCheck atab m2tab ctab 3 = true := by
   decide +kernel
 
 /-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 3 =>
     ∑ c : Fin 3, millerCoeff atab 3 j.val c.val
       * (HeckeRatWeight40.M2 ^ (i : ℕ)) 0 c) = C :=
-  hcard_of_check atab HeckeRatWeight40.M2 C hcheck
+  hcard_of_check atab HeckeRatWeight40.M2 C m2tab ctab hM2tab hCtab hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight40.Ik := by
@@ -656,16 +846,45 @@ def C : Matrix (Fin 3) (Fin 3) ℤ := !![
 0, 1, 0;
 2199013818624, -112752, -576]
 
-/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
-is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
-theorem hcheck : cardCheck atab HeckeRatWeight42.M2 C = true := by
+/-- The landed `T₂` matrix `HeckeRatWeight42.M2` as an integer table. -/
+def m2tab : ℕ → ℕ → ℤ
+  | 0, 0 => 912
+  | 0, 1 => 1
+  | 1, 0 => 2198845440000
+  | 1, 1 => -210432
+  | 1, 2 => -576
+  | 2, 0 => -394149888000000
+  | 2, 1 => -7299072000
+  | 2, 2 => -135168
+  | _, _ => 0
+
+theorem hM2tab : ∀ i j : Fin 3, HeckeRatWeight42.M2 i j = m2tab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The matrix `C` as an integer table. -/
+def ctab : ℕ → ℕ → ℤ
+  | 0, 0 => 1
+  | 1, 1 => 1
+  | 2, 0 => 2199013818624
+  | 2, 1 => -112752
+  | 2, 2 => -576
+  | _, _ => 0
+
+theorem hCtab : ∀ i j : Fin 3, C i j = ctab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only):
+every cell of `C` is the Miller-conjugated row 0 of the powers of `T₂`. -/
+theorem hcheck : cardCheck atab m2tab ctab 3 = true := by
   decide +kernel
 
 /-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 3 =>
     ∑ c : Fin 3, millerCoeff atab 3 j.val c.val
       * (HeckeRatWeight42.M2 ^ (i : ℕ)) 0 c) = C :=
-  hcard_of_check atab HeckeRatWeight42.M2 C hcheck
+  hcard_of_check atab HeckeRatWeight42.M2 C m2tab ctab hM2tab hCtab hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = -HeckeIndexWeight42.Ik := by
@@ -732,16 +951,45 @@ def C : Matrix (Fin 3) (Fin 3) ℤ := !![
 0, 1, 0;
 8796096975456, 60264, 408]
 
-/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
-is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
-theorem hcheck : cardCheck atab HeckeRatWeight44.M2 C = true := by
+/-- The landed `T₂` matrix `HeckeRatWeight44.M2` as an integer table. -/
+def m2tab : ℕ → ℕ → ℤ
+  | 0, 0 => 1896
+  | 0, 1 => 1
+  | 1, 0 => 8796854016000
+  | 1, 1 => 528384
+  | 1, 2 => 408
+  | 2, 0 => -10086653952000000
+  | 2, 1 => 13271040000
+  | 2, 2 => -2740224
+  | _, _ => 0
+
+theorem hM2tab : ∀ i j : Fin 3, HeckeRatWeight44.M2 i j = m2tab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The matrix `C` as an integer table. -/
+def ctab : ℕ → ℕ → ℤ
+  | 0, 0 => 1
+  | 1, 1 => 1
+  | 2, 0 => 8796096975456
+  | 2, 1 => 60264
+  | 2, 2 => 408
+  | _, _ => 0
+
+theorem hCtab : ∀ i j : Fin 3, C i j = ctab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only):
+every cell of `C` is the Miller-conjugated row 0 of the powers of `T₂`. -/
+theorem hcheck : cardCheck atab m2tab ctab 3 = true := by
   decide +kernel
 
 /-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 3 =>
     ∑ c : Fin 3, millerCoeff atab 3 j.val c.val
       * (HeckeRatWeight44.M2 ^ (i : ℕ)) 0 c) = C :=
-  hcard_of_check atab HeckeRatWeight44.M2 C hcheck
+  hcard_of_check atab HeckeRatWeight44.M2 C m2tab ctab hM2tab hCtab hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight44.Ik := by
@@ -807,16 +1055,45 @@ def C : Matrix (Fin 3) (Fin 3) ℤ := !![
 0, 1, 0;
 35184370572864, -29952, -336]
 
-/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
-is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
-theorem hcheck : cardCheck atab HeckeRatWeight46.M2 C = true := by
+/-- The landed `T₂` matrix `HeckeRatWeight46.M2` as an integer table. -/
+def m2tab : ℕ → ℕ → ℤ
+  | 0, 0 => 1152
+  | 0, 1 => 1
+  | 1, 0 => 35184222720000
+  | 1, 1 => -168192
+  | 1, 2 => -336
+  | 2, 0 => -14404386816000000
+  | 2, 1 => -25878528000
+  | 2, 2 => 3981312
+  | _, _ => 0
+
+theorem hM2tab : ∀ i j : Fin 3, HeckeRatWeight46.M2 i j = m2tab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The matrix `C` as an integer table. -/
+def ctab : ℕ → ℕ → ℤ
+  | 0, 0 => 1
+  | 1, 1 => 1
+  | 2, 0 => 35184370572864
+  | 2, 1 => -29952
+  | 2, 2 => -336
+  | _, _ => 0
+
+theorem hCtab : ∀ i j : Fin 3, C i j = ctab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only):
+every cell of `C` is the Miller-conjugated row 0 of the powers of `T₂`. -/
+theorem hcheck : cardCheck atab m2tab ctab 3 = true := by
   decide +kernel
 
 /-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 3 =>
     ∑ c : Fin 3, millerCoeff atab 3 j.val c.val
       * (HeckeRatWeight46.M2 ^ (i : ℕ)) 0 c) = C :=
-  hcard_of_check atab HeckeRatWeight46.M2 C hcheck
+  hcard_of_check atab HeckeRatWeight46.M2 C m2tab ctab hM2tab hCtab hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = -HeckeIndexWeight46.Ik := by
@@ -888,16 +1165,54 @@ def C : Matrix (Fin 4) (Fin 4) ℤ := !![
 140737488355328, 0, 0, 1;
 1780269180492840960, 443745005276160, 7115931648, 2897880]
 
-/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
-is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
-theorem hcheck : cardCheck atab HeckeRatWeight48.M2 C = true := by
+/-- The landed `T₂` matrix `HeckeRatWeight48.M2` as an integer table. -/
+def m2tab : ℕ → ℕ → ℤ
+  | 0, 0 => 2136
+  | 0, 1 => 1
+  | 1, 0 => 140738632704000
+  | 1, 1 => 806784
+  | 1, 2 => 648
+  | 1, 3 => 1
+  | 2, 0 => -195802914816000000
+  | 2, 1 => 43130880000
+  | 2, 2 => 4878336
+  | 2, 3 => 3072
+  | 3, 0 => 15479341056000000000
+  | 3, 1 => 286654464000000
+  | 3, 2 => 5308416000
+  | 3, 3 => 98304
+  | _, _ => 0
+
+theorem hM2tab : ∀ i j : Fin 4, HeckeRatWeight48.M2 i j = m2tab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The matrix `C` as an integer table. -/
+def ctab : ℕ → ℕ → ℤ
+  | 0, 0 => 1
+  | 1, 1 => 1
+  | 2, 0 => 140737488355328
+  | 2, 3 => 1
+  | 3, 0 => 1780269180492840960
+  | 3, 1 => 443745005276160
+  | 3, 2 => 7115931648
+  | 3, 3 => 2897880
+  | _, _ => 0
+
+theorem hCtab : ∀ i j : Fin 4, C i j = ctab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only):
+every cell of `C` is the Miller-conjugated row 0 of the powers of `T₂`. -/
+theorem hcheck : cardCheck atab m2tab ctab 4 = true := by
   decide +kernel
 
 /-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 4 =>
     ∑ c : Fin 4, millerCoeff atab 4 j.val c.val
       * (HeckeRatWeight48.M2 ^ (i : ℕ)) 0 c) = C :=
-  hcard_of_check atab HeckeRatWeight48.M2 C hcheck
+  hcard_of_check atab HeckeRatWeight48.M2 C m2tab ctab hM2tab hCtab hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = -HeckeIndexWeight48.Ik := by
@@ -964,16 +1279,45 @@ def C : Matrix (Fin 3) (Fin 3) ℤ := !![
 0, 1, 0;
 562949953259904, -4752, -96]
 
-/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
-is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
-theorem hcheck : cardCheck atab HeckeRatWeight50.M2 C = true := by
+/-- The landed `T₂` matrix `HeckeRatWeight50.M2` as an integer table. -/
+def m2tab : ℕ → ℕ → ℤ
+  | 0, 0 => 1392
+  | 0, 1 => 1
+  | 1, 0 => 562949885952000
+  | 1, 1 => -68352
+  | 1, 2 => -96
+  | 2, 0 => -364875300864000000
+  | 2, 1 => -56401920000
+  | 2, 2 => -24158208
+  | _, _ => 0
+
+theorem hM2tab : ∀ i j : Fin 3, HeckeRatWeight50.M2 i j = m2tab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The matrix `C` as an integer table. -/
+def ctab : ℕ → ℕ → ℤ
+  | 0, 0 => 1
+  | 1, 1 => 1
+  | 2, 0 => 562949953259904
+  | 2, 1 => -4752
+  | 2, 2 => -96
+  | _, _ => 0
+
+theorem hCtab : ∀ i j : Fin 3, C i j = ctab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only):
+every cell of `C` is the Miller-conjugated row 0 of the powers of `T₂`. -/
+theorem hcheck : cardCheck atab m2tab ctab 3 = true := by
   decide +kernel
 
 /-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 3 =>
     ∑ c : Fin 3, millerCoeff atab 3 j.val c.val
       * (HeckeRatWeight50.M2 ^ (i : ℕ)) 0 c) = C :=
-  hcard_of_check atab HeckeRatWeight50.M2 C hcheck
+  hcard_of_check atab HeckeRatWeight50.M2 C m2tab ctab hM2tab hCtab hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = -HeckeIndexWeight50.Ik := by
@@ -1045,16 +1389,54 @@ def C : Matrix (Fin 4) (Fin 4) ℤ := !![
 2251799813685248, 0, 0, 1;
 3584702066951946240, 5906395638743040, -59746885632, -20189880]
 
-/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
-is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
-theorem hcheck : cardCheck atab HeckeRatWeight52.M2 C = true := by
+/-- The landed `T₂` matrix `HeckeRatWeight52.M2` as an integer table. -/
+def m2tab : ℕ → ℕ → ℤ
+  | 0, 0 => 2376
+  | 0, 1 => 1
+  | 1, 0 => 2251801451520000
+  | 1, 1 => 1142784
+  | 1, 2 => 888
+  | 1, 3 => 1
+  | 2, 0 => -3674731069440000000
+  | 2, 1 => 104509440000
+  | 2, 2 => 36919296
+  | 2, 3 => -18048
+  | 3, 0 => 696570347520000000000
+  | 3, 1 => 3439853568000000
+  | 3, 2 => -111476736000
+  | 3, 3 => -5308416
+  | _, _ => 0
+
+theorem hM2tab : ∀ i j : Fin 4, HeckeRatWeight52.M2 i j = m2tab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The matrix `C` as an integer table. -/
+def ctab : ℕ → ℕ → ℤ
+  | 0, 0 => 1
+  | 1, 1 => 1
+  | 2, 0 => 2251799813685248
+  | 2, 3 => 1
+  | 3, 0 => 3584702066951946240
+  | 3, 1 => 5906395638743040
+  | 3, 2 => -59746885632
+  | 3, 3 => -20189880
+  | _, _ => 0
+
+theorem hCtab : ∀ i j : Fin 4, C i j = ctab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only):
+every cell of `C` is the Miller-conjugated row 0 of the powers of `T₂`. -/
+theorem hcheck : cardCheck atab m2tab ctab 4 = true := by
   decide +kernel
 
 /-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 4 =>
     ∑ c : Fin 4, millerCoeff atab 4 j.val c.val
       * (HeckeRatWeight52.M2 ^ (i : ℕ)) 0 c) = C :=
-  hcard_of_check atab HeckeRatWeight52.M2 C hcheck
+  hcard_of_check atab HeckeRatWeight52.M2 C m2tab ctab hM2tab hCtab hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight52.Ik := by
@@ -1125,16 +1507,54 @@ def C : Matrix (Fin 4) (Fin 4) ℤ := !![
 9007199254740992, 0, 0, 1;
 -4324281271705927680, 15205350919127040, 105556082688, 7340640]
 
-/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
-is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
-theorem hcheck : cardCheck atab HeckeRatWeight54.M2 C = true := by
+/-- The landed `T₂` matrix `HeckeRatWeight54.M2` as an integer table. -/
+def m2tab : ℕ → ℕ → ℤ
+  | 0, 0 => 1632
+  | 0, 1 => 1
+  | 1, 0 => 9007199336448000
+  | 1, 1 => 89088
+  | 1, 2 => 144
+  | 1, 3 => 1
+  | 2, 0 => -7998519508992000000
+  | 2, 1 => -96215040000
+  | 2, 2 => -70729728
+  | 2, 3 => 35328
+  | 3, 0 => 340545503232000000000
+  | 3, 1 => 6306398208000000
+  | 3, 2 => 116785152000
+  | 3, 3 => 2162688
+  | _, _ => 0
+
+theorem hM2tab : ∀ i j : Fin 4, HeckeRatWeight54.M2 i j = m2tab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The matrix `C` as an integer table. -/
+def ctab : ℕ → ℕ → ℤ
+  | 0, 0 => 1
+  | 1, 1 => 1
+  | 2, 0 => 9007199254740992
+  | 2, 3 => 1
+  | 3, 0 => -4324281271705927680
+  | 3, 1 => 15205350919127040
+  | 3, 2 => 105556082688
+  | 3, 3 => 7340640
+  | _, _ => 0
+
+theorem hCtab : ∀ i j : Fin 4, C i j = ctab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only):
+every cell of `C` is the Miller-conjugated row 0 of the powers of `T₂`. -/
+theorem hcheck : cardCheck atab m2tab ctab 4 = true := by
   decide +kernel
 
 /-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 4 =>
     ∑ c : Fin 4, millerCoeff atab 4 j.val c.val
       * (HeckeRatWeight54.M2 ^ (i : ℕ)) 0 c) = C :=
-  hcard_of_check atab HeckeRatWeight54.M2 C hcheck
+  hcard_of_check atab HeckeRatWeight54.M2 C m2tab ctab hM2tab hCtab hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = -HeckeIndexWeight54.Ik := by
@@ -1206,16 +1626,54 @@ def C : Matrix (Fin 4) (Fin 4) ℤ := !![
 36028797018963968, 0, 0, 1;
 4726301246593105920, 76756306122961920, 170609983488, 122207160]
 
-/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
-is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
-theorem hcheck : cardCheck atab HeckeRatWeight56.M2 C = true := by
+/-- The landed `T₂` matrix `HeckeRatWeight56.M2` as an integer table. -/
+def m2tab : ℕ → ℕ → ℤ
+  | 0, 0 => 2616
+  | 0, 1 => 1
+  | 1, 0 => 36028799274240000
+  | 1, 1 => 1536384
+  | 1, 2 => 1128
+  | 1, 3 => 1
+  | 2, 0 => -67445531394048000000
+  | 2, 1 => 213663744000
+  | 2, 2 => 107206656
+  | 2, 3 => 18432
+  | 3, 0 => 20742317015040000000000
+  | 3, 1 => 40991588352000000
+  | 3, 2 => 185794560000
+  | 3, 3 => 99876864
+  | _, _ => 0
+
+theorem hM2tab : ∀ i j : Fin 4, HeckeRatWeight56.M2 i j = m2tab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The matrix `C` as an integer table. -/
+def ctab : ℕ → ℕ → ℤ
+  | 0, 0 => 1
+  | 1, 1 => 1
+  | 2, 0 => 36028797018963968
+  | 2, 3 => 1
+  | 3, 0 => 4726301246593105920
+  | 3, 1 => 76756306122961920
+  | 3, 2 => 170609983488
+  | 3, 3 => 122207160
+  | _, _ => 0
+
+theorem hCtab : ∀ i j : Fin 4, C i j = ctab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only):
+every cell of `C` is the Miller-conjugated row 0 of the powers of `T₂`. -/
+theorem hcheck : cardCheck atab m2tab ctab 4 = true := by
   decide +kernel
 
 /-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 4 =>
     ∑ c : Fin 4, millerCoeff atab 4 j.val c.val
       * (HeckeRatWeight56.M2 ^ (i : ℕ)) 0 c) = C :=
-  hcard_of_check atab HeckeRatWeight56.M2 C hcheck
+  hcard_of_check atab HeckeRatWeight56.M2 C m2tab ctab hM2tab hCtab hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = -HeckeIndexWeight56.Ik := by
@@ -1287,16 +1745,54 @@ def C : Matrix (Fin 4) (Fin 4) ℤ := !![
 144115188075855872, 0, 0, 1;
 -4707976624251863040, 281480212381777920, -1331874496512, -136828080]
 
-/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
-is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
-theorem hcheck : cardCheck atab HeckeRatWeight58.M2 C = true := by
+/-- The landed `T₂` matrix `HeckeRatWeight58.M2` as an integer table. -/
+def m2tab : ℕ → ℕ → ℤ
+  | 0, 0 => 1872
+  | 0, 1 => 1
+  | 1, 0 => 144115188387840000
+  | 1, 1 => 304128
+  | 1, 2 => 384
+  | 1, 3 => 1
+  | 2, 0 => -162562104852480000000
+  | 2, 1 => -139345920000
+  | 2, 2 => -121909248
+  | 2, 3 => -106752
+  | 3, 0 => 18575209267200000000000
+  | 3, 1 => 135874215936000000
+  | 3, 2 => -1337720832000
+  | 3, 3 => -96141312
+  | _, _ => 0
+
+theorem hM2tab : ∀ i j : Fin 4, HeckeRatWeight58.M2 i j = m2tab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The matrix `C` as an integer table. -/
+def ctab : ℕ → ℕ → ℤ
+  | 0, 0 => 1
+  | 1, 1 => 1
+  | 2, 0 => 144115188075855872
+  | 2, 3 => 1
+  | 3, 0 => -4707976624251863040
+  | 3, 1 => 281480212381777920
+  | 3, 2 => -1331874496512
+  | 3, 3 => -136828080
+  | _, _ => 0
+
+theorem hCtab : ∀ i j : Fin 4, C i j = ctab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only):
+every cell of `C` is the Miller-conjugated row 0 of the powers of `T₂`. -/
+theorem hcheck : cardCheck atab m2tab ctab 4 = true := by
   decide +kernel
 
 /-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 4 =>
     ∑ c : Fin 4, millerCoeff atab 4 j.val c.val
       * (HeckeRatWeight58.M2 ^ (i : ℕ)) 0 c) = C :=
-  hcard_of_check atab HeckeRatWeight58.M2 C hcheck
+  hcard_of_check atab HeckeRatWeight58.M2 C m2tab ctab hM2tab hCtab hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight58.Ik := by
@@ -1374,16 +1870,67 @@ def C : Matrix (Fin 5) (Fin 5) ℤ := !![
 669506805932242342424764515565501440, -242883658427449306279034880, -593665996120432220160,
    2115056036454276672, -331129448133120]
 
-/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
-is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
-theorem hcheck : cardCheck atab HeckeRatWeight60.M2 C = true := by
+/-- The landed `T₂` matrix `HeckeRatWeight60.M2` as an integer table. -/
+def m2tab : ℕ → ℕ → ℤ
+  | 0, 0 => 2856
+  | 0, 1 => 1
+  | 1, 0 => 576460755313920000
+  | 1, 1 => 1987584
+  | 1, 2 => 1368
+  | 1, 3 => 1
+  | 2, 0 => -1217484465094656000000
+  | 2, 1 => 390168576000
+  | 2, 2 => 229564416
+  | 2, 3 => 112512
+  | 2, 4 => -120
+  | 3, 0 => 519796272660480000000000
+  | 3, 1 => 591654813696000000
+  | 3, 2 => 2893086720000
+  | 3, 3 => -679673856
+  | 3, 4 => -102400
+  | 4, 0 => -13374150672384000000000000
+  | 4, 1 => -247669456896000000000
+  | 4, 2 => -4586471424000000
+  | 4, 3 => -84934656000
+  | 4, 4 => -1572864
+  | _, _ => 0
+
+theorem hM2tab : ∀ i j : Fin 5, HeckeRatWeight60.M2 i j = m2tab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The matrix `C` as an integer table. -/
+def ctab : ℕ → ℕ → ℤ
+  | 0, 0 => 1
+  | 1, 1 => 1
+  | 2, 0 => 576460752303423488
+  | 2, 3 => 1
+  | 3, 0 => 4296146047821982080
+  | 3, 1 => 1161409413206927360
+  | 3, 2 => 3905610524928
+  | 3, 3 => -357433560
+  | 3, 4 => -266560
+  | 4, 0 => 669506805932242342424764515565501440
+  | 4, 1 => -242883658427449306279034880
+  | 4, 2 => -593665996120432220160
+  | 4, 3 => 2115056036454276672
+  | 4, 4 => -331129448133120
+  | _, _ => 0
+
+theorem hCtab : ∀ i j : Fin 5, C i j = ctab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only):
+every cell of `C` is the Miller-conjugated row 0 of the powers of `T₂`. -/
+theorem hcheck : cardCheck atab m2tab ctab 5 = true := by
   decide +kernel
 
 /-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 5 =>
     ∑ c : Fin 5, millerCoeff atab 5 j.val c.val
       * (HeckeRatWeight60.M2 ^ (i : ℕ)) 0 c) = C :=
-  hcard_of_check atab HeckeRatWeight60.M2 C hcheck
+  hcard_of_check atab HeckeRatWeight60.M2 C m2tab ctab hM2tab hCtab hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight60.Ik := by
@@ -1454,16 +2001,54 @@ def C : Matrix (Fin 4) (Fin 4) ℤ := !![
 2305843009213693952, 0, 0, 1;
 -3607539468828672000, 4602214136946585600, -7905182810112, 1190856000]
 
-/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
-is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
-theorem hcheck : cardCheck atab HeckeRatWeight62.M2 C = true := by
+/-- The landed `T₂` matrix `HeckeRatWeight62.M2` as an integer table. -/
+def m2tab : ℕ → ℕ → ℤ
+  | 0, 0 => 2112
+  | 0, 1 => 1
+  | 1, 0 => 2305843009850880000
+  | 1, 1 => 576768
+  | 1, 2 => 624
+  | 1, 3 => 1
+  | 2, 0 => -3154393449824256000000
+  | 2, 1 => -176504832000
+  | 2, 2 => -163872768
+  | 2, 3 => -191232
+  | 3, 0 => 638368025149440000000000
+  | 3, 1 => 2286356004864000000
+  | 3, 2 => -7060193280000
+  | 3, 3 => 1309605888
+  | _, _ => 0
+
+theorem hM2tab : ∀ i j : Fin 4, HeckeRatWeight62.M2 i j = m2tab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The matrix `C` as an integer table. -/
+def ctab : ℕ → ℕ → ℤ
+  | 0, 0 => 1
+  | 1, 1 => 1
+  | 2, 0 => 2305843009213693952
+  | 2, 3 => 1
+  | 3, 0 => -3607539468828672000
+  | 3, 1 => 4602214136946585600
+  | 3, 2 => -7905182810112
+  | 3, 3 => 1190856000
+  | _, _ => 0
+
+theorem hCtab : ∀ i j : Fin 4, C i j = ctab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only):
+every cell of `C` is the Miller-conjugated row 0 of the powers of `T₂`. -/
+theorem hcheck : cardCheck atab m2tab ctab 4 = true := by
   decide +kernel
 
 /-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 4 =>
     ∑ c : Fin 4, millerCoeff atab 4 j.val c.val
       * (HeckeRatWeight62.M2 ^ (i : ℕ)) 0 c) = C :=
-  hcard_of_check atab HeckeRatWeight62.M2 C hcheck
+  hcard_of_check atab HeckeRatWeight62.M2 C m2tab ctab hM2tab hCtab hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight62.Ik := by
@@ -1541,16 +2126,67 @@ def C : Matrix (Fin 5) (Fin 5) ℤ := !![
 170228641479707219697578955575731737600, -4948216399934132983815168000, 15794953144064296704000,
    23668363015915079232, 2073868362385920]
 
-/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
-is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
-theorem hcheck : cardCheck atab HeckeRatWeight64.M2 C = true := by
+/-- The landed `T₂` matrix `HeckeRatWeight64.M2` as an integer table. -/
+def m2tab : ℕ → ℕ → ℤ
+  | 0, 0 => 3096
+  | 0, 1 => 1
+  | 1, 0 => 9223372040772096000
+  | 1, 1 => 2496384
+  | 1, 2 => 1608
+  | 1, 3 => 1
+  | 2, 0 => -21693369986924544000000
+  | 2, 1 => 656916480000
+  | 2, 2 => 417816576
+  | 2, 3 => 264192
+  | 2, 4 => 120
+  | 3, 0 => 11857949215948800000000000
+  | 3, 1 => 9261805731840000000
+  | 3, 2 => 12262440960000
+  | 3, 3 => -21528576
+  | 3, 4 => 972800
+  | 4, 0 => -842571492360192000000000000
+  | 4, 1 => -7430083706880000000000
+  | 4, 2 => 13759414272000000
+  | 4, 3 => 3057647616000
+  | 4, 4 => 108527616
+  | _, _ => 0
+
+theorem hM2tab : ∀ i j : Fin 5, HeckeRatWeight64.M2 i j = m2tab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The matrix `C` as an integer table. -/
+def ctab : ℕ → ℕ → ℤ
+  | 0, 0 => 1
+  | 1, 1 => 1
+  | 2, 0 => 9223372036854775808
+  | 2, 3 => 1
+  | 3, 0 => 2798801732908080000
+  | 3, 1 => 18456226175828433920
+  | 3, 2 => 12615785572608
+  | 3, 3 => -601425000
+  | 3, 4 => 1165760
+  | 4, 0 => 170228641479707219697578955575731737600
+  | 4, 1 => -4948216399934132983815168000
+  | 4, 2 => 15794953144064296704000
+  | 4, 3 => 23668363015915079232
+  | 4, 4 => 2073868362385920
+  | _, _ => 0
+
+theorem hCtab : ∀ i j : Fin 5, C i j = ctab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only):
+every cell of `C` is the Miller-conjugated row 0 of the powers of `T₂`. -/
+theorem hcheck : cardCheck atab m2tab ctab 5 = true := by
   decide +kernel
 
 /-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 5 =>
     ∑ c : Fin 5, millerCoeff atab 5 j.val c.val
       * (HeckeRatWeight64.M2 ^ (i : ℕ)) 0 c) = C :=
-  hcard_of_check atab HeckeRatWeight64.M2 C hcheck
+  hcard_of_check atab HeckeRatWeight64.M2 C m2tab ctab hM2tab hCtab hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = -HeckeIndexWeight64.Ik := by
@@ -1629,16 +2265,67 @@ def C : Matrix (Fin 5) (Fin 5) ℤ := !![
 2721942065542353237471963919429931581440, -134771614763973641784778752000,
    258047810871718662144000, 94287702017739979008, 18093857387913216]
 
-/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
-is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
-theorem hcheck : cardCheck atab HeckeRatWeight66.M2 C = true := by
+/-- The landed `T₂` matrix `HeckeRatWeight66.M2` as an integer table. -/
+def m2tab : ℕ → ℕ → ℤ
+  | 0, 0 => 2352
+  | 0, 1 => 1
+  | 1, 0 => 36893488148490240000
+  | 1, 1 => 907008
+  | 1, 2 => 864
+  | 1, 3 => 1
+  | 2, 0 => -59324729175539712000000
+  | 2, 1 => -195084288000
+  | 2, 2 => -182796288
+  | 2, 3 => -218112
+  | 2, 4 => -624
+  | 3, 0 => 17793812130693120000000000
+  | 3, 1 => 36854591127552000000
+  | 3, 2 => -19959644160000
+  | 3, 3 => -3743219712
+  | 3, 4 => -1392640
+  | 4, 0 => -294231314792448000000000000
+  | 4, 1 => -5448728051712000000000
+  | 4, 2 => -100902371328000000
+  | 4, 3 => -1868562432000
+  | 4, 4 => -34603008
+  | _, _ => 0
+
+theorem hM2tab : ∀ i j : Fin 5, HeckeRatWeight66.M2 i j = m2tab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The matrix `C` as an integer table. -/
+def ctab : ℕ → ℕ → ℤ
+  | 0, 0 => 1
+  | 1, 1 => 1
+  | 2, 0 => 36893488147419103232
+  | 2, 3 => 1
+  | 3, 0 => -2013359180577408000
+  | 3, 1 => 73778387464262512640
+  | 3, 2 => -16786337605632
+  | 3, 3 => -3698946000
+  | 3, 4 => -1931776
+  | 4, 0 => 2721942065542353237471963919429931581440
+  | 4, 1 => -134771614763973641784778752000
+  | 4, 2 => 258047810871718662144000
+  | 4, 3 => 94287702017739979008
+  | 4, 4 => 18093857387913216
+  | _, _ => 0
+
+theorem hCtab : ∀ i j : Fin 5, C i j = ctab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only):
+every cell of `C` is the Miller-conjugated row 0 of the powers of `T₂`. -/
+theorem hcheck : cardCheck atab m2tab ctab 5 = true := by
   decide +kernel
 
 /-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 5 =>
     ∑ c : Fin 5, millerCoeff atab 5 j.val c.val
       * (HeckeRatWeight66.M2 ^ (i : ℕ)) 0 c) = C :=
-  hcard_of_check atab HeckeRatWeight66.M2 C hcheck
+  hcard_of_check atab HeckeRatWeight66.M2 C m2tab ctab hM2tab hCtab hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = -HeckeIndexWeight66.Ik := by
@@ -1717,16 +2404,67 @@ def C : Matrix (Fin 5) (Fin 5) ℤ := !![
 43557189063095491623456910723861197327360, 1797849271230584551494190202880,
    -783642239560778067671040, 484662669898963632192, -11266877309667840]
 
-/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
-is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
-theorem hcheck : cardCheck atab HeckeRatWeight68.M2 C = true := by
+/-- The landed `T₂` matrix `HeckeRatWeight68.M2` as an integer table. -/
+def m2tab : ℕ → ℕ → ℤ
+  | 0, 0 => 3336
+  | 0, 1 => 1
+  | 1, 0 => 147573952594665984000
+  | 1, 1 => 3062784
+  | 1, 2 => 1848
+  | 1, 3 => 1
+  | 2, 0 => -382511683491766272000000
+  | 2, 1 => 1040117760000
+  | 2, 2 => 685787136
+  | 2, 3 => 473472
+  | 2, 4 => 360
+  | 3, 0 => 254894625085980672000000000
+  | 3, 1 => 147659154259968000000
+  | 3, 2 => 35598237696000
+  | 3, 3 => 7714504704
+  | 3, 4 => -3942400
+  | 4, 0 => -32646301791289344000000000000
+  | 4, 1 => -160985146982400000000000
+  | 4, 2 => 238496514048000000
+  | 4, 3 => -28453109760000
+  | 4, 4 => -2848456704
+  | _, _ => 0
+
+theorem hM2tab : ∀ i j : Fin 5, HeckeRatWeight68.M2 i j = m2tab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The matrix `C` as an integer table. -/
+def ctab : ℕ → ℕ → ℤ
+  | 0, 0 => 1
+  | 1, 1 => 1
+  | 2, 0 => 147573952589676412928
+  | 2, 3 => 1
+  | 3, 0 => 1347292820763918720
+  | 3, 1 => 295154993835966279680
+  | 3, 2 => 19203336569088
+  | 3, 3 => 12210487560
+  | 3, 4 => -3277120
+  | 4, 0 => 43557189063095491623456910723861197327360
+  | 4, 1 => 1797849271230584551494190202880
+  | 4, 2 => -783642239560778067671040
+  | 4, 3 => 484662669898963632192
+  | 4, 4 => -11266877309667840
+  | _, _ => 0
+
+theorem hCtab : ∀ i j : Fin 5, C i j = ctab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only):
+every cell of `C` is the Miller-conjugated row 0 of the powers of `T₂`. -/
+theorem hcheck : cardCheck atab m2tab ctab 5 = true := by
   decide +kernel
 
 /-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 5 =>
     ∑ c : Fin 5, millerCoeff atab 5 j.val c.val
       * (HeckeRatWeight68.M2 ^ (i : ℕ)) 0 c) = C :=
-  hcard_of_check atab HeckeRatWeight68.M2 C hcheck
+  hcard_of_check atab HeckeRatWeight68.M2 C m2tab ctab hM2tab hCtab hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight68.Ik := by
@@ -1804,16 +2542,67 @@ def C : Matrix (Fin 5) (Fin 5) ℤ := !![
 696895121911149854564071891128602656112640, -13781932334199942283070869340160,
    -5998999443272337233018880, 2085513450497560470528, -153451619270590464]
 
-/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
-is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
-theorem hcheck : cardCheck atab HeckeRatWeight70.M2 C = true := by
+/-- The landed `T₂` matrix `HeckeRatWeight70.M2` as an integer table. -/
+def m2tab : ℕ → ℕ → ℤ
+  | 0, 0 => 2592
+  | 0, 1 => 1
+  | 1, 0 => 590295810360333312000
+  | 1, 1 => 1294848
+  | 1, 2 => 1104
+  | 1, 3 => 1
+  | 2, 0 => -1090866657760247808000000
+  | 2, 1 => -179159040000
+  | 2, 2 => -164855808
+  | 2, 3 => -187392
+  | 2, 4 => -384
+  | 3, 0 => 439973335463362560000000000
+  | 3, 1 => 590227274465280000000
+  | 3, 2 => -42361159680000
+  | 3, 3 => -19899482112
+  | 3, 4 => 9359360
+  | 4, 0 => -21345144473124864000000000000
+  | 4, 1 => -215472427499520000000000
+  | 4, 2 => -660451885056000000
+  | 4, 3 => 49431969792000
+  | 4, 4 => 2057306112
+  | _, _ => 0
+
+theorem hM2tab : ∀ i j : Fin 5, HeckeRatWeight70.M2 i j = m2tab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The matrix `C` as an integer table. -/
+def ctab : ℕ → ℕ → ℤ
+  | 0, 0 => 1
+  | 1, 1 => 1
+  | 2, 0 => 590295810358705651712
+  | 2, 3 => 1
+  | 3, 0 => -841145767965757440
+  | 3, 1 => 1180586258097288765440
+  | 3, 2 => -19289032630272
+  | 3, 3 => -23321818080
+  | 3, 4 => 8935424
+  | 4, 0 => 696895121911149854564071891128602656112640
+  | 4, 1 => -13781932334199942283070869340160
+  | 4, 2 => -5998999443272337233018880
+  | 4, 3 => 2085513450497560470528
+  | 4, 4 => -153451619270590464
+  | _, _ => 0
+
+theorem hCtab : ∀ i j : Fin 5, C i j = ctab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only):
+every cell of `C` is the Miller-conjugated row 0 of the powers of `T₂`. -/
+theorem hcheck : cardCheck atab m2tab ctab 5 = true := by
   decide +kernel
 
 /-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 5 =>
     ∑ c : Fin 5, millerCoeff atab 5 j.val c.val
       * (HeckeRatWeight70.M2 ^ (i : ℕ)) 0 c) = C :=
-  hcard_of_check atab HeckeRatWeight70.M2 C hcheck
+  hcard_of_check atab HeckeRatWeight70.M2 C m2tab ctab hM2tab hCtab hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = -HeckeIndexWeight70.Ik := by
@@ -1892,16 +2681,67 @@ def C : Matrix (Fin 5) (Fin 5) ℤ := !![
 178405938822600936515852114845253833623306240, -373559819554877623759504970219520,
    34321231616130304397475840, 23137883774594743304448, 1392819877299142656]
 
-/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
-is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
-theorem hcheck : cardCheck atab HeckeRatWeight74.M2 C = true := by
+/-- The landed `T₂` matrix `HeckeRatWeight74.M2` as an integer table. -/
+def m2tab : ℕ → ℕ → ℤ
+  | 0, 0 => 2832
+  | 0, 1 => 1
+  | 1, 0 => 9444732965741611008000
+  | 1, 1 => 1740288
+  | 1, 2 => 1344
+  | 1, 3 => 1
+  | 2, 0 => -19720602432599998464000000
+  | 2, 1 => -109486080000
+  | 2, 2 => -96227328
+  | 2, 3 => -99072
+  | 2, 4 => -144
+  | 3, 0 => 10067934067078201344000000000
+  | 3, 1 => 9444623629418496000000
+  | 3, 2 => -75209637888000
+  | 3, 3 => -48486285312
+  | 3, 4 => -14909440
+  | 4, 0 => -926052940857212928000000000000
+  | 4, 1 => -5674107257487360000000000
+  | 4, 2 => -2458348683264000000
+  | 4, 3 => -180061470720000
+  | 4, 4 => -43508563968
+  | _, _ => 0
+
+theorem hM2tab : ∀ i j : Fin 5, HeckeRatWeight74.M2 i j = m2tab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The matrix `C` as an integer table. -/
+def ctab : ℕ → ℕ → ℤ
+  | 0, 0 => 1
+  | 1, 1 => 1
+  | 2, 0 => 9444732965739290427392
+  | 2, 3 => 1
+  | 3, 0 => -269067459167815680
+  | 3, 1 => 18889463521070633738240
+  | 3, 2 => -13922726694912
+  | 3, 3 => -39555909360
+  | 3, 4 => -15102976
+  | 4, 0 => 178405938822600936515852114845253833623306240
+  | 4, 1 => -373559819554877623759504970219520
+  | 4, 2 => 34321231616130304397475840
+  | 4, 3 => 23137883774594743304448
+  | 4, 4 => 1392819877299142656
+  | _, _ => 0
+
+theorem hCtab : ∀ i j : Fin 5, C i j = ctab i.val j.val := by
+  intro i j
+  fin_cases i <;> fin_cases j <;> rfl
+
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only):
+every cell of `C` is the Miller-conjugated row 0 of the powers of `T₂`. -/
+theorem hcheck : cardCheck atab m2tab ctab 5 = true := by
   decide +kernel
 
 /-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 5 =>
     ∑ c : Fin 5, millerCoeff atab 5 j.val c.val
       * (HeckeRatWeight74.M2 ^ (i : ℕ)) 0 c) = C :=
-  hcard_of_check atab HeckeRatWeight74.M2 C hcheck
+  hcard_of_check atab HeckeRatWeight74.M2 C m2tab ctab hM2tab hCtab hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = -HeckeIndexWeight74.Ik := by

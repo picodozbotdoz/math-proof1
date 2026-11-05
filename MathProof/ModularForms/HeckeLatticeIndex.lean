@@ -415,10 +415,6 @@ section ListCert
 
 variable {n : ℕ}
 
-/-- Matrix entries at natural-number indices (`0` outside the range). -/
-def mget (M : Matrix (Fin n) (Fin n) ℤ) (i j : ℕ) : ℤ :=
-  if h : i < n ∧ j < n then M ⟨i, h.1⟩ ⟨j, h.2⟩ else 0
-
 /-- Row `0` of the powers `M^i` as `List`s (`List` sums: kernel-reducible
 without `Finset`'s quotient, so certificates stay `propext`-only). -/
 def rowPowL (m : ℕ → ℕ → ℤ) (n : ℕ) : ℕ → List ℤ
@@ -430,10 +426,13 @@ def rowPowL (m : ℕ → ℕ → ℤ) (n : ℕ) : ℕ → List ℤ
 def cellL (a m : ℕ → ℕ → ℤ) (n i j : ℕ) : ℤ :=
   ((List.range n).map fun c => millerCoeff a n j c * (rowPowL m n i).getD c 0).sum
 
-/-- The whole `hcard` identity as ONE boolean (one `decide +kernel` per weight). -/
-def cardCheck (a : ℕ → ℕ → ℤ) (M2 C : Matrix (Fin n) (Fin n) ℤ) : Bool :=
+/-- The whole `hcard` identity as ONE boolean (one `decide +kernel` per weight),
+over integer tables `m` (for `M2`) and `c` (for `C`): no `Matrix` literal and no
+`BEq ℤ` instance (which routes through `Int.instLinearOrderPackage` and pulls
+`Classical.choice`) — `Int.decEq` directly. -/
+def cardCheck (a m c : ℕ → ℕ → ℤ) (n : ℕ) : Bool :=
   (List.range n).all fun i => (List.range n).all fun j =>
-    cellL a (mget M2) n i j == mget C i j
+    (Int.decEq (cellL a m n i j) (c i j)).decide
 
 lemma getD_map_range (f : ℕ → ℤ) {c : ℕ} (hc : c < n) :
     ((List.range n).map f).getD c 0 = f c := by
@@ -445,12 +444,9 @@ lemma list_sum_eq_fin_sum (f : ℕ → ℤ) :
   rw [← MaedaLevelOne.finset_sum_range_eq_list]
   exact (Fin.sum_univ_eq_sum_range f n).symm
 
-lemma mget_apply (M : Matrix (Fin n) (Fin n) ℤ) (i j : Fin n) :
-    mget M i.val j.val = M i j := by
-  simp [mget, i.isLt, j.isLt]
-
-lemma rowPowL_getD [NeZero n] (M : Matrix (Fin n) (Fin n) ℤ) (i : ℕ) (c : Fin n) :
-    (rowPowL (mget M) n i).getD c.val 0 = (M ^ i) 0 c := by
+lemma rowPowL_getD [NeZero n] (M : Matrix (Fin n) (Fin n) ℤ) (m : ℕ → ℕ → ℤ)
+    (hM : ∀ i j : Fin n, M i j = m i.val j.val) (i : ℕ) (c : Fin n) :
+    (rowPowL m n i).getD c.val 0 = (M ^ i) 0 c := by
   induction i generalizing c with
   | zero =>
       rw [rowPowL, getD_map_range _ c.isLt, pow_zero, Matrix.one_apply]
@@ -462,23 +458,24 @@ lemma rowPowL_getD [NeZero n] (M : Matrix (Fin n) (Fin n) ℤ) (i : ℕ) (c : Fi
   | succ i ih =>
       rw [rowPowL, getD_map_range _ c.isLt, pow_succ, Matrix.mul_apply,
         list_sum_eq_fin_sum]
-      exact Finset.sum_congr rfl fun l _ => by rw [ih l, mget_apply]
+      exact Finset.sum_congr rfl fun l _ => by rw [ih l, ← hM l c]
 
-lemma cellL_eq [NeZero n] (a : ℕ → ℕ → ℤ) (M2 : Matrix (Fin n) (Fin n) ℤ) (i j : ℕ) :
-    cellL a (mget M2) n i j
-      = ∑ c : Fin n, millerCoeff a n j c.val * (M2 ^ i) 0 c := by
+lemma cellL_eq [NeZero n] (a : ℕ → ℕ → ℤ) (M2 : Matrix (Fin n) (Fin n) ℤ)
+    (m : ℕ → ℕ → ℤ) (hM : ∀ i j : Fin n, M2 i j = m i.val j.val) (i j : ℕ) :
+    cellL a m n i j = ∑ c : Fin n, millerCoeff a n j c.val * (M2 ^ i) 0 c := by
   rw [cellL, list_sum_eq_fin_sum]
-  exact Finset.sum_congr rfl fun c _ => by rw [rowPowL_getD]
+  exact Finset.sum_congr rfl fun c _ => by rw [rowPowL_getD M2 m hM]
 
-/-- **The `hcard` bridge**: the boolean certificate gives the matrix identity
-consumed by `index_card_dimN`. -/
+/-- **The `hcard` bridge**: the boolean certificate over the integer tables gives
+the matrix identity consumed by `index_card_dimN`. -/
 theorem hcard_of_check [NeZero n] (a : ℕ → ℕ → ℤ) (M2 C : Matrix (Fin n) (Fin n) ℤ)
-    (h : cardCheck a M2 C = true) :
+    (m c : ℕ → ℕ → ℤ) (hM : ∀ i j : Fin n, M2 i j = m i.val j.val)
+    (hC : ∀ i j : Fin n, C i j = c i.val j.val) (h : cardCheck a m c n = true) :
     Matrix.of (fun i j : Fin n =>
       ∑ c : Fin n, millerCoeff a n j.val c.val * (M2 ^ (i : ℕ)) 0 c) = C := by
   ext i j
-  simp only [cardCheck, List.all_eq_true, List.mem_range, beq_iff_eq] at h
-  rw [Matrix.of_apply, ← cellL_eq, h i.val i.isLt j.val j.isLt, mget_apply]
+  simp only [cardCheck, List.all_eq_true, List.mem_range, decide_eq_true_eq] at h
+  rw [Matrix.of_apply, ← cellL_eq a M2 m hM, h i.val i.isLt j.val j.isLt, hC]
 
 end ListCert
 

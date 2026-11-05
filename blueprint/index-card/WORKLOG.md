@@ -215,3 +215,18 @@ literals).  Inbox: clean at this checkpoint.
   HeckeLatticeIndex green (12 s / 4.80 GiB).  AxCheckDecide.lean merged from the trunk
   (adds `#audit_decide_certs_nested`).  Next: AxCheckDecide target (rebuilds the big card
   file + root; EXPECTED 6–15 min).  Log: runs/g4r-axcheck-1.out
+- Nested audit round 1: hcheck still dirty (54 top + 54 nested).  `#axiom_path`:
+  (a) `==` on ℤ → `Int.instLinearOrderPackage` → `Classical.propDecidable`;
+  (b) the Matrix literals (`!![…]`, landed `M2` and my `C`) depend on Quot.sound.
+  Fix: `cardCheck` over integer tables `m2tab`/`ctab` (pattern-match defs, bridged to
+  the matrices by `fin_cases … <;> rfl`, no decide) with `Int.decEq` directly; all table
+  and `C` literals pow-free (Horner with a written-out 10^40 numeral — `Monoid.npow` on
+  ℤ is a Mathlib instance).  Next: AxCheckDecide target (EXPECTED 5–10 min).
+- G4 RE-CLOSED: AxCheckDecide (trunk version with the nested pass) on the full light
+  root: top-level 1414 audited / 0 violations; nested 6991 audited / 5296 violations,
+  NONE in HeckeIndexCard* or HeckeLatticeIndex (was 54 top + 54 nested in round 1,
+  2304 cell certs before the fix).  The remaining 5296 are in landed legacy files (out of
+  scope per orchestrator).  0 err / 0 warn; HeckeLatticeIndex 15 s, small card 11 s,
+  big card 47 s / 7.39 GiB (now much faster: one decide per weight); tree peak 12.76 GiB
+  (parallel modules), wall 106 s.  tauceti 0/0/0/0; gen --check 4/4.  Scratch
+  `#axiom_path` file removed.

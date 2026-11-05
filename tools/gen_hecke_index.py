@@ -100,7 +100,7 @@ def chunked_def(name, v, doc, indent=""):
     return out
 
 
-def matrix_def(name, A, doc):
+def matrix_def(name, A, doc, lines_of=None):
     """Lines of `def name : Matrix (Fin n) (Fin n) ℤ := !![...]` (chunked)."""
     n = len(A)
     out = wrap_doc(doc)
@@ -108,7 +108,7 @@ def matrix_def(name, A, doc):
     for i, row in enumerate(A):
         toks = []
         for e in row:
-            ls = int_lines(e)
+            ls = (lines_of or int_lines)(e)
             toks.append(ls[0] if len(ls) == 1 else "(" + " ".join(ls) + ")")
         term = ";" if i < n - 1 else "]"
         lines = wrap_tokens(", ".join(toks) + term, "  ", "   ")
@@ -481,7 +481,7 @@ def card_data():
         Ik = I24.parse_Ik(idx[k])
         d = det_exact(C)
         assert abs(d) == abs(Ik) and Ik > 0, (k, d, Ik)
-        out[k] = dict(dim=n, atab=atab, C=C, Ik=Ik, sign=1 if d > 0 else -1,
+        out[k] = dict(dim=n, atab=atab, M2=M2, C=C, Ik=Ik, sign=1 if d > 0 else -1,
                       small=k in small, gt=gt[k])
     assert len(out) == 54, len(out)
     return out
@@ -493,6 +493,44 @@ def atab_def(atab, k):
     for (i, j) in sorted(atab):
         out.extend(wrap_tokens(" ".join(int_lines(atab[(i, j)])), f"  | {i}, {j} => ",
                                "      "))
+    out.append("  | _, _ => 0")
+    return out
+
+
+TAB_CHUNK = 40   # pow-free chunks: base written as a 41-digit numeral
+
+
+def int_lines_nopow(v):
+    """Pow-free chunked ℤ expression for `v` (Horner in the numeral base
+    `10^TAB_CHUNK` written out): kernel certificates must not touch `Monoid.npow`
+    (Mathlib's `ℤ` instances are not axiom-free); `*`, `+`, `-` are core."""
+    if abs(v) < 10 ** PLAIN_DIGITS:
+        return [str(v)]
+    base = "1" + "0" * TAB_CHUNK
+    s = str(abs(v))
+    chunks = []
+    while s:
+        chunks.insert(0, str(int(s[-TAB_CHUNK:])))
+        s = s[:-TAB_CHUNK]
+    lines = ["(" * (len(chunks) - 1) + chunks[0] + f" * {base}"]
+    for j, ch in enumerate(chunks[1:], 1):
+        tail = "" if j == len(chunks) - 1 else f" * {base}"
+        lines.append(f"+ {ch}){tail}")
+    if v < 0:
+        lines[0] = "-(" + lines[0]
+        lines[-1] = lines[-1] + ")"
+    return lines
+
+
+def table_def(name, M, doc):
+    """`def name : ℕ → ℕ → ℤ` from a square integer matrix (zero arms omitted)."""
+    out = wrap_doc(doc) + [f"def {name} : ℕ → ℕ → ℤ"]
+    for i, row in enumerate(M):
+        for j, v in enumerate(row):
+            if v:
+                ls = int_lines_nopow(v)
+                out.append(f"  | {i}, {j} => " + ls[0])
+                out.extend("      " + ln for ln in ls[1:])
     out.append("  | _, _ => 0")
     return out
 
@@ -541,18 +579,31 @@ def emit_card_weight(k, w):
     L.append(f"    LinearMap.charpoly_natDegree, {t3}.finrank_eq]")
     L.append("")
     L.extend(matrix_def("C", C,
-                        f"Dual coordinates at weight {k}: `T₂^i = ∑_j C i j • T_(j+1)`."))
+                        f"Dual coordinates at weight {k}: `T₂^i = ∑_j C i j • T_(j+1)`.",
+                        int_lines_nopow))
     L.append("")
-    L.append("/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`")
-    L.append("is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/")
-    L.append(f"theorem hcheck : cardCheck atab {M2} C = true := by")
+    L.extend(table_def("m2tab", w["M2"], f"The landed `T₂` matrix `{M2}` as an integer table."))
+    L.append("")
+    L.append(f"theorem hM2tab : ∀ i j : Fin {n}, {M2} i j = m2tab i.val j.val := by")
+    L.append("  intro i j")
+    L.append("  fin_cases i <;> fin_cases j <;> rfl")
+    L.append("")
+    L.extend(table_def("ctab", C, "The matrix `C` as an integer table."))
+    L.append("")
+    L.append(f"theorem hCtab : ∀ i j : Fin {n}, C i j = ctab i.val j.val := by")
+    L.append("  intro i j")
+    L.append("  fin_cases i <;> fin_cases j <;> rfl")
+    L.append("")
+    L.append("/-- The kernel certificate over `List` sums and integer tables (`propext`-only):")
+    L.append("every cell of `C` is the Miller-conjugated row 0 of the powers of `T₂`. -/")
+    L.append(f"theorem hcheck : cardCheck atab m2tab ctab {n} = true := by")
     L.append("  decide +kernel")
     L.append("")
     L.append("/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/")
     L.append(f"theorem hcard : Matrix.of (fun i j : Fin {n} =>")
     L.append(f"    ∑ c : Fin {n}, millerCoeff atab {n} j.val c.val")
     L.append(f"      * ({M2} ^ (i : ℕ)) 0 c) = C :=")
-    L.append(f"  hcard_of_check atab {M2} C hcheck")
+    L.append(f"  hcard_of_check atab {M2} C m2tab ctab hM2tab hCtab hcheck")
     L.append("")
     L.append("/-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/")
     L.append(f"theorem det_C : C.det = {sign}{ix}.Ik := by")
