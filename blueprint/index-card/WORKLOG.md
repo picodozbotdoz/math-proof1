@@ -182,3 +182,12 @@ literals).  Inbox: clean at this checkpoint.
   files ≤ 12.4 GiB each per AGENTS.md).  Expected wall-clock: 5 min warm cache,
   up to ~90 min if the dims-6–10 parents are cold.  Log:
   /home/doz/tmp/math-proof1-temp/agent-work/index-card/runs/g4-big-1.out
+
+### 2026-11-05 — G4: HeckeIndexCardWeights.lean green 0 err / 0 warn
+- Modal (mrun.sh --file, LEAN_CHECK_MEMORY_MIB=16384, parents warm): module 286 s,
+  peak 6.80 GiB (tree 8.03 GiB), wall 324 s.  Under the blueprint split trigger
+  (~10 min / 8 GiB module) → no dimension split.  tauceti_audit 0/0/0/0.
+- Registration: `HeckeLatticeIndex` → defaultTargets (push tier, ci_targets --report
+  rc 0, push tier 55 / full-only 22) + root; both card files → root only.
+- Next: AxCheckDecide target (builds the light root too; EXPECTED 5–60 min depending
+  on cache state).  Log: runs/g4-axcheck-1.out
