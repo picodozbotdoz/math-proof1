@@ -418,6 +418,20 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   root-only) — T-Rat + T-Field for every `m` at all 54 weights.
   `MaedaT2GaloisSmallWeights.lean` (light, trio) — `Gal = S₂` for the six
   dim-2 T₂ charpolys.
+  `HeckeRingGens.lean` (light, trio; iteration 24) — ring generators of 𝕋:
+  `gensOf k ps`, `heckeTM_mem_closure_of_smooth` (every `ps`-smooth `T_m`
+  lies in `Subring.closure`), transport `heckeRing_eq_closure`, the
+  certificate-free `heckeRing_eq_closure_gens{2357,235,23,2}` (n ≤ 10/6/4/2),
+  `heckeRing_eq_closure_gens235_of_t7`, row certificate
+  `heckeTM_mem_closure_of_rows` (`T_{m₀} = ∑ cₜ T_{Mₜ}` checked on first
+  q-coefficients via `op_eq_of_first_coeff`).  ℤ[T_p : p ∈ ps] =
+  span_ℤ{smooth T_m}, so no Cayley–Hamilton / index machinery is needed.
+  `HeckeRingGens{Small,}Weights.lean` (light, generated —
+  `tools/gen_hecke_ring_gens.py`, `--check`; root-only) — all 54 weights:
+  `heckeRing_eq_gens2357` everywhere, `heckeRing_eq_gens235` at the 22
+  {3,5}-weights (dims 5–6 free; dims 7–9: ten `T₇` Bezout certificates over
+  smooth m ≤ 3n, ≤ 66 digits), `…gens23` (n ≤ 4), `…gens2` (n = 2).
+  Modal 46 s / 4.8 GiB and 86 s / 5.2 GiB.
 - `MathProof/ModularForms/MaedaCertCExt.lean` (light) — `tau22 … tau30`
   (kernel-verified against `Ramanujan.tau`), `tauTableX`, `dCc3`,
   `seqPLc3`, `seqPLc3_eq` with cap `N ≤ 31`: the T₃ coefficient formula

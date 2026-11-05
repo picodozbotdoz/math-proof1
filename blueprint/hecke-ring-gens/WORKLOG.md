@@ -92,3 +92,18 @@ G4 GREEN (both generated files, Modal --file, warm, 0 err / 0 warn):
 registration in MathProof.lean (no defaultTargets — parents non-push-tier).
 NEXT: AxCheckDecide over the light root (audits t7_smooth + the generic
 `decide +kernel` divisibility facts); expected 5–40 min depending on cache.
+AUDIT GREEN: AxCheckDecide over the root incl. both new files — "1370
+audited, 0 depend on more than propext" (69 s / 6.79 GiB tree). Inbox polled:
+no STEER files. AGENTS.md layout entry added.
+G3 DECISION / DESCOPE (ii): the blueprint's idx3 index statements
+([𝕋 : ℤ[T₂,T₃]] = idx3, and the `≠ ℤ[T₂,T₃]` / `≠ ℤ[T₂,T₃,T₅]` corollaries
+at the 14 {3,5,7}-weights) are DESCOPED. Reason: any index or `≠` statement
+needs ℤ[T₂,T₃] identified with a FINITE lattice (closure of an explicit
+basis under ×T₂, ×T₃ — per-weight structure-constant certificates; G1
+measured transforms U23 of 42–32 489 digits) or an infinite-coefficient
+congruence argument; neither is a session-sized certificate. The
+𝕋 = ℤ[T₂,T₃,T₅] half of (ii) is DELIVERED at all 22 weights without
+relIndex (span-of-smooth argument), so no index-card merge was needed.
+(iii) data stays as research/iteration24/hecke-ring-gens/
+minimality_table.json + g1_data.json (no new Lean `≠`).
+SESSION DONE — branch ready for orchestrator review.
