@@ -122,22 +122,18 @@ def section(k):
     for j,((i,a,b),f) in enumerate(basis,1):
         out.append(f"/-- `Δ^{i} E₄^{a} E₆^{b}`. -/\nnoncomputable def f{j} : CuspForm 𝒮ℒ (({k} : ℕ) : ℤ) :=\n  prodForm _ {i-1} {a} {b} (by norm_num)\n")
         out.append(f"lemma c{j} (n : ℕ) : (qExpansion 1 f{j}).coeff n = seqP {i-1} {a} {b} n :=\n  prodForm_coeff _ _ _ _ _ n\n")
-        if d in (4, 5):
-            # the kernel certificate is about the axiom-free `seqPLc`
-            # (MaedaCertC); `seqPLc_eq` transfers it to `seqPL`
-            NL = 9 if d == 4 else 11
-            vs=[str(f[n]) for n in range(NL)]
-            vals=",\n     ".join(", ".join(vs[r:r+4]) for r in range(0,NL,4))
-            out.append(f"lemma L{j}c : seqPLc {i-1} {a} {b} {NL} =\n    [{vals}] := by\n  decide +kernel\n")
-            out.append(f"lemma L{j} : seqPL {i-1} {a} {b} {NL} =\n    [{vals}] := by\n"
-                       f"  rw [← seqPLc_eq (by norm_num)]\n  exact L{j}c\n")
+        # the kernel certificate is about the axiom-free `seqPLc`
+        # (MaedaCertC); `seqPLc_eq` transfers it to `seqPL` (all dims: a
+        # `seqP` decide pulls `Classical.choice` + `Quot.sound` through
+        # `Finset`/`ArithmeticFunction`, iteration 25)
+        NL = 2 * d + 1
+        vs=[str(f[n]) for n in range(NL)]
+        vals=",\n     ".join(", ".join(vs[r:r+4]) for r in range(0,NL,4))
+        out.append(f"lemma L{j}c : seqPLc {i-1} {a} {b} {NL} =\n    [{vals}] := by\n  decide +kernel\n")
+        out.append(f"lemma L{j} : seqPL {i-1} {a} {b} {NL} =\n    [{vals}] := by\n"
+                   f"  rw [← seqPLc_eq (by norm_num)]\n  exact L{j}c\n")
         for n in idx:
-            if d == 4:
-                out.append(f"lemma q{j}_{n} : (qExpansion 1 f{j}).coeff {n} = ({f[n]} : ℂ) := by\n  rw [c{j}, seqP_getD (N := 9) (by norm_num), L{j}]\n  norm_num [List.getD_cons_succ, List.getD_cons_zero]\n")
-            elif d == 5:
-                out.append(f"lemma q{j}_{n} : (qExpansion 1 f{j}).coeff {n} = ({f[n]} : ℂ) := by\n  rw [c{j}, seqP_getD (N := 11) (by norm_num), L{j}]\n  norm_num [List.getD_cons_succ, List.getD_cons_zero]\n")
-            else:
-                out.append(f"lemma q{j}_{n} : (qExpansion 1 f{j}).coeff {n} = ({f[n]} : ℂ) := by\n  rw [c{j}, show seqP {i-1} {a} {b} {n} = {f[n]} by decide +kernel]; norm_num\n")
+            out.append(f"lemma q{j}_{n} : (qExpansion 1 f{j}).coeff {n} = ({f[n]} : ℂ) := by\n  rw [c{j}, seqP_getD (N := {NL}) (by norm_num), L{j}]\n  norm_num [List.getD_cons_succ, List.getD_cons_zero]\n")
     m=k-12
     out.append(f"""lemma finrank_eq : Module.finrank ℂ (CuspForm 𝒮ℒ (({k} : ℕ) : ℤ)) = {d} := by
   apply Module.finrank_eq_of_rank_eq
@@ -386,8 +382,10 @@ if any(compute(k)[0] == 5 for k in ks):
     hdr = hdr.replace("with `dim S_k ∈ {2, 3}`", "with `dim S_k = 5`")
     hdr = hdr.replace("(from `charpoly_dim2` / `charpoly_dim3`), the characteristic polynomial and its\nirreducibility over `ℚ` (no root modulo a small prime).",
                       "(from `charpoly_dim5`), the characteristic polynomial and its irreducibility\nover `ℚ` (irreducible modulo a small prime: no root and no quadratic factor).")
-elif any(compute(k)[0] == 4 for k in ks):
+else:
+    # every dim certifies through the axiom-free `seqPLc` (MaedaCertC)
     hdr = hdr.replace("import MathProof.ModularForms.MaedaLevelOne", "import MathProof.ModularForms.MaedaCertC")
+if any(compute(k)[0] == 4 for k in ks):
     hdr = hdr.replace("with `dim S_k ∈ {2, 3}`", "with `dim S_k = 4`")
     hdr = hdr.replace("(from `charpoly_dim2` / `charpoly_dim3`), the characteristic polynomial and its\nirreducibility over `ℚ` (no root modulo a small prime).",
                       "(from `charpoly_dim4`), the characteristic polynomial and its irreducibility\nover `ℚ` (irreducible modulo a small prime: no root and no quadratic factor).")
