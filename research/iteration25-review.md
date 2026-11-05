@@ -57,7 +57,7 @@ axioms` all on ≤ the standard three, no `sorryAx`.
    change is proof-only: two `private` certificates re-proved over bounded
    `Nat` plus new private helpers, every public statement byte-identical,
    so the two importers — which see only statements — cannot elaborate
-   differently.  Their last green builds (Iterations 9 / 22) stand; rebuild
+   differently.  Their last green builds stand; rebuild
    them the next time `LehmerPacked` is rebuilt for another reason.
 2. Heavy modules' own in-file certificates are audited by their own
    `#print axioms` lines, not by the nested pass.
