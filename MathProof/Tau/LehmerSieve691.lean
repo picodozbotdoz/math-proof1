@@ -66,7 +66,13 @@ private lemma sigma_prime (hp : p.Prime) : sigma 11 p = 1 + p ^ 11 := by
 /-- The kernel-decided finite fact: the only residue `x < 691` with
 `x ^ 11 ≡ −1 [MOD 691]` is `x = 690`. -/
 private theorem bad_residues :
-    ∀ x ∈ Finset.range 691, (1 + x ^ 11) % 691 = 0 ↔ x = 690 := by decide +kernel
+    ∀ x ∈ Finset.range 691, (1 + x ^ 11) % 691 = 0 ↔ x = 690 := by
+  -- decided as a bounded `ℕ` quantifier (`Nat.decidableBallLT`) with `Nat.pow`:
+  -- a `Finset.range` quantifier or `^` in the decided term pulls in more
+  -- than `propext`
+  have h : ∀ x, x < 691 → ((1 + Nat.pow x 11) % 691 = 0 ↔ x = 690) := by
+    decide +kernel
+  exact fun x hx => h x (Finset.mem_range.mp hx)
 
 /-- **The only escape class for primes**: for `p` prime, `691 ∣ σ₁₁ p` holds
 exactly for `p ≡ −1 [MOD 691]`. -/
@@ -109,9 +115,24 @@ theorem tau_ne_zero_of_sigma_prime_pows {n : ℕ} (hn : 0 < n)
 
 /-- Kernel-decided: the geometric sums `σ₁₁ (2 ^ a) = Σ_{j ≤ a} 2^{11j}` are
 nonzero mod 691 for every `a ≤ 64`. -/
+private def geom211 : ℕ → ℕ
+  | 0 => 1
+  | a + 1 => geom211 a + Nat.pow 2 ((a + 1) * 11)
+
+private theorem geom211_eq (a : ℕ) :
+    geom211 a = ∑ j ∈ Finset.range (a + 1), (2 : ℕ) ^ (j * 11) := by
+  induction a with
+  | zero => simp [geom211]
+  | succ a ih => rw [Finset.sum_range_succ, ← ih, geom211, Nat.pow_eq]
+
 private theorem two_pow_sigma_nonzero :
     ∀ a ∈ Finset.range 65, (∑ j ∈ Finset.range (a + 1), (2 : ℕ) ^ (j * 11)) % 691 ≠ 0 := by
-  decide +kernel
+  -- decided over the structural `geom211` and a bounded `ℕ` quantifier
+  -- (no `Finset` in the decided term)
+  have h : ∀ a, a < 65 → geom211 a % 691 ≠ 0 := by decide +kernel
+  intro a ha
+  rw [← geom211_eq]
+  exact h a (Finset.mem_range.mp ha)
 
 /-- **Powers of two to `2 ^ 64`**: `τ (2 ^ a) ≠ 0` for every `a ≤ 64` — the
 index `2 ^ 64` is `2 ^ 32` beyond the Iteration-9 chain bound, and the prime
