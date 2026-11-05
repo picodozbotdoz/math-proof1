@@ -25,3 +25,6 @@ Merge order scaled-certs → zmod-casts → maeda-small (registration files
 union-resolved).  Then, serialized: light root + AxCheckDecide (target
 nested 0), `tools/stage_chain.sh` + `MaedaGalois5AxCheck`, `LehmerGrand`,
 `LehmerPrimeGrand` (memory per AGENTS.md).
+Thu Nov  5 11:04:46 AM +08 2026 chain rebuild start (MaedaGalois5AxCheck, 48 GiB, expected ~35-45 min)
+- chain rebuild DONE: MaedaGalois5AxCheck green, 1580 s lake wall, peak 34.75 GiB (IdE6 33.46), 30 `#print axioms` = 19 [propext] + 11 std-3, 0 sorryAx; memory alert CLOSED (budgeted chain cost).
+- maeda-small merged e36b288; scaled-certs merged 0217f9a (statement text verified identical, `:= by` → `:=` only).

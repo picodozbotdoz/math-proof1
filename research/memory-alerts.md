@@ -105,3 +105,42 @@ Builds that crossed 64 GiB before the tooling existed; numbers from
   `MaedaSmallWeights` 7.66, `HeckeIndexCardWeights` 7.40, `HeckeIndexWeights`
   6.17 GiB.  No single declaration to profile; inherent to parallel rebuilds
   (same verdict as the 2026-10-31 no-cache entry).  No action.
+## 2026-11-05T03:32Z — CLOSED
+
+- command: `tools/modal_run.sh --target MathProof.ModularForms.MaedaGalois5AxCheck` (rc=0)
+- log: `/home/doz/tmp/math-proof1-temp/mathproof-runs/run-20261105-110453-536570-m49152.log`
+- alert:
+
+  ```
+  [memory] request 8192 MiB (soft; escalation ladder 8192/16384/32768 on OOM)
+  [memory] per-module peak RSS (GiB, t of peak):
+  [memory]     33.46  t=   1137s  /tmp/repo/MathProof/ModularForms/MaedaGalois5IdE6.lean
+  [memory]     20.77  t=    551s  /tmp/repo/MathProof/ModularForms/MaedaGalois5IdE5.lean
+  [memory]     16.24  t=   1453s  /tmp/repo/MathProof/ModularForms/MaedaGalois5Identities.lean
+  [memory]     12.30  t=    273s  /tmp/repo/MathProof/ModularForms/MaedaGalois5IdE4.lean
+  [memory]      6.84  t=    122s  /tmp/repo/MathProof/ModularForms/MaedaGalois5IdBase.lean
+  [memory]      5.38  t=   1563s  /tmp/repo/MathProof/ModularForms/MaedaGalois5.lean
+  [memory]      4.98  t=   1574s  /tmp/repo/MathProof/ModularForms/MaedaGalois5Weights.lean
+  [memory]      4.81  t=     65s  /tmp/repo/MathProof/ModularForms/MaedaGalois5Defs.lean
+  [memory]      4.78  t=   1578s  /tmp/repo/MathProof/ModularForms/MaedaGalois5AxCheck.lean
+  [memory]      4.77  t=     29s  /tmp/repo/MathProof/ModularForms/MaedaGalois.lean
+  [memory-alert] peak tree RSS 34.8 GiB >= 16 GiB — investigation required (AGENTS.md, Memory alerts)
+  [memory-alert]   .tmp.repo.MathProof.ModularForms.MaedaGalois5IdE6: 33.5 GiB  →  per-declaration profile: LEAN_CHECK_PROFILE=.tmp.repo.MathProof.ModularForms.MaedaGalois5IdE6 tools/modal_run.sh
+  [memory-alert]   .tmp.repo.MathProof.ModularForms.MaedaGalois5IdE5: 20.8 GiB  →  per-declaration profile: LEAN_CHECK_PROFILE=.tmp.repo.MathProof.ModularForms.MaedaGalois5IdE5 tools/modal_run.sh
+  [memory-alert]   .tmp.repo.MathProof.ModularForms.MaedaGalois5Identities: 16.2 GiB  →  per-declaration profile: LEAN_CHECK_PROFILE=.tmp.repo.MathProof.ModularForms.MaedaGalois5Identities tools/modal_run.sh
+  [memory-alert]   .tmp.repo.MathProof.ModularForms.MaedaGalois5IdE4: 12.3 GiB  →  per-declaration profile: LEAN_CHECK_PROFILE=.tmp.repo.MathProof.ModularForms.MaedaGalois5IdE4 tools/modal_run.sh
+  ```
+
+- investigation (CLOSED 2026-11-05, iteration-25 orchestrator): the approved
+  heavy-chain rebuild forced by the `MaedaSmallWeights` retrofit (an import
+  ancestor; the chain's own sources are unchanged).  Per-module peaks
+  reproduce the budgeted, already-profiled chain costs within 1.3 GiB
+  (`tools/stage_chain.sh` header, measured 2026-10-29: IdE4 13.5, IdE5 22.0,
+  IdE6 34.7, Identities 17.6 GiB; cause and per-declaration budget in
+  `research/poly5-memory-study/` — ≈ 27 GiB per M `Poly5` list operations,
+  checkpointed at ≈ 0.5–0.9 M).  Inherent; no new profile needed (inputs
+  identical to the profiled run).  Note: `LEAN_CHECK_MEMORY_MIB=49152` was
+  not reflected in the `[memory] request` line (8192) — the request is soft
+  and the run was granted ≥ 35 GiB; check the env passthrough of
+  `tools/modal_run.sh` before relying on explicit requests.
+
