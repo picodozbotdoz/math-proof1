@@ -21,3 +21,10 @@
   HeckeLatticeIndex (it imports HeckeIndex/HeckeFieldRat — would weigh on
   HeckeRationalSmallWeights); the nopow renderer is reused from
   gen_hecke_index.py (imported by gen_hecke_rat.py).
+
+## 2026-11-05 — G2 green
+- `MathProof/ModularForms/ScaledCert.lean` (Mathlib-only imports) green on
+  Modal: 40 s wall / 3.61 GiB peak tree (99 s round trip).  Registered in
+  `MathProof.lean` + `defaultTargets` (after HeckeRational).
+- Generic names: `ScaledCert.powL`, `cellL`, `scaledCheck`, `powL_getD`,
+  `cellL_eq`, `scaled_of_check`.

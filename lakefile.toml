@@ -71,6 +71,7 @@ defaultTargets = [
   # root-only registration, NOT a default/CI item (it would drag the parent
   # into CI; it is verified on Modal, 40 s).
   "MathProof.ModularForms.HeckeRational",
+  "MathProof.ModularForms.ScaledCert",
   "MathProof.ModularForms.HeckeRationalWeights",
   # HeckeIndex (iteration 23): the index [𝕋 : ℤ[T₂]] — generic layer + the
   # 54-weight instance file.  The generic module is a default/CI item

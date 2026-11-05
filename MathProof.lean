@@ -62,6 +62,7 @@ import MathProof.ModularForms.MaedaT3Dim10Weights
 -- dims 6-10 instance file are defaultTargets/CI items; the 24-weight small
 -- sibling (dims 2-5) follows its parent MaedaT3SmallWeights — root only.
 import MathProof.ModularForms.HeckeRational
+import MathProof.ModularForms.ScaledCert
 import MathProof.ModularForms.HeckeRationalWeights
 -- The T₃ stretch file (dims 2–5) is registered in the root only: it is a
 -- light module (audited via AxCheckDecide) but deliberately NOT a
