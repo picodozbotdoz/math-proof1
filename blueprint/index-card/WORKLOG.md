@@ -174,3 +174,11 @@ literals).  Inbox: clean at this checkpoint.
   so the card small file must be root-only too — NOT defaultTargets (blueprint §2
   said defaultTargets; that would pull a non-CI parent into CI).  HeckeLatticeIndex
   itself → root + defaultTargets.
+
+### 2026-11-05 — G4 in flight: big-file build started (EXPECTED > 10 min)
+- Generated `HeckeIndexCardWeights.lean` (30 weights, dims 6–10; 4.2k lines; |det C| = Ik
+  asserted by the generator).  Modal build via mrun.sh --file with
+  LEAN_CHECK_MEMORY_MIB=16384 (parents dims-6–10 Maeda T₂/T₃ + HeckeRational/Index
+  files ≤ 12.4 GiB each per AGENTS.md).  Expected wall-clock: 5 min warm cache,
+  up to ~90 min if the dims-6–10 parents are cold.  Log:
+  /home/doz/tmp/math-proof1-temp/agent-work/index-card/runs/g4-big-1.out
