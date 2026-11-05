@@ -455,9 +455,15 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   `tools/gen_hecke_index.py --card`, `--check` covers all four
   HeckeIndex/HeckeIndexCard files; root-only like their parents) —
   `HeckeIndexCardWeightKK.index_card` / `index_card_natCard`:
-  `[𝕋 : ℤ[T₂]] = |I_k|` at all 54 weights (`C` literal + entrywise `hcard`
-  decide + `det_C` by `eval_det`).  Modal 23 s / 5.2 GiB (dims 2–5) and
-  286 s / 6.8 GiB (dims 6–10).
+  `[𝕋 : ℤ[T₂]] = |I_k|` at all 54 weights (`C` literal; ONE `List`-sum
+  Bool decide per weight `hcheck : cardCheck atab m2tab ctab n = true`,
+  bridged to the matrix `hcard` by `hcard_of_check`; `det_C` by
+  `eval_det`).  Nested-audit clean: the certificate mentions only integer
+  pattern-match tables (no `Matrix` literal — `!![…]` pulls `Quot.sound`),
+  `Int.decEq` (not `==`: `BEq ℤ` routes through
+  `Int.instLinearOrderPackage` → `Classical.choice`) and pow-free chunked
+  numerals (no `Monoid.npow`).  Modal 11 s / 5.1 GiB (dims 2–5) and
+  47 s / 7.4 GiB (dims 6–10).
   `HeckeRingGens.lean` (light, trio; iteration 24) — ring generators of 𝕋:
   `gensOf k ps`, `heckeTM_mem_closure_of_smooth` (every `ps`-smooth `T_m`
   lies in `Subring.closure`), transport `heckeRing_eq_closure`, the
