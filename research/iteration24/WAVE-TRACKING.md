@@ -87,3 +87,18 @@ statements (ℤ[T₂,T₃] lattice pinning needs 42–32 489-digit transforms).
 Open audit note (index-card): entrywise decides under `ext`/`fin_cases`
 are not enumerated by AxCheckDecide (same gap as the landed `scaled`
 certificates) — to be closed by a `#print axioms` pass at integration.
+
+### 2026-11-05 — integration audit: nested-decide gap (proof-standard finding)
+`Iteration24AxCheck.lean` (opt-in `#print axioms`, 584 decls): every new
+iteration-24 theorem on the standard three axioms or fewer, no `sorryAx`
+(Modal 42 s / 6.75 GiB).  `AxCheckDecide` extended with
+`#audit_decide_certs_nested` (internal aux lemmas = `decide +kernel` inside
+tactic proofs, e.g. `ext; fin_cases <;> decide +kernel`, `show … by decide
++kernel`): top-level 1370/0, **nested 9256 audited / 7600 beyond propext**
+(Modal 47 s / 6.82 GiB; per-module counts in `nested-decide-audit.txt`).
+New in iteration 24: 2304 (`HeckeIndexCard{Small,}Weights` `hcard` cells —
+Finset sums + `Matrix` powers in the decided proposition) → returned to
+index-card for a List-based fix.  `HeckeRingGens*`: 0.  Legacy (iterations
+≤ 23: HeckeIndex*, HeckeRational*, Maeda{Small,Dim6–10,T3*}Weights,
+LehmerSieve691): 5296 — pre-existing, includes heavy-chain ancestor
+`MaedaSmallWeights` (`seqP` decides) → operator decision, review §7.
