@@ -138,3 +138,20 @@ gen_hecke_cyclic.py now emits per dims-3-4 weight `index_card` (from
 `HeckeIndexCardWeightKK.index_card_natCard`, rw heckeTM_prime, exact by
 t2Lattice≡t2Span defeq) and hcard-free `D_eq_Ik` / `heckeLattice_ne_t2Span`.
 Modal file build starting (expected ~2-5 min; card small file may be cold).
+
+**2026-11-05 — G3p2 file GREEN (committed).** HeckeCyclicWeights 45 s wall /
+6.17 GiB tree / 4.93 GiB module, 0 err / 0 warn, first run. --check ok,
+tauceti 0/0/0/0, ci_targets rc 0. Next: light root `MathProof` build
+(expected 2-10 min) then AxCheckDecide (expected 5-30 min).
+- root MathProof green: 61 s / 6.72 GiB, 0 warn. AxCheckDecide starting (expected 5-30 min).
+- AxCheckDecide green: 1360 audited / 0 beyond propext, 119 s / 6.82 GiB (count = index-card's G4 figure; the new files add no top-level decide certs). Quick #print axioms probe (scratch, not committed).
+- axiom probe (temporary module, deleted): D_eq_Ik (w36), heckeLattice_ne_t2Span
+  (w62), index_card (w48) → [propext, Classical.choice, Quot.sound] (standard three;
+  analytic theorems).
+
+**2026-11-05 — session 2 END. G3 phase 2 CLOSED; blueprint DONE.**
+Merge 34b93b3 (index-card ba19a59) + plug-in 2bc3073 + this close commit.
+All 12 dims-3-4 `D_eq_Ik` / `heckeLattice_ne_t2Span` unconditional; new
+per-weight `index_card`. Verified: file 45 s / 6.17 GiB, root 61 s / 6.72 GiB,
+AxCheckDecide 1360/0 (119 s / 6.82 GiB), tauceti clean, ci_targets rc 0,
+generator --check ok. No memory alerts. Inbox clean. Not pushed; master untouched.
