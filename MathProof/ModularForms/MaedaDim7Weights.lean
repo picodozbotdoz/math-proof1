@@ -1,6 +1,7 @@
 import MathProof.ModularForms.CharpolyDimN
 import MathProof.ModularForms.CharpolyEngine
 import MathProof.ModularForms.RabinCert
+import MathProof.ModularForms.IntCastCert
 import MathProof.ModularForms.MaedaCertC
 
 /-!
@@ -2315,21 +2316,26 @@ lemma hmap : P.map (Int.castRingHom (ZMod 307)) = RabinCert.toPoly 307 fr := by
   simp only [P, RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr,
       Polynomial.map_C, Polynomial.map_X, Polynomial.map_add, Polynomial.map_mul,
       Polynomial.map_pow, Int.coe_castRingHom, ← Polynomial.C_neg]
-  rw [show ((-347450761416 : ℤ) : ZMod 307) = (50 : ZMod 307) from by decide +kernel,
-      show ((-51581614762950285464322048 : ℤ) : ZMod 307)
-           = (306 : ZMod 307) from by decide +kernel,
-      show ((33417972087548210133554282597311315968 : ℤ) : ZMod 307)
-           = (201 : ZMod 307) from by decide +kernel,
+  rw [show ((-347450761416 : ℤ) : ZMod 307) = ((50 : ℤ) : ZMod 307) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
+      show ((-51581614762950285464322048 : ℤ) : ZMod 307) = ((306 : ℤ) : ZMod 307) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
+      show ((33417972087548210133554282597311315968 : ℤ) : ZMod 307) = ((201 : ℤ) : ZMod 307) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
       show ((635034504677120884757513260543788593924372240007168 : ℤ) : ZMod 307)
-           = (9 : ZMod 307) from by decide +kernel,
+          = ((9 : ℤ) : ZMod 307) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
       show ((-562565686721049598960388762470519765798823346661357825334181888 : ℤ) : ZMod 307)
-           = (9 : ZMod 307) from by decide +kernel,
-            show ((- (179040003910577094135305444109180132031313866213983091534677 * 10 ^ 16
+          = ((9 : ℤ) : ZMod 307) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
+      show ((- (179040003910577094135305444109180132031313866213983091534677 * 10 ^ 16
             + 7079557700714496) : ℤ) : ZMod 307)
-          = (297 : ZMod 307) from by decide +kernel,
-            show ((112408328809130331700221810789273732983362629523975727103152 * 10 ^ 28
+          = ((297 : ℤ) : ZMod 307) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
+      show ((112408328809130331700221810789273732983362629523975727103152 * 10 ^ 28
             + 3918606364634654432177422336 : ℤ) : ZMod 307)
-          = (301 : ZMod 307) from by decide +kernel]
+          = ((301 : ℤ) : ZMod 307) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel)]
   ring_nf
 
 lemma hmon' : (RabinCert.toPoly 307 fr).Monic := by
@@ -4671,21 +4677,27 @@ lemma hmap : P.map (Int.castRingHom (ZMod 349)) = RabinCert.toPoly 349 fr := by
   simp only [P, RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr,
       Polynomial.map_C, Polynomial.map_X, Polynomial.map_add, Polynomial.map_mul,
       Polynomial.map_pow, Int.coe_castRingHom, ← Polynomial.C_neg]
-  rw [show ((-18197022042936 : ℤ) : ZMod 349) = (207 : ZMod 349) from by decide +kernel,
-      show ((-564235186214233767519802368 : ℤ) : ZMod 349)
-           = (307 : ZMod 349) from by decide +kernel,
+  rw [show ((-18197022042936 : ℤ) : ZMod 349) = ((207 : ℤ) : ZMod 349) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
+      show ((-564235186214233767519802368 : ℤ) : ZMod 349) = ((307 : ℤ) : ZMod 349) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
       show ((9469986856558070054862549104080818536448 : ℤ) : ZMod 349)
-           = (70 : ZMod 349) from by decide +kernel,
+          = ((70 : ℤ) : ZMod 349) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
       show ((77399298405874102643706834935868342570273672378974208 : ℤ) : ZMod 349)
-           = (97 : ZMod 349) from by decide +kernel,
+          = ((97 : ℤ) : ZMod 349) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
       show ((-1080069535198488781867669355624948784284442394272777499650910322688 : ℤ) : ZMod 349)
-           = (224 : ZMod 349) from by decide +kernel,
-            show ((- (193758178127421669256815739198552751929993704398907158052844 * 10 ^ 19
+          = ((224 : ℤ) : ZMod 349) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
+      show ((- (193758178127421669256815739198552751929993704398907158052844 * 10 ^ 19
             + 3054414855422345216) : ℤ) : ZMod 349)
-          = (250 : ZMod 349) from by decide +kernel,
-            show ((259100108483817333170764313111328587301025983049059827102067 * 10 ^ 31
+          = ((250 : ℤ) : ZMod 349) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
+      show ((259100108483817333170764313111328587301025983049059827102067 * 10 ^ 31
             + 4673257153575927974722510258176 : ℤ) : ZMod 349)
-          = (78 : ZMod 349) from by decide +kernel]
+          = ((78 : ℤ) : ZMod 349) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel)]
   ring_nf
 
 lemma hmon' : (RabinCert.toPoly 349 fr).Monic := by
@@ -7035,21 +7047,27 @@ lemma hmap : P.map (Int.castRingHom (ZMod 109)) = RabinCert.toPoly 109 fr := by
   simp only [P, RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr,
       Polynomial.map_C, Polynomial.map_X, Polynomial.map_add, Polynomial.map_mul,
       Polynomial.map_pow, Int.coe_castRingHom, ← Polynomial.C_neg]
-  rw [show ((31407330351408 : ℤ) : ZMod 109) = (83 : ZMod 109) from by decide +kernel,
-      show ((-2804073207701014957046464512 : ℤ) : ZMod 109)
-           = (10 : ZMod 109) from by decide +kernel,
+  rw [show ((31407330351408 : ℤ) : ZMod 109) = ((83 : ℤ) : ZMod 109) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
+      show ((-2804073207701014957046464512 : ℤ) : ZMod 109) = ((10 : ℤ) : ZMod 109) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
       show ((-79450576654836631207865591379313500880896 : ℤ) : ZMod 109)
-           = (91 : ZMod 109) from by decide +kernel,
+          = ((91 : ℤ) : ZMod 109) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
       show ((1763692780412274711200953495224734191706744806019432448 : ℤ) : ZMod 109)
-           = (9 : ZMod 109) from by decide +kernel,
+          = ((9 : ℤ) : ZMod 109) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
       show ((41197296365825222809668632782626165746369804425389774873378668150784 : ℤ) : ZMod 109)
-           = (10 : ZMod 109) from by decide +kernel,
-            show ((- (344011867318247898929947320580602397844859850576081863866317 * 10 ^ 21
+          = ((10 : ℤ) : ZMod 109) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
+      show ((- (344011867318247898929947320580602397844859850576081863866317 * 10 ^ 21
             + 096133547994764017664) : ℤ) : ZMod 109)
-          = (42 : ZMod 109) from by decide +kernel,
-            show ((- (548154698531104234037079560779394473117771183294903954155923 * 10 ^ 34
+          = ((42 : ℤ) : ZMod 109) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
+      show ((- (548154698531104234037079560779394473117771183294903954155923 * 10 ^ 34
             + 6945061422884853193556401598758912) : ℤ) : ZMod 109)
-          = (101 : ZMod 109) from by decide +kernel]
+          = ((101 : ℤ) : ZMod 109) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel)]
   ring_nf
 
 lemma hmon' : (RabinCert.toPoly 109 fr).Monic := by
@@ -9403,22 +9421,28 @@ lemma hmap : P.map (Int.castRingHom (ZMod 107)) = RabinCert.toPoly 107 fr := by
   simp only [P, RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr,
       Polynomial.map_C, Polynomial.map_X, Polynomial.map_add, Polynomial.map_mul,
       Polynomial.map_pow, Int.coe_castRingHom, ← Polynomial.C_neg]
-  rw [show ((-3841716838056 : ℤ) : ZMod 107) = (25 : ZMod 107) from by decide +kernel,
-      show ((-11494032343953969715391858688 : ℤ) : ZMod 107)
-           = (16 : ZMod 107) from by decide +kernel,
+  rw [show ((-3841716838056 : ℤ) : ZMod 107) = ((25 : ℤ) : ZMod 107) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
+      show ((-11494032343953969715391858688 : ℤ) : ZMod 107) = ((16 : ℤ) : ZMod 107) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
       show ((41296487230488129659704014414759359152128 : ℤ) : ZMod 107)
-           = (104 : ZMod 107) from by decide +kernel,
+          = ((104 : ℤ) : ZMod 107) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
       show ((35466507693544540764922624428372941397142567970194587648 : ℤ) : ZMod 107)
-           = (61 : ZMod 107) from by decide +kernel,
-            show ((- (364648590718457558095483424953664706081263498538230856202048 * 10 ^ 8
+          = ((61 : ℤ) : ZMod 107) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
+      show ((- (364648590718457558095483424953664706081263498538230856202048 * 10 ^ 8
             + 11583488) : ℤ) : ZMod 107)
-          = (96 : ZMod 107) from by decide +kernel,
-            show ((- (224065985275335344474434585170118242124825662469351300547817 * 10 ^ 23
+          = ((96 : ℤ) : ZMod 107) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
+      show ((- (224065985275335344474434585170118242124825662469351300547817 * 10 ^ 23
             + 45321920356372589838336) : ℤ) : ZMod 107)
-          = (54 : ZMod 107) from by decide +kernel,
-            show ((186451475093483795141771763557933549866869729609625309358563 * 10 ^ 36
+          = ((54 : ℤ) : ZMod 107) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
+      show ((186451475093483795141771763557933549866869729609625309358563 * 10 ^ 36
             + 904813503354583451934325606675644416 : ℤ) : ZMod 107)
-          = (91 : ZMod 107) from by decide +kernel]
+          = ((91 : ℤ) : ZMod 107) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel)]
   ring_nf
 
 lemma hmon' : (RabinCert.toPoly 107 fr).Monic := by
@@ -11776,22 +11800,28 @@ lemma hmap : P.map (Int.castRingHom (ZMod 137)) = RabinCert.toPoly 137 fr := by
   simp only [P, RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr,
       Polynomial.map_C, Polynomial.map_X, Polynomial.map_add, Polynomial.map_mul,
       Polynomial.map_pow, Int.coe_castRingHom, ← Polynomial.C_neg]
-  rw [show ((-43735426713792 : ℤ) : ZMod 137) = (62 : ZMod 137) from by decide +kernel,
-      show ((-52422817047248315187327578112 : ℤ) : ZMod 137)
-           = (61 : ZMod 137) from by decide +kernel,
+  rw [show ((-43735426713792 : ℤ) : ZMod 137) = ((62 : ℤ) : ZMod 137) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
+      show ((-52422817047248315187327578112 : ℤ) : ZMod 137) = ((61 : ℤ) : ZMod 137) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
       show ((1822340570225776508355098661880437883797504 : ℤ) : ZMod 137)
-           = (70 : ZMod 137) from by decide +kernel,
+          = ((70 : ℤ) : ZMod 137) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
       show ((774285750205728873399065770796719479780298817622452994048 : ℤ) : ZMod 137)
-           = (103 : ZMod 137) from by decide +kernel,
-            show ((- (161287792410494755740466210353209902547971193959787757809953 * 10 ^ 11
+          = ((103 : ℤ) : ZMod 137) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
+      show ((- (161287792410494755740466210353209902547971193959787757809953 * 10 ^ 11
             + 72381372416) : ℤ) : ZMod 137)
-          = (15 : ZMod 137) from by decide +kernel,
-            show ((- (249474723091143066692321373845719454571800757521890194899347 * 10 ^ 25
+          = ((15 : ℤ) : ZMod 137) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
+      show ((- (249474723091143066692321373845719454571800757521890194899347 * 10 ^ 25
             + 2855205244009258327998464) : ℤ) : ZMod 137)
-          = (89 : ZMod 137) from by decide +kernel,
-            show ((- (124404274437684794108277575734850895617680386303195050687003 * 10 ^ 38
+          = ((89 : ℤ) : ZMod 137) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
+      show ((- (124404274437684794108277575734850895617680386303195050687003 * 10 ^ 38
             + 71236404014284338312788954309787123712) : ℤ) : ZMod 137)
-          = (83 : ZMod 137) from by decide +kernel]
+          = ((83 : ℤ) : ZMod 137) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel)]
   ring_nf
 
 lemma hmon' : (RabinCert.toPoly 137 fr).Monic := by
@@ -14151,22 +14181,28 @@ lemma hmap : P.map (Int.castRingHom (ZMod 107)) = RabinCert.toPoly 107 fr := by
   simp only [P, RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr,
       Polynomial.map_C, Polynomial.map_X, Polynomial.map_add, Polynomial.map_mul,
       Polynomial.map_pow, Int.coe_castRingHom, ← Polynomial.C_neg]
-  rw [show ((16697241085008 : ℤ) : ZMod 107) = (94 : ZMod 107) from by decide +kernel,
-      show ((-635986280640272454494247923712 : ℤ) : ZMod 107)
-           = (32 : ZMod 107) from by decide +kernel,
+  rw [show ((16697241085008 : ℤ) : ZMod 107) = ((94 : ℤ) : ZMod 107) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
+      show ((-635986280640272454494247923712 : ℤ) : ZMod 107) = ((32 : ℤ) : ZMod 107) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
       show ((-20866421731146544870629238284489679014199296 : ℤ) : ZMod 107)
-           = (6 : ZMod 107) from by decide +kernel,
+          = ((6 : ℤ) : ZMod 107) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
       show ((102677867774691861474983492034303494526156086913708953960448 : ℤ) : ZMod 107)
-           = (97 : ZMod 107) from by decide +kernel,
-            show ((521953293405929708067886055734628908755543531123385682408780 * 10 ^ 13
+          = ((97 : ℤ) : ZMod 107) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
+      show ((521953293405929708067886055734628908755543531123385682408780 * 10 ^ 13
             + 3900549136384 : ℤ) : ZMod 107)
-          = (21 : ZMod 107) from by decide +kernel,
-            show ((- (691258928482341263148270872224899357831955370457940048393925 * 10 ^ 27
+          = ((21 : ℤ) : ZMod 107) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
+      show ((- (691258928482341263148270872224899357831955370457940048393925 * 10 ^ 27
             + 373665517137217013325758464) : ℤ) : ZMod 107)
-          = (81 : ZMod 107) from by decide +kernel,
-            show ((- (520053370692553259677899254143612596308683576289918419513856 * 10 ^ 40
+          = ((81 : ℤ) : ZMod 107) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel),
+      show ((- (520053370692553259677899254143612596308683576289918419513856 * 10 ^ 40
             + 4077495007831568377106753438933227405312) : ℤ) : ZMod 107)
-          = (2 : ZMod 107) from by decide +kernel]
+          = ((2 : ℤ) : ZMod 107) from
+        IntCastCert.intCast_eq_of_emod (by decide +kernel)]
   ring_nf
 
 lemma hmon' : (RabinCert.toPoly 107 fr).Monic := by

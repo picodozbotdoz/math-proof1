@@ -332,6 +332,50 @@ def flat_expr_lines(v, lead, cont):
     return [lead + toks[0]] + [cont + t for t in toks[1:]]
 
 
+def hmap_rw_items(cp, n, ell):
+    """The `rw` items of `hmap`: one cast rewrite `((c : ℤ) : ZMod ℓ) =
+    ((c % ℓ : ℤ) : ZMod ℓ)` per non-leading charpoly coefficient.  Each is
+    proved by `IntCastCert.intCast_eq_of_emod` from the residue decided over
+    `ℤ` (`decide +kernel` on `c % ℓ = r`, an `Int.decEq` comparison: propext
+    only — deciding the `ZMod` equality itself pulls in `Classical.choice` and
+    `Quot.sound`).  The cast pattern must stay syntactically the expression P
+    contains (rw matches syntactically), so chunked coefficients keep their
+    `c0 * 10 ^ E0 + …` tokens; the right-hand side `((r : ℤ) : ZMod ℓ)` is
+    the very atom `RabinCert.toPoly` leaves for the `fr` entry."""
+    rhs = " = ((%d : ℤ) : ZMod %d) from"
+    proof = "        IntCastCert.intCast_eq_of_emod (by decide +kernel)"
+    items = []
+    for i, c in enumerate(cp):
+        if i == 0:
+            continue
+        r = c % ell
+        suffix = f" * (X : ℤ[X]) ^ {n - i}" if i < n else ""
+        chs = term_chunks(c, suffix)  # SAME decision as P's literal (syntactic match)
+        tail = rhs % (r, ell)
+        if chs is None:
+            head = f"show (({c} : ℤ) : ZMod {ell})"
+            if 6 + len(head) + len(tail) <= WIDTH:
+                lines = ["      " + head + tail]
+            elif 6 + len(head) <= WIDTH:
+                lines = ["      " + head, "         " + tail]
+            else:  # the coefficient literal alone nearly fills the line: split the cast
+                lines = [f"      show (({c} : ℤ)", f"          : ZMod {ell})", "         " + tail]
+        else:
+            # chunked coefficient: the pattern must be syntactically the cast of
+            # NEGATED unit expression (what <- C_neg + map_C leave in the goal);
+            # the inner tokens come from the same builder as P's C (…) literal
+            toks = chunk_expr_tokens(chs)
+            op = "show ((- (" if c < 0 else "show (("
+            cl = ") : ℤ) : ZMod %d)" % ell if c < 0 else " : ℤ) : ZMod %d)" % ell
+            lines = ["      " + op + toks[0]]
+            lines += ["            " + t for t in toks[1:]]
+            lines[-1] += cl
+            lines.append("         " + tail)
+        lines.append(proof)
+        items.append("\n".join(lines)[6:])
+    return items
+
+
 def p_literal(cp, n):
     # term units: plain strings (packed like the dim-6 output) or pre-rendered
     # multi-line blocks for coefficients whose literal does not fit on a line
@@ -728,34 +772,8 @@ def emit_weight(w):
     P("  simp only [P, RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr,")
     P("      Polynomial.map_C, Polynomial.map_X, Polynomial.map_add, Polynomial.map_mul,")
     P("      Polynomial.map_pow, Int.coe_castRingHom, ← Polynomial.C_neg]")
-    # per-coefficient kernel casts: c mod ell (the leading C 1 needs no rewrite)
-    rw_items = []
-    for i, c in enumerate(cp):
-        if i == 0:
-            continue
-        suffix = f" * (X : ℤ[X]) ^ {n - i}" if i < n else ""
-        chs = term_chunks(c, suffix)  # SAME decision as P's literal (syntactic match)
-        if chs is None:
-            head = f"show (({c} : ℤ) : ZMod {ell})"
-            tail = f" = ({c % ell} : ZMod {ell}) from by decide +kernel"
-            if 6 + len(head) + len(tail) <= WIDTH:
-                rw_items.append(head + tail)
-            elif 6 + len(head) <= WIDTH:
-                rw_items.append(head + "\n          " + tail)
-            else:  # the coefficient literal alone nearly fills the line: split the cast
-                rw_items.append(f"show (({c} : ℤ)\n          : ZMod {ell})" + tail)
-        else:
-            # chunked coefficient: the pattern must be syntactically the cast of
-            # NEGATED unit expression (what <- C_neg + map_C leave in the goal);
-            # the inner tokens come from the same builder as P's C (…) literal
-            toks = chunk_expr_tokens(chs)
-            op = "show ((- (" if c < 0 else "show (("
-            cl = ") : ℤ) : ZMod %d)" % ell if c < 0 else " : ℤ) : ZMod %d)" % ell
-            lines = ["      " + op + toks[0]]
-            lines += ["            " + t for t in toks[1:]]
-            lines[-1] += cl
-            lines.append("          = (%d : ZMod %d) from by decide +kernel" % (c % ell, ell))
-            rw_items.append("\n".join(lines))
+    # per-coefficient casts: c mod ell (the leading C 1 needs no rewrite)
+    rw_items = hmap_rw_items(cp, n, ell)
     P("  rw [" + ",\n      ".join(rw_items) + "]")
     P("  ring_nf")
     P("")
@@ -815,6 +833,7 @@ def emit_weight(w):
 HEADER = """import MathProof.ModularForms.CharpolyDimN
 import MathProof.ModularForms.CharpolyEngine
 import MathProof.ModularForms.RabinCert
+import MathProof.ModularForms.IntCastCert
 import MathProof.ModularForms.MaedaCertC
 
 /-!
@@ -1204,30 +1223,7 @@ def emit_weight_t3(w, list_maxbody=None):
     P("  simp only [P, RabinCert.toPoly_nil, RabinCert.toPoly_cons, fr,")
     P("      Polynomial.map_C, Polynomial.map_X, Polynomial.map_add, Polynomial.map_mul,")
     P("      Polynomial.map_pow, Int.coe_castRingHom, ← Polynomial.C_neg]")
-    rw_items = []
-    for i, c in enumerate(cp):
-        if i == 0:
-            continue
-        suffix = f" * (X : ℤ[X]) ^ {n - i}" if i < n else ""
-        chs = term_chunks(c, suffix)  # SAME decision as P's literal (syntactic match)
-        if chs is None:
-            head = f"show (({c} : ℤ) : ZMod {ell})"
-            tail = f" = ({c % ell} : ZMod {ell}) from by decide +kernel"
-            if 6 + len(head) + len(tail) <= WIDTH:
-                rw_items.append(head + tail)
-            elif 6 + len(head) <= WIDTH:
-                rw_items.append(head + "\n          " + tail)
-            else:  # the coefficient literal alone nearly fills the line: split the cast
-                rw_items.append(f"show (({c} : ℤ)\n          : ZMod {ell})" + tail)
-        else:
-            toks = chunk_expr_tokens(chs)
-            op = "show ((- (" if c < 0 else "show (("
-            cl = ") : ℤ) : ZMod %d)" % ell if c < 0 else " : ℤ) : ZMod %d)" % ell
-            lines = ["      " + op + toks[0]]
-            lines += ["            " + t for t in toks[1:]]
-            lines[-1] += cl
-            lines.append("          = (%d : ZMod %d) from by decide +kernel" % (c % ell, ell))
-            rw_items.append("\n".join(lines))
+    rw_items = hmap_rw_items(cp, n, ell)
     P("  rw [" + ",\n      ".join(rw_items) + "]")
     P("  ring_nf")
     P("")
@@ -1284,6 +1280,7 @@ def emit_weight_t3(w, list_maxbody=None):
 HEADER_T3 = """import MathProof.ModularForms.CharpolyDimN
 import MathProof.ModularForms.CharpolyEngine
 import MathProof.ModularForms.RabinCert
+import MathProof.ModularForms.IntCastCert
 import MathProof.ModularForms.HeckeTPCoeff
 import MathProof.ModularForms.MaedaCertCExt
 
@@ -1332,6 +1329,7 @@ def emit_dim_t3(dim):
 HEADER_T3_SMALL = """import MathProof.ModularForms.CharpolyDimN
 import MathProof.ModularForms.CharpolyEngine
 import MathProof.ModularForms.RabinCert
+import MathProof.ModularForms.IntCastCert
 import MathProof.ModularForms.HeckeTPCoeff
 import MathProof.ModularForms.MaedaCertCExt
 

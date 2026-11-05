@@ -514,6 +514,11 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   `∀ y : ℕ, y < ℓ → hornerZ cs y % ℓ ≠ 0` (no axioms), never as
   `∀ x : ZMod ℓ, …` (`decide` then depends on `Classical.choice` and
   `Quot.sound`).
+- `MathProof/ModularForms/IntCastCert.lean` (light) —
+  `intCast_eq_of_emod`: `n % ℓ = r` over `ℤ` (decided, `propext`-only) ⇒
+  `((n : ℤ) : ZMod ℓ) = ((r : ℤ) : ZMod ℓ)`.  The `hmap` cast rewrites of
+  `gen_maedan.py`'s files (all modes) go through it; never decide a `ZMod`
+  cast equation directly (`Classical.choice` + `Quot.sound`).
 - `MathProof/ModularForms/MaedaCertC.lean` (light) — `seqPLc`, the Maeda
   coefficient lists without `Finset`/`ArithmeticFunction`/`Ramanujan.tau`
   (`sigmaL`, `convLc`, `dCc`), and `seqPLc_eq` back to `seqPL`; the `L{j}c`

@@ -41,6 +41,7 @@ defaultTargets = [
   "MathProof.ModularForms.Poly5",
   "MathProof.ModularForms.MaedaGalois5Defs",
   "MathProof.ModularForms.HornerCert",
+  "MathProof.ModularForms.IntCastCert",
   "MathProof.ModularForms.MaedaCertC",
   "MathProof.ModularForms.MaedaPermCriterion",
   "MathProof.ModularForms.CharpolyEngine",

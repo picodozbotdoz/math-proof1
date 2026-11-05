@@ -36,6 +36,7 @@ import MathProof.ModularForms.MaedaDim5Weights
 import MathProof.ModularForms.Poly5
 import MathProof.ModularForms.MaedaGalois5Defs
 import MathProof.ModularForms.HornerCert
+import MathProof.ModularForms.IntCastCert
 import MathProof.ModularForms.MaedaCertC
 import MathProof.ModularForms.MaedaCertCExt
 import MathProof.ModularForms.MaedaPermCriterion
