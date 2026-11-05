@@ -396,8 +396,259 @@ def render(keys, data, report, scope, count, imports):
     return "\n".join(L).rstrip("\n") + "\n"
 
 
+# ---------------------------------------------------------------------------
+# `--card` mode (iteration 24, b1 index-card): the lattice index
+# `[𝕋 : ℤ[T₂]] = |I_k|` per weight, through `HeckeLatticeIndex.index_card_dimN`.
+# Ground truth = the LANDED Lean literals (Atab of the MaedaT3 files, the T₂
+# matrix of the HeckeRational / MaedaDim files, `Ik` + `det_A` sign of the
+# HeckeIndex files), parsed with the iteration-23/24 G1 audit parsers
+# (imported, not copied).  Per weight: the integer echelon table `atab`, the
+# dual-coordinate matrix `C i j = a_1(T₂^i g_j) = ∑_c μ_{jc} (M₂^i)_{0c}`,
+# its entrywise kernel certificate `hcard`, `det_C : C.det = ±I_k`
+# (`eval_det`), and the index statements.
+
+CARD_PARTS = [
+    (MF / "HeckeIndexCardSmallWeights.lean", lambda d: d <= 5, "2 ≤ dim S_k ≤ 5", 24, [
+        "MathProof.ModularForms.HeckeLatticeIndex",
+        "MathProof.ModularForms.HeckeIndexSmallWeights",
+        "MathProof.ModularForms.HeckeGeneratedByT2SmallWeights",
+    ]),
+    (MF / "HeckeIndexCardWeights.lean", lambda d: d >= 6, "6 ≤ dim S_k ≤ 10", 30, [
+        "MathProof.ModularForms.HeckeLatticeIndex",
+        "MathProof.ModularForms.HeckeIndexWeights",
+    ]),
+]
+
+
+def _load_audits():
+    import importlib.util
+    i24 = ROOT / "research" / "iteration24" / "index-card" / "g1_audit.py"
+    spec = importlib.util.spec_from_file_location("g1_audit_i24", i24)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)          # also imports the iteration-23 parsers as mod.G
+    sys.path.insert(0, str(ROOT / "tools"))
+    import gen_hecke_field as HF          # gent2_names / c_lemmas (hfi, hmin names)
+    return mod, mod.G, HF
+
+
+def miller_top_c(atab, n):
+    """Mirror of `HeckeLatticeIndex.millerTopC` / `millerCoeff`: row j = the
+    fb-coefficients of the Miller vector g_j."""
+    acc = []
+    for r in range(1, n + 1):
+        j = n - r
+        head = [int(c == j) for c in range(n)]
+        for t in range(r - 1):
+            a = atab.get((j, t + (n - r + 1)), 0)
+            for c in range(n):
+                head[c] -= a * acc[t][c]
+        acc.insert(0, head)
+    return acc
+
+
+def card_data():
+    """{weight: dict(dim, atab, M2, C, Ik, sign)} from the landed literals."""
+    I24, G, HF = _load_audits()
+    idx = I24.parse_index_files()
+    t3, small = {}, set()
+    for f in [G.T3_SMALL] + list(G.T3_DIM.values()):
+        for ns, sec in G.namespaces(f).items():
+            t3[G.weight_of(ns)] = sec
+            if f is G.T3_SMALL:
+                small.add(G.weight_of(ns))
+    t2dim = {}
+    for f in G.T2_DIM.values():
+        for ns, sec in G.namespaces(f).items():
+            t2dim[G.weight_of(ns)] = sec
+    hr = {}
+    for f in [G.HR_BIG, G.HR_SMALL]:
+        for ns, sec in G.namespaces(f).items():
+            hr[G.hr_weight_of(ns)] = sec
+    gt, cl = HF.gent2_names(), HF.c_lemmas()
+    out = {}
+    for k in sorted(t3):
+        sec3 = t3[k]
+        atab = G.parse_Atab(sec3)
+        M2 = G.parse_M2(hr[k]) if k in small else G.parse_M(t2dim[k])
+        n = len(M2)
+        assert cl[k] == n, (k, cl[k], n)
+        mu = miller_top_c(atab, n)
+        # cross-check: the iteration-24 audit's accumulator gives the same μ
+        assert mu == I24.miller_top_c(lambda i, j: atab.get((i, j), 0), n), k
+        pows = [G.matpow(M2, i) for i in range(n)]
+        C = [[sum(mu[j][c] * pows[i][0][c] for c in range(n)) for j in range(n)]
+             for i in range(n)]
+        Ik = I24.parse_Ik(idx[k])
+        d = det_exact(C)
+        assert abs(d) == abs(Ik) and Ik > 0, (k, d, Ik)
+        out[k] = dict(dim=n, atab=atab, C=C, Ik=Ik, sign=1 if d > 0 else -1,
+                      small=k in small, gt=gt[k])
+    assert len(out) == 54, len(out)
+    return out
+
+
+def atab_def(atab, k):
+    out = [f"/-- The landed echelon table `MaedaT3Weight{k}.Atab`, integer-typed (G1 audit). -/",
+           "def atab : ℕ → ℕ → ℤ"]
+    for (i, j) in sorted(atab):
+        out.extend(wrap_tokens(" ".join(int_lines(atab[(i, j)])), f"  | {i}, {j} => ",
+                               "      "))
+    out.append("  | _, _ => 0")
+    return out
+
+
+def emit_card_weight(k, w):
+    n, C = w["dim"], w["C"]
+    t3 = f"MaedaT3Weight{k}"
+    ix = f"HeckeIndexWeight{k}"
+    if w["small"]:
+        rat = f"HeckeRatWeight{k}"
+        X2, hX2, M2, hM2 = f"{rat}.Xtab2", f"{rat}.hX2", f"{rat}.M2", f"{rat}.hM2"
+    else:
+        t2 = f"MaedaWeight{k}"
+        X2, hX2, M2, hM2 = f"{t2}.Xtab", f"{t2}.hX", f"{t2}.M", f"HeckeRatWeight{k}.hM2"
+    t2op, cp, mae = w["gt"]
+    sign = "" if w["sign"] > 0 else "-"
+    kk = f"(({k} : ℕ) : ℤ)"
+    L = [f"/-! ### Weight {k} (dim {n}) -/", f"namespace HeckeIndexCardWeight{k}", ""]
+    L.extend(atab_def(w["atab"], k))
+    L.append("")
+    L.append(f"theorem hAeq : ∀ i j : ℕ, i < j → j < {n} →")
+    L.append(f"    {t3}.Atab i j = ((atab i j : ℤ) : ℂ) := by")
+    L.append("  intro i j hij hj")
+    if n == 2:   # a single (i, j) cell: `<;>` would trip the unusedTactic linter
+        L.append("  obtain rfl : j = 1 := by omega")
+        L.append("  obtain rfl : i = 0 := by omega")
+        L.append(f"  norm_num [{t3}.Atab, atab]")
+    else:
+        L.append(f"  interval_cases j <;> interval_cases i <;> norm_num [{t3}.Atab, atab]")
+    L.append("")
+    L.append(f"/-- The echelon basis at weight {k} has integer `q`-coefficients (all `m`). -/")
+    L.append(f"theorem hfi : ∀ i : ℕ, i < {n} → ∀ m : ℕ,")
+    L.append(f"    ∃ z : ℤ, (qExpansion 1 ({t3}.fb i)).coeff m = (z : ℂ)")
+    for i in range(n):
+        L.append(f"  | {i}, _, m => ⟨_, {t3}.c{i + 1} m⟩")
+    L.append(f"  | _ + {n}, h, _ => absurd h (by omega)")
+    L.append("")
+    L.append(f"/-- `minpoly T₂` has degree `dim S_{k} = {n}` (Maeda: charpoly irreducible). -/")
+    L.append(f"theorem hmin : (minpoly ℂ (heckeTM {kk} 2)).natDegree = {n} := by")
+    L.append("  rw [HeckeTM.heckeTM_prime _ Nat.prime_two]")
+    L.append(f"  change (minpoly ℂ ({t2op} :")
+    L.append(f"    Module.End ℂ (CuspForm 𝒮ℒ {kk}))).natDegree = {n}")
+    L.append("  rw [HeckeGeneratedByT2.minpoly_eq_charpoly_of_map_of_irreducible")
+    L.append(f"    {cp}")
+    L.append(f"    {mae},")
+    L.append(f"    LinearMap.charpoly_natDegree, {t3}.finrank_eq]")
+    L.append("")
+    L.extend(matrix_def("C", C,
+                        f"Dual coordinates at weight {k}: `T₂^i = ∑_j C i j • T_(j+1)`."))
+    L.append("")
+    L.append("/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the")
+    L.append("powers of the landed `T₂` matrix. -/")
+    L.append(f"theorem hcard : Matrix.of (fun i j : Fin {n} =>")
+    L.append(f"    ∑ c : Fin {n}, millerCoeff atab {n} j.val c.val")
+    L.append(f"      * ({M2} ^ (i : ℕ)) 0 c) = C := by")
+    L.append("  ext i j")
+    L.append("  fin_cases i <;> fin_cases j <;> decide +kernel")
+    L.append("")
+    L.append("/-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/")
+    L.append(f"theorem det_C : C.det = {sign}{ix}.Ik := by")
+    L.append("  simp only [C]")
+    L.append("  eval_det")
+    L.append(f"  norm_num [{ix}.Ik]")
+    L.append("")
+    habs = "by rw [det_C]" if not sign else "by rw [det_C, Int.natAbs_neg]"
+    toks = ["(by norm_num)", "(by norm_num)", f"{t3}.finrank_eq", f"{t3}.fb", f"{t3}.Atab",
+            f"{t3}.hzero", f"{t3}.hone", f"{t3}.hA", "hfi", "hmin", "atab", "hAeq",
+            X2, hX2, M2, hM2, "C", "hcard", f"{ix}.Ik", f"({habs})"]
+
+    def app(head):
+        out, cur = [], "  " + head
+        for t in toks:
+            if len(cur) + 1 + len(t) > WIDTH:
+                out.append(cur)
+                cur = "    " + t
+            else:
+                cur += " " + t
+        out.append(cur)
+        return out
+
+    L.append(f"/-- **The lattice index at weight {k}**: `[𝕋 : ℤ[T₂]] = |I_k|`. -/")
+    L.append(f"theorem index_card : (t2Lattice (heckeTM {kk} 2) {n}).toAddSubgroup.relIndex")
+    L.append(f"    (heckeLattice {kk} {n}).toAddSubgroup = {ix}.Ik.natAbs :=")
+    L.extend(app("index_card_dimN"))
+    L.append("")
+    L.append(f"/-- **The lattice index at weight {k}**, as `Nat.card (𝕋 ⧸ ℤ[T₂])`. -/")
+    L.append(f"theorem index_card_natCard : Nat.card (↥(heckeLattice {kk} {n}).toAddSubgroup ⧸")
+    L.append(f"    (t2Lattice (heckeTM {kk} 2) {n}).toAddSubgroup.addSubgroupOf")
+    L.append(f"      (heckeLattice {kk} {n}).toAddSubgroup) = {ix}.Ik.natAbs :=")
+    L.extend(app("index_card_natCard_dimN"))
+    L.append("")
+    L.append(f"end HeckeIndexCardWeight{k}")
+    return L
+
+
+def render_card(keys, data, scope, count, imports):
+    L = [f"import {m}" for m in imports]
+    L.append("")
+    L.append("open HeckeIndex HeckeLatticeIndex HeckeTM MaedaLevelOne")
+    L.append("open UpperHalfPlane ModularForm CuspForm")
+    L.append("open scoped MatrixGroups")
+    L.append("")
+    L.append("/-!")
+    L.append(f"# The lattice index `[𝕋 : ℤ[T₂]]` at every level-one weight with `{scope}`")
+    L.append("")
+    L.append("Generated by `tools/gen_hecke_index.py --card` from the landed literals")
+    L.append("(the `Atab` tables of the `MaedaT3` files, the `T₂` matrices of the")
+    L.append("`HeckeRational` / `MaedaDim` files, `I_k` of the `HeckeIndex` files; parsed")
+    L.append("with the iteration-23/24 G1 audit parsers; byte-identical re-runs, `--check`;")
+    L.append(f"do not hand-edit).  For each of the {count} weights with `{scope}`")
+    L.append("(the 54 weights `24 ≤ k ≤ 134` are split by dimension over")
+    L.append("`HeckeIndexCardSmallWeights` / `HeckeIndexCardWeights`): the dual")
+    L.append("coordinates `C i j = a_1(T₂^i g_j)` of the powers of `T₂` over the Hecke")
+    L.append("basis `T_1, …, T_n` (`g` the Miller basis), certified entrywise by")
+    L.append("`decide +kernel` (`hcard`), `det C = ±I_k` (`eval_det`), and the lattice")
+    L.append("index `[𝕋 : ℤ[T₂]] = |I_k|` as an `AddSubgroup.relIndex` (`index_card`) and")
+    L.append("as `Nat.card (𝕋 ⧸ ℤ[T₂])` (`index_card_natCard`), through")
+    L.append("`HeckeLatticeIndex.index_card_dimN`.")
+    L.append("")
+    L.append("Everything is light: no `set_option`, no `native_decide`/`sorry`; the only")
+    L.append("decides are the entrywise per-cell certificates, all `decide +kernel`.")
+    L.append("-/")
+    L.append("")
+    for k in keys:
+        L.extend(emit_card_weight(k, data[k]))
+        L.append("")
+    return "\n".join(L).rstrip("\n") + "\n"
+
+
+def card_main(check):
+    data = card_data()
+    keys = sorted(data)
+    failed = False
+    for out, pick, scope, count, imports in CARD_PARTS:
+        ks = [k for k in keys if pick(data[k]["dim"])]
+        assert len(ks) == count, (out.name, len(ks))
+        text = render_card(ks, data, scope, count, imports)
+        if check:
+            old = out.read_text() if out.exists() else ""
+            if old == text:
+                print(f"check OK: {out.name} byte-identical")
+            else:
+                print(f"check FAILED: {out.name} differs (lines", len(old.splitlines()),
+                      "vs", len(text.splitlines()), ")")
+                failed = True
+            continue
+        out.write_text(text)
+        print(f"wrote {out}: {count} weights")
+    return failed
+
+
 def main():
     check = "--check" in sys.argv
+    if "--card" in sys.argv and not check:
+        card_main(False)
+        return
     data = json.load(open(DATA))
     keys = sorted(data, key=int)
     assert len(keys) == 54, len(keys)
@@ -419,6 +670,7 @@ def main():
         out.write_text(text)
         print(f"wrote {out}: {count} weights")
     if check:
+        failed = card_main(True) or failed
         if failed:
             sys.exit(1)
         return

@@ -125,3 +125,9 @@ index-card facts — one generator flag + re-verify).
 Final session state: branch impl/iteration24/index-cyclic at 4 commits
 (base + G1 + G2 + G3p1 [+ corrections]); nothing uncommitted except this
 WORKLOG/bundle; inbox clean; no memory alerts (all peaks ≤ 6.8 GiB).
+
+**2026-11-05 — session 2 START (fresh respawn).** State: tip 1875fca clean.
+index-card landed G2 afeee0d / G3 8cf8736 / G4 ba19a59. Plan: merge
+impl/iteration24/index-card, adapt plug-in to its actual exports, regenerate
+HeckeCyclicWeights hcard-free, verify (file, root, AxCheckDecide, tauceti,
+ci_targets), commit. Inbox: checked at start.

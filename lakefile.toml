@@ -119,6 +119,12 @@ defaultTargets = [
   # (every T_m ∈ ℚ[T₂]; 46 s / 4.7 GiB) — all parents are default targets.
   "MathProof.ModularForms.HeckeFieldDim2",
   "MathProof.ModularForms.HeckeFieldRat",
+  # Iteration 24 b1 (index-card): the generic lattice-index layer
+  # [𝕋 : ℤ[T₂]] = |det C| (relIndex / Nat.card), parents HeckeIndex +
+  # HeckeFieldRat are default targets (16 s / 4.8 GiB on Modal).  Its
+  # per-weight instances HeckeIndexCard{Small,}Weights are root-only like
+  # their parents HeckeIndex{Small,}Weights.
+  "MathProof.ModularForms.HeckeLatticeIndex",
   # Iteration 24 b2: generic cyclicity of 𝕋 ⧸ ℤ[T₂] at n ≤ 4 (T₁, T₂, T₄ ∈
   # ℤ[T₂] via heckeTM_two_mul_even; order bridge; D = I_k packaging; the
   # 𝕋 = ℤ[T₂] iff).  All parents already default targets; 33 s / 5.9 GiB.
