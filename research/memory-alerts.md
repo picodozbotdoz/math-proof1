@@ -75,3 +75,21 @@ Builds that crossed 64 GiB before the tooling existed; numbers from
   sizing keys on) is 8.0 GiB.  No action; the request ladder and the 16 GiB
   alert behaved exactly as designed.
 
+
+## 2026-11-05 — `MathProof.AxCheckDecide` (iteration 25, maeda-small worker)
+
+- alert: `[memory-alert] peak tree RSS 25.6 GiB >= 16 GiB` (wall 81 s,
+  run log `agent-work/maeda-small/runs/axcheck.out`).  Per-module peaks:
+  max 5.67 GiB (`MaedaGalois4`), then `AxCheckDecide` 5.61, `MathProof`
+  5.55, `HeckeFieldWeights` 5.45, … `MaedaGalois` 4.80 — no module above
+  6 GiB.
+- investigation (CLOSED 2026-11-05): editing `MaedaSmallWeights`
+  (q-cells now via `seqPLc`) invalidated its light descendants
+  (`MaedaGalois`, `MaedaGalois4`, `MaedaGalois5Defs`, `HeckeIndexSmallWeights`,
+  `HeckeField*`, `HeckeGeneratedByT2*`, `MaedaT2GaloisSmallWeights`, …), and
+  lake rebuilt ≈ 13 of them with up to 4–5 `lean` processes in parallel,
+  each at its ≈ 5 GiB import floor.  The 25.6 GiB *tree* peak is that sum;
+  the largest single process is 5.67 GiB (what request sizing keys on).
+  Same pattern as the 2026-10-31 `MaedaDim8Weights` entry.  Cost inherent to
+  a multi-descendant rebuild; no action.  The edited module itself:
+  4.92 GiB (25 s) in its `--file` run.

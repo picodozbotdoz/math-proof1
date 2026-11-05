@@ -1,4 +1,4 @@
-import MathProof.ModularForms.MaedaLevelOne
+import MathProof.ModularForms.MaedaCertC
 
 /-!
 # Maeda's conjecture for the level-one weights with `dim S_k ∈ {2, 3}`
@@ -24,14 +24,28 @@ noncomputable def f1 : CuspForm 𝒮ℒ ((28 : ℕ) : ℤ) :=
 lemma c1 (n : ℕ) : (qExpansion 1 f1).coeff n = seqP 0 4 0 n :=
   prodForm_coeff _ _ _ _ _ n
 
+lemma L1c : seqPLc 0 4 0 5 =
+    [0, 1, 936, 331452,
+     53282368] := by
+  decide +kernel
+
+lemma L1 : seqPL 0 4 0 5 =
+    [0, 1, 936, 331452,
+     53282368] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L1c
+
 lemma q1_1 : (qExpansion 1 f1).coeff 1 = (1 : ℂ) := by
-  rw [c1, show seqP 0 4 0 1 = 1 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 5) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_2 : (qExpansion 1 f1).coeff 2 = (936 : ℂ) := by
-  rw [c1, show seqP 0 4 0 2 = 936 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 5) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_4 : (qExpansion 1 f1).coeff 4 = (53282368 : ℂ) := by
-  rw [c1, show seqP 0 4 0 4 = 53282368 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 5) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 /-- `Δ^2 E₄^1 E₆^0`. -/
 noncomputable def f2 : CuspForm 𝒮ℒ ((28 : ℕ) : ℤ) :=
@@ -40,14 +54,28 @@ noncomputable def f2 : CuspForm 𝒮ℒ ((28 : ℕ) : ℤ) :=
 lemma c2 (n : ℕ) : (qExpansion 1 f2).coeff n = seqP 1 1 0 n :=
   prodForm_coeff _ _ _ _ _ n
 
+lemma L2c : seqPLc 1 1 0 5 =
+    [0, 0, 1, 192,
+     -8280] := by
+  decide +kernel
+
+lemma L2 : seqPL 1 1 0 5 =
+    [0, 0, 1, 192,
+     -8280] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L2c
+
 lemma q2_1 : (qExpansion 1 f2).coeff 1 = (0 : ℂ) := by
-  rw [c2, show seqP 1 1 0 1 = 0 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 5) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_2 : (qExpansion 1 f2).coeff 2 = (1 : ℂ) := by
-  rw [c2, show seqP 1 1 0 2 = 1 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 5) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_4 : (qExpansion 1 f2).coeff 4 = (-8280 : ℂ) := by
-  rw [c2, show seqP 1 1 0 4 = -8280 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 5) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma finrank_eq : Module.finrank ℂ (CuspForm 𝒮ℒ ((28 : ℕ) : ℤ)) = 2 := by
   apply Module.finrank_eq_of_rank_eq
@@ -115,14 +143,28 @@ noncomputable def f1 : CuspForm 𝒮ℒ ((30 : ℕ) : ℤ) :=
 lemma c1 (n : ℕ) : (qExpansion 1 f1).coeff n = seqP 0 3 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
+lemma L1c : seqPLc 0 3 1 5 =
+    [0, 1, 192, -205164,
+     -80642048] := by
+  decide +kernel
+
+lemma L1 : seqPL 0 3 1 5 =
+    [0, 1, 192, -205164,
+     -80642048] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L1c
+
 lemma q1_1 : (qExpansion 1 f1).coeff 1 = (1 : ℂ) := by
-  rw [c1, show seqP 0 3 1 1 = 1 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 5) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_2 : (qExpansion 1 f1).coeff 2 = (192 : ℂ) := by
-  rw [c1, show seqP 0 3 1 2 = 192 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 5) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_4 : (qExpansion 1 f1).coeff 4 = (-80642048 : ℂ) := by
-  rw [c1, show seqP 0 3 1 4 = -80642048 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 5) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 /-- `Δ^2 E₄^0 E₆^1`. -/
 noncomputable def f2 : CuspForm 𝒮ℒ ((30 : ℕ) : ℤ) :=
@@ -131,14 +173,28 @@ noncomputable def f2 : CuspForm 𝒮ℒ ((30 : ℕ) : ℤ) :=
 lemma c2 (n : ℕ) : (qExpansion 1 f2).coeff n = seqP 1 0 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
+lemma L2c : seqPLc 1 0 1 5 =
+    [0, 0, 1, -552,
+     8640] := by
+  decide +kernel
+
+lemma L2 : seqPL 1 0 1 5 =
+    [0, 0, 1, -552,
+     8640] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L2c
+
 lemma q2_1 : (qExpansion 1 f2).coeff 1 = (0 : ℂ) := by
-  rw [c2, show seqP 1 0 1 1 = 0 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 5) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_2 : (qExpansion 1 f2).coeff 2 = (1 : ℂ) := by
-  rw [c2, show seqP 1 0 1 2 = 1 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 5) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_4 : (qExpansion 1 f2).coeff 4 = (8640 : ℂ) := by
-  rw [c2, show seqP 1 0 1 4 = 8640 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 5) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma finrank_eq : Module.finrank ℂ (CuspForm 𝒮ℒ ((30 : ℕ) : ℤ)) = 2 := by
   apply Module.finrank_eq_of_rank_eq
@@ -206,14 +262,28 @@ noncomputable def f1 : CuspForm 𝒮ℒ ((32 : ℕ) : ℤ) :=
 lemma c1 (n : ℕ) : (qExpansion 1 f1).coeff n = seqP 0 5 0 n :=
   prodForm_coeff _ _ _ _ _ n
 
+lemma L1c : seqPLc 0 5 0 5 =
+    [0, 1, 1176, 558252,
+     134859328] := by
+  decide +kernel
+
+lemma L1 : seqPL 0 5 0 5 =
+    [0, 1, 1176, 558252,
+     134859328] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L1c
+
 lemma q1_1 : (qExpansion 1 f1).coeff 1 = (1 : ℂ) := by
-  rw [c1, show seqP 0 5 0 1 = 1 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 5) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_2 : (qExpansion 1 f1).coeff 2 = (1176 : ℂ) := by
-  rw [c1, show seqP 0 5 0 2 = 1176 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 5) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_4 : (qExpansion 1 f1).coeff 4 = (134859328 : ℂ) := by
-  rw [c1, show seqP 0 5 0 4 = 134859328 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 5) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 /-- `Δ^2 E₄^2 E₆^0`. -/
 noncomputable def f2 : CuspForm 𝒮ℒ ((32 : ℕ) : ℤ) :=
@@ -222,14 +292,28 @@ noncomputable def f2 : CuspForm 𝒮ℒ ((32 : ℕ) : ℤ) :=
 lemma c2 (n : ℕ) : (qExpansion 1 f2).coeff n = seqP 1 2 0 n :=
   prodForm_coeff _ _ _ _ _ n
 
+lemma L2c : seqPLc 1 2 0 5 =
+    [0, 0, 1, 432,
+     39960] := by
+  decide +kernel
+
+lemma L2 : seqPL 1 2 0 5 =
+    [0, 0, 1, 432,
+     39960] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L2c
+
 lemma q2_1 : (qExpansion 1 f2).coeff 1 = (0 : ℂ) := by
-  rw [c2, show seqP 1 2 0 1 = 0 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 5) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_2 : (qExpansion 1 f2).coeff 2 = (1 : ℂ) := by
-  rw [c2, show seqP 1 2 0 2 = 1 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 5) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_4 : (qExpansion 1 f2).coeff 4 = (39960 : ℂ) := by
-  rw [c2, show seqP 1 2 0 4 = 39960 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 5) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma finrank_eq : Module.finrank ℂ (CuspForm 𝒮ℒ ((32 : ℕ) : ℤ)) = 2 := by
   apply Module.finrank_eq_of_rank_eq
@@ -297,14 +381,28 @@ noncomputable def f1 : CuspForm 𝒮ℒ ((34 : ℕ) : ℤ) :=
 lemma c1 (n : ℕ) : (qExpansion 1 f1).coeff n = seqP 0 4 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
+lemma L1c : seqPLc 0 4 1 5 =
+    [0, 1, 432, -156924,
+     -129459968] := by
+  decide +kernel
+
+lemma L1 : seqPL 0 4 1 5 =
+    [0, 1, 432, -156924,
+     -129459968] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L1c
+
 lemma q1_1 : (qExpansion 1 f1).coeff 1 = (1 : ℂ) := by
-  rw [c1, show seqP 0 4 1 1 = 1 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 5) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_2 : (qExpansion 1 f1).coeff 2 = (432 : ℂ) := by
-  rw [c1, show seqP 0 4 1 2 = 432 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 5) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_4 : (qExpansion 1 f1).coeff 4 = (-129459968 : ℂ) := by
-  rw [c1, show seqP 0 4 1 4 = -129459968 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 5) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 /-- `Δ^2 E₄^1 E₆^1`. -/
 noncomputable def f2 : CuspForm 𝒮ℒ ((34 : ℕ) : ℤ) :=
@@ -313,14 +411,28 @@ noncomputable def f2 : CuspForm 𝒮ℒ ((34 : ℕ) : ℤ) :=
 lemma c2 (n : ℕ) : (qExpansion 1 f2).coeff n = seqP 1 1 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
+lemma L2c : seqPLc 1 1 1 5 =
+    [0, 0, 1, -312,
+     -121680] := by
+  decide +kernel
+
+lemma L2 : seqPL 1 1 1 5 =
+    [0, 0, 1, -312,
+     -121680] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L2c
+
 lemma q2_1 : (qExpansion 1 f2).coeff 1 = (0 : ℂ) := by
-  rw [c2, show seqP 1 1 1 1 = 0 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 5) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_2 : (qExpansion 1 f2).coeff 2 = (1 : ℂ) := by
-  rw [c2, show seqP 1 1 1 2 = 1 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 5) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_4 : (qExpansion 1 f2).coeff 4 = (-121680 : ℂ) := by
-  rw [c2, show seqP 1 1 1 4 = -121680 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 5) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma finrank_eq : Module.finrank ℂ (CuspForm 𝒮ℒ ((34 : ℕ) : ℤ)) = 2 := by
   apply Module.finrank_eq_of_rank_eq
@@ -388,14 +500,28 @@ noncomputable def f1 : CuspForm 𝒮ℒ ((38 : ℕ) : ℤ) :=
 lemma c1 (n : ℕ) : (qExpansion 1 f1).coeff n = seqP 0 5 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
+lemma L1c : seqPLc 0 5 1 5 =
+    [0, 1, 672, -51084,
+     -166181888] := by
+  decide +kernel
+
+lemma L1 : seqPL 0 5 1 5 =
+    [0, 1, 672, -51084,
+     -166181888] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L1c
+
 lemma q1_1 : (qExpansion 1 f1).coeff 1 = (1 : ℂ) := by
-  rw [c1, show seqP 0 5 1 1 = 1 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 5) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_2 : (qExpansion 1 f1).coeff 2 = (672 : ℂ) := by
-  rw [c1, show seqP 0 5 1 2 = 672 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 5) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_4 : (qExpansion 1 f1).coeff 4 = (-166181888 : ℂ) := by
-  rw [c1, show seqP 0 5 1 4 = -166181888 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 5) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 /-- `Δ^2 E₄^2 E₆^1`. -/
 noncomputable def f2 : CuspForm 𝒮ℒ ((38 : ℕ) : ℤ) :=
@@ -404,14 +530,28 @@ noncomputable def f2 : CuspForm 𝒮ℒ ((38 : ℕ) : ℤ) :=
 lemma c2 (n : ℕ) : (qExpansion 1 f2).coeff n = seqP 1 2 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
+lemma L2c : seqPLc 1 2 1 5 =
+    [0, 0, 1, -72,
+     -194400] := by
+  decide +kernel
+
+lemma L2 : seqPL 1 2 1 5 =
+    [0, 0, 1, -72,
+     -194400] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L2c
+
 lemma q2_1 : (qExpansion 1 f2).coeff 1 = (0 : ℂ) := by
-  rw [c2, show seqP 1 2 1 1 = 0 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 5) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_2 : (qExpansion 1 f2).coeff 2 = (1 : ℂ) := by
-  rw [c2, show seqP 1 2 1 2 = 1 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 5) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_4 : (qExpansion 1 f2).coeff 4 = (-194400 : ℂ) := by
-  rw [c2, show seqP 1 2 1 4 = -194400 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 5) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma finrank_eq : Module.finrank ℂ (CuspForm 𝒮ℒ ((38 : ℕ) : ℤ)) = 2 := by
   apply Module.finrank_eq_of_rank_eq
@@ -479,20 +619,36 @@ noncomputable def f1 : CuspForm 𝒮ℒ ((36 : ℕ) : ℤ) :=
 lemma c1 (n : ℕ) : (qExpansion 1 f1).coeff n = seqP 0 6 0 n :=
   prodForm_coeff _ _ _ _ _ n
 
+lemma L1c : seqPLc 0 6 0 7 =
+    [0, 1, 1416, 842652,
+     271386688, 50558976510, 5356057835232] := by
+  decide +kernel
+
+lemma L1 : seqPL 0 6 0 7 =
+    [0, 1, 1416, 842652,
+     271386688, 50558976510, 5356057835232] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L1c
+
 lemma q1_1 : (qExpansion 1 f1).coeff 1 = (1 : ℂ) := by
-  rw [c1, show seqP 0 6 0 1 = 1 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_2 : (qExpansion 1 f1).coeff 2 = (1416 : ℂ) := by
-  rw [c1, show seqP 0 6 0 2 = 1416 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_3 : (qExpansion 1 f1).coeff 3 = (842652 : ℂ) := by
-  rw [c1, show seqP 0 6 0 3 = 842652 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_4 : (qExpansion 1 f1).coeff 4 = (271386688 : ℂ) := by
-  rw [c1, show seqP 0 6 0 4 = 271386688 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_6 : (qExpansion 1 f1).coeff 6 = (5356057835232 : ℂ) := by
-  rw [c1, show seqP 0 6 0 6 = 5356057835232 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 /-- `Δ^2 E₄^3 E₆^0`. -/
 noncomputable def f2 : CuspForm 𝒮ℒ ((36 : ℕ) : ℤ) :=
@@ -501,20 +657,36 @@ noncomputable def f2 : CuspForm 𝒮ℒ ((36 : ℕ) : ℤ) :=
 lemma c2 (n : ℕ) : (qExpansion 1 f2).coeff n = seqP 1 3 0 n :=
   prodForm_coeff _ _ _ _ _ n
 
+lemma L2c : seqPLc 1 3 0 7 =
+    [0, 0, 1, 672,
+     145800, 9111680, -233907300] := by
+  decide +kernel
+
+lemma L2 : seqPL 1 3 0 7 =
+    [0, 0, 1, 672,
+     145800, 9111680, -233907300] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L2c
+
 lemma q2_1 : (qExpansion 1 f2).coeff 1 = (0 : ℂ) := by
-  rw [c2, show seqP 1 3 0 1 = 0 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_2 : (qExpansion 1 f2).coeff 2 = (1 : ℂ) := by
-  rw [c2, show seqP 1 3 0 2 = 1 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_3 : (qExpansion 1 f2).coeff 3 = (672 : ℂ) := by
-  rw [c2, show seqP 1 3 0 3 = 672 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_4 : (qExpansion 1 f2).coeff 4 = (145800 : ℂ) := by
-  rw [c2, show seqP 1 3 0 4 = 145800 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_6 : (qExpansion 1 f2).coeff 6 = (-233907300 : ℂ) := by
-  rw [c2, show seqP 1 3 0 6 = -233907300 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 /-- `Δ^3 E₄^0 E₆^0`. -/
 noncomputable def f3 : CuspForm 𝒮ℒ ((36 : ℕ) : ℤ) :=
@@ -523,20 +695,36 @@ noncomputable def f3 : CuspForm 𝒮ℒ ((36 : ℕ) : ℤ) :=
 lemma c3 (n : ℕ) : (qExpansion 1 f3).coeff n = seqP 2 0 0 n :=
   prodForm_coeff _ _ _ _ _ n
 
+lemma L3c : seqPLc 2 0 0 7 =
+    [0, 0, 0, 1,
+     -72, 2484, -54528] := by
+  decide +kernel
+
+lemma L3 : seqPL 2 0 0 7 =
+    [0, 0, 0, 1,
+     -72, 2484, -54528] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L3c
+
 lemma q3_1 : (qExpansion 1 f3).coeff 1 = (0 : ℂ) := by
-  rw [c3, show seqP 2 0 0 1 = 0 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q3_2 : (qExpansion 1 f3).coeff 2 = (0 : ℂ) := by
-  rw [c3, show seqP 2 0 0 2 = 0 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q3_3 : (qExpansion 1 f3).coeff 3 = (1 : ℂ) := by
-  rw [c3, show seqP 2 0 0 3 = 1 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q3_4 : (qExpansion 1 f3).coeff 4 = (-72 : ℂ) := by
-  rw [c3, show seqP 2 0 0 4 = -72 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q3_6 : (qExpansion 1 f3).coeff 6 = (-54528 : ℂ) := by
-  rw [c3, show seqP 2 0 0 6 = -54528 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma finrank_eq : Module.finrank ℂ (CuspForm 𝒮ℒ ((36 : ℕ) : ℤ)) = 3 := by
   apply Module.finrank_eq_of_rank_eq
@@ -620,20 +808,36 @@ noncomputable def f1 : CuspForm 𝒮ℒ ((40 : ℕ) : ℤ) :=
 lemma c1 (n : ℕ) : (qExpansion 1 f1).coeff n = seqP 0 7 0 n :=
   prodForm_coeff _ _ _ _ _ n
 
+lemma L1c : seqPLc 0 7 0 7 =
+    [0, 1, 1656, 1184652,
+     476688448, 117521442990, 18082094903712] := by
+  decide +kernel
+
+lemma L1 : seqPL 0 7 0 7 =
+    [0, 1, 1656, 1184652,
+     476688448, 117521442990, 18082094903712] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L1c
+
 lemma q1_1 : (qExpansion 1 f1).coeff 1 = (1 : ℂ) := by
-  rw [c1, show seqP 0 7 0 1 = 1 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_2 : (qExpansion 1 f1).coeff 2 = (1656 : ℂ) := by
-  rw [c1, show seqP 0 7 0 2 = 1656 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_3 : (qExpansion 1 f1).coeff 3 = (1184652 : ℂ) := by
-  rw [c1, show seqP 0 7 0 3 = 1184652 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_4 : (qExpansion 1 f1).coeff 4 = (476688448 : ℂ) := by
-  rw [c1, show seqP 0 7 0 4 = 476688448 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_6 : (qExpansion 1 f1).coeff 6 = (18082094903712 : ℂ) := by
-  rw [c1, show seqP 0 7 0 6 = 18082094903712 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 /-- `Δ^2 E₄^4 E₆^0`. -/
 noncomputable def f2 : CuspForm 𝒮ℒ ((40 : ℕ) : ℤ) :=
@@ -642,20 +846,36 @@ noncomputable def f2 : CuspForm 𝒮ℒ ((40 : ℕ) : ℤ) :=
 lemma c2 (n : ℕ) : (qExpansion 1 f2).coeff n = seqP 1 4 0 n :=
   prodForm_coeff _ _ _ _ _ n
 
+lemma L2c : seqPLc 1 4 0 7 =
+    [0, 0, 1, 912,
+     309240, 45561920, 2272357260] := by
+  decide +kernel
+
+lemma L2 : seqPL 1 4 0 7 =
+    [0, 0, 1, 912,
+     309240, 45561920, 2272357260] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L2c
+
 lemma q2_1 : (qExpansion 1 f2).coeff 1 = (0 : ℂ) := by
-  rw [c2, show seqP 1 4 0 1 = 0 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_2 : (qExpansion 1 f2).coeff 2 = (1 : ℂ) := by
-  rw [c2, show seqP 1 4 0 2 = 1 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_3 : (qExpansion 1 f2).coeff 3 = (912 : ℂ) := by
-  rw [c2, show seqP 1 4 0 3 = 912 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_4 : (qExpansion 1 f2).coeff 4 = (309240 : ℂ) := by
-  rw [c2, show seqP 1 4 0 4 = 309240 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_6 : (qExpansion 1 f2).coeff 6 = (2272357260 : ℂ) := by
-  rw [c2, show seqP 1 4 0 6 = 2272357260 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 /-- `Δ^3 E₄^1 E₆^0`. -/
 noncomputable def f3 : CuspForm 𝒮ℒ ((40 : ℕ) : ℤ) :=
@@ -664,20 +884,36 @@ noncomputable def f3 : CuspForm 𝒮ℒ ((40 : ℕ) : ℤ) :=
 lemma c3 (n : ℕ) : (qExpansion 1 f3).coeff n = seqP 2 1 0 n :=
   prodForm_coeff _ _ _ _ _ n
 
+lemma L3c : seqPLc 2 1 0 7 =
+    [0, 0, 0, 1,
+     168, -12636, 392832] := by
+  decide +kernel
+
+lemma L3 : seqPL 2 1 0 7 =
+    [0, 0, 0, 1,
+     168, -12636, 392832] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L3c
+
 lemma q3_1 : (qExpansion 1 f3).coeff 1 = (0 : ℂ) := by
-  rw [c3, show seqP 2 1 0 1 = 0 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q3_2 : (qExpansion 1 f3).coeff 2 = (0 : ℂ) := by
-  rw [c3, show seqP 2 1 0 2 = 0 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q3_3 : (qExpansion 1 f3).coeff 3 = (1 : ℂ) := by
-  rw [c3, show seqP 2 1 0 3 = 1 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q3_4 : (qExpansion 1 f3).coeff 4 = (168 : ℂ) := by
-  rw [c3, show seqP 2 1 0 4 = 168 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q3_6 : (qExpansion 1 f3).coeff 6 = (392832 : ℂ) := by
-  rw [c3, show seqP 2 1 0 6 = 392832 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma finrank_eq : Module.finrank ℂ (CuspForm 𝒮ℒ ((40 : ℕ) : ℤ)) = 3 := by
   apply Module.finrank_eq_of_rank_eq
@@ -761,20 +997,36 @@ noncomputable def f1 : CuspForm 𝒮ℒ ((42 : ℕ) : ℤ) :=
 lemma c1 (n : ℕ) : (qExpansion 1 f1).coeff n = seqP 0 6 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
+lemma L1c : seqPLc 0 6 1 7 =
+    [0, 1, 912, 112356,
+     -176983808, -100409569050, -24743751611328] := by
+  decide +kernel
+
+lemma L1 : seqPL 0 6 1 7 =
+    [0, 1, 912, 112356,
+     -176983808, -100409569050, -24743751611328] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L1c
+
 lemma q1_1 : (qExpansion 1 f1).coeff 1 = (1 : ℂ) := by
-  rw [c1, show seqP 0 6 1 1 = 1 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_2 : (qExpansion 1 f1).coeff 2 = (912 : ℂ) := by
-  rw [c1, show seqP 0 6 1 2 = 912 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_3 : (qExpansion 1 f1).coeff 3 = (112356 : ℂ) := by
-  rw [c1, show seqP 0 6 1 3 = 112356 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_4 : (qExpansion 1 f1).coeff 4 = (-176983808 : ℂ) := by
-  rw [c1, show seqP 0 6 1 4 = -176983808 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_6 : (qExpansion 1 f1).coeff 6 = (-24743751611328 : ℂ) := by
-  rw [c1, show seqP 0 6 1 6 = -24743751611328 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 /-- `Δ^2 E₄^3 E₆^1`. -/
 noncomputable def f2 : CuspForm 𝒮ℒ ((42 : ℕ) : ℤ) :=
@@ -783,20 +1035,36 @@ noncomputable def f2 : CuspForm 𝒮ℒ ((42 : ℕ) : ℤ) :=
 lemma c2 (n : ℕ) : (qExpansion 1 f2).coeff n = seqP 1 3 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
+lemma L2c : seqPLc 1 3 1 7 =
+    [0, 0, 1, 168,
+     -209520, -75671200, -7334312220] := by
+  decide +kernel
+
+lemma L2 : seqPL 1 3 1 7 =
+    [0, 0, 1, 168,
+     -209520, -75671200, -7334312220] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L2c
+
 lemma q2_1 : (qExpansion 1 f2).coeff 1 = (0 : ℂ) := by
-  rw [c2, show seqP 1 3 1 1 = 0 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_2 : (qExpansion 1 f2).coeff 2 = (1 : ℂ) := by
-  rw [c2, show seqP 1 3 1 2 = 1 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_3 : (qExpansion 1 f2).coeff 3 = (168 : ℂ) := by
-  rw [c2, show seqP 1 3 1 3 = 168 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_4 : (qExpansion 1 f2).coeff 4 = (-209520 : ℂ) := by
-  rw [c2, show seqP 1 3 1 4 = -209520 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_6 : (qExpansion 1 f2).coeff 6 = (-7334312220 : ℂ) := by
-  rw [c2, show seqP 1 3 1 6 = -7334312220 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 /-- `Δ^3 E₄^0 E₆^1`. -/
 noncomputable def f3 : CuspForm 𝒮ℒ ((42 : ℕ) : ℤ) :=
@@ -805,20 +1073,36 @@ noncomputable def f3 : CuspForm 𝒮ℒ ((42 : ℕ) : ℤ) :=
 lemma c3 (n : ℕ) : (qExpansion 1 f3).coeff n = seqP 2 0 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
+lemma L3c : seqPLc 2 0 1 7 =
+    [0, 0, 0, 1,
+     -576, 22140, -231936] := by
+  decide +kernel
+
+lemma L3 : seqPL 2 0 1 7 =
+    [0, 0, 0, 1,
+     -576, 22140, -231936] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L3c
+
 lemma q3_1 : (qExpansion 1 f3).coeff 1 = (0 : ℂ) := by
-  rw [c3, show seqP 2 0 1 1 = 0 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q3_2 : (qExpansion 1 f3).coeff 2 = (0 : ℂ) := by
-  rw [c3, show seqP 2 0 1 2 = 0 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q3_3 : (qExpansion 1 f3).coeff 3 = (1 : ℂ) := by
-  rw [c3, show seqP 2 0 1 3 = 1 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q3_4 : (qExpansion 1 f3).coeff 4 = (-576 : ℂ) := by
-  rw [c3, show seqP 2 0 1 4 = -576 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q3_6 : (qExpansion 1 f3).coeff 6 = (-231936 : ℂ) := by
-  rw [c3, show seqP 2 0 1 6 = -231936 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma finrank_eq : Module.finrank ℂ (CuspForm 𝒮ℒ ((42 : ℕ) : ℤ)) = 3 := by
   apply Module.finrank_eq_of_rank_eq
@@ -902,20 +1186,36 @@ noncomputable def f1 : CuspForm 𝒮ℒ ((44 : ℕ) : ℤ) :=
 lemma c1 (n : ℕ) : (qExpansion 1 f1).coeff n = seqP 0 8 0 n :=
   prodForm_coeff _ _ _ _ _ n
 
+lemma L1c : seqPLc 0 8 0 7 =
+    [0, 1, 1896, 1584252,
+     764588608, 234496664670, 47324878173792] := by
+  decide +kernel
+
+lemma L1 : seqPL 0 8 0 7 =
+    [0, 1, 1896, 1584252,
+     764588608, 234496664670, 47324878173792] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L1c
+
 lemma q1_1 : (qExpansion 1 f1).coeff 1 = (1 : ℂ) := by
-  rw [c1, show seqP 0 8 0 1 = 1 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_2 : (qExpansion 1 f1).coeff 2 = (1896 : ℂ) := by
-  rw [c1, show seqP 0 8 0 2 = 1896 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_3 : (qExpansion 1 f1).coeff 3 = (1584252 : ℂ) := by
-  rw [c1, show seqP 0 8 0 3 = 1584252 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_4 : (qExpansion 1 f1).coeff 4 = (764588608 : ℂ) := by
-  rw [c1, show seqP 0 8 0 4 = 764588608 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_6 : (qExpansion 1 f1).coeff 6 = (47324878173792 : ℂ) := by
-  rw [c1, show seqP 0 8 0 6 = 47324878173792 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 /-- `Δ^2 E₄^5 E₆^0`. -/
 noncomputable def f2 : CuspForm 𝒮ℒ ((44 : ℕ) : ℤ) :=
@@ -924,20 +1224,36 @@ noncomputable def f2 : CuspForm 𝒮ℒ ((44 : ℕ) : ℤ) :=
 lemma c2 (n : ℕ) : (qExpansion 1 f2).coeff n = seqP 1 5 0 n :=
   prodForm_coeff _ _ _ _ _ n
 
+lemma L2c : seqPLc 1 5 0 7 =
+    [0, 0, 1, 1152,
+     530280, 121756160, 13881322620] := by
+  decide +kernel
+
+lemma L2 : seqPL 1 5 0 7 =
+    [0, 0, 1, 1152,
+     530280, 121756160, 13881322620] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L2c
+
 lemma q2_1 : (qExpansion 1 f2).coeff 1 = (0 : ℂ) := by
-  rw [c2, show seqP 1 5 0 1 = 0 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_2 : (qExpansion 1 f2).coeff 2 = (1 : ℂ) := by
-  rw [c2, show seqP 1 5 0 2 = 1 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_3 : (qExpansion 1 f2).coeff 3 = (1152 : ℂ) := by
-  rw [c2, show seqP 1 5 0 3 = 1152 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_4 : (qExpansion 1 f2).coeff 4 = (530280 : ℂ) := by
-  rw [c2, show seqP 1 5 0 4 = 530280 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_6 : (qExpansion 1 f2).coeff 6 = (13881322620 : ℂ) := by
-  rw [c2, show seqP 1 5 0 6 = 13881322620 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 /-- `Δ^3 E₄^2 E₆^0`. -/
 noncomputable def f3 : CuspForm 𝒮ℒ ((44 : ℕ) : ℤ) :=
@@ -946,20 +1262,36 @@ noncomputable def f3 : CuspForm 𝒮ℒ ((44 : ℕ) : ℤ) :=
 lemma c3 (n : ℕ) : (qExpansion 1 f3).coeff n = seqP 2 2 0 n :=
   prodForm_coeff _ _ _ _ _ n
 
+lemma L3c : seqPLc 2 2 0 7 =
+    [0, 0, 0, 1,
+     408, 29844, -2270208] := by
+  decide +kernel
+
+lemma L3 : seqPL 2 2 0 7 =
+    [0, 0, 0, 1,
+     408, 29844, -2270208] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L3c
+
 lemma q3_1 : (qExpansion 1 f3).coeff 1 = (0 : ℂ) := by
-  rw [c3, show seqP 2 2 0 1 = 0 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q3_2 : (qExpansion 1 f3).coeff 2 = (0 : ℂ) := by
-  rw [c3, show seqP 2 2 0 2 = 0 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q3_3 : (qExpansion 1 f3).coeff 3 = (1 : ℂ) := by
-  rw [c3, show seqP 2 2 0 3 = 1 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q3_4 : (qExpansion 1 f3).coeff 4 = (408 : ℂ) := by
-  rw [c3, show seqP 2 2 0 4 = 408 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q3_6 : (qExpansion 1 f3).coeff 6 = (-2270208 : ℂ) := by
-  rw [c3, show seqP 2 2 0 6 = -2270208 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma finrank_eq : Module.finrank ℂ (CuspForm 𝒮ℒ ((44 : ℕ) : ℤ)) = 3 := by
   apply Module.finrank_eq_of_rank_eq
@@ -1043,20 +1375,36 @@ noncomputable def f1 : CuspForm 𝒮ℒ ((46 : ℕ) : ℤ) :=
 lemma c1 (n : ℕ) : (qExpansion 1 f1).coeff n = seqP 0 7 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
+lemma L1c : seqPLc 0 7 1 7 =
+    [0, 1, 1152, 333396,
+     -148041728, -142636847850, -49223562167808] := by
+  decide +kernel
+
+lemma L1 : seqPL 0 7 1 7 =
+    [0, 1, 1152, 333396,
+     -148041728, -142636847850, -49223562167808] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L1c
+
 lemma q1_1 : (qExpansion 1 f1).coeff 1 = (1 : ℂ) := by
-  rw [c1, show seqP 0 7 1 1 = 1 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_2 : (qExpansion 1 f1).coeff 2 = (1152 : ℂ) := by
-  rw [c1, show seqP 0 7 1 2 = 1152 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_3 : (qExpansion 1 f1).coeff 3 = (333396 : ℂ) := by
-  rw [c1, show seqP 0 7 1 3 = 333396 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_4 : (qExpansion 1 f1).coeff 4 = (-148041728 : ℂ) := by
-  rw [c1, show seqP 0 7 1 4 = -148041728 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_6 : (qExpansion 1 f1).coeff 6 = (-49223562167808 : ℂ) := by
-  rw [c1, show seqP 0 7 1 6 = -49223562167808 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 /-- `Δ^2 E₄^4 E₆^1`. -/
 noncomputable def f2 : CuspForm 𝒮ℒ ((46 : ℕ) : ℤ) :=
@@ -1065,20 +1413,36 @@ noncomputable def f2 : CuspForm 𝒮ℒ ((46 : ℕ) : ℤ) :=
 lemma c2 (n : ℕ) : (qExpansion 1 f2).coeff n = seqP 1 4 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
+lemma L2c : seqPLc 1 4 1 7 =
+    [0, 0, 1, 408,
+     -167040, -125586400, -25946816940] := by
+  decide +kernel
+
+lemma L2 : seqPL 1 4 1 7 =
+    [0, 0, 1, 408,
+     -167040, -125586400, -25946816940] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L2c
+
 lemma q2_1 : (qExpansion 1 f2).coeff 1 = (0 : ℂ) := by
-  rw [c2, show seqP 1 4 1 1 = 0 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_2 : (qExpansion 1 f2).coeff 2 = (1 : ℂ) := by
-  rw [c2, show seqP 1 4 1 2 = 1 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_3 : (qExpansion 1 f2).coeff 3 = (408 : ℂ) := by
-  rw [c2, show seqP 1 4 1 3 = 408 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_4 : (qExpansion 1 f2).coeff 4 = (-167040 : ℂ) := by
-  rw [c2, show seqP 1 4 1 4 = -167040 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_6 : (qExpansion 1 f2).coeff 6 = (-25946816940 : ℂ) := by
-  rw [c2, show seqP 1 4 1 6 = -25946816940 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 /-- `Δ^3 E₄^1 E₆^1`. -/
 noncomputable def f3 : CuspForm 𝒮ℒ ((46 : ℕ) : ℤ) :=
@@ -1087,20 +1451,36 @@ noncomputable def f3 : CuspForm 𝒮ℒ ((46 : ℕ) : ℤ) :=
 lemma c3 (n : ℕ) : (qExpansion 1 f3).coeff n = seqP 2 1 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
+lemma L3c : seqPLc 2 1 1 7 =
+    [0, 0, 0, 1,
+     -336, -113940, 3844224] := by
+  decide +kernel
+
+lemma L3 : seqPL 2 1 1 7 =
+    [0, 0, 0, 1,
+     -336, -113940, 3844224] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L3c
+
 lemma q3_1 : (qExpansion 1 f3).coeff 1 = (0 : ℂ) := by
-  rw [c3, show seqP 2 1 1 1 = 0 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q3_2 : (qExpansion 1 f3).coeff 2 = (0 : ℂ) := by
-  rw [c3, show seqP 2 1 1 2 = 0 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q3_3 : (qExpansion 1 f3).coeff 3 = (1 : ℂ) := by
-  rw [c3, show seqP 2 1 1 3 = 1 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q3_4 : (qExpansion 1 f3).coeff 4 = (-336 : ℂ) := by
-  rw [c3, show seqP 2 1 1 4 = -336 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q3_6 : (qExpansion 1 f3).coeff 6 = (3844224 : ℂ) := by
-  rw [c3, show seqP 2 1 1 6 = 3844224 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma finrank_eq : Module.finrank ℂ (CuspForm 𝒮ℒ ((46 : ℕ) : ℤ)) = 3 := by
   apply Module.finrank_eq_of_rank_eq
@@ -1184,20 +1564,36 @@ noncomputable def f1 : CuspForm 𝒮ℒ ((50 : ℕ) : ℤ) :=
 lemma c1 (n : ℕ) : (qExpansion 1 f1).coeff n = seqP 0 8 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
+lemma L1c : seqPLc 0 8 1 7 =
+    [0, 1, 1392, 612036,
+     -65531648, -177438968250, -83773915149888] := by
+  decide +kernel
+
+lemma L1 : seqPL 0 8 1 7 =
+    [0, 1, 1392, 612036,
+     -65531648, -177438968250, -83773915149888] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L1c
+
 lemma q1_1 : (qExpansion 1 f1).coeff 1 = (1 : ℂ) := by
-  rw [c1, show seqP 0 8 1 1 = 1 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_2 : (qExpansion 1 f1).coeff 2 = (1392 : ℂ) := by
-  rw [c1, show seqP 0 8 1 2 = 1392 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_3 : (qExpansion 1 f1).coeff 3 = (612036 : ℂ) := by
-  rw [c1, show seqP 0 8 1 3 = 612036 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_4 : (qExpansion 1 f1).coeff 4 = (-65531648 : ℂ) := by
-  rw [c1, show seqP 0 8 1 4 = -65531648 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q1_6 : (qExpansion 1 f1).coeff 6 = (-83773915149888 : ℂ) := by
-  rw [c1, show seqP 0 8 1 6 = -83773915149888 by decide +kernel]; norm_num
+  rw [c1, seqP_getD (N := 7) (by norm_num), L1]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 /-- `Δ^2 E₄^5 E₆^1`. -/
 noncomputable def f2 : CuspForm 𝒮ℒ ((50 : ℕ) : ℤ) :=
@@ -1206,20 +1602,36 @@ noncomputable def f2 : CuspForm 𝒮ℒ ((50 : ℕ) : ℤ) :=
 lemma c2 (n : ℕ) : (qExpansion 1 f2).coeff n = seqP 1 5 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
+lemma L2c : seqPLc 1 5 1 7 =
+    [0, 0, 1, 648,
+     -66960, -164788000, -56445600060] := by
+  decide +kernel
+
+lemma L2 : seqPL 1 5 1 7 =
+    [0, 0, 1, 648,
+     -66960, -164788000, -56445600060] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L2c
+
 lemma q2_1 : (qExpansion 1 f2).coeff 1 = (0 : ℂ) := by
-  rw [c2, show seqP 1 5 1 1 = 0 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_2 : (qExpansion 1 f2).coeff 2 = (1 : ℂ) := by
-  rw [c2, show seqP 1 5 1 2 = 1 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_3 : (qExpansion 1 f2).coeff 3 = (648 : ℂ) := by
-  rw [c2, show seqP 1 5 1 3 = 648 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_4 : (qExpansion 1 f2).coeff 4 = (-66960 : ℂ) := by
-  rw [c2, show seqP 1 5 1 4 = -66960 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q2_6 : (qExpansion 1 f2).coeff 6 = (-56445600060 : ℂ) := by
-  rw [c2, show seqP 1 5 1 6 = -56445600060 by decide +kernel]; norm_num
+  rw [c2, seqP_getD (N := 7) (by norm_num), L2]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 /-- `Δ^3 E₄^2 E₆^1`. -/
 noncomputable def f3 : CuspForm 𝒮ℒ ((50 : ℕ) : ℤ) :=
@@ -1228,20 +1640,36 @@ noncomputable def f3 : CuspForm 𝒮ℒ ((50 : ℕ) : ℤ) :=
 lemma c3 (n : ℕ) : (qExpansion 1 f3).coeff n = seqP 2 2 1 n :=
   prodForm_coeff _ _ _ _ _ n
 
+lemma L3c : seqPLc 2 2 1 7 =
+    [0, 0, 0, 1,
+     -96, -192420, -24220416] := by
+  decide +kernel
+
+lemma L3 : seqPL 2 2 1 7 =
+    [0, 0, 0, 1,
+     -96, -192420, -24220416] := by
+  rw [← seqPLc_eq (by norm_num)]
+  exact L3c
+
 lemma q3_1 : (qExpansion 1 f3).coeff 1 = (0 : ℂ) := by
-  rw [c3, show seqP 2 2 1 1 = 0 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q3_2 : (qExpansion 1 f3).coeff 2 = (0 : ℂ) := by
-  rw [c3, show seqP 2 2 1 2 = 0 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q3_3 : (qExpansion 1 f3).coeff 3 = (1 : ℂ) := by
-  rw [c3, show seqP 2 2 1 3 = 1 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q3_4 : (qExpansion 1 f3).coeff 4 = (-96 : ℂ) := by
-  rw [c3, show seqP 2 2 1 4 = -96 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma q3_6 : (qExpansion 1 f3).coeff 6 = (-24220416 : ℂ) := by
-  rw [c3, show seqP 2 2 1 6 = -24220416 by decide +kernel]; norm_num
+  rw [c3, seqP_getD (N := 7) (by norm_num), L3]
+  norm_num [List.getD_cons_succ, List.getD_cons_zero]
 
 lemma finrank_eq : Module.finrank ℂ (CuspForm 𝒮ℒ ((50 : ℕ) : ℤ)) = 3 := by
   apply Module.finrank_eq_of_rank_eq
