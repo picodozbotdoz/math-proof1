@@ -14,6 +14,9 @@ Watchdog (§6 defaults: HUNG 60 min, LOOPING 90 min, run-overdue 3×):
 
 | worker | task id | spawned | stalls | parked? |
 |---|---|---|---|---|
+| scaled-certs | a7cb6e0ce98ab6967 | 2026-11-05 | 0 | no |
+| zmod-casts | a00cbff21497cae73 | 2026-11-05 | 0 | no |
+| maeda-small | a6c7e884782c7cf88 | 2026-11-05 | 0 | no |
 
 ## Incident log
 
