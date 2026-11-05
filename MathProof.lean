@@ -90,6 +90,12 @@ import MathProof.ModularForms.HeckeFieldWeights
 import MathProof.ModularForms.HeckeIndex
 import MathProof.ModularForms.HeckeIndexSmallWeights
 import MathProof.ModularForms.HeckeIndexWeights
+-- The lattice index [𝕋 : ℤ[T₂]] = |I_k| (iteration 24): generic layer is a
+-- defaultTargets/CI item; the per-weight files are root-only like their
+-- HeckeIndex{Small,}Weights parents.
+import MathProof.ModularForms.HeckeLatticeIndex
+import MathProof.ModularForms.HeckeIndexCardSmallWeights
+import MathProof.ModularForms.HeckeIndexCardWeights
 import MathProof.ModularForms.FrobeniusCycleType
 import MathProof.ModularForms.JordanPrimitive
 import MathProof.ModularForms.MaedaGaloisFull
