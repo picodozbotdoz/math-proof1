@@ -1,4 +1,4 @@
-# Iteration 25 wave — tracking (nested-certificate retrofit, 3 workers)
+# Iteration 25 wave — tracking (nested-certificate retrofit, 3 workers) — CLOSED 2026-11-05
 
 Operator decision 2026-11-05: retrofit the 5296 pre-24 nested certificates
 (iteration24-review §7.1), heavy-chain rebuild approved.  Trunk
@@ -6,9 +6,9 @@ Operator decision 2026-11-05: retrofit the 5296 pre-24 nested certificates
 
 | branch | blueprint | status | result |
 |---|---|---|---|
-| impl/iteration25/scaled-certs | blueprint/scaled-certs/BLUEPRINT.md | SPAWNED | |
-| impl/iteration25/zmod-casts | blueprint/zmod-casts/BLUEPRINT.md | SPAWNED | |
-| impl/iteration25/maeda-small | blueprint/maeda-small/BLUEPRINT.md | SPAWNED | |
+| impl/iteration25/scaled-certs | blueprint/scaled-certs/BLUEPRINT.md | DONE, merged (tip bbc682b) | nested → 0 |
+| impl/iteration25/zmod-casts | blueprint/zmod-casts/BLUEPRINT.md | DONE, merged (tip 2432676) | nested → 0 |
+| impl/iteration25/maeda-small | blueprint/maeda-small/BLUEPRINT.md | DONE, merged (tip 9077b9d) | nested → 0 |
 
 Watchdog (§6 defaults: HUNG 60 min, LOOPING 90 min, run-overdue 3×):
 
@@ -40,3 +40,11 @@ LehmerPrimeGrand (LehmerPacked + LehmerPow32 NOT in the build cache →
 ~63 GiB + ~144 GiB rebuilds) or skip with recorded rationale (proof-only
 change to two private lemmas of LehmerSieve691).
 - 2026-11-05: operator decision — SKIP re-verification of LehmerGrand / LehmerPrimeGrand, rationale recorded in iteration25-review §4.1.
+
+### 2026-11-05 — INTEGRATED + CLOSED
+zmod-casts closed by the orchestrator from its run logs (worker hit the
+session limit; seq.sh finished all 11 files green) and merged 75f1823.
+Combined trunk: light root 8531 jobs 0/0, AxCheckDecide top-level 1560/0,
+nested 2412/0; generators byte-identical; ci_targets exit 0; tauceti clean.
+95.7 GiB tree alert = 19 parallel processes, CLOSED.  Master merge handed
+to the operator.

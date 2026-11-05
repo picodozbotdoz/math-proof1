@@ -9,7 +9,9 @@ problem connected to modular forms / the Langlands program, and contributes
 See `research/research-log.md` for the full log, and the
 [Discoveries articles](https://picodozbotdoz.github.io/math-proof1/articles/index.html)
 (`docs/articles/`) for readable accounts of what was found, what is proved
-and what is classical. Highlights:
+and what is classical. Every `decide` certificate in the light library — including the
+entrywise ones inside tactic proofs — depends on `propext` only
+(`MathProof.AxCheckDecide`, both passes, since Iteration 25). Highlights:
 
 ## The Ramanujan tau function (`MathProof/Tau/`)
 

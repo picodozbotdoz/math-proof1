@@ -2208,3 +2208,27 @@ Review: `research/iteration24-review.md`.
 
 Next: review §7 (legacy nested retrofit or a recorded exception; ℤ[T₂,T₃]
 structure-constant probe).  Master merge: the operator's.
+
+## Iteration 25 — nested-certificate retrofit (2026-11-05)
+
+Operator decision ("Retrofit them", iteration24-review §7.1).  Trunk
+`dev/iteration25-nested-certs` (from the iteration-24 trunk); three wave
+workers; review `research/iteration25-review.md`.
+
+* **maeda-small** — `MaedaSmallWeights`: per-cell `seqP` decides → one
+  `seqPLc` list decide per basis form (120 → 0).
+* **scaled-certs** — new `ScaledCert` (`scaled_of_check`): one Bool decide
+  per weight for `HeckeIndex{Small,}Weights.scaled` and
+  `HeckeRational{Small,}Weights.scaled_id` (4608 → 0).
+* **zmod-casts** — new `IntCastCert.intCast_eq_of_emod`: `hmap` in the 11
+  Maeda dims-6–10 / T₃ files, plus `LehmerSieve691`'s private certificates
+  (568 → 0).
+* Every exported statement unchanged.  Combined trunk on Modal: light root
+  8531 jobs 0 err / 0 warn; `AxCheckDecide` top-level 1560 / 0, **nested
+  2412 / 0**.  Heavy `MaedaGalois5` chain re-verified (1580 s / 34.75 GiB,
+  axioms clean).  `LehmerGrand` / `LehmerPrimeGrand` not rebuilt (operator
+  decision: uncached ≈ 63 + 144 GiB parents, proof-only private change).
+
+Next: review §5 (lake parallelism cap, `lean_check.py` memory default),
+then the research frontier (ℤ[T₂,T₃] structure-constant probe).  Master
+merge: the operator's (iteration 24 + 25 together).

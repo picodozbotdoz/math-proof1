@@ -148,3 +148,45 @@ Builds that crossed 64 GiB before the tooling existed; numbers from
   escalated.  Successful runs unaffected.  Tooling fix recommended
   (iteration25-review).
 
+## 2026-11-05T04:43Z — CLOSED
+
+- command: `tools/modal_run.sh --target MathProof.AxCheckDecide` (rc=0)
+- log: `/home/doz/tmp/math-proof1-temp/mathproof-runs/run-20261105-123651-559015-m8192.log`
+- alert:
+
+  ```
+  [memory] request 8192 MiB (soft; escalation ladder 8192/16384/32768 on OOM)
+  [memory] per-module peak RSS (GiB, t of peak):
+  [memory]      8.03  t=    179s  /tmp/repo/MathProof/ModularForms/HeckeRationalWeights.lean
+  [memory]      7.37  t=    307s  /tmp/repo/MathProof/ModularForms/HeckeIndexCardWeights.lean
+  [memory]      6.37  t=    156s  /tmp/repo/MathProof/ModularForms/MaedaDim5Weights.lean
+  [memory]      6.23  t=    137s  /tmp/repo/MathProof/ModularForms/MaedaT3GaloisDim10Weights.lean
+  [memory]      6.22  t=    130s  /tmp/repo/MathProof/ModularForms/MaedaGaloisDim10Weights.lean
+  [memory]      6.17  t=    258s  /tmp/repo/MathProof/ModularForms/HeckeIndexWeights.lean
+  [memory]      5.91  t=    109s  /tmp/repo/MathProof/ModularForms/MaedaGaloisDim9Weights.lean
+  [memory]      5.88  t=    113s  /tmp/repo/MathProof/ModularForms/MaedaT3GaloisDim9Weights.lean
+  [memory]      5.83  t=    115s  /tmp/repo/MathProof/ModularForms/HeckeRationalSmallWeights.lean
+  [memory]      5.75  t=    142s  /tmp/repo/MathProof/ModularForms/MaedaGalois4.lean
+  [memory]      5.75  t=     83s  /tmp/repo/MathProof/Tau/LehmerCoverageCount.lean
+  [memory]      5.62  t=    321s  /tmp/repo/MathProof/AxCheckDecide.lean
+  [memory]      5.58  t=    113s  /tmp/repo/MathProof/ModularForms/MaedaT3GaloisDim8Weights.lean
+  [memory]      5.58  t=     78s  /tmp/repo/MathProof/ModularForms/MaedaGaloisDim8Weights.lean
+  [memory]      5.55  t=    313s  /tmp/repo/MathProof.lean
+  [memory-alert] peak tree RSS 95.7 GiB >= 16 GiB — investigation required (AGENTS.md, Memory alerts)
+  [memory-alert]   .tmp.repo.MathProof.ModularForms.HeckeRationalWeights: 8.0 GiB  →  per-declaration profile: LEAN_CHECK_PROFILE=.tmp.repo.MathProof.ModularForms.HeckeRationalWeights tools/modal_run.sh
+  ```
+
+- investigation (CLOSED 2026-11-05, iteration-25 integration audit): no single
+  module above 8.03 GiB (`HeckeRationalWeights`; then `HeckeIndexCardWeights`
+  7.37, all others ≤ 6.4 GiB).  The 95.7 GiB tree peak (t = 75 s) is **19
+  concurrent `lean` processes** (telemetry `procs=19`, top =
+  `MaedaGaloisDim10Weights`) — the cold parallel rebuild of everything
+  downstream of the regenerated Maeda dims-6–10 / T₃ / HeckeIndex /
+  HeckeRational files.  Same verdict as the 2026-10-31 no-cache entry and
+  the two iteration-25 worker entries: inherent to a wide rebuild, no
+  declaration to profile.  Risk noted: lake's job count follows the
+  container's visible cores, not the 4-CPU request, and Modal memory is
+  soft — a wide rebuild can exceed any request.  Recommendation
+  (iteration25-review §5): cap lake's parallelism in `lean_check.py` for
+  cold full-root runs.
+

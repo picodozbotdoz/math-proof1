@@ -692,9 +692,11 @@ decide +kernel`
 - **Entrywise certificates are audited too** (2026-11-05, iteration-24
   integration): the top-level `#audit_decide_certs` never saw `decide
   +kernel` calls inside tactic proofs; `#audit_decide_certs_nested` found
-  7600 of 9256 beyond `propext` (5296 in pre-24 files remained — see
-  iteration24-review §6.1; the 4608 `scaled`/`scaled_id` cells were retired
-  in iteration 25 by `ScaledCert.scaled_of_check`).  Three causes: `Finset` sums / `Matrix`
+  7600 of 9256 beyond `propext`; all retired by iteration 25 (combined
+  trunk: top-level 1560 / 0, nested 2412 / 0 — `ScaledCert.scaled_of_check`
+  for the `scaled`/`scaled_id` cells, `IntCastCert.intCast_eq_of_emod` for
+  `ZMod` casts, `MaedaCertC.seqPLc` for `seqP` values).  A nested
+  violation is now a regression.  Three causes: `Finset` sums / `Matrix`
   products in the decided cell; `==` on `ℤ` (`BEq ℤ` →
   `Int.instLinearOrderPackage` → `Classical.choice`; use `Int.decEq`); any
   `!![…]` literal in the statement (`Quot.sound`) and `^` on numerals
@@ -702,6 +704,15 @@ decide +kernel`
   pattern-match tables bridged to the matrices by `fin_cases <;> rfl`, ONE
   `List`-based Bool `decide +kernel` per weight, one generic bridge lemma.
   Run both passes at every close-out.
+- **Wide cold rebuilds sum per-module memory** (2026-11-05, iteration 25):
+  lake runs as many `lean` processes as the container shows cores (19
+  observed), so the iteration-25 full-root audit peaked at 95.7 GiB tree
+  RSS with no module above 8.03 GiB.  Read the `[memory]` per-module table
+  before profiling; a ≥ 16 GiB *tree* with small modules is parallelism.
+- **`lean_check.py`'s in-container `[memory] request` line shows the
+  default 8192** even for explicit `LEAN_CHECK_MEMORY_MIB` runs (the env is
+  read at import time, unset in the container); the OOM heuristic uses the
+  same value, so a failing heavy run can be misreported as exit 42.
 - **`Polynomial.natDegree_map` needs `[IsSimpleRing R]`** at the pin: for
   `ℤ → ℂ` use `natDegree_map_eq_of_injective (RingHom.injective_int _)`.
   Also missing at the pin: `LinearMap.coeFn_sum` (use

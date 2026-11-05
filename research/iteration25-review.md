@@ -41,10 +41,11 @@ axioms` all on ≤ the standard three, no `sorryAx`.
 
 | item | value |
 |---|---|
-| nested certificates beyond `propext` | 5296 → FINAL_NESTED |
-| combined light root | FINAL_ROOT |
+| nested certificates beyond `propext` | 5296 → **0** (combined trunk: nested 2412 audited / 0; top-level 1560 / 0) |
+| combined light root | 8531 jobs green, 0 err / 0 warn, 324 s; tree peak 95.7 GiB = 19 parallel `lean` processes, max module 8.03 GiB (alert CLOSED) |
 | new light modules | 2 (`ScaledCert`, `IntCastCert`) |
-| generators changed | `gen_maeda.py`, `gen_hecke_index.py`, `gen_hecke_rat.py`, `gen_maedan.py` (all `--check` byte-identical) |
+| generators changed | `gen_maeda.py` (regeneration byte-identical), `gen_hecke_index.py`, `gen_hecke_rat.py`, `gen_maedan.py` (all modes) — `--check` byte-identical, as are the untouched `gen_hecke_cyclic/ring_gens/field` |
+| heavy re-verification | `MaedaGalois5` chain + AxCheck 1580 s / 34.75 GiB green; `LehmerGrand`/`LehmerPrimeGrand` skipped by operator decision (§4.1) |
 
 ## 4. Gaps left open
 
@@ -69,5 +70,7 @@ axioms` all on ≤ the standard three, no `sorryAx`.
    AGENTS.md) and fail CI-side review on any nested violation.
 2. Fix the `lean_check.py` memory default (pass the request into the
    container explicitly).
-3. Return to the research frontier: iteration24-review §7.3 (ℤ[T₂,T₃]
+3. Cap lake's parallelism in `lean_check.py` for cold full-root runs
+   (19 concurrent processes observed; Modal memory is soft).
+4. Return to the research frontier: iteration24-review §7.3 (ℤ[T₂,T₃]
    structure-constant probe).
