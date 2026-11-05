@@ -129,6 +129,10 @@ defaultTargets = [
   # for dim ≤ 10, the smooth sub-cases, the T₇ row certificate) — parents are
   # default targets; 65 s / 4.8 GiB on Modal.
   "MathProof.ModularForms.HeckeRingGens",
+  # Iteration 24 b2: generic cyclicity of 𝕋 ⧸ ℤ[T₂] at n ≤ 4 (T₁, T₂, T₄ ∈
+  # ℤ[T₂] via heckeTM_two_mul_even; order bridge; D = I_k packaging; the
+  # 𝕋 = ℤ[T₂] iff).  All parents already default targets; 33 s / 5.9 GiB.
+  "MathProof.ModularForms.HeckeCyclic",
 ]
 
 [leanOptions]
