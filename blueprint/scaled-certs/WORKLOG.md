@@ -43,3 +43,22 @@
   audit passes); expected 30-60 min wall (downstream of the HeckeRational
   files rebuilds: HeckeIndex*, HeckeIndexCard*, HeckeField*, HeckeCyclic*,
   HeckeRingGens*).
+
+## 2026-11-05 — G4 green (DONE)
+- Modal `--target MathProof.AxCheckDecide` (full light root, 8529 jobs):
+  green, no warnings, wall 396 s, tree peak 22.2 GiB (parallel sum; alert
+  CLOSED in research/memory-alerts.md).  Per-module (lake time / peak RSS):
+  ScaledCert 8.3 s / 2.42 GiB; HeckeRationalSmallWeights 21 s / 5.79 GiB;
+  HeckeIndexSmallWeights 8.5 s / 5.06 GiB; HeckeRationalWeights 76 s /
+  7.99 GiB; HeckeIndexWeights 78 s / 6.17 GiB.
+- Audit: top-level 1532 audited, 0 beyond propext; nested 2506 audited,
+  688 beyond propext — ZERO in HeckeIndex{Small,}Weights /
+  HeckeRational{Small,}Weights (was 4608).  The 688 = 564 zmod (MaedaDim*,
+  MaedaT3Dim*, MaedaT3Small) + 120 MaedaSmallWeights + 4 LehmerSieve691
+  (other workers' families).
+- Generators: gen_hecke_rat / gen_hecke_index (incl. --card) /
+  gen_hecke_field / gen_hecke_cyclic / gen_hecke_ring_gens --check all
+  byte-identical.  tauceti_audit clean; ci_targets --report rc 0
+  (80 default / 58 push / 22 full-only).
+- Statements of `scaled` / `scaled_id` unchanged (text emitted verbatim;
+  downstream HeckeIndexCard*, HeckeCyclic*, HeckeField* rebuilt green).
