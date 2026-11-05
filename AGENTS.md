@@ -415,14 +415,15 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
 - `MathProof/ModularForms/HeckeCyclicWeights.lean` (light, generated —
   `tools/gen_hecke_cyclic.py`, `--check` byte-identity; regenerate, don't
   hand-edit; root-only registration — imports the non-CI
-  `HeckeIndexSmallWeights`/`HeckeRationalSmallWeights`/
-  `MaedaT3SmallWeights`) — the 18 dims-2-4 instances of `HeckeCyclic`:
-  at dims 3-4 `D_eq_Ik` (`D = I_k`, with the index cardinality as an
-  explicit `hcard` hypothesis until b1's `HeckeLatticeIndex` per-weight
-  facts land and are plugged in) and `heckeLattice_ne_t2Span`
-  (`𝕋 ≠ ℤ[T₂]`, same hypothesis); at the six dim-2 weights the
-  UNCONDITIONAL lattice equality `heckeLattice_eq_t2Span` (`𝕋 = ℤ[T₂]`,
-  no index input).  80 s / 6.2 GiB on Modal.
+  `HeckeIndexSmallWeights`/`HeckeIndexCardSmallWeights`/
+  `HeckeRationalSmallWeights`/`MaedaT3SmallWeights`) — the 18 dims-2-4
+  instances of `HeckeCyclic`, all unconditional: at dims 3-4 `index_card`
+  (`Nat.card (𝕋 ⧸ ℤ[T₂]) = |I_k|`, index-card's
+  `HeckeIndexCardWeightKK.index_card_natCard` moved along `heckeTM_prime`;
+  `t2Lattice` is `t2Span` by definition), `D_eq_Ik` (`D = I_k`) and
+  `heckeLattice_ne_t2Span` (`𝕋 ≠ ℤ[T₂]`); at the six dim-2 weights the
+  lattice equality `heckeLattice_eq_t2Span` (`𝕋 = ℤ[T₂]`, no index
+  input).  45 s / 6.2 GiB on Modal (warm).
 - `MathProof/ModularForms/HeckeTM.lean` (light, trio) — `T_m` for every
   `m` (recursive route over `minFac`), coefficient formula
   `heckeTM_qExpansion_coeff`, `heckeTM_one`, `heckeTM_prime`, commutation,

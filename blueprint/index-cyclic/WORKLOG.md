@@ -131,3 +131,10 @@ index-card landed G2 afeee0d / G3 8cf8736 / G4 ba19a59. Plan: merge
 impl/iteration24/index-card, adapt plug-in to its actual exports, regenerate
 HeckeCyclicWeights hcard-free, verify (file, root, AxCheckDecide, tauceti,
 ci_targets), commit. Inbox: checked at start.
+
+**2026-11-05 — merge 34b93b3 recorded; generator switched to plugged form.**
+Merged index-card ba19a59 (union-resolved MathProof.lean/lakefile.toml).
+gen_hecke_cyclic.py now emits per dims-3-4 weight `index_card` (from
+`HeckeIndexCardWeightKK.index_card_natCard`, rw heckeTM_prime, exact by
+t2Lattice≡t2Span defeq) and hcard-free `D_eq_Ik` / `heckeLattice_ne_t2Span`.
+Modal file build starting (expected ~2-5 min; card small file may be cold).
