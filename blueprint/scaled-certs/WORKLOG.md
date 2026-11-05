@@ -28,3 +28,8 @@
   `MathProof.lean` + `defaultTargets` (after HeckeRational).
 - Generic names: `ScaledCert.powL`, `cellL`, `scaledCheck`, `powL_getD`,
   `cellL_eq`, `scaled_of_check`.
+
+## 2026-11-05 — G3 start
+- gen_hecke_rat.py regenerated (tables t2tab/t3tab + hscaled + scaled_of_check;
+  certv/Dv pow-free only where `^` appears).  Running Modal --file
+  HeckeRationalSmallWeights (expected ~2-5 min).

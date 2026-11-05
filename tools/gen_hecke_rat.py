@@ -45,6 +45,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 MF = ROOT / "MathProof" / "ModularForms"
+sys.path.insert(0, str(ROOT / "tools"))
+import gen_hecke_index as HI   # noqa: E402  (pow-free table renderers, shared)
 
 WIDTH = 98          # linter.style.longLine limit is 100; keep a margin
 CHUNK = 60          # digits per chunk in decomposed big literals
@@ -503,26 +505,86 @@ def matrix_def(M, name, doc):
     return out
 
 
-def scaled_id(n, D, m2name, m3name, docname):
-    """`scaled_id` theorem lines + the D-argument lines for the application."""
+def scaled_id(n, D, m2name, m3name, docname, N=None, M2=None, M3=None):
+    """`scaled_id` lines + the D-argument lines for the application.
+
+    Iteration 25 (scaled-certs): the identity is no longer decided cell by
+    cell (each cell dragged the `Finset` sum, the `!![…]` literals and the
+    chunked `10 ^ e` numerals into its certificate); instead the matrices are
+    re-stated as pow-free integer tables (`t2tab`/`t3tab`, bridged by
+    `fin_cases <;> rfl`) and the whole identity is ONE `List`-sum boolean
+    `ScaledCert.scaledCheck … = true` (`propext`-only), bridged back by
+    `ScaledCert.scaled_of_check`.  The tables are reused by the HeckeIndex
+    files."""
     Dtoks = int_expr_lines(D)
     if len(Dtoks) == 1:
-        oneline = f"    = ({Dtoks[0]} : ℤ) • {m3name} := by"
+        oneline = f"    = ({Dtoks[0]} : ℤ) • {m3name} :="
         if len(oneline) <= WIDTH:
             dlines = [oneline]
         else:
-            dlines = [f"    = ({Dtoks[0]} : ℤ)", f"    • {m3name} := by"]
+            dlines = [f"    = ({Dtoks[0]} : ℤ)", f"    • {m3name} :="]
         arg = [f"({Dtoks[0]} : ℤ)"]
     else:
         dlines = [f"    = ({Dtoks[0]}"]
         dlines.extend("    " + t for t in Dtoks[1:])
-        tail = f"    : ℤ) • {m3name} := by"
+        tail = f"    : ℤ) • {m3name} :="
         dlines.append(tail)
         arg = ["(" + Dtoks[0]] + ["  " + t for t in Dtoks[1:]] + ["  : ℤ)"]
-    lines = [f"theorem {docname} : (∑ j ∈ Finset.range {n}, cert j • {m2name} ^ j)"] + dlines + [
-        "  ext a b",
-        "  fin_cases a <;> fin_cases b <;> decide +kernel"]
+    pre = scaled_tables(n, M2, M3, m2name, m3name)
+    # pow-free weights / scalar (only where the landed literal has `^`)
+    if any(len(int_expr_lines(v)) > 1 for v in N):
+        pre.extend(HI.seq_def("certv", N, "The certificate `cert`, pow-free (for the `List` "
+                              "certificate).", HI.int_lines_nopow))
+        pre.append("")
+        pre.append(f"theorem hcertv : ∀ j : Fin {n}, cert j = certv j := by")
+        pre.append("  intro j")
+        pre.append("  fin_cases j <;> rfl")
+        pre.append("")
+        wv, hw = "certv", "hcertv"
+    else:
+        wv, hw = "cert", "(fun _ => rfl)"
+    if len(Dtoks) > 1:
+        pre.extend(HI.chunked_def("Dv", D, "The scalar `D`, pow-free.", lines_of=HI.int_lines_nopow))
+        pre.append("")
+        sv = "Dv"
+    else:
+        sv = f"({Dtoks[0]} : ℤ)"
+    pre.append("/-- The kernel certificate over `List` sums and integer tables (`propext`-only). -/")
+    pre.extend(wrap_words(f"theorem hscaled : ScaledCert.scaledCheck {wv} t2tab {sv} t3tab "
+                          f"{n} {n} = true := by", "", "    "))
+    pre.append("  decide +kernel")
+    pre.append("")
+    lines = pre + [f"theorem {docname} : (∑ j ∈ Finset.range {n}, cert j • {m2name} ^ j)"] + dlines
+    lines.extend(wrap_words(f"ScaledCert.scaled_of_check {n} cert {wv} {m2name} {m3name} _ "
+                            f"{sv} t2tab t3tab {hw} rfl ht2tab ht3tab hscaled", "  ", "    "))
     return lines, arg
+
+
+def wrap_words(text, first_prefix, cont_prefix):
+    """Greedily wrap the space-separated words of `text` to WIDTH."""
+    out, cur = [], first_prefix
+    for tok in text.split(" "):
+        if cur.strip() and len(cur) + 1 + len(tok) > WIDTH:
+            out.append(cur)
+            cur = cont_prefix + tok
+        else:
+            cur = cur + (" " if cur.strip() else "") + tok
+    out.append(cur)
+    return out
+
+
+def scaled_tables(n, M2, M3, m2name, m3name):
+    """`t2tab`/`t3tab` + their `fin_cases <;> rfl` bridges."""
+    out = []
+    for t, M, nm in [("t2tab", M2, m2name), ("t3tab", M3, m3name)]:
+        out.extend(HI.table_def(t, M, f"`{nm}` as a pow-free integer table (for the `List` "
+                                "certificate)."))
+        out.append("")
+        out.append(f"theorem h{t} : ∀ i j : Fin {n}, {nm} i j = {t} i.val j.val := by")
+        out.append("  intro i j")
+        out.append("  fin_cases i <;> fin_cases j <;> rfl")
+        out.append("")
+    return out
 
 
 def emit_small_section(w):
@@ -659,7 +721,7 @@ def emit_small_section(w):
     # certificate + identity
     L.extend(cert_def(w["N"], n))
     L.append("")
-    sid, Darg = scaled_id(n, w["D"], "M2", "M", "scaled_id")
+    sid, Darg = scaled_id(n, w["D"], "M2", "M", "scaled_id", w["N"], w["M2"], w["M3"])
     L.extend(sid)
     L.append("")
     # final theorem
@@ -694,7 +756,8 @@ def emit_big_section(w):
     L.append("")
     L.extend(cert_def(w["N"], n))
     L.append("")
-    sid, Darg = scaled_id(n, w["D"], f"{ns2}.M", f"{ns3}.M", "scaled_id")
+    sid, Darg = scaled_id(n, w["D"], f"{ns2}.M", f"{ns3}.M", "scaled_id", w["N"], w["M2"],
+                           w["M3"])
     L.extend(sid)
     L.append("")
     for name, xname, mname, pfx in [
@@ -751,6 +814,7 @@ def main():
     data = audit_and_certify(t3, t2, small)
 
     small_header = f"""import MathProof.ModularForms.HeckeRational
+import MathProof.ModularForms.ScaledCert
 import MathProof.ModularForms.MaedaT3SmallWeights
 
 /-!
@@ -782,6 +846,7 @@ open scoped MatrixGroups
 
 """
     big_header = f"""import MathProof.ModularForms.HeckeRational
+import MathProof.ModularForms.ScaledCert
 import MathProof.ModularForms.MaedaT3Dim6Weights
 import MathProof.ModularForms.MaedaT3Dim7Weights
 import MathProof.ModularForms.MaedaT3Dim8Weights

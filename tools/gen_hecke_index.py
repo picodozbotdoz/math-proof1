@@ -91,11 +91,11 @@ def wrap_doc(doc, indent=""):
     return out
 
 
-def chunked_def(name, v, doc, indent=""):
+def chunked_def(name, v, doc, indent="", lines_of=None):
     """Lines of `def name : ℤ := <chunked v>`."""
     out = wrap_doc(doc, indent) if doc else []
     out.append(f"{indent}def {name} : ℤ :=")
-    for ln in int_lines(v):
+    for ln in (lines_of or int_lines)(v):
         out.append(f"{indent}  " + ln if not ln.startswith("-(") else f"{indent}  " + ln)
     return out
 
@@ -116,12 +116,12 @@ def matrix_def(name, A, doc, lines_of=None):
     return out
 
 
-def seq_def(name, vals, doc):
+def seq_def(name, vals, doc, lines_of=None):
     """Lines of `def name : ℕ → ℤ | 0 => .. | _ => 0` (chunked arms)."""
     out = wrap_doc(doc)
     out.append(f"def {name} : ℕ → ℤ")
     for i, v in enumerate(vals):
-        ls = int_lines(v)
+        ls = (lines_of or int_lines)(v)
         first = f"  | {i} => "
         wrapped = wrap_tokens(" ".join(ls), first, "      ")
         out.extend(wrapped)
