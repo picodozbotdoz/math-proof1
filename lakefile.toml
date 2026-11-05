@@ -125,6 +125,10 @@ defaultTargets = [
   # per-weight instances HeckeIndexCard{Small,}Weights are root-only like
   # their parents HeckeIndex{Small,}Weights.
   "MathProof.ModularForms.HeckeLatticeIndex",
+  # Iteration 24 hecke-ring-gens: the generic generator layer (𝕋 = ℤ[T₂,T₃,T₅,T₇]
+  # for dim ≤ 10, the smooth sub-cases, the T₇ row certificate) — parents are
+  # default targets; 65 s / 4.8 GiB on Modal.
+  "MathProof.ModularForms.HeckeRingGens",
 ]
 
 [leanOptions]

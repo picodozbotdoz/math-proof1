@@ -96,6 +96,11 @@ import MathProof.ModularForms.HeckeIndexWeights
 import MathProof.ModularForms.HeckeLatticeIndex
 import MathProof.ModularForms.HeckeIndexCardSmallWeights
 import MathProof.ModularForms.HeckeIndexCardWeights
+import MathProof.ModularForms.HeckeRingGens
+-- Per-weight generator instances (iteration 24): root-only, like their data
+-- parents (MaedaT3SmallWeights / the T₃ dim-6–10 files are not push-tier CI).
+import MathProof.ModularForms.HeckeRingGensSmallWeights
+import MathProof.ModularForms.HeckeRingGensWeights
 import MathProof.ModularForms.FrobeniusCycleType
 import MathProof.ModularForms.JordanPrimitive
 import MathProof.ModularForms.MaedaGaloisFull
