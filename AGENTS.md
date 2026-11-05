@@ -418,6 +418,22 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   root-only) — T-Rat + T-Field for every `m` at all 54 weights.
   `MaedaT2GaloisSmallWeights.lean` (light, trio) — `Gal = S₂` for the six
   dim-2 T₂ charpolys.
+  `HeckeLatticeIndex.lean` (light, trio; iteration 24) — the lattice index
+  as an honest `AddSubgroup.relIndex`: `t2Lattice T₂ n = span_ℤ {T₂^i}`,
+  `relIndex_t2_eq_det` (`AddSubgroup.relIndex_eq_natAbs_det` with
+  `Basis.span` bases; no `toIntSubmodule` friction once `Module ℤ` is the
+  canonical `AddCommGroup.toIntModule` — never add a separate `[Module ℤ M]`
+  binder), `natCard_quot_eq_det`, the ℤ Miller accumulator
+  `millerTopC`/`millerCoeff`, and the dual route `T₂^i = ∑_j C i j • T_{j+1}`
+  with `C i j = a_1(T₂^i g_j)` (`t2_pow_eq_smul_heckeTM`); per-weight entry
+  points `index_card_dimN` / `index_card_natCard_dimN`.
+  `HeckeIndexCard{Small,}Weights.lean` (light, generated —
+  `tools/gen_hecke_index.py --card`, `--check` covers all four
+  HeckeIndex/HeckeIndexCard files; root-only like their parents) —
+  `HeckeIndexCardWeightKK.index_card` / `index_card_natCard`:
+  `[𝕋 : ℤ[T₂]] = |I_k|` at all 54 weights (`C` literal + entrywise `hcard`
+  decide + `det_C` by `eval_det`).  Modal 23 s / 5.2 GiB (dims 2–5) and
+  286 s / 6.8 GiB (dims 6–10).
 - `MathProof/ModularForms/MaedaCertCExt.lean` (light) — `tau22 … tau30`
   (kernel-verified against `Ramanujan.tau`), `tauTableX`, `dCc3`,
   `seqPLc3`, `seqPLc3_eq` with cap `N ≤ 31`: the T₃ coefficient formula

@@ -191,3 +191,15 @@ literals).  Inbox: clean at this checkpoint.
   rc 0, push tier 55 / full-only 22) + root; both card files → root only.
 - Next: AxCheckDecide target (builds the light root too; EXPECTED 5–60 min depending
   on cache state).  Log: runs/g4-axcheck-1.out
+
+### 2026-11-05 — G4 CLOSED: light root + AxCheckDecide green; blueprint DONE
+- `mrun.sh --target MathProof.AxCheckDecide` (16 GiB request): builds the root
+  `MathProof.lean` with the 3 new imports, 0 err / 0 warn; wall 319 s, peak tree
+  8.07 GiB (HeckeIndexCardWeights 6.82 GiB, MathProof 5.50, AxCheckDecide 5.58).
+  Result: "decide certificates: 1360 audited, 0 depend on more than propext".
+  Caveat (same as the landed `HeckeIndexWeightKK.scaled` precedent): the `hcard`
+  per-cell decides sit under `Matrix.ext`/`fin_cases`, so the audit's
+  top-level-decide filter does not enumerate them (count unchanged at 1360).
+- tauceti_audit 0/0/0/0 on all three new Lean files; gen `--check` 4/4 byte-identical.
+- AGENTS.md layout entry added.  No memory alert (all modules < 16 GiB).
+- Inbox: clean at every checkpoint this session (no STEER-index-card-* / STEER-all-*).
