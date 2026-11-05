@@ -45,8 +45,8 @@
 <ol>
 <li><strong>State certificates over <code>ℕ</code> and <code>ℤ</code>, with bounded quantifiers.</strong> Prove once, by hand, that this implies the <code>ZMod</code> statement. The project's <code>HornerCert</code> module does this with a structural Horner evaluation.</li>
 <li><strong>Compute with <code>List</code>, not <code>Finset</code>.</strong> Then prove once that the list version equals the Mathlib one. <code>MaedaCertC</code> does this for all Maeda coefficient tables.</li>
-<li><strong>Decide matrices entrywise:</strong> <code>ext a b; fin_cases a &lt;;&gt; fin_cases b &lt;;&gt; decide +kernel</code>.</li>
-<li><strong>Audit mechanically, on every release.</strong></li>
+<li><strong>Do not decide matrices at all.</strong> Deciding entrywise (<code>ext a b; fin_cases a &lt;;&gt; fin_cases b &lt;;&gt; decide +kernel</code>) avoids the matrix-level instance, but each cell still mentions <code>Finset</code> sums, <code>Matrix</code> literals (<code>Quot.sound</code>), <code>==</code> on <code>ℤ</code> (<code>Classical.choice</code>) or <code>^</code> on numerals. Since Iteration 25 the certificates decide one <code>List</code>-based Boolean check per weight over plain integer tables, and a lemma proved once turns it back into the matrix statement (<code>ScaledCert.scaled_of_check</code>).</li>
+<li><strong>Audit mechanically, on every release — including the certificates inside tactic proofs.</strong> The first audit only looked at theorems proved by a single <code>decide</code>. In Iteration 24 a second pass over the auxiliary lemmas that <code>decide +kernel</code> creates inside proofs found 7,600 of 9,256 entrywise certificates depending on more than <code>propext</code>. Iteration 25 removed all of them, with no theorem statement changed: 1,560 top-level and 2,412 nested certificates now depend on <code>propext</code> alone.</li>
 </ol>
 <p>The classical axioms can stay in the bridge lemma. The aim is for the computation itself to be clean.</p>
 <pre><code>theorem scaled_id : (∑ j ∈ Finset.range 2, cert j • M2 ^ j)
