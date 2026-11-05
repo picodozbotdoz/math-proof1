@@ -90,6 +90,7 @@ import MathProof.ModularForms.HeckeFieldWeights
 import MathProof.ModularForms.HeckeIndex
 import MathProof.ModularForms.HeckeIndexSmallWeights
 import MathProof.ModularForms.HeckeIndexWeights
+import MathProof.ModularForms.HeckeRingGens
 import MathProof.ModularForms.FrobeniusCycleType
 import MathProof.ModularForms.JordanPrimitive
 import MathProof.ModularForms.MaedaGaloisFull
