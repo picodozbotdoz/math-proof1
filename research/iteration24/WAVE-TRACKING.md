@@ -22,7 +22,7 @@ every spawn briefing):
 | worker | task id | spawned | stalls (branch × gate) | parked? |
 |---|---|---|---|---|
 | index-card | agent_c7cc1c8f — TERMINATED (session wrap-up 2026-11-04 ~22:15); respawn aae4a388bebe2cc09 (2026-11-05) | 2026-11-04 / 2026-11-05 | 0 (operator wrap-up, not a stall) | no |
-| index-cyclic | agent_c2624ee1 — TERMINATED (session wrap-up, clean tip) | 2026-11-04 | 0 (operator wrap-up, not a stall) | no |
+| index-cyclic | agent_c2624ee1 — TERMINATED (session wrap-up, clean tip); respawn a3d4ae33213d7fb88 (2026-11-05, G3p2) | 2026-11-04 / 2026-11-05 | 0 (operator wrap-up, not a stall) | no |
 | hecke-ring-gens | agent_d9d751ff — TERMINATED (session wrap-up 2026-11-04 ~22:15); respawn a030abde0ef90ae4f (2026-11-05) | 2026-11-04 / 2026-11-05 | 0 (operator wrap-up, not a stall) | no |
 
 ## Incident log
@@ -68,3 +68,8 @@ FINISHED after the salvage — `g1_table2.log`: 0 failures, 22 {3,5}-weights;
 resume = record + commit G1, then G2).  index-cyclic NOT respawned yet: its
 only remaining gate (G3p2) is blocked on index-card G3; respawn when b1's
 small file is green.
+
+### 2026-11-05 — index-card G2–G4 green; index-cyclic respawned for G3p2
+index-card: G2 afeee0d (HeckeLatticeIndex, 54 s / 6.0 GiB), G3 8cf8736
+(small file, 55 s / 6.4 GiB), G4 ba19a59 (big file, 286 s / 6.8 GiB) +
+registration.  index-cyclic respawned to plug `hcard` from b1.
