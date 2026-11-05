@@ -33,3 +33,13 @@
 - gen_hecke_rat.py regenerated (tables t2tab/t3tab + hscaled + scaled_of_check;
   certv/Dv pow-free only where `^` appears).  Running Modal --file
   HeckeRationalSmallWeights (expected ~2-5 min).
+
+## 2026-11-05 — G3/G4 run
+- HeckeRationalSmallWeights green: 77 s / 7.08 GiB tree (5.83 GiB module).
+- gen_hecke_index.py: `scaled` now via `hscaled` + `ScaledCert.scaled_of_check`,
+  reusing `HeckeRatWeightK.t2tab/t3tab/ht2tab/ht3tab`; `wpv`/`Ikv` pow-free
+  where needed.  All 4 files regenerated; --check byte-identical.
+- Starting Modal `--target MathProof.AxCheckDecide` (full light root + both
+  audit passes); expected 30-60 min wall (downstream of the HeckeRational
+  files rebuilds: HeckeIndex*, HeckeIndexCard*, HeckeField*, HeckeCyclic*,
+  HeckeRingGens*).
