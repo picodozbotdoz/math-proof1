@@ -221,6 +221,24 @@ and `T₃` across every level-one weight with `2 ≤ dim S_k ≤ 10`.
   explicit integers (`seqP` values) at 28–38; `MaedaT2GaloisSmallWeights`
   closes `Gal = S₂` for the six dim-2 `T₂` charpolys.
 
+### The Hecke index and ring generators (Iteration 24: `HeckeLatticeIndex`, `HeckeIndexCard*`, `HeckeCyclic*`, `HeckeRingGens*`)
+
+* `HeckeLatticeIndex.relIndex_t2_eq_det` + `HeckeIndexCard{Small,}Weights`
+  — the index as an honest **lattice index**: at all 54 weights,
+  `[𝕋 : ℤ[T₂]] = |I_k|` (`index_card`, as `AddSubgroup.relIndex`, and
+  `index_card_natCard`, as `Nat.card (𝕋 ⧸ ℤ[T₂])`), from the coordinates
+  `C i j = a₁(T₂^i g_j)` and `|det C| = |I_k|` (certified `eval_det`);
+* `HeckeCyclic` + `HeckeCyclicWeights` — at dims ≤ 4 the quotient
+  `𝕋 / ℤ[T₂]` is **cyclic**, so the Iteration-22 denominator is the whole
+  index: `D = I_k` at the 12 dims-3–4 weights, hence `𝕋 ≠ ℤ[T₂]` there,
+  and `𝕋 = ℤ[T₂]` at the six dim-2 weights;
+* `HeckeRingGens` + `HeckeRingGens{Small,}Weights` — **ring generators**:
+  `ℤ[T_p : p ∈ ps]` contains every `ps`-smooth `T_m`, so
+  `𝕋 = ℤ[T₂, T₃, T₅, T₇]` at every weight with `dim S_k ≤ 10` (all 54,
+  certificate-free); `𝕋 = ℤ[T₂, T₃, T₅]` at the 22 weights where it holds
+  (free at dims 5–6, one `T₇` row certificate each at ten dims-7–9
+  weights); `ℤ[T₂, T₃]` at dims ≤ 4, `ℤ[T₂]` at dim 2.
+
 ## Eisenstein series and the 691 congruence (`MathProof/ModularForms/`)
 
 * `RamanujanWeight12.E12_rel` — **Ramanujan's weight-12 identity**
