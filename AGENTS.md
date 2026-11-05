@@ -396,10 +396,17 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   twins: T₂ data re-derived fresh (Xtab2/hX2 via `heckeT2_coeff` + the T₃
   file's q-lemmas, LvT2/entryT2/M2) — root-only registration (follows its
   parent `MaedaT3SmallWeights`), NOT a defaultTargets/CI item.  Modal 67 s /
-  7 GiB.  The scaled identities are `decide +kernel` ENTRYWISE
-  (`ext`+`fin_cases`): a matrix-level `decide` inherits
-  `Fintype.decidablePiFintype`'s simp-built Iff proof (Classical) and fails
-  the AxCheckDecide audit.
+  7 GiB.  The scaled identities are ONE `List`-sum `decide +kernel` per
+  weight since iteration 25 (`hscaled : ScaledCert.scaledCheck … = true`
+  over pow-free tables `t2tab`/`t3tab`, bridged by
+  `ScaledCert.scaled_of_check`; the HeckeIndex files reuse the tables) —
+  never a matrix-level `decide` (`Fintype.decidablePiFintype`, Classical)
+  nor per-cell decides over the `Finset` sum (nested audit).  Modal
+  (iteration 25, root build): big 7.99 GiB, small 5.79 GiB per module.
+  `ScaledCert.lean` (light, Mathlib-only) — `powL`, `cellL`,
+  `scaledCheck`, `scaled_of_check`: `∑_{j<d} w j • M₂^j = s • N` from one
+  boolean over integer tables (+ value bridges `w j = wv j`, `s = sv` for
+  pow-free literals).
 - `MathProof/ModularForms/HeckeCyclic.lean` (light, trio) — iteration-24 b2
   generic cyclicity: `t2Span T2 n = span ℤ {T₂^j : j<n}` (the b1
   `HeckeLatticeIndex.t2Lattice` contract form, rfl-identical so adoption is
@@ -433,7 +440,7 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   `heckeLattice`/`heckeRing`.  `HeckeIndexSmallWeights` (dims 2–5) /
   `HeckeIndexWeights` (dims 6–10) (light, generated —
   `tools/gen_hecke_index.py`, `--check` covers both; root-only): index
-  `I_k = |det A|` (`eval_det`), entrywise certificates, `D ∣ I_k`; split by
+  `I_k = |det A|` (`eval_det`), `List` certificate `hscaled`, `D ∣ I_k`; split by
   dim so each builds under the default 8 GiB request (69 s / 5.14 GiB and
   336 s / 6.56 GiB).  `HeckeFieldDim2.lean` (light, trio) — dim-2
   integrality for every `m`.  `HeckeFieldRat.lean` (light, trio) — every
@@ -680,8 +687,9 @@ decide +kernel`
 - **Entrywise certificates are audited too** (2026-11-05, iteration-24
   integration): the top-level `#audit_decide_certs` never saw `decide
   +kernel` calls inside tactic proofs; `#audit_decide_certs_nested` found
-  7600 of 9256 beyond `propext` (5296 in pre-24 files remain — see
-  iteration24-review §6.1).  Three causes: `Finset` sums / `Matrix`
+  7600 of 9256 beyond `propext` (5296 in pre-24 files remained — see
+  iteration24-review §6.1; the 4608 `scaled`/`scaled_id` cells were retired
+  in iteration 25 by `ScaledCert.scaled_of_check`).  Three causes: `Finset` sums / `Matrix`
   products in the decided cell; `==` on `ℤ` (`BEq ℤ` →
   `Int.instLinearOrderPackage` → `Classical.choice`; use `Int.decEq`); any
   `!![…]` literal in the statement (`Quot.sound`) and `^` on numerals

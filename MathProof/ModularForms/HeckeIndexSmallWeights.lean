@@ -17,8 +17,8 @@ re-pinned data; byte-identical re-runs; do not hand-edit).  For each of
 the 24 weights with `2 ≤ dim S_k ≤ 5` (the 54 weights `24 ≤ k ≤ 134`
 are split by dimension over `HeckeIndexSmallWeights` / `HeckeIndexWeights`):
 the index `I_k = |det A|` with its certified Bareiss determinant
-(`eval_det`), the Cramer weights `w' = I_k · w`, the entrywise kernel
-certificate `∑ w'_j M₂^j = I_k M₃` (`decide +kernel` entrywise), the
+(`eval_det`), the Cramer weights `w' = I_k · w`, the kernel certificate
+`∑ w'_j M₂^j = I_k M₃` (one `List`-sum `decide +kernel`, `ScaledCert`), the
 basis-independent operator identity
 `∑ (w'_j : ℂ) • T₂^j = (I_k : ℂ) • T₃`
 (`HeckeIndex.int_poly_of_dimN`), and — for the weights with a
@@ -28,7 +28,7 @@ representation divides the denominator of every other).  At the
 dim-2 weights the denominator is `1` and the divisibility is `one_dvd`.
 
 Everything is light: no `set_option`, no `native_decide`/`sorry`; the
-only decides are entrywise per-matrix-cell certificates plus one small
+only decides are one `List`-sum certificate (`hscaled`) plus one small
 Bézout identity per weight (over a `List` sum), all `decide +kernel`.
 -/
 
@@ -60,10 +60,16 @@ def wp : ℕ → ℤ
   | 1 => -48
   | _ => 0
 
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only). -/
+theorem hscaled : ScaledCert.scaledCheck wp HeckeRatWeight24.t2tab Ik HeckeRatWeight24.t3tab 2 2 =
+    true := by
+  decide +kernel
+
 theorem scaled : (∑ j ∈ Finset.range 2, wp j • HeckeRatWeight24.M2 ^ j)
-    = Ik • MaedaT3Weight24.M := by
-  ext a b
-  fin_cases a <;> fin_cases b <;> decide +kernel
+    = Ik • MaedaT3Weight24.M :=
+  ScaledCert.scaled_of_check 2 wp wp HeckeRatWeight24.M2 MaedaT3Weight24.M Ik Ik
+    HeckeRatWeight24.t2tab HeckeRatWeight24.t3tab (fun _ => rfl) rfl HeckeRatWeight24.ht2tab
+    HeckeRatWeight24.ht3tab hscaled
 
 /-- The basis-independent operator identity `∑ w'_j T₂^j = I_k • T₃`. -/
 theorem op_id : ∑ j ∈ Finset.range 2, ((wp j : ℤ) : ℂ) • HeckeRatWeight24.T2 ^ j
@@ -108,10 +114,16 @@ def wp : ℕ → ℤ
   | 1 => 192
   | _ => 0
 
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only). -/
+theorem hscaled : ScaledCert.scaledCheck wp HeckeRatWeight28.t2tab Ik HeckeRatWeight28.t3tab 2 2 =
+    true := by
+  decide +kernel
+
 theorem scaled : (∑ j ∈ Finset.range 2, wp j • HeckeRatWeight28.M2 ^ j)
-    = Ik • MaedaT3Weight28.M := by
-  ext a b
-  fin_cases a <;> fin_cases b <;> decide +kernel
+    = Ik • MaedaT3Weight28.M :=
+  ScaledCert.scaled_of_check 2 wp wp HeckeRatWeight28.M2 MaedaT3Weight28.M Ik Ik
+    HeckeRatWeight28.t2tab HeckeRatWeight28.t3tab (fun _ => rfl) rfl HeckeRatWeight28.ht2tab
+    HeckeRatWeight28.ht3tab hscaled
 
 /-- The basis-independent operator identity `∑ w'_j T₂^j = I_k • T₃`. -/
 theorem op_id : ∑ j ∈ Finset.range 2, ((wp j : ℤ) : ℂ) • HeckeRatWeight28.T2 ^ j
@@ -156,10 +168,16 @@ def wp : ℕ → ℤ
   | 1 => -552
   | _ => 0
 
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only). -/
+theorem hscaled : ScaledCert.scaledCheck wp HeckeRatWeight30.t2tab Ik HeckeRatWeight30.t3tab 2 2 =
+    true := by
+  decide +kernel
+
 theorem scaled : (∑ j ∈ Finset.range 2, wp j • HeckeRatWeight30.M2 ^ j)
-    = Ik • MaedaT3Weight30.M := by
-  ext a b
-  fin_cases a <;> fin_cases b <;> decide +kernel
+    = Ik • MaedaT3Weight30.M :=
+  ScaledCert.scaled_of_check 2 wp wp HeckeRatWeight30.M2 MaedaT3Weight30.M Ik Ik
+    HeckeRatWeight30.t2tab HeckeRatWeight30.t3tab (fun _ => rfl) rfl HeckeRatWeight30.ht2tab
+    HeckeRatWeight30.ht3tab hscaled
 
 /-- The basis-independent operator identity `∑ w'_j T₂^j = I_k • T₃`. -/
 theorem op_id : ∑ j ∈ Finset.range 2, ((wp j : ℤ) : ℂ) • HeckeRatWeight30.T2 ^ j
@@ -204,10 +222,16 @@ def wp : ℕ → ℤ
   | 1 => 432
   | _ => 0
 
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only). -/
+theorem hscaled : ScaledCert.scaledCheck wp HeckeRatWeight32.t2tab Ik HeckeRatWeight32.t3tab 2 2 =
+    true := by
+  decide +kernel
+
 theorem scaled : (∑ j ∈ Finset.range 2, wp j • HeckeRatWeight32.M2 ^ j)
-    = Ik • MaedaT3Weight32.M := by
-  ext a b
-  fin_cases a <;> fin_cases b <;> decide +kernel
+    = Ik • MaedaT3Weight32.M :=
+  ScaledCert.scaled_of_check 2 wp wp HeckeRatWeight32.M2 MaedaT3Weight32.M Ik Ik
+    HeckeRatWeight32.t2tab HeckeRatWeight32.t3tab (fun _ => rfl) rfl HeckeRatWeight32.ht2tab
+    HeckeRatWeight32.ht3tab hscaled
 
 /-- The basis-independent operator identity `∑ w'_j T₂^j = I_k • T₃`. -/
 theorem op_id : ∑ j ∈ Finset.range 2, ((wp j : ℤ) : ℂ) • HeckeRatWeight32.T2 ^ j
@@ -252,10 +276,16 @@ def wp : ℕ → ℤ
   | 1 => -312
   | _ => 0
 
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only). -/
+theorem hscaled : ScaledCert.scaledCheck wp HeckeRatWeight34.t2tab Ik HeckeRatWeight34.t3tab 2 2 =
+    true := by
+  decide +kernel
+
 theorem scaled : (∑ j ∈ Finset.range 2, wp j • HeckeRatWeight34.M2 ^ j)
-    = Ik • MaedaT3Weight34.M := by
-  ext a b
-  fin_cases a <;> fin_cases b <;> decide +kernel
+    = Ik • MaedaT3Weight34.M :=
+  ScaledCert.scaled_of_check 2 wp wp HeckeRatWeight34.M2 MaedaT3Weight34.M Ik Ik
+    HeckeRatWeight34.t2tab HeckeRatWeight34.t3tab (fun _ => rfl) rfl HeckeRatWeight34.ht2tab
+    HeckeRatWeight34.ht3tab hscaled
 
 /-- The basis-independent operator identity `∑ w'_j T₂^j = I_k • T₃`. -/
 theorem op_id : ∑ j ∈ Finset.range 2, ((wp j : ℤ) : ℂ) • HeckeRatWeight34.T2 ^ j
@@ -302,10 +332,16 @@ def wp : ℕ → ℤ
   | 2 => -1
   | _ => 0
 
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only). -/
+theorem hscaled : ScaledCert.scaledCheck wp HeckeRatWeight36.t2tab Ik HeckeRatWeight36.t3tab 3 3 =
+    true := by
+  decide +kernel
+
 theorem scaled : (∑ j ∈ Finset.range 3, wp j • HeckeRatWeight36.M2 ^ j)
-    = Ik • MaedaT3Weight36.M := by
-  ext a b
-  fin_cases a <;> fin_cases b <;> decide +kernel
+    = Ik • MaedaT3Weight36.M :=
+  ScaledCert.scaled_of_check 3 wp wp HeckeRatWeight36.M2 MaedaT3Weight36.M Ik Ik
+    HeckeRatWeight36.t2tab HeckeRatWeight36.t3tab (fun _ => rfl) rfl HeckeRatWeight36.ht2tab
+    HeckeRatWeight36.ht3tab hscaled
 
 /-- The basis-independent operator identity `∑ w'_j T₂^j = I_k • T₃`. -/
 theorem op_id : ∑ j ∈ Finset.range 3, ((wp j : ℤ) : ℂ) • HeckeRatWeight36.T2 ^ j
@@ -412,10 +448,16 @@ def wp : ℕ → ℤ
   | 1 => -72
   | _ => 0
 
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only). -/
+theorem hscaled : ScaledCert.scaledCheck wp HeckeRatWeight38.t2tab Ik HeckeRatWeight38.t3tab 2 2 =
+    true := by
+  decide +kernel
+
 theorem scaled : (∑ j ∈ Finset.range 2, wp j • HeckeRatWeight38.M2 ^ j)
-    = Ik • MaedaT3Weight38.M := by
-  ext a b
-  fin_cases a <;> fin_cases b <;> decide +kernel
+    = Ik • MaedaT3Weight38.M :=
+  ScaledCert.scaled_of_check 2 wp wp HeckeRatWeight38.M2 MaedaT3Weight38.M Ik Ik
+    HeckeRatWeight38.t2tab HeckeRatWeight38.t3tab (fun _ => rfl) rfl HeckeRatWeight38.ht2tab
+    HeckeRatWeight38.ht3tab hscaled
 
 /-- The basis-independent operator identity `∑ w'_j T₂^j = I_k • T₃`. -/
 theorem op_id : ∑ j ∈ Finset.range 2, ((wp j : ℤ) : ℂ) • HeckeRatWeight38.T2 ^ j
@@ -462,10 +504,16 @@ def wp : ℕ → ℤ
   | 2 => 1
   | _ => 0
 
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only). -/
+theorem hscaled : ScaledCert.scaledCheck wp HeckeRatWeight40.t2tab Ik HeckeRatWeight40.t3tab 3 3 =
+    true := by
+  decide +kernel
+
 theorem scaled : (∑ j ∈ Finset.range 3, wp j • HeckeRatWeight40.M2 ^ j)
-    = Ik • MaedaT3Weight40.M := by
-  ext a b
-  fin_cases a <;> fin_cases b <;> decide +kernel
+    = Ik • MaedaT3Weight40.M :=
+  ScaledCert.scaled_of_check 3 wp wp HeckeRatWeight40.M2 MaedaT3Weight40.M Ik Ik
+    HeckeRatWeight40.t2tab HeckeRatWeight40.t3tab (fun _ => rfl) rfl HeckeRatWeight40.ht2tab
+    HeckeRatWeight40.ht3tab hscaled
 
 /-- The basis-independent operator identity `∑ w'_j T₂^j = I_k • T₃`. -/
 theorem op_id : ∑ j ∈ Finset.range 3, ((wp j : ℤ) : ℂ) • HeckeRatWeight40.T2 ^ j
@@ -574,10 +622,16 @@ def wp : ℕ → ℤ
   | 2 => -1
   | _ => 0
 
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only). -/
+theorem hscaled : ScaledCert.scaledCheck wp HeckeRatWeight42.t2tab Ik HeckeRatWeight42.t3tab 3 3 =
+    true := by
+  decide +kernel
+
 theorem scaled : (∑ j ∈ Finset.range 3, wp j • HeckeRatWeight42.M2 ^ j)
-    = Ik • MaedaT3Weight42.M := by
-  ext a b
-  fin_cases a <;> fin_cases b <;> decide +kernel
+    = Ik • MaedaT3Weight42.M :=
+  ScaledCert.scaled_of_check 3 wp wp HeckeRatWeight42.M2 MaedaT3Weight42.M Ik Ik
+    HeckeRatWeight42.t2tab HeckeRatWeight42.t3tab (fun _ => rfl) rfl HeckeRatWeight42.ht2tab
+    HeckeRatWeight42.ht3tab hscaled
 
 /-- The basis-independent operator identity `∑ w'_j T₂^j = I_k • T₃`. -/
 theorem op_id : ∑ j ∈ Finset.range 3, ((wp j : ℤ) : ℂ) • HeckeRatWeight42.T2 ^ j
@@ -686,10 +740,16 @@ def wp : ℕ → ℤ
   | 2 => 1
   | _ => 0
 
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only). -/
+theorem hscaled : ScaledCert.scaledCheck wp HeckeRatWeight44.t2tab Ik HeckeRatWeight44.t3tab 3 3 =
+    true := by
+  decide +kernel
+
 theorem scaled : (∑ j ∈ Finset.range 3, wp j • HeckeRatWeight44.M2 ^ j)
-    = Ik • MaedaT3Weight44.M := by
-  ext a b
-  fin_cases a <;> fin_cases b <;> decide +kernel
+    = Ik • MaedaT3Weight44.M :=
+  ScaledCert.scaled_of_check 3 wp wp HeckeRatWeight44.M2 MaedaT3Weight44.M Ik Ik
+    HeckeRatWeight44.t2tab HeckeRatWeight44.t3tab (fun _ => rfl) rfl HeckeRatWeight44.ht2tab
+    HeckeRatWeight44.ht3tab hscaled
 
 /-- The basis-independent operator identity `∑ w'_j T₂^j = I_k • T₃`. -/
 theorem op_id : ∑ j ∈ Finset.range 3, ((wp j : ℤ) : ℂ) • HeckeRatWeight44.T2 ^ j
@@ -798,10 +858,16 @@ def wp : ℕ → ℤ
   | 2 => -1
   | _ => 0
 
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only). -/
+theorem hscaled : ScaledCert.scaledCheck wp HeckeRatWeight46.t2tab Ik HeckeRatWeight46.t3tab 3 3 =
+    true := by
+  decide +kernel
+
 theorem scaled : (∑ j ∈ Finset.range 3, wp j • HeckeRatWeight46.M2 ^ j)
-    = Ik • MaedaT3Weight46.M := by
-  ext a b
-  fin_cases a <;> fin_cases b <;> decide +kernel
+    = Ik • MaedaT3Weight46.M :=
+  ScaledCert.scaled_of_check 3 wp wp HeckeRatWeight46.M2 MaedaT3Weight46.M Ik Ik
+    HeckeRatWeight46.t2tab HeckeRatWeight46.t3tab (fun _ => rfl) rfl HeckeRatWeight46.ht2tab
+    HeckeRatWeight46.ht3tab hscaled
 
 /-- The basis-independent operator identity `∑ w'_j T₂^j = I_k • T₃`. -/
 theorem op_id : ∑ j ∈ Finset.range 3, ((wp j : ℤ) : ℂ) • HeckeRatWeight46.T2 ^ j
@@ -912,10 +978,16 @@ def wp : ℕ → ℤ
   | 3 => 1
   | _ => 0
 
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only). -/
+theorem hscaled : ScaledCert.scaledCheck wp HeckeRatWeight48.t2tab Ik HeckeRatWeight48.t3tab 4 4 =
+    true := by
+  decide +kernel
+
 theorem scaled : (∑ j ∈ Finset.range 4, wp j • HeckeRatWeight48.M2 ^ j)
-    = Ik • MaedaT3Weight48.M := by
-  ext a b
-  fin_cases a <;> fin_cases b <;> decide +kernel
+    = Ik • MaedaT3Weight48.M :=
+  ScaledCert.scaled_of_check 4 wp wp HeckeRatWeight48.M2 MaedaT3Weight48.M Ik Ik
+    HeckeRatWeight48.t2tab HeckeRatWeight48.t3tab (fun _ => rfl) rfl HeckeRatWeight48.ht2tab
+    HeckeRatWeight48.ht3tab hscaled
 
 /-- The basis-independent operator identity `∑ w'_j T₂^j = I_k • T₃`. -/
 theorem op_id : ∑ j ∈ Finset.range 4, ((wp j : ℤ) : ℂ) • HeckeRatWeight48.T2 ^ j
@@ -1025,10 +1097,16 @@ def wp : ℕ → ℤ
   | 2 => -1
   | _ => 0
 
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only). -/
+theorem hscaled : ScaledCert.scaledCheck wp HeckeRatWeight50.t2tab Ik HeckeRatWeight50.t3tab 3 3 =
+    true := by
+  decide +kernel
+
 theorem scaled : (∑ j ∈ Finset.range 3, wp j • HeckeRatWeight50.M2 ^ j)
-    = Ik • MaedaT3Weight50.M := by
-  ext a b
-  fin_cases a <;> fin_cases b <;> decide +kernel
+    = Ik • MaedaT3Weight50.M :=
+  ScaledCert.scaled_of_check 3 wp wp HeckeRatWeight50.M2 MaedaT3Weight50.M Ik Ik
+    HeckeRatWeight50.t2tab HeckeRatWeight50.t3tab (fun _ => rfl) rfl HeckeRatWeight50.ht2tab
+    HeckeRatWeight50.ht3tab hscaled
 
 /-- The basis-independent operator identity `∑ w'_j T₂^j = I_k • T₃`. -/
 theorem op_id : ∑ j ∈ Finset.range 3, ((wp j : ℤ) : ℂ) • HeckeRatWeight50.T2 ^ j
@@ -1139,10 +1217,16 @@ def wp : ℕ → ℤ
   | 3 => -1
   | _ => 0
 
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only). -/
+theorem hscaled : ScaledCert.scaledCheck wp HeckeRatWeight52.t2tab Ik HeckeRatWeight52.t3tab 4 4 =
+    true := by
+  decide +kernel
+
 theorem scaled : (∑ j ∈ Finset.range 4, wp j • HeckeRatWeight52.M2 ^ j)
-    = Ik • MaedaT3Weight52.M := by
-  ext a b
-  fin_cases a <;> fin_cases b <;> decide +kernel
+    = Ik • MaedaT3Weight52.M :=
+  ScaledCert.scaled_of_check 4 wp wp HeckeRatWeight52.M2 MaedaT3Weight52.M Ik Ik
+    HeckeRatWeight52.t2tab HeckeRatWeight52.t3tab (fun _ => rfl) rfl HeckeRatWeight52.ht2tab
+    HeckeRatWeight52.ht3tab hscaled
 
 /-- The basis-independent operator identity `∑ w'_j T₂^j = I_k • T₃`. -/
 theorem op_id : ∑ j ∈ Finset.range 4, ((wp j : ℤ) : ℂ) • HeckeRatWeight52.T2 ^ j
@@ -1254,10 +1338,16 @@ def wp : ℕ → ℤ
   | 3 => 1
   | _ => 0
 
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only). -/
+theorem hscaled : ScaledCert.scaledCheck wp HeckeRatWeight54.t2tab Ik HeckeRatWeight54.t3tab 4 4 =
+    true := by
+  decide +kernel
+
 theorem scaled : (∑ j ∈ Finset.range 4, wp j • HeckeRatWeight54.M2 ^ j)
-    = Ik • MaedaT3Weight54.M := by
-  ext a b
-  fin_cases a <;> fin_cases b <;> decide +kernel
+    = Ik • MaedaT3Weight54.M :=
+  ScaledCert.scaled_of_check 4 wp wp HeckeRatWeight54.M2 MaedaT3Weight54.M Ik Ik
+    HeckeRatWeight54.t2tab HeckeRatWeight54.t3tab (fun _ => rfl) rfl HeckeRatWeight54.ht2tab
+    HeckeRatWeight54.ht3tab hscaled
 
 /-- The basis-independent operator identity `∑ w'_j T₂^j = I_k • T₃`. -/
 theorem op_id : ∑ j ∈ Finset.range 4, ((wp j : ℤ) : ℂ) • HeckeRatWeight54.T2 ^ j
@@ -1369,10 +1459,16 @@ def wp : ℕ → ℤ
   | 3 => 1
   | _ => 0
 
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only). -/
+theorem hscaled : ScaledCert.scaledCheck wp HeckeRatWeight56.t2tab Ik HeckeRatWeight56.t3tab 4 4 =
+    true := by
+  decide +kernel
+
 theorem scaled : (∑ j ∈ Finset.range 4, wp j • HeckeRatWeight56.M2 ^ j)
-    = Ik • MaedaT3Weight56.M := by
-  ext a b
-  fin_cases a <;> fin_cases b <;> decide +kernel
+    = Ik • MaedaT3Weight56.M :=
+  ScaledCert.scaled_of_check 4 wp wp HeckeRatWeight56.M2 MaedaT3Weight56.M Ik Ik
+    HeckeRatWeight56.t2tab HeckeRatWeight56.t3tab (fun _ => rfl) rfl HeckeRatWeight56.ht2tab
+    HeckeRatWeight56.ht3tab hscaled
 
 /-- The basis-independent operator identity `∑ w'_j T₂^j = I_k • T₃`. -/
 theorem op_id : ∑ j ∈ Finset.range 4, ((wp j : ℤ) : ℂ) • HeckeRatWeight56.T2 ^ j
@@ -1484,10 +1580,16 @@ def wp : ℕ → ℤ
   | 3 => -1
   | _ => 0
 
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only). -/
+theorem hscaled : ScaledCert.scaledCheck wp HeckeRatWeight58.t2tab Ik HeckeRatWeight58.t3tab 4 4 =
+    true := by
+  decide +kernel
+
 theorem scaled : (∑ j ∈ Finset.range 4, wp j • HeckeRatWeight58.M2 ^ j)
-    = Ik • MaedaT3Weight58.M := by
-  ext a b
-  fin_cases a <;> fin_cases b <;> decide +kernel
+    = Ik • MaedaT3Weight58.M :=
+  ScaledCert.scaled_of_check 4 wp wp HeckeRatWeight58.M2 MaedaT3Weight58.M Ik Ik
+    HeckeRatWeight58.t2tab HeckeRatWeight58.t3tab (fun _ => rfl) rfl HeckeRatWeight58.ht2tab
+    HeckeRatWeight58.ht3tab hscaled
 
 /-- The basis-independent operator identity `∑ w'_j T₂^j = I_k • T₃`. -/
 theorem op_id : ∑ j ∈ Finset.range 4, ((wp j : ℤ) : ℂ) • HeckeRatWeight58.T2 ^ j
@@ -1602,10 +1704,16 @@ def wp : ℕ → ℤ
   | 4 => -266560
   | _ => 0
 
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only). -/
+theorem hscaled : ScaledCert.scaledCheck wp HeckeRatWeight60.t2tab Ik HeckeRatWeight60.t3tab 5 5 =
+    true := by
+  decide +kernel
+
 theorem scaled : (∑ j ∈ Finset.range 5, wp j • HeckeRatWeight60.M2 ^ j)
-    = Ik • MaedaT3Weight60.M := by
-  ext a b
-  fin_cases a <;> fin_cases b <;> decide +kernel
+    = Ik • MaedaT3Weight60.M :=
+  ScaledCert.scaled_of_check 5 wp wp HeckeRatWeight60.M2 MaedaT3Weight60.M Ik Ik
+    HeckeRatWeight60.t2tab HeckeRatWeight60.t3tab (fun _ => rfl) rfl HeckeRatWeight60.ht2tab
+    HeckeRatWeight60.ht3tab hscaled
 
 /-- The basis-independent operator identity `∑ w'_j T₂^j = I_k • T₃`. -/
 theorem op_id : ∑ j ∈ Finset.range 5, ((wp j : ℤ) : ℂ) • HeckeRatWeight60.T2 ^ j
@@ -1718,10 +1826,16 @@ def wp : ℕ → ℤ
   | 3 => -1
   | _ => 0
 
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only). -/
+theorem hscaled : ScaledCert.scaledCheck wp HeckeRatWeight62.t2tab Ik HeckeRatWeight62.t3tab 4 4 =
+    true := by
+  decide +kernel
+
 theorem scaled : (∑ j ∈ Finset.range 4, wp j • HeckeRatWeight62.M2 ^ j)
-    = Ik • MaedaT3Weight62.M := by
-  ext a b
-  fin_cases a <;> fin_cases b <;> decide +kernel
+    = Ik • MaedaT3Weight62.M :=
+  ScaledCert.scaled_of_check 4 wp wp HeckeRatWeight62.M2 MaedaT3Weight62.M Ik Ik
+    HeckeRatWeight62.t2tab HeckeRatWeight62.t3tab (fun _ => rfl) rfl HeckeRatWeight62.ht2tab
+    HeckeRatWeight62.ht3tab hscaled
 
 /-- The basis-independent operator identity `∑ w'_j T₂^j = I_k • T₃`. -/
 theorem op_id : ∑ j ∈ Finset.range 4, ((wp j : ℤ) : ℂ) • HeckeRatWeight62.T2 ^ j
@@ -1836,10 +1950,16 @@ def wp : ℕ → ℤ
   | 4 => -1165760
   | _ => 0
 
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only). -/
+theorem hscaled : ScaledCert.scaledCheck wp HeckeRatWeight64.t2tab Ik HeckeRatWeight64.t3tab 5 5 =
+    true := by
+  decide +kernel
+
 theorem scaled : (∑ j ∈ Finset.range 5, wp j • HeckeRatWeight64.M2 ^ j)
-    = Ik • MaedaT3Weight64.M := by
-  ext a b
-  fin_cases a <;> fin_cases b <;> decide +kernel
+    = Ik • MaedaT3Weight64.M :=
+  ScaledCert.scaled_of_check 5 wp wp HeckeRatWeight64.M2 MaedaT3Weight64.M Ik Ik
+    HeckeRatWeight64.t2tab HeckeRatWeight64.t3tab (fun _ => rfl) rfl HeckeRatWeight64.ht2tab
+    HeckeRatWeight64.ht3tab hscaled
 
 /-- The basis-independent operator identity `∑ w'_j T₂^j = I_k • T₃`. -/
 theorem op_id : ∑ j ∈ Finset.range 5, ((wp j : ℤ) : ℂ) • HeckeRatWeight64.T2 ^ j
@@ -1955,10 +2075,16 @@ def wp : ℕ → ℤ
   | 4 => 1931776
   | _ => 0
 
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only). -/
+theorem hscaled : ScaledCert.scaledCheck wp HeckeRatWeight66.t2tab Ik HeckeRatWeight66.t3tab 5 5 =
+    true := by
+  decide +kernel
+
 theorem scaled : (∑ j ∈ Finset.range 5, wp j • HeckeRatWeight66.M2 ^ j)
-    = Ik • MaedaT3Weight66.M := by
-  ext a b
-  fin_cases a <;> fin_cases b <;> decide +kernel
+    = Ik • MaedaT3Weight66.M :=
+  ScaledCert.scaled_of_check 5 wp wp HeckeRatWeight66.M2 MaedaT3Weight66.M Ik Ik
+    HeckeRatWeight66.t2tab HeckeRatWeight66.t3tab (fun _ => rfl) rfl HeckeRatWeight66.ht2tab
+    HeckeRatWeight66.ht3tab hscaled
 
 /-- The basis-independent operator identity `∑ w'_j T₂^j = I_k • T₃`. -/
 theorem op_id : ∑ j ∈ Finset.range 5, ((wp j : ℤ) : ℂ) • HeckeRatWeight66.T2 ^ j
@@ -2074,10 +2200,16 @@ def wp : ℕ → ℤ
   | 4 => -3277120
   | _ => 0
 
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only). -/
+theorem hscaled : ScaledCert.scaledCheck wp HeckeRatWeight68.t2tab Ik HeckeRatWeight68.t3tab 5 5 =
+    true := by
+  decide +kernel
+
 theorem scaled : (∑ j ∈ Finset.range 5, wp j • HeckeRatWeight68.M2 ^ j)
-    = Ik • MaedaT3Weight68.M := by
-  ext a b
-  fin_cases a <;> fin_cases b <;> decide +kernel
+    = Ik • MaedaT3Weight68.M :=
+  ScaledCert.scaled_of_check 5 wp wp HeckeRatWeight68.M2 MaedaT3Weight68.M Ik Ik
+    HeckeRatWeight68.t2tab HeckeRatWeight68.t3tab (fun _ => rfl) rfl HeckeRatWeight68.ht2tab
+    HeckeRatWeight68.ht3tab hscaled
 
 /-- The basis-independent operator identity `∑ w'_j T₂^j = I_k • T₃`. -/
 theorem op_id : ∑ j ∈ Finset.range 5, ((wp j : ℤ) : ℂ) • HeckeRatWeight68.T2 ^ j
@@ -2193,10 +2325,16 @@ def wp : ℕ → ℤ
   | 4 => -8935424
   | _ => 0
 
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only). -/
+theorem hscaled : ScaledCert.scaledCheck wp HeckeRatWeight70.t2tab Ik HeckeRatWeight70.t3tab 5 5 =
+    true := by
+  decide +kernel
+
 theorem scaled : (∑ j ∈ Finset.range 5, wp j • HeckeRatWeight70.M2 ^ j)
-    = Ik • MaedaT3Weight70.M := by
-  ext a b
-  fin_cases a <;> fin_cases b <;> decide +kernel
+    = Ik • MaedaT3Weight70.M :=
+  ScaledCert.scaled_of_check 5 wp wp HeckeRatWeight70.M2 MaedaT3Weight70.M Ik Ik
+    HeckeRatWeight70.t2tab HeckeRatWeight70.t3tab (fun _ => rfl) rfl HeckeRatWeight70.ht2tab
+    HeckeRatWeight70.ht3tab hscaled
 
 /-- The basis-independent operator identity `∑ w'_j T₂^j = I_k • T₃`. -/
 theorem op_id : ∑ j ∈ Finset.range 5, ((wp j : ℤ) : ℂ) • HeckeRatWeight70.T2 ^ j
@@ -2312,10 +2450,16 @@ def wp : ℕ → ℤ
   | 4 => 15102976
   | _ => 0
 
+/-- The kernel certificate over `List` sums and integer tables (`propext`-only). -/
+theorem hscaled : ScaledCert.scaledCheck wp HeckeRatWeight74.t2tab Ik HeckeRatWeight74.t3tab 5 5 =
+    true := by
+  decide +kernel
+
 theorem scaled : (∑ j ∈ Finset.range 5, wp j • HeckeRatWeight74.M2 ^ j)
-    = Ik • MaedaT3Weight74.M := by
-  ext a b
-  fin_cases a <;> fin_cases b <;> decide +kernel
+    = Ik • MaedaT3Weight74.M :=
+  ScaledCert.scaled_of_check 5 wp wp HeckeRatWeight74.M2 MaedaT3Weight74.M Ik Ik
+    HeckeRatWeight74.t2tab HeckeRatWeight74.t3tab (fun _ => rfl) rfl HeckeRatWeight74.ht2tab
+    HeckeRatWeight74.ht3tab hscaled
 
 /-- The basis-independent operator identity `∑ w'_j T₂^j = I_k • T₃`. -/
 theorem op_id : ∑ j ∈ Finset.range 5, ((wp j : ℤ) : ℂ) • HeckeRatWeight74.T2 ^ j
