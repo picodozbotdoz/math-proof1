@@ -575,6 +575,77 @@ theorem index_card_hecke_natCard (hn : 0 < n) (hk : 1 ≤ k)
       (fun j m hj hm => miller_coeff' f A hzero hone hA j m hj hm))
     C (t2_pow_eq_smul_heckeTM hn hk hdim f A hzero hone hA hfi a hAeq M2 hrep2 C hcard)
 
+omit [NeZero n] in
+/-- `T₂ = heckeTM k 2` acts on the echelon family by the integer matrix `M2`,
+from the landed `coordN`-form data (`represents_dimN` + `heckeTM_prime`). -/
+theorem heckeTM_two_rep_of_dimN (hn : 0 < n)
+    (hdim : Module.finrank ℂ (CuspForm 𝒮ℒ k) = n)
+    (f : ℕ → CuspForm 𝒮ℒ k) (A X2 : ℕ → ℕ → ℂ)
+    (hzero : ∀ (i m : ℕ), i < n → 1 ≤ m → m ≤ i → (qExpansion 1 (f i)).coeff m = 0)
+    (hone : ∀ i : ℕ, i < n → (qExpansion 1 (f i)).coeff (i + 1) = 1)
+    (hA : ∀ (i j : ℕ), i < j → j < n → (qExpansion 1 (f i)).coeff (j + 1) = A i j)
+    (hX2 : ∀ (i m : ℕ), i < n → m < n →
+      (qExpansion 1 (heckeTPₗ k Nat.prime_two (f i))).coeff (m + 1) = X2 i m)
+    (M2 : Matrix (Fin n) (Fin n) ℤ)
+    (hM2 : ∀ (i l : Fin n), coordN A (fun m => X2 i.val m) l.val = ((M2 l i : ℤ) : ℂ)) :
+    ∀ i : Fin n, heckeTM k 2 (f i.val) = ∑ l : Fin n, ((M2 l i : ℤ) : ℂ) • f l.val := by
+  intro i
+  rw [heckeTM_prime k Nat.prime_two,
+    represents_dimN hn hdim f A X2 hzero hone hA _ hX2 i]
+  exact Finset.sum_congr rfl fun l _ => by rw [hM2 i l]
+
+/-- **The per-weight index card from the landed echelon data**: the generated
+files' entry point — `index_card_hecke` with `hrep2` derived from the
+`coordN`-form `T₂` data and the determinant pinned to a signed literal `I`. -/
+theorem index_card_dimN (hn : 0 < n) (hk : 1 ≤ k)
+    (hdim : Module.finrank ℂ (CuspForm 𝒮ℒ k) = n)
+    (f : ℕ → CuspForm 𝒮ℒ k) (A : ℕ → ℕ → ℂ)
+    (hzero : ∀ (i m : ℕ), i < n → 1 ≤ m → m ≤ i → (qExpansion 1 (f i)).coeff m = 0)
+    (hone : ∀ i : ℕ, i < n → (qExpansion 1 (f i)).coeff (i + 1) = 1)
+    (hA : ∀ (i j : ℕ), i < j → j < n → (qExpansion 1 (f i)).coeff (j + 1) = A i j)
+    (hfi : ∀ i : ℕ, i < n → ∀ m : ℕ, ∃ z : ℤ, (qExpansion 1 (f i)).coeff m = (z : ℂ))
+    (hmin : (minpoly ℂ (heckeTM k 2 : Module.End ℂ (CuspForm 𝒮ℒ k))).natDegree = n)
+    (a : ℕ → ℕ → ℤ) (hAeq : ∀ i j : ℕ, i < j → j < n → A i j = ((a i j : ℤ) : ℂ))
+    (X2 : ℕ → ℕ → ℂ)
+    (hX2 : ∀ (i m : ℕ), i < n → m < n →
+      (qExpansion 1 (heckeTPₗ k Nat.prime_two (f i))).coeff (m + 1) = X2 i m)
+    (M2 : Matrix (Fin n) (Fin n) ℤ)
+    (hM2 : ∀ (i l : Fin n), coordN A (fun m => X2 i.val m) l.val = ((M2 l i : ℤ) : ℂ))
+    (C : Matrix (Fin n) (Fin n) ℤ)
+    (hcard : Matrix.of (fun i j : Fin n =>
+      ∑ c : Fin n, millerCoeff a n j.val c.val * (M2 ^ (i : ℕ)) 0 c) = C)
+    (I : ℤ) (hdet : C.det.natAbs = I.natAbs) :
+    (t2Lattice (heckeTM k 2) n).toAddSubgroup.relIndex
+        (heckeLattice k n).toAddSubgroup = I.natAbs := by
+  rw [index_card_hecke hn hk hdim f A hzero hone hA hfi hmin a hAeq M2
+    (heckeTM_two_rep_of_dimN hn hdim f A X2 hzero hone hA hX2 M2 hM2) C hcard, hdet]
+
+/-- **The per-weight index card, quotient-cardinality phrasing** (the form
+consumed as `hcard` downstream). -/
+theorem index_card_natCard_dimN (hn : 0 < n) (hk : 1 ≤ k)
+    (hdim : Module.finrank ℂ (CuspForm 𝒮ℒ k) = n)
+    (f : ℕ → CuspForm 𝒮ℒ k) (A : ℕ → ℕ → ℂ)
+    (hzero : ∀ (i m : ℕ), i < n → 1 ≤ m → m ≤ i → (qExpansion 1 (f i)).coeff m = 0)
+    (hone : ∀ i : ℕ, i < n → (qExpansion 1 (f i)).coeff (i + 1) = 1)
+    (hA : ∀ (i j : ℕ), i < j → j < n → (qExpansion 1 (f i)).coeff (j + 1) = A i j)
+    (hfi : ∀ i : ℕ, i < n → ∀ m : ℕ, ∃ z : ℤ, (qExpansion 1 (f i)).coeff m = (z : ℂ))
+    (hmin : (minpoly ℂ (heckeTM k 2 : Module.End ℂ (CuspForm 𝒮ℒ k))).natDegree = n)
+    (a : ℕ → ℕ → ℤ) (hAeq : ∀ i j : ℕ, i < j → j < n → A i j = ((a i j : ℤ) : ℂ))
+    (X2 : ℕ → ℕ → ℂ)
+    (hX2 : ∀ (i m : ℕ), i < n → m < n →
+      (qExpansion 1 (heckeTPₗ k Nat.prime_two (f i))).coeff (m + 1) = X2 i m)
+    (M2 : Matrix (Fin n) (Fin n) ℤ)
+    (hM2 : ∀ (i l : Fin n), coordN A (fun m => X2 i.val m) l.val = ((M2 l i : ℤ) : ℂ))
+    (C : Matrix (Fin n) (Fin n) ℤ)
+    (hcard : Matrix.of (fun i j : Fin n =>
+      ∑ c : Fin n, millerCoeff a n j.val c.val * (M2 ^ (i : ℕ)) 0 c) = C)
+    (I : ℤ) (hdet : C.det.natAbs = I.natAbs) :
+    Nat.card (↥(heckeLattice k n).toAddSubgroup ⧸
+      (t2Lattice (heckeTM k 2) n).toAddSubgroup.addSubgroupOf
+        (heckeLattice k n).toAddSubgroup) = I.natAbs := by
+  rw [index_card_hecke_natCard hn hk hdim f A hzero hone hA hfi hmin a hAeq M2
+    (heckeTM_two_rep_of_dimN hn hdim f A X2 hzero hone hA hX2 M2 hM2) C hcard, hdet]
+
 end Assemble
 
 end HeckeLatticeIndex

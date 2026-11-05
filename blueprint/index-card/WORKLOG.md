@@ -140,3 +140,37 @@ literals).  Inbox: clean at this checkpoint.
   `coeff_one_t2_pow`, `t2_pow_eq_smul_heckeTM`, `index_card_hecke`,
   `index_card_hecke_natCard` (binder list unchanged except `coeff_one_t2_pow`).
 - Inbox poll: no STEER-index-card-* / STEER-all-*.
+
+### 2026-11-05 — G3 in flight: generator `--card` mode + first small-file build
+- HeckeLatticeIndex.lean: added the per-weight entry points `heckeTM_two_rep_of_dimN`
+  (hrep2 from the landed coordN data), `index_card_dimN`, `index_card_natCard_dimN`
+  (signed literal `I` with `hdet : C.det.natAbs = I.natAbs`).
+- tools/gen_hecke_index.py: new `--card` mode (CARD_PARTS: HeckeIndexCardSmallWeights
+  dims 2–5 / HeckeIndexCardWeights dims 6–10); `--check` now covers all four files
+  (legacy two still byte-identical).  Data = landed literals via the i23/i24 G1 parsers;
+  generator asserts |det C| = Ik for all 54 (passed) and μ == i24 audit accumulator.
+- Starting Modal build of HeckeIndexCardSmallWeights (expected 5–15 min: parents may
+  be cold in the build cache).
+
+### 2026-11-05 — G3 CLOSED: HeckeIndexCardSmallWeights.lean green 0 err / 0 warn
+- Modal (mrun.sh --file, warm): wall 55 s, peak tree 6.44 GiB, module 5.20 GiB
+  (elaboration 23 s for the 24 weights).  Two fix rounds: `omit [NeZero n] in` on
+  `heckeTM_two_rep_of_dimN` (unusedSectionVars), and dim-2 `hAeq` via
+  `obtain rfl : j = 1 / i = 0 := by omega` (`<;>` on one goal tripped unusedTactic;
+  a bare `interval_cases i` after `interval_cases j` left the goal unsolved).
+- `python3 -I tools/gen_hecke_index.py --check`: all 4 files byte-identical.
+  tauceti_audit: 0/0/0/0 on both Lean files.
+- Exported per-weight facts (namespace `HeckeIndexCardWeightKK`, all 24 weights k ≤ 74):
+  `index_card : (t2Lattice (heckeTM ((k:ℕ):ℤ) 2) n).toAddSubgroup.relIndex
+     (heckeLattice ((k:ℕ):ℤ) n).toAddSubgroup = HeckeIndexWeightKK.Ik.natAbs`
+  `index_card_natCard : Nat.card (↥(heckeLattice ((k:ℕ):ℤ) n).toAddSubgroup ⧸
+     (t2Lattice (heckeTM ((k:ℕ):ℤ) 2) n).toAddSubgroup.addSubgroupOf
+     (heckeLattice ((k:ℕ):ℤ) n).toAddSubgroup) = HeckeIndexWeightKK.Ik.natAbs`
+  (+ helpers atab, hAeq, hfi, hmin, C, hcard, det_C).  For index-cyclic: the
+  `t2Lattice` operator is `heckeTM k 2` (bridge to `HeckeRatWeightKK.T2` by
+  `HeckeTM.heckeTM_prime`, as in the recipe).
+- Registration deviation (to apply in G4): the small file's parent
+  `HeckeIndexSmallWeights` is root-only (imports the non-CI `MaedaT3SmallWeights`),
+  so the card small file must be root-only too — NOT defaultTargets (blueprint §2
+  said defaultTargets; that would pull a non-CI parent into CI).  HeckeLatticeIndex
+  itself → root + defaultTargets.
