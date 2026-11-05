@@ -75,3 +75,16 @@ Builds that crossed 64 GiB before the tooling existed; numbers from
   sizing keys on) is 8.0 GiB.  No action; the request ladder and the 16 GiB
   alert behaved exactly as designed.
 
+
+## 2026-11-05 — scaled-certs (iteration 25) `--target MathProof.AxCheckDecide` — CLOSED
+
+- alert: `[memory-alert] peak tree RSS 22.2 GiB >= 16 GiB` (wall 396 s,
+  8 GiB request, no OOM).  Log:
+  `/home/doz/tmp/math-proof1-temp/agent-work/scaled-certs/runs/g4-axcheck.out`.
+- investigation (CLOSED 2026-11-05): tree peak = SUM of concurrent lean
+  processes (lake rebuilt everything downstream of the regenerated
+  HeckeRational files in parallel).  Largest single module: 7.99 GiB
+  (`HeckeRationalWeights`, was 8.4 GiB before the retrofit), then
+  `MaedaSmallWeights` 7.66, `HeckeIndexCardWeights` 7.40, `HeckeIndexWeights`
+  6.17 GiB.  No single declaration to profile; inherent to parallel rebuilds
+  (same verdict as the 2026-10-31 no-cache entry).  No action.
