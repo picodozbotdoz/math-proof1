@@ -111,3 +111,32 @@ literals).  Inbox: clean at this checkpoint.
     for light small file; big file root-only) + audits (light root 0/0, AxCheckDecide,
     tauceti_audit.sh).
 - Heartbeat convention understood; entry before/after any >10 min run.
+
+### 2026-11-05 — session 2 start (fresh respawn after operator wrap-up 2026-11-04 ~22:15)
+- Resume point: G1 CLOSED (do-not-redo).  Branch tip 9e518e1 = salvage of WIP
+  `MathProof/ModularForms/HeckeLatticeIndex.lean` (582 lines, correctness not asserted).
+- Plan: build the salvage on Modal first to learn its state (G2), then G3, G4.
+
+### 2026-11-05 — G2 CLOSED: HeckeLatticeIndex.lean green 0 err / 0 warn
+- Salvage build (run 1): 2 errors + 1 unused-variable warning only — the WIP was
+  essentially complete.  Fixes: (a) `det_eq_of_expansions` section variable
+  `[Module ℤ M]` removed (instance diamond with `AddCommGroup.toIntModule` on the
+  span); (b) `hmem` now rewrites with the ℤ-smul expansion `hw` (ℂ-smul cast form
+  fails `Submodule.smul_mem` over ℤ); (c) `Finsupp.finsetSum_apply` + `smul_eq_mul`
+  + `simp [Matrix.transpose_apply]` in the toMatrix computation; (d) dropped the
+  unused `hA` binder of `coeff_one_t2_pow`.
+- Modal (mrun.sh --file, warm cache): wall 54 s, peak tree 6.01 GiB, module 4.77 GiB.
+  tauceti_audit: 0/0/0/0, imports OK.  No relIndex/toIntSubmodule defeq wall — the
+  `relIndex_eq_natAbs_det` route went through as designed; no Nat.card descope.
+- DESIGN DEVIATION from G1's "star certificate" plan (recorded per §4d): the WIP
+  uses the simpler DUAL route — `C i j = a_1(T₂^i g_j) = ∑_c μ_{jc} (M2^i)_{0c}`
+  (`hcard : Matrix.of (fun i j => ∑ c, millerCoeff a n j c * (M2^i) 0 c) = C`),
+  so no p/q transforms or Q literal are needed; `T₂^i = ∑_j C i j • T_{j+1}` by
+  duality (`op_eq_zero_of_dual_zero`).  |det C| = I_k by G1 D3 (C = Q·A, det Q = 1);
+  the generator re-checks |det C| = |Ik| per weight in Python.
+- Exported generic API (shape kept for index-cyclic): `t2Lattice`,
+  `relIndex_t2_eq_det`, `natCard_quot_eq_det`, `millerTopC`/`millerCoeff`,
+  `miller_eq_fb_sum`, `coeff_one_heckeTM`, `op_eq_zero_of_dual_zero`,
+  `coeff_one_t2_pow`, `t2_pow_eq_smul_heckeTM`, `index_card_hecke`,
+  `index_card_hecke_natCard` (binder list unchanged except `coeff_one_t2_pow`).
+- Inbox poll: no STEER-index-card-* / STEER-all-*.

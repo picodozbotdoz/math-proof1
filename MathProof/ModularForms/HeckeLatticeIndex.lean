@@ -52,7 +52,7 @@ open scoped MatrixGroups
 
 section Span
 
-variable {M : Type*} [AddCommGroup M] [Module ℤ M] {n : ℕ}
+variable {M : Type*} [AddCommGroup M] {n : ℕ}
 
 /-- **Basis-change determinant.**  If the family `w` expands over the
 independent family `u` with the integer matrix `D` (`w i = ∑_j D i j • u j`),
@@ -77,14 +77,13 @@ private theorem det_eq_of_expansions (u : Fin n → M) (hli : LinearIndependent 
   rw [Basis.det_apply]
   have htm : (Basis.span hli).toMatrix v = Matrix.transpose D := by
     ext i j
-    rw [Basis.toMatrix_apply, hvj j, map_sum]
+    rw [Basis.toMatrix_apply, hvj j, map_sum, Finsupp.finsetSum_apply]
     have hsmul : ∀ l : Fin n, (Basis.span hli).repr (D j l • Basis.span hli l) i
         = D j l * (if l = i then (1 : ℤ) else 0) := by
       intro l
-      rw [map_smul, Finsupp.smul_apply, Basis.repr_self_apply]
-    rw [Finset.sum_congr rfl fun l _ => hsmul l,
-      Finset.sum_ite_eq' Finset.univ i (fun l => D j l),
-      ite_eq_left (Finset.mem_univ i), Matrix.transpose_apply]
+      rw [map_smul, Finsupp.smul_apply, Basis.repr_self_apply, smul_eq_mul]
+    rw [Finset.sum_congr rfl fun l _ => hsmul l]
+    simp [Matrix.transpose_apply]
   rw [htm, Matrix.det_transpose]
 
 end Span
@@ -115,12 +114,17 @@ theorem relIndex_t2_eq_det (T2 : V →ₗ[ℂ] V)
         (Submodule.span ℤ (Set.range u)).toAddSubgroup = C.det.natAbs := by
   classical
   -- memberships and the lattice inclusion
+  have hw : ∀ i : Fin n, (T2 : Module.End ℂ V) ^ (i : ℕ)
+      = ∑ j : Fin n, C i j • u j := by
+    intro i
+    rw [hC i]
+    exact Finset.sum_congr rfl fun j _ => Int.cast_smul_eq_zsmul ℂ _ _
   have hmem : ∀ i : Fin n, (T2 : Module.End ℂ V) ^ (i : ℕ)
       ∈ Submodule.span ℤ (Set.range u) := by
     intro i
-    rw [hC i]
+    rw [hw i]
     exact Submodule.sum_mem _ fun j _ =>
-      Submodule.smul_mem _ _ (Submodule.subset_span ⟨j, rfl⟩)
+      Submodule.smul_mem _ (C i j) (Submodule.subset_span (Set.mem_range_self j))
   have H : t2Lattice T2 n ≤ Submodule.span ℤ (Set.range u) := by
     rw [t2Lattice, Submodule.span_le]
     rintro _ ⟨i, rfl⟩
@@ -131,11 +135,6 @@ theorem relIndex_t2_eq_det (T2 : V →ₗ[ℂ] V)
     have h := linearIndependent_pow (K := ℂ) (T2 : Module.End ℂ V)
     rw [hmin] at h
     exact h
-  have hw : ∀ i : Fin n, (T2 : Module.End ℂ V) ^ (i : ℕ)
-      = ∑ j : Fin n, C i j • u j := by
-    intro i
-    rw [hC i]
-    exact Finset.sum_congr rfl fun j _ => Int.cast_smul_eq_zsmul ℂ _ _
   have hdet := det_eq_of_expansions u (LinearIndependent.restrict_scalars' ℤ hli) C
     (fun i => (T2 : Module.End ℂ V) ^ (i : ℕ)) hw
     (fun i => (⟨(T2 : Module.End ℂ V) ^ (i : ℕ), hmem i⟩ :
@@ -412,7 +411,6 @@ is the dot product of the Miller row `j` with the row-0 readoffs of
 theorem coeff_one_t2_pow (f : ℕ → CuspForm 𝒮ℒ k) (A : ℕ → ℕ → ℂ)
     (hzero : ∀ (i m : ℕ), i < n → 1 ≤ m → m ≤ i → (qExpansion 1 (f i)).coeff m = 0)
     (hone : ∀ i : ℕ, i < n → (qExpansion 1 (f i)).coeff (i + 1) = 1)
-    (hA : ∀ (i j : ℕ), i < j → j < n → (qExpansion 1 (f i)).coeff (j + 1) = A i j)
     (a : ℕ → ℕ → ℤ) (hAeq : ∀ i j : ℕ, i < j → j < n → A i j = ((a i j : ℤ) : ℂ))
     (M2 : Matrix (Fin n) (Fin n) ℤ)
     (hrep2 : ∀ i : Fin n, heckeTM k 2 (f i.val)
@@ -514,7 +512,7 @@ theorem t2_pow_eq_smul_heckeTM (hn : 0 < n) (hk : 1 ≤ k)
             exact Finset.sum_congr rfl fun l _ => (sub_smul _ _ _).symm
     · intro j
       rw [LinearMap.sub_apply, coeff_sub_l,
-        coeff_one_t2_pow f A hzero hone hA a hAeq M2 hrep2 i j, hentry j,
+        coeff_one_t2_pow f A hzero hone a hAeq M2 hrep2 i j, hentry j,
         LinearMap.sum_apply]
       simp only [LinearMap.smul_apply]
       rw [coeff_sum Finset.univ (fun l => ((C i l : ℤ) : ℂ))
