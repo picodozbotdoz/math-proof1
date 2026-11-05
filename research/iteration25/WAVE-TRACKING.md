@@ -39,3 +39,4 @@ then review/log/README.  OPEN operator question: re-verify LehmerGrand /
 LehmerPrimeGrand (LehmerPacked + LehmerPow32 NOT in the build cache →
 ~63 GiB + ~144 GiB rebuilds) or skip with recorded rationale (proof-only
 change to two private lemmas of LehmerSieve691).
+- 2026-11-05: operator decision — SKIP re-verification of LehmerGrand / LehmerPrimeGrand, rationale recorded in iteration25-review §4.1.
