@@ -10,9 +10,10 @@ this emits, on the LANDED fb-coordinate literals (the G1 audit's re-pinning):
     (G3-measured at the worst dim-10 weight: seconds),
   * `hIkq` — `((Ik : ℤ) : ℚ) ≠ 0`,
   * `wp`   — the Cramer weights `w' = I_k · w` (chunked arms),
-  * `scaled` — the entrywise kernel certificate
-    `∑ wp j • M₂^j = Ik • M₃` (`ext`/`fin_cases` + `decide +kernel` per cell,
-    never matrix-level decide),
+  * `scaled` — the kernel certificate `∑ wp j • M₂^j = Ik • M₃`: ONE
+    `List`-sum boolean `hscaled` (`ScaledCert.scaledCheck` over the
+    HeckeRational files' pow-free tables `t2tab`/`t3tab`, `propext`-only;
+    iteration 25) bridged by `ScaledCert.scaled_of_check`,
   * `op_id` — the basis-independent operator identity
     `∑ (wp j : ℂ) • T₂^j = (Ik : ℂ) • T₃` via `HeckeIndex.int_poly_of_dimN`,
   * for the 48 weights with `D ≠ 1`: `Dn`, `scaled_idN` (the landed
@@ -24,7 +25,7 @@ this emits, on the LANDED fb-coordinate literals (the G1 audit's re-pinning):
     composite `D_dvd_Ik : Dn ∣ Ik` via `HeckeIndex.den_dvd_index`;
   * for the six dim-2 weights (`D = 1`): the composite is `one_dvd`.
 
-Everything is light: no `set_option`, entrywise `decide +kernel` only.
+Everything is light: no `set_option`, `List`-sum `decide +kernel` only.
 Data source: `research/iteration23/hecke-index/index_data.json` (the G1
 audit's re-pinned values).  `--check` verifies byte-identical regeneration.
 """
@@ -250,10 +251,37 @@ def emit_weight(k, w, report):
     L.append("")
     L.extend(seq_def("wp", wp, f"The Cramer weights `w' = I_k · w` at weight {k} (G1 audit)."))
     L.append("")
+    # iteration 25 (scaled-certs): ONE `List`-sum boolean over the pow-free
+    # tables of the HeckeRational files (`t2tab`/`t3tab`), bridged back by
+    # `ScaledCert.scaled_of_check` — no per-cell decide over `Finset` sums,
+    # `!![…]` literals or `10 ^ e` numerals (nested audit: `propext` only).
+    if any(len(int_lines(v)) > 1 for v in wp):
+        L.extend(seq_def("wpv", wp, "The Cramer weights `wp`, pow-free (for the `List` "
+                         "certificate).", int_lines_nopow))
+        L.append("")
+        L.append(f"theorem hwpv : ∀ j : Fin {n}, wp j = wpv j := by")
+        L.append("  intro j")
+        L.append("  fin_cases j <;> rfl")
+        L.append("")
+        wv, hw = "wpv", "hwpv"
+    else:
+        wv, hw = "wp", "(fun _ => rfl)"
+    if len(int_lines(Ik)) > 1:
+        L.extend(chunked_def("Ikv", Ik, "The index `Ik`, pow-free.", lines_of=int_lines_nopow))
+        L.append("")
+        sv = "Ikv"
+    else:
+        sv = "Ik"
+    L.append("/-- The kernel certificate over `List` sums and integer tables (`propext`-only). -/")
+    L.extend(wrap_tokens(f"theorem hscaled : ScaledCert.scaledCheck {wv} {ratns}.t2tab {sv} "
+                         f"{ratns}.t3tab {n} {n} = true := by", "", "    "))
+    L.append("  decide +kernel")
+    L.append("")
     L.append(f"theorem scaled : (∑ j ∈ Finset.range {n}, wp j • {M2} ^ j)")
-    L.append(f"    = Ik • {M3} := by")
-    L.append("  ext a b")
-    L.append("  fin_cases a <;> fin_cases b <;> decide +kernel")
+    L.append(f"    = Ik • {M3} :=")
+    L.extend(["  " + ln.lstrip() if i == 0 else ln for i, ln in enumerate(wrap_tokens(
+        f"ScaledCert.scaled_of_check {n} wp {wv} {M2} {M3} Ik {sv} {ratns}.t2tab "
+        f"{ratns}.t3tab {hw} rfl {ratns}.ht2tab {ratns}.ht3tab hscaled", "  ", "    "))])
     L.append("")
     L.append("/-- The basis-independent operator identity `∑ w'_j T₂^j = I_k • T₃`. -/")
     L.append(f"theorem op_id : ∑ j ∈ Finset.range {n}, ((wp j : ℤ) : ℂ) • {T2} ^ j")
@@ -375,8 +403,8 @@ def render(keys, data, report, scope, count, imports):
     L.append(f"the {count} weights with `{scope}` (the 54 weights `24 ≤ k ≤ 134`")
     L.append("are split by dimension over `HeckeIndexSmallWeights` / `HeckeIndexWeights`):")
     L.append("the index `I_k = |det A|` with its certified Bareiss determinant")
-    L.append("(`eval_det`), the Cramer weights `w' = I_k · w`, the entrywise kernel")
-    L.append("certificate `∑ w'_j M₂^j = I_k M₃` (`decide +kernel` entrywise), the")
+    L.append("(`eval_det`), the Cramer weights `w' = I_k · w`, the kernel certificate")
+    L.append("`∑ w'_j M₂^j = I_k M₃` (one `List`-sum `decide +kernel`, `ScaledCert`), the")
     L.append("basis-independent operator identity")
     L.append("`∑ (w'_j : ℂ) • T₂^j = (I_k : ℂ) • T₃`")
     L.append("(`HeckeIndex.int_poly_of_dimN`), and — for the weights with a")
@@ -386,7 +414,7 @@ def render(keys, data, report, scope, count, imports):
     L.append("dim-2 weights the denominator is `1` and the divisibility is `one_dvd`.")
     L.append("")
     L.append("Everything is light: no `set_option`, no `native_decide`/`sorry`; the")
-    L.append("only decides are entrywise per-matrix-cell certificates plus one small")
+    L.append("only decides are one `List`-sum certificate (`hscaled`) plus one small")
     L.append("Bézout identity per weight (over a `List` sum), all `decide +kernel`.")
     L.append("-/")
     L.append("")
