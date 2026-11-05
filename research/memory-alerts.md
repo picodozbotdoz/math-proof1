@@ -139,8 +139,12 @@ Builds that crossed 64 GiB before the tooling existed; numbers from
   IdE6 34.7, Identities 17.6 GiB; cause and per-declaration budget in
   `research/poly5-memory-study/` — ≈ 27 GiB per M `Poly5` list operations,
   checkpointed at ≈ 0.5–0.9 M).  Inherent; no new profile needed (inputs
-  identical to the profiled run).  Note: `LEAN_CHECK_MEMORY_MIB=49152` was
-  not reflected in the `[memory] request` line (8192) — the request is soft
-  and the run was granted ≥ 35 GiB; check the env passthrough of
-  `tools/modal_run.sh` before relying on explicit requests.
+  identical to the profiled run).  Note: the `[memory] request 8192 MiB` line is misleading for explicit
+  requests — `lean_check.py` reads `LEAN_CHECK_MEMORY_MIB` at import time; the
+  `memory=` decorator uses the local value (49152 here; the log name carries
+  `-m49152`) but the in-container print and the OOM heuristic
+  (`rc != 0 and peak ≥ 97 %`) see the unset default.  Effect: a heavy run
+  that *fails* above 7.9 GiB is misreported as an OOM (exit 42) and
+  escalated.  Successful runs unaffected.  Tooling fix recommended
+  (iteration25-review).
 
