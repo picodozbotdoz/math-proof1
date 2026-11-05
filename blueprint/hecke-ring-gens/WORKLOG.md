@@ -76,3 +76,19 @@ sorry). Registered: defaultTargets + MathProof.lean; ci_targets --report OK
 (77 default, push tier 55 incl. HeckeRingGens). NEXT: generator
 tools/gen_hecke_ring_gens.py → HeckeRingGens{Small,}Weights instances (54)
 + T₇ row certificates at the 10 dims-7–9 {3,5}-weights.
+G4 generator written: tools/gen_hecke_ring_gens.py (re-verifies every T₇
+certificate on raw rows; asserts the T₇-list = exactly the dims-7–10 weights
+with a smooth relation over m ≤ 3n = the 10 dims-7–9 {3,5}-weights).  Emits
+HeckeRingGensSmallWeights (dims 2–5, 1046 lines) / HeckeRingGensWeights
+(dims 6–10, 2045 lines). T₇ coefficients ≤ 66 digits, 9–11 terms.
+BEFORE RUN (2026-11-05): two parallel Modal --file runs (small + big);
+expected 3–10 min each warm, up to ~40 min if the T₃ dim-6–10 parents are
+cold in the rolling cache.
+G4 GREEN (both generated files, Modal --file, warm, 0 err / 0 warn):
+  HeckeRingGensSmallWeights: wall 46 s, module peak 4.78 GiB (tree 6.02)
+  HeckeRingGensWeights:      wall 86 s, module peak 5.17 GiB (tree 6.40),
+                             elaboration 10 s (10 T₇ certificates)
+--check byte-identical; tauceti audit 0/0/0/0 on all three; root-only
+registration in MathProof.lean (no defaultTargets — parents non-push-tier).
+NEXT: AxCheckDecide over the light root (audits t7_smooth + the generic
+`decide +kernel` divisibility facts); expected 5–40 min depending on cache.
