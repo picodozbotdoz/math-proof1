@@ -1,13 +1,15 @@
 import MathProof.ModularForms.HeckeIndexCardSmallWeights
 import MathProof.ModularForms.HeckeIndexCardWeights
+import MathProof.ModularForms.HeckeCyclicWeights
 import MathProof.ModularForms.HeckeRingGensSmallWeights
 import MathProof.ModularForms.HeckeRingGensWeights
 import MathProof.ModularForms.HeckeLatticeIndex
+import MathProof.ModularForms.HeckeCyclic
 import MathProof.ModularForms.HeckeRingGens
 
-/-! Axiom audit of Iteration 24 (opt-in, not in the root; covers the entrywise
-`ext`/`fin_cases` certificates that `AxCheckDecide` does not enumerate).
-Regenerate the name list from the generated files; do not hand-edit. -/
+/-! Axiom audit of Iteration 24 (opt-in, not in the root): `#print axioms` for the
+generic headline theorems and every theorem of the per-weight files.
+The name list is derived from the generated files; regenerate, do not hand-edit. -/
 
 #print axioms HeckeLatticeIndex.relIndex_t2_eq_det
 #print axioms HeckeLatticeIndex.natCard_quot_eq_det
@@ -16,6 +18,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight24.hAeq
 #print axioms HeckeIndexCardWeight24.hfi
 #print axioms HeckeIndexCardWeight24.hmin
+#print axioms HeckeIndexCardWeight24.hM2tab
+#print axioms HeckeIndexCardWeight24.hCtab
+#print axioms HeckeIndexCardWeight24.hcheck
 #print axioms HeckeIndexCardWeight24.hcard
 #print axioms HeckeIndexCardWeight24.det_C
 #print axioms HeckeIndexCardWeight24.index_card
@@ -23,6 +28,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight28.hAeq
 #print axioms HeckeIndexCardWeight28.hfi
 #print axioms HeckeIndexCardWeight28.hmin
+#print axioms HeckeIndexCardWeight28.hM2tab
+#print axioms HeckeIndexCardWeight28.hCtab
+#print axioms HeckeIndexCardWeight28.hcheck
 #print axioms HeckeIndexCardWeight28.hcard
 #print axioms HeckeIndexCardWeight28.det_C
 #print axioms HeckeIndexCardWeight28.index_card
@@ -30,6 +38,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight30.hAeq
 #print axioms HeckeIndexCardWeight30.hfi
 #print axioms HeckeIndexCardWeight30.hmin
+#print axioms HeckeIndexCardWeight30.hM2tab
+#print axioms HeckeIndexCardWeight30.hCtab
+#print axioms HeckeIndexCardWeight30.hcheck
 #print axioms HeckeIndexCardWeight30.hcard
 #print axioms HeckeIndexCardWeight30.det_C
 #print axioms HeckeIndexCardWeight30.index_card
@@ -37,6 +48,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight32.hAeq
 #print axioms HeckeIndexCardWeight32.hfi
 #print axioms HeckeIndexCardWeight32.hmin
+#print axioms HeckeIndexCardWeight32.hM2tab
+#print axioms HeckeIndexCardWeight32.hCtab
+#print axioms HeckeIndexCardWeight32.hcheck
 #print axioms HeckeIndexCardWeight32.hcard
 #print axioms HeckeIndexCardWeight32.det_C
 #print axioms HeckeIndexCardWeight32.index_card
@@ -44,6 +58,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight34.hAeq
 #print axioms HeckeIndexCardWeight34.hfi
 #print axioms HeckeIndexCardWeight34.hmin
+#print axioms HeckeIndexCardWeight34.hM2tab
+#print axioms HeckeIndexCardWeight34.hCtab
+#print axioms HeckeIndexCardWeight34.hcheck
 #print axioms HeckeIndexCardWeight34.hcard
 #print axioms HeckeIndexCardWeight34.det_C
 #print axioms HeckeIndexCardWeight34.index_card
@@ -51,6 +68,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight36.hAeq
 #print axioms HeckeIndexCardWeight36.hfi
 #print axioms HeckeIndexCardWeight36.hmin
+#print axioms HeckeIndexCardWeight36.hM2tab
+#print axioms HeckeIndexCardWeight36.hCtab
+#print axioms HeckeIndexCardWeight36.hcheck
 #print axioms HeckeIndexCardWeight36.hcard
 #print axioms HeckeIndexCardWeight36.det_C
 #print axioms HeckeIndexCardWeight36.index_card
@@ -58,6 +78,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight38.hAeq
 #print axioms HeckeIndexCardWeight38.hfi
 #print axioms HeckeIndexCardWeight38.hmin
+#print axioms HeckeIndexCardWeight38.hM2tab
+#print axioms HeckeIndexCardWeight38.hCtab
+#print axioms HeckeIndexCardWeight38.hcheck
 #print axioms HeckeIndexCardWeight38.hcard
 #print axioms HeckeIndexCardWeight38.det_C
 #print axioms HeckeIndexCardWeight38.index_card
@@ -65,6 +88,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight40.hAeq
 #print axioms HeckeIndexCardWeight40.hfi
 #print axioms HeckeIndexCardWeight40.hmin
+#print axioms HeckeIndexCardWeight40.hM2tab
+#print axioms HeckeIndexCardWeight40.hCtab
+#print axioms HeckeIndexCardWeight40.hcheck
 #print axioms HeckeIndexCardWeight40.hcard
 #print axioms HeckeIndexCardWeight40.det_C
 #print axioms HeckeIndexCardWeight40.index_card
@@ -72,6 +98,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight42.hAeq
 #print axioms HeckeIndexCardWeight42.hfi
 #print axioms HeckeIndexCardWeight42.hmin
+#print axioms HeckeIndexCardWeight42.hM2tab
+#print axioms HeckeIndexCardWeight42.hCtab
+#print axioms HeckeIndexCardWeight42.hcheck
 #print axioms HeckeIndexCardWeight42.hcard
 #print axioms HeckeIndexCardWeight42.det_C
 #print axioms HeckeIndexCardWeight42.index_card
@@ -79,6 +108,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight44.hAeq
 #print axioms HeckeIndexCardWeight44.hfi
 #print axioms HeckeIndexCardWeight44.hmin
+#print axioms HeckeIndexCardWeight44.hM2tab
+#print axioms HeckeIndexCardWeight44.hCtab
+#print axioms HeckeIndexCardWeight44.hcheck
 #print axioms HeckeIndexCardWeight44.hcard
 #print axioms HeckeIndexCardWeight44.det_C
 #print axioms HeckeIndexCardWeight44.index_card
@@ -86,6 +118,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight46.hAeq
 #print axioms HeckeIndexCardWeight46.hfi
 #print axioms HeckeIndexCardWeight46.hmin
+#print axioms HeckeIndexCardWeight46.hM2tab
+#print axioms HeckeIndexCardWeight46.hCtab
+#print axioms HeckeIndexCardWeight46.hcheck
 #print axioms HeckeIndexCardWeight46.hcard
 #print axioms HeckeIndexCardWeight46.det_C
 #print axioms HeckeIndexCardWeight46.index_card
@@ -93,6 +128,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight48.hAeq
 #print axioms HeckeIndexCardWeight48.hfi
 #print axioms HeckeIndexCardWeight48.hmin
+#print axioms HeckeIndexCardWeight48.hM2tab
+#print axioms HeckeIndexCardWeight48.hCtab
+#print axioms HeckeIndexCardWeight48.hcheck
 #print axioms HeckeIndexCardWeight48.hcard
 #print axioms HeckeIndexCardWeight48.det_C
 #print axioms HeckeIndexCardWeight48.index_card
@@ -100,6 +138,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight50.hAeq
 #print axioms HeckeIndexCardWeight50.hfi
 #print axioms HeckeIndexCardWeight50.hmin
+#print axioms HeckeIndexCardWeight50.hM2tab
+#print axioms HeckeIndexCardWeight50.hCtab
+#print axioms HeckeIndexCardWeight50.hcheck
 #print axioms HeckeIndexCardWeight50.hcard
 #print axioms HeckeIndexCardWeight50.det_C
 #print axioms HeckeIndexCardWeight50.index_card
@@ -107,6 +148,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight52.hAeq
 #print axioms HeckeIndexCardWeight52.hfi
 #print axioms HeckeIndexCardWeight52.hmin
+#print axioms HeckeIndexCardWeight52.hM2tab
+#print axioms HeckeIndexCardWeight52.hCtab
+#print axioms HeckeIndexCardWeight52.hcheck
 #print axioms HeckeIndexCardWeight52.hcard
 #print axioms HeckeIndexCardWeight52.det_C
 #print axioms HeckeIndexCardWeight52.index_card
@@ -114,6 +158,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight54.hAeq
 #print axioms HeckeIndexCardWeight54.hfi
 #print axioms HeckeIndexCardWeight54.hmin
+#print axioms HeckeIndexCardWeight54.hM2tab
+#print axioms HeckeIndexCardWeight54.hCtab
+#print axioms HeckeIndexCardWeight54.hcheck
 #print axioms HeckeIndexCardWeight54.hcard
 #print axioms HeckeIndexCardWeight54.det_C
 #print axioms HeckeIndexCardWeight54.index_card
@@ -121,6 +168,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight56.hAeq
 #print axioms HeckeIndexCardWeight56.hfi
 #print axioms HeckeIndexCardWeight56.hmin
+#print axioms HeckeIndexCardWeight56.hM2tab
+#print axioms HeckeIndexCardWeight56.hCtab
+#print axioms HeckeIndexCardWeight56.hcheck
 #print axioms HeckeIndexCardWeight56.hcard
 #print axioms HeckeIndexCardWeight56.det_C
 #print axioms HeckeIndexCardWeight56.index_card
@@ -128,6 +178,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight58.hAeq
 #print axioms HeckeIndexCardWeight58.hfi
 #print axioms HeckeIndexCardWeight58.hmin
+#print axioms HeckeIndexCardWeight58.hM2tab
+#print axioms HeckeIndexCardWeight58.hCtab
+#print axioms HeckeIndexCardWeight58.hcheck
 #print axioms HeckeIndexCardWeight58.hcard
 #print axioms HeckeIndexCardWeight58.det_C
 #print axioms HeckeIndexCardWeight58.index_card
@@ -135,6 +188,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight60.hAeq
 #print axioms HeckeIndexCardWeight60.hfi
 #print axioms HeckeIndexCardWeight60.hmin
+#print axioms HeckeIndexCardWeight60.hM2tab
+#print axioms HeckeIndexCardWeight60.hCtab
+#print axioms HeckeIndexCardWeight60.hcheck
 #print axioms HeckeIndexCardWeight60.hcard
 #print axioms HeckeIndexCardWeight60.det_C
 #print axioms HeckeIndexCardWeight60.index_card
@@ -142,6 +198,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight62.hAeq
 #print axioms HeckeIndexCardWeight62.hfi
 #print axioms HeckeIndexCardWeight62.hmin
+#print axioms HeckeIndexCardWeight62.hM2tab
+#print axioms HeckeIndexCardWeight62.hCtab
+#print axioms HeckeIndexCardWeight62.hcheck
 #print axioms HeckeIndexCardWeight62.hcard
 #print axioms HeckeIndexCardWeight62.det_C
 #print axioms HeckeIndexCardWeight62.index_card
@@ -149,6 +208,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight64.hAeq
 #print axioms HeckeIndexCardWeight64.hfi
 #print axioms HeckeIndexCardWeight64.hmin
+#print axioms HeckeIndexCardWeight64.hM2tab
+#print axioms HeckeIndexCardWeight64.hCtab
+#print axioms HeckeIndexCardWeight64.hcheck
 #print axioms HeckeIndexCardWeight64.hcard
 #print axioms HeckeIndexCardWeight64.det_C
 #print axioms HeckeIndexCardWeight64.index_card
@@ -156,6 +218,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight66.hAeq
 #print axioms HeckeIndexCardWeight66.hfi
 #print axioms HeckeIndexCardWeight66.hmin
+#print axioms HeckeIndexCardWeight66.hM2tab
+#print axioms HeckeIndexCardWeight66.hCtab
+#print axioms HeckeIndexCardWeight66.hcheck
 #print axioms HeckeIndexCardWeight66.hcard
 #print axioms HeckeIndexCardWeight66.det_C
 #print axioms HeckeIndexCardWeight66.index_card
@@ -163,6 +228,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight68.hAeq
 #print axioms HeckeIndexCardWeight68.hfi
 #print axioms HeckeIndexCardWeight68.hmin
+#print axioms HeckeIndexCardWeight68.hM2tab
+#print axioms HeckeIndexCardWeight68.hCtab
+#print axioms HeckeIndexCardWeight68.hcheck
 #print axioms HeckeIndexCardWeight68.hcard
 #print axioms HeckeIndexCardWeight68.det_C
 #print axioms HeckeIndexCardWeight68.index_card
@@ -170,6 +238,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight70.hAeq
 #print axioms HeckeIndexCardWeight70.hfi
 #print axioms HeckeIndexCardWeight70.hmin
+#print axioms HeckeIndexCardWeight70.hM2tab
+#print axioms HeckeIndexCardWeight70.hCtab
+#print axioms HeckeIndexCardWeight70.hcheck
 #print axioms HeckeIndexCardWeight70.hcard
 #print axioms HeckeIndexCardWeight70.det_C
 #print axioms HeckeIndexCardWeight70.index_card
@@ -177,6 +248,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight74.hAeq
 #print axioms HeckeIndexCardWeight74.hfi
 #print axioms HeckeIndexCardWeight74.hmin
+#print axioms HeckeIndexCardWeight74.hM2tab
+#print axioms HeckeIndexCardWeight74.hCtab
+#print axioms HeckeIndexCardWeight74.hcheck
 #print axioms HeckeIndexCardWeight74.hcard
 #print axioms HeckeIndexCardWeight74.det_C
 #print axioms HeckeIndexCardWeight74.index_card
@@ -184,6 +258,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight72.hAeq
 #print axioms HeckeIndexCardWeight72.hfi
 #print axioms HeckeIndexCardWeight72.hmin
+#print axioms HeckeIndexCardWeight72.hM2tab
+#print axioms HeckeIndexCardWeight72.hCtab
+#print axioms HeckeIndexCardWeight72.hcheck
 #print axioms HeckeIndexCardWeight72.hcard
 #print axioms HeckeIndexCardWeight72.det_C
 #print axioms HeckeIndexCardWeight72.index_card
@@ -191,6 +268,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight76.hAeq
 #print axioms HeckeIndexCardWeight76.hfi
 #print axioms HeckeIndexCardWeight76.hmin
+#print axioms HeckeIndexCardWeight76.hM2tab
+#print axioms HeckeIndexCardWeight76.hCtab
+#print axioms HeckeIndexCardWeight76.hcheck
 #print axioms HeckeIndexCardWeight76.hcard
 #print axioms HeckeIndexCardWeight76.det_C
 #print axioms HeckeIndexCardWeight76.index_card
@@ -198,6 +278,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight78.hAeq
 #print axioms HeckeIndexCardWeight78.hfi
 #print axioms HeckeIndexCardWeight78.hmin
+#print axioms HeckeIndexCardWeight78.hM2tab
+#print axioms HeckeIndexCardWeight78.hCtab
+#print axioms HeckeIndexCardWeight78.hcheck
 #print axioms HeckeIndexCardWeight78.hcard
 #print axioms HeckeIndexCardWeight78.det_C
 #print axioms HeckeIndexCardWeight78.index_card
@@ -205,6 +288,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight80.hAeq
 #print axioms HeckeIndexCardWeight80.hfi
 #print axioms HeckeIndexCardWeight80.hmin
+#print axioms HeckeIndexCardWeight80.hM2tab
+#print axioms HeckeIndexCardWeight80.hCtab
+#print axioms HeckeIndexCardWeight80.hcheck
 #print axioms HeckeIndexCardWeight80.hcard
 #print axioms HeckeIndexCardWeight80.det_C
 #print axioms HeckeIndexCardWeight80.index_card
@@ -212,6 +298,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight82.hAeq
 #print axioms HeckeIndexCardWeight82.hfi
 #print axioms HeckeIndexCardWeight82.hmin
+#print axioms HeckeIndexCardWeight82.hM2tab
+#print axioms HeckeIndexCardWeight82.hCtab
+#print axioms HeckeIndexCardWeight82.hcheck
 #print axioms HeckeIndexCardWeight82.hcard
 #print axioms HeckeIndexCardWeight82.det_C
 #print axioms HeckeIndexCardWeight82.index_card
@@ -219,6 +308,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight84.hAeq
 #print axioms HeckeIndexCardWeight84.hfi
 #print axioms HeckeIndexCardWeight84.hmin
+#print axioms HeckeIndexCardWeight84.hM2tab
+#print axioms HeckeIndexCardWeight84.hCtab
+#print axioms HeckeIndexCardWeight84.hcheck
 #print axioms HeckeIndexCardWeight84.hcard
 #print axioms HeckeIndexCardWeight84.det_C
 #print axioms HeckeIndexCardWeight84.index_card
@@ -226,6 +318,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight86.hAeq
 #print axioms HeckeIndexCardWeight86.hfi
 #print axioms HeckeIndexCardWeight86.hmin
+#print axioms HeckeIndexCardWeight86.hM2tab
+#print axioms HeckeIndexCardWeight86.hCtab
+#print axioms HeckeIndexCardWeight86.hcheck
 #print axioms HeckeIndexCardWeight86.hcard
 #print axioms HeckeIndexCardWeight86.det_C
 #print axioms HeckeIndexCardWeight86.index_card
@@ -233,6 +328,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight88.hAeq
 #print axioms HeckeIndexCardWeight88.hfi
 #print axioms HeckeIndexCardWeight88.hmin
+#print axioms HeckeIndexCardWeight88.hM2tab
+#print axioms HeckeIndexCardWeight88.hCtab
+#print axioms HeckeIndexCardWeight88.hcheck
 #print axioms HeckeIndexCardWeight88.hcard
 #print axioms HeckeIndexCardWeight88.det_C
 #print axioms HeckeIndexCardWeight88.index_card
@@ -240,6 +338,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight90.hAeq
 #print axioms HeckeIndexCardWeight90.hfi
 #print axioms HeckeIndexCardWeight90.hmin
+#print axioms HeckeIndexCardWeight90.hM2tab
+#print axioms HeckeIndexCardWeight90.hCtab
+#print axioms HeckeIndexCardWeight90.hcheck
 #print axioms HeckeIndexCardWeight90.hcard
 #print axioms HeckeIndexCardWeight90.det_C
 #print axioms HeckeIndexCardWeight90.index_card
@@ -247,6 +348,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight92.hAeq
 #print axioms HeckeIndexCardWeight92.hfi
 #print axioms HeckeIndexCardWeight92.hmin
+#print axioms HeckeIndexCardWeight92.hM2tab
+#print axioms HeckeIndexCardWeight92.hCtab
+#print axioms HeckeIndexCardWeight92.hcheck
 #print axioms HeckeIndexCardWeight92.hcard
 #print axioms HeckeIndexCardWeight92.det_C
 #print axioms HeckeIndexCardWeight92.index_card
@@ -254,6 +358,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight94.hAeq
 #print axioms HeckeIndexCardWeight94.hfi
 #print axioms HeckeIndexCardWeight94.hmin
+#print axioms HeckeIndexCardWeight94.hM2tab
+#print axioms HeckeIndexCardWeight94.hCtab
+#print axioms HeckeIndexCardWeight94.hcheck
 #print axioms HeckeIndexCardWeight94.hcard
 #print axioms HeckeIndexCardWeight94.det_C
 #print axioms HeckeIndexCardWeight94.index_card
@@ -261,6 +368,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight96.hAeq
 #print axioms HeckeIndexCardWeight96.hfi
 #print axioms HeckeIndexCardWeight96.hmin
+#print axioms HeckeIndexCardWeight96.hM2tab
+#print axioms HeckeIndexCardWeight96.hCtab
+#print axioms HeckeIndexCardWeight96.hcheck
 #print axioms HeckeIndexCardWeight96.hcard
 #print axioms HeckeIndexCardWeight96.det_C
 #print axioms HeckeIndexCardWeight96.index_card
@@ -268,6 +378,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight98.hAeq
 #print axioms HeckeIndexCardWeight98.hfi
 #print axioms HeckeIndexCardWeight98.hmin
+#print axioms HeckeIndexCardWeight98.hM2tab
+#print axioms HeckeIndexCardWeight98.hCtab
+#print axioms HeckeIndexCardWeight98.hcheck
 #print axioms HeckeIndexCardWeight98.hcard
 #print axioms HeckeIndexCardWeight98.det_C
 #print axioms HeckeIndexCardWeight98.index_card
@@ -275,6 +388,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight100.hAeq
 #print axioms HeckeIndexCardWeight100.hfi
 #print axioms HeckeIndexCardWeight100.hmin
+#print axioms HeckeIndexCardWeight100.hM2tab
+#print axioms HeckeIndexCardWeight100.hCtab
+#print axioms HeckeIndexCardWeight100.hcheck
 #print axioms HeckeIndexCardWeight100.hcard
 #print axioms HeckeIndexCardWeight100.det_C
 #print axioms HeckeIndexCardWeight100.index_card
@@ -282,6 +398,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight102.hAeq
 #print axioms HeckeIndexCardWeight102.hfi
 #print axioms HeckeIndexCardWeight102.hmin
+#print axioms HeckeIndexCardWeight102.hM2tab
+#print axioms HeckeIndexCardWeight102.hCtab
+#print axioms HeckeIndexCardWeight102.hcheck
 #print axioms HeckeIndexCardWeight102.hcard
 #print axioms HeckeIndexCardWeight102.det_C
 #print axioms HeckeIndexCardWeight102.index_card
@@ -289,6 +408,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight104.hAeq
 #print axioms HeckeIndexCardWeight104.hfi
 #print axioms HeckeIndexCardWeight104.hmin
+#print axioms HeckeIndexCardWeight104.hM2tab
+#print axioms HeckeIndexCardWeight104.hCtab
+#print axioms HeckeIndexCardWeight104.hcheck
 #print axioms HeckeIndexCardWeight104.hcard
 #print axioms HeckeIndexCardWeight104.det_C
 #print axioms HeckeIndexCardWeight104.index_card
@@ -296,6 +418,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight106.hAeq
 #print axioms HeckeIndexCardWeight106.hfi
 #print axioms HeckeIndexCardWeight106.hmin
+#print axioms HeckeIndexCardWeight106.hM2tab
+#print axioms HeckeIndexCardWeight106.hCtab
+#print axioms HeckeIndexCardWeight106.hcheck
 #print axioms HeckeIndexCardWeight106.hcard
 #print axioms HeckeIndexCardWeight106.det_C
 #print axioms HeckeIndexCardWeight106.index_card
@@ -303,6 +428,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight108.hAeq
 #print axioms HeckeIndexCardWeight108.hfi
 #print axioms HeckeIndexCardWeight108.hmin
+#print axioms HeckeIndexCardWeight108.hM2tab
+#print axioms HeckeIndexCardWeight108.hCtab
+#print axioms HeckeIndexCardWeight108.hcheck
 #print axioms HeckeIndexCardWeight108.hcard
 #print axioms HeckeIndexCardWeight108.det_C
 #print axioms HeckeIndexCardWeight108.index_card
@@ -310,6 +438,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight110.hAeq
 #print axioms HeckeIndexCardWeight110.hfi
 #print axioms HeckeIndexCardWeight110.hmin
+#print axioms HeckeIndexCardWeight110.hM2tab
+#print axioms HeckeIndexCardWeight110.hCtab
+#print axioms HeckeIndexCardWeight110.hcheck
 #print axioms HeckeIndexCardWeight110.hcard
 #print axioms HeckeIndexCardWeight110.det_C
 #print axioms HeckeIndexCardWeight110.index_card
@@ -317,6 +448,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight112.hAeq
 #print axioms HeckeIndexCardWeight112.hfi
 #print axioms HeckeIndexCardWeight112.hmin
+#print axioms HeckeIndexCardWeight112.hM2tab
+#print axioms HeckeIndexCardWeight112.hCtab
+#print axioms HeckeIndexCardWeight112.hcheck
 #print axioms HeckeIndexCardWeight112.hcard
 #print axioms HeckeIndexCardWeight112.det_C
 #print axioms HeckeIndexCardWeight112.index_card
@@ -324,6 +458,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight114.hAeq
 #print axioms HeckeIndexCardWeight114.hfi
 #print axioms HeckeIndexCardWeight114.hmin
+#print axioms HeckeIndexCardWeight114.hM2tab
+#print axioms HeckeIndexCardWeight114.hCtab
+#print axioms HeckeIndexCardWeight114.hcheck
 #print axioms HeckeIndexCardWeight114.hcard
 #print axioms HeckeIndexCardWeight114.det_C
 #print axioms HeckeIndexCardWeight114.index_card
@@ -331,6 +468,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight116.hAeq
 #print axioms HeckeIndexCardWeight116.hfi
 #print axioms HeckeIndexCardWeight116.hmin
+#print axioms HeckeIndexCardWeight116.hM2tab
+#print axioms HeckeIndexCardWeight116.hCtab
+#print axioms HeckeIndexCardWeight116.hcheck
 #print axioms HeckeIndexCardWeight116.hcard
 #print axioms HeckeIndexCardWeight116.det_C
 #print axioms HeckeIndexCardWeight116.index_card
@@ -338,6 +478,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight118.hAeq
 #print axioms HeckeIndexCardWeight118.hfi
 #print axioms HeckeIndexCardWeight118.hmin
+#print axioms HeckeIndexCardWeight118.hM2tab
+#print axioms HeckeIndexCardWeight118.hCtab
+#print axioms HeckeIndexCardWeight118.hcheck
 #print axioms HeckeIndexCardWeight118.hcard
 #print axioms HeckeIndexCardWeight118.det_C
 #print axioms HeckeIndexCardWeight118.index_card
@@ -345,6 +488,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight120.hAeq
 #print axioms HeckeIndexCardWeight120.hfi
 #print axioms HeckeIndexCardWeight120.hmin
+#print axioms HeckeIndexCardWeight120.hM2tab
+#print axioms HeckeIndexCardWeight120.hCtab
+#print axioms HeckeIndexCardWeight120.hcheck
 #print axioms HeckeIndexCardWeight120.hcard
 #print axioms HeckeIndexCardWeight120.det_C
 #print axioms HeckeIndexCardWeight120.index_card
@@ -352,6 +498,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight122.hAeq
 #print axioms HeckeIndexCardWeight122.hfi
 #print axioms HeckeIndexCardWeight122.hmin
+#print axioms HeckeIndexCardWeight122.hM2tab
+#print axioms HeckeIndexCardWeight122.hCtab
+#print axioms HeckeIndexCardWeight122.hcheck
 #print axioms HeckeIndexCardWeight122.hcard
 #print axioms HeckeIndexCardWeight122.det_C
 #print axioms HeckeIndexCardWeight122.index_card
@@ -359,6 +508,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight124.hAeq
 #print axioms HeckeIndexCardWeight124.hfi
 #print axioms HeckeIndexCardWeight124.hmin
+#print axioms HeckeIndexCardWeight124.hM2tab
+#print axioms HeckeIndexCardWeight124.hCtab
+#print axioms HeckeIndexCardWeight124.hcheck
 #print axioms HeckeIndexCardWeight124.hcard
 #print axioms HeckeIndexCardWeight124.det_C
 #print axioms HeckeIndexCardWeight124.index_card
@@ -366,6 +518,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight126.hAeq
 #print axioms HeckeIndexCardWeight126.hfi
 #print axioms HeckeIndexCardWeight126.hmin
+#print axioms HeckeIndexCardWeight126.hM2tab
+#print axioms HeckeIndexCardWeight126.hCtab
+#print axioms HeckeIndexCardWeight126.hcheck
 #print axioms HeckeIndexCardWeight126.hcard
 #print axioms HeckeIndexCardWeight126.det_C
 #print axioms HeckeIndexCardWeight126.index_card
@@ -373,6 +528,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight128.hAeq
 #print axioms HeckeIndexCardWeight128.hfi
 #print axioms HeckeIndexCardWeight128.hmin
+#print axioms HeckeIndexCardWeight128.hM2tab
+#print axioms HeckeIndexCardWeight128.hCtab
+#print axioms HeckeIndexCardWeight128.hcheck
 #print axioms HeckeIndexCardWeight128.hcard
 #print axioms HeckeIndexCardWeight128.det_C
 #print axioms HeckeIndexCardWeight128.index_card
@@ -380,6 +538,9 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight130.hAeq
 #print axioms HeckeIndexCardWeight130.hfi
 #print axioms HeckeIndexCardWeight130.hmin
+#print axioms HeckeIndexCardWeight130.hM2tab
+#print axioms HeckeIndexCardWeight130.hCtab
+#print axioms HeckeIndexCardWeight130.hcheck
 #print axioms HeckeIndexCardWeight130.hcard
 #print axioms HeckeIndexCardWeight130.det_C
 #print axioms HeckeIndexCardWeight130.index_card
@@ -387,10 +548,103 @@ Regenerate the name list from the generated files; do not hand-edit. -/
 #print axioms HeckeIndexCardWeight134.hAeq
 #print axioms HeckeIndexCardWeight134.hfi
 #print axioms HeckeIndexCardWeight134.hmin
+#print axioms HeckeIndexCardWeight134.hM2tab
+#print axioms HeckeIndexCardWeight134.hCtab
+#print axioms HeckeIndexCardWeight134.hcheck
 #print axioms HeckeIndexCardWeight134.hcard
 #print axioms HeckeIndexCardWeight134.det_C
 #print axioms HeckeIndexCardWeight134.index_card
 #print axioms HeckeIndexCardWeight134.index_card_natCard
+#print axioms HeckeCyclicWeight24.heckeLattice_eq_t2Span
+#print axioms HeckeCyclicWeight28.heckeLattice_eq_t2Span
+#print axioms HeckeCyclicWeight30.heckeLattice_eq_t2Span
+#print axioms HeckeCyclicWeight32.heckeLattice_eq_t2Span
+#print axioms HeckeCyclicWeight34.heckeLattice_eq_t2Span
+#print axioms HeckeCyclicWeight36.hfi
+#print axioms HeckeCyclicWeight36.op_id
+#print axioms HeckeCyclicWeight36.Dn_smul_mem
+#print axioms HeckeCyclicWeight36.index_card
+#print axioms HeckeCyclicWeight36.D_eq_Ik
+#print axioms HeckeCyclicWeight36.t2Span_le
+#print axioms HeckeCyclicWeight36.heckeLattice_ne_t2Span
+#print axioms HeckeCyclicWeight38.heckeLattice_eq_t2Span
+#print axioms HeckeCyclicWeight40.hfi
+#print axioms HeckeCyclicWeight40.op_id
+#print axioms HeckeCyclicWeight40.Dn_smul_mem
+#print axioms HeckeCyclicWeight40.index_card
+#print axioms HeckeCyclicWeight40.D_eq_Ik
+#print axioms HeckeCyclicWeight40.t2Span_le
+#print axioms HeckeCyclicWeight40.heckeLattice_ne_t2Span
+#print axioms HeckeCyclicWeight42.hfi
+#print axioms HeckeCyclicWeight42.op_id
+#print axioms HeckeCyclicWeight42.Dn_smul_mem
+#print axioms HeckeCyclicWeight42.index_card
+#print axioms HeckeCyclicWeight42.D_eq_Ik
+#print axioms HeckeCyclicWeight42.t2Span_le
+#print axioms HeckeCyclicWeight42.heckeLattice_ne_t2Span
+#print axioms HeckeCyclicWeight44.hfi
+#print axioms HeckeCyclicWeight44.op_id
+#print axioms HeckeCyclicWeight44.Dn_smul_mem
+#print axioms HeckeCyclicWeight44.index_card
+#print axioms HeckeCyclicWeight44.D_eq_Ik
+#print axioms HeckeCyclicWeight44.t2Span_le
+#print axioms HeckeCyclicWeight44.heckeLattice_ne_t2Span
+#print axioms HeckeCyclicWeight46.hfi
+#print axioms HeckeCyclicWeight46.op_id
+#print axioms HeckeCyclicWeight46.Dn_smul_mem
+#print axioms HeckeCyclicWeight46.index_card
+#print axioms HeckeCyclicWeight46.D_eq_Ik
+#print axioms HeckeCyclicWeight46.t2Span_le
+#print axioms HeckeCyclicWeight46.heckeLattice_ne_t2Span
+#print axioms HeckeCyclicWeight48.hfi
+#print axioms HeckeCyclicWeight48.op_id
+#print axioms HeckeCyclicWeight48.Dn_smul_mem
+#print axioms HeckeCyclicWeight48.index_card
+#print axioms HeckeCyclicWeight48.D_eq_Ik
+#print axioms HeckeCyclicWeight48.t2Span_le
+#print axioms HeckeCyclicWeight48.heckeLattice_ne_t2Span
+#print axioms HeckeCyclicWeight50.hfi
+#print axioms HeckeCyclicWeight50.op_id
+#print axioms HeckeCyclicWeight50.Dn_smul_mem
+#print axioms HeckeCyclicWeight50.index_card
+#print axioms HeckeCyclicWeight50.D_eq_Ik
+#print axioms HeckeCyclicWeight50.t2Span_le
+#print axioms HeckeCyclicWeight50.heckeLattice_ne_t2Span
+#print axioms HeckeCyclicWeight52.hfi
+#print axioms HeckeCyclicWeight52.op_id
+#print axioms HeckeCyclicWeight52.Dn_smul_mem
+#print axioms HeckeCyclicWeight52.index_card
+#print axioms HeckeCyclicWeight52.D_eq_Ik
+#print axioms HeckeCyclicWeight52.t2Span_le
+#print axioms HeckeCyclicWeight52.heckeLattice_ne_t2Span
+#print axioms HeckeCyclicWeight54.hfi
+#print axioms HeckeCyclicWeight54.op_id
+#print axioms HeckeCyclicWeight54.Dn_smul_mem
+#print axioms HeckeCyclicWeight54.index_card
+#print axioms HeckeCyclicWeight54.D_eq_Ik
+#print axioms HeckeCyclicWeight54.t2Span_le
+#print axioms HeckeCyclicWeight54.heckeLattice_ne_t2Span
+#print axioms HeckeCyclicWeight56.hfi
+#print axioms HeckeCyclicWeight56.op_id
+#print axioms HeckeCyclicWeight56.Dn_smul_mem
+#print axioms HeckeCyclicWeight56.index_card
+#print axioms HeckeCyclicWeight56.D_eq_Ik
+#print axioms HeckeCyclicWeight56.t2Span_le
+#print axioms HeckeCyclicWeight56.heckeLattice_ne_t2Span
+#print axioms HeckeCyclicWeight58.hfi
+#print axioms HeckeCyclicWeight58.op_id
+#print axioms HeckeCyclicWeight58.Dn_smul_mem
+#print axioms HeckeCyclicWeight58.index_card
+#print axioms HeckeCyclicWeight58.D_eq_Ik
+#print axioms HeckeCyclicWeight58.t2Span_le
+#print axioms HeckeCyclicWeight58.heckeLattice_ne_t2Span
+#print axioms HeckeCyclicWeight62.hfi
+#print axioms HeckeCyclicWeight62.op_id
+#print axioms HeckeCyclicWeight62.Dn_smul_mem
+#print axioms HeckeCyclicWeight62.index_card
+#print axioms HeckeCyclicWeight62.D_eq_Ik
+#print axioms HeckeCyclicWeight62.t2Span_le
+#print axioms HeckeCyclicWeight62.heckeLattice_ne_t2Span
 #print axioms HeckeRingGensWeight24.hfi
 #print axioms HeckeRingGensWeight24.heckeRing_eq_gens2357
 #print axioms HeckeRingGensWeight24.heckeRing_eq_gens235

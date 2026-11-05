@@ -1,4 +1,4 @@
-# Iteration 24 wave — tracking (3 blueprint implementations in parallel)
+# Iteration 24 wave — tracking (3 blueprint implementations in parallel) — CLOSED 2026-11-05
 
 Operator instruction (2026-11-04, T2 submission): standing loop — close the
 Hecke index gaps (iteration23-review §6.1–6.3 → §7.2); priorities normal,
@@ -102,3 +102,13 @@ index-card for a List-based fix.  `HeckeRingGens*`: 0.  Legacy (iterations
 ≤ 23: HeckeIndex*, HeckeRational*, Maeda{Small,Dim6–10,T3*}Weights,
 LehmerSieve691): 5296 — pre-existing, includes heavy-chain ancestor
 `MaedaSmallWeights` (`seqP` decides) → operator decision, review §7.
+
+### 2026-11-05 — INTEGRATED + CLOSED
+index-card nested fix 43d6df5 merged (013cd06).  index-cyclic bbcd288
+merged (3cf4d7b).  Combined trunk on Modal: light root 8527 jobs 0/0,
+AxCheckDecide top-level 1424/0, nested 7006/5296 (all pre-24 files),
+`Iteration24AxCheck` 836 decls on ≤ std-3 axioms, no `sorryAx`.  Generators
+`--check` byte-identical (hecke_index 4/4, hecke_cyclic, hecke_ring_gens);
+`ci_targets.py --report` exit 0.  Review: `research/iteration24-review.md`.
+Worktrees under worktree/mp1/ kept (clean; branches preserved) — remove at
+the operator's master merge.  Master merge handed to the operator.

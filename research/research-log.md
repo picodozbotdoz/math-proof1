@@ -2179,19 +2179,32 @@ CURRENT_PROMPT / ENTRY-PROMPTS / reviews still resolves.  Verification was
 behavioral (script exercised against real worktrees as above); no `.lean`
 file was touched, so no Modal build and no `tauceti_audit` run.
 
-## Iteration 24 — IN PROGRESS, mid-wave session handoff (2026-11-04 ~22:15)
+## Iteration 24 — the Hecke index closed (2026-11-04 → 2026-11-05)
 
-Theme: close the Hecke index (iteration23-review §6.1–6.3 → §7.2).  INIT +
-recon (stay at `v4.36.0-rc1`; CI push tier measured **2.0 min** on master,
-rec 1 satisfied), probes 1–3 (`research/iteration24/FINDINGS.md`: dims ≤ 4
-quotient cyclic D = I_k; dims 5–10 non-cyclic, T₃ carries almost all,
-**𝕋 = ℤ[T₂,T₃,T₅(,T₇)] generically for n ≤ 10 certificate-free**; Mathlib
-`relIndex` API confirmed at pin), three blueprints committed (f7628f6),
-wave spawned (9357338).  Workers progressed (index-card G1 green;
-index-cyclic G1+G2+G3-phase1 green incl. AxCheckDecide 1360/0;
-hecke-ring-gens G1 measurement nearly done, tiny-certificate route found)
-before the operator wrapped the session up.  All state salvage-committed;
-worktrees preserved.  **Resume: `research/iteration24/WAVE-TRACKING.md`
-(§ incident log 2026-11-04 ~22:15) — re-enter stage (d), fresh-respawn per
-§6.**  No master contact; trunk `dev/iteration24-hecke-index` is
-self-contained.
+Theme: iteration23-review §6.1–6.3 / §7.2.  Trunk
+`dev/iteration24-hecke-index`; three blueprints (FINDINGS probes 1–3), one
+wave with a mid-wave operator handoff (salvage → cold respawn, §6).
+Review: `research/iteration24-review.md`.
+
+* **b1 index-card** — `HeckeLatticeIndex.relIndex_t2_eq_det` /
+  `natCard_quot_eq_det`; `HeckeIndexCard{Small,}Weights`:
+  `[𝕋 : ℤ[T₂]] = |I_k|` (`relIndex` and `Nat.card (𝕋 ⧸ ℤ[T₂])`) at all 54
+  weights.
+* **b2 index-cyclic** — `HeckeCyclic` (quotient cyclic at `n ≤ 4`,
+  `heckeLattice_eq_t2Span_iff`), `HeckeCyclicWeights`: `D = I_k` and
+  `𝕋 ≠ ℤ[T₂]` at the 12 dims-3–4 weights, `𝕋 = ℤ[T₂]` at the six dim-2
+  weights.
+* **b3 hecke-ring-gens** — `HeckeRingGens`: every `ps`-smooth `T_m` lies in
+  `ℤ[T_p : p ∈ ps]`, so `𝕋 = ℤ[T₂,T₃,T₅,T₇]` for `dim S_k ≤ 10`
+  (certificate-free, all 54 weights); `𝕋 = ℤ[T₂,T₃,T₅]` at the 22
+  `{3,5}`-weights (ten `T₇` row certificates); `[𝕋 : ℤ[T₂,T₃]]` descoped.
+* **Audit** — `AxCheckDecide` nested pass (`#audit_decide_certs_nested`):
+  entrywise certificates inside tactic proofs were never audited; 7600 of
+  9256 used more than `propext`.  The 2304 new ones were fixed (tables + one
+  `List` Bool decide + generic bridge); **5296 in pre-24 files remain open —
+  operator decision** (review §6.1, §7.1).  Combined trunk: light root
+  8527 jobs 0 err / 0 warn, top-level 1424/0, nested 7006/5296 (all pre-24),
+  iteration-24 theorems on ≤ the standard three axioms (`Iteration24AxCheck`).
+
+Next: review §7 (legacy nested retrofit or a recorded exception; ℤ[T₂,T₃]
+structure-constant probe).  Master merge: the operator's.

@@ -521,7 +521,10 @@ no volume/secret, ephemeral `modal run` only) for TauCeti port checks, run via
   files are about it.
 - `MathProof/AxCheckDecide.lean` (opt-in audit, imports the light root) —
   `#audit_decide_certs`: finds every `decide` certificate in the light library
-  and reports those depending on more than `propext`; `#axiom_path ax n`
+  and reports those depending on more than `propext`;
+  `#audit_decide_certs_nested` (iteration 24) does the same for the internal
+  auxiliary lemmas of `decide +kernel` calls *inside* tactic proofs
+  (entrywise `ext; fin_cases <;> decide +kernel`, `show … by decide +kernel`); `#axiom_path ax n`
   prints the chain of constants that pulls axiom `ax` into `n`.
 - `MathProof.lean` — root import file for the *light* modules. The heavy
   kernel-decide modules (`LehmerMod`, `LehmerPacked`) and `AxCheck` are
@@ -674,6 +677,18 @@ decide +kernel`
   `∑ j ∈ Finset.range n, … = 1 := by decide +kernel` failed AxCheckDecide at
   48 weights.  Decide the `List` sum (`((List.range n).map f).sum`) and
   derive the `Finset` form with `MaedaLevelOne.finset_sum_range_eq_list`.
+- **Entrywise certificates are audited too** (2026-11-05, iteration-24
+  integration): the top-level `#audit_decide_certs` never saw `decide
+  +kernel` calls inside tactic proofs; `#audit_decide_certs_nested` found
+  7600 of 9256 beyond `propext` (5296 in pre-24 files remain — see
+  iteration24-review §6.1).  Three causes: `Finset` sums / `Matrix`
+  products in the decided cell; `==` on `ℤ` (`BEq ℤ` →
+  `Int.instLinearOrderPackage` → `Classical.choice`; use `Int.decEq`); any
+  `!![…]` literal in the statement (`Quot.sound`) and `^` on numerals
+  (`Monoid.npow`).  Recipe (`HeckeLatticeIndex.hcard_of_check`): integer
+  pattern-match tables bridged to the matrices by `fin_cases <;> rfl`, ONE
+  `List`-based Bool `decide +kernel` per weight, one generic bridge lemma.
+  Run both passes at every close-out.
 - **`Polynomial.natDegree_map` needs `[IsSimpleRing R]`** at the pin: for
   `ℤ → ℂ` use `natDegree_map_eq_of_injective (RingHom.injective_int _)`.
   Also missing at the pin: `LinearMap.coeFn_sum` (use
