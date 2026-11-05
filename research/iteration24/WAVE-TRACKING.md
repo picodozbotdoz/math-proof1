@@ -21,9 +21,9 @@ every spawn briefing):
 
 | worker | task id | spawned | stalls (branch × gate) | parked? |
 |---|---|---|---|---|
-| index-card | agent_c7cc1c8f — TERMINATED (session wrap-up 2026-11-04 ~22:15) | 2026-11-04 | 0 (operator wrap-up, not a stall) | no |
+| index-card | agent_c7cc1c8f — TERMINATED (session wrap-up 2026-11-04 ~22:15); respawn aae4a388bebe2cc09 (2026-11-05) | 2026-11-04 / 2026-11-05 | 0 (operator wrap-up, not a stall) | no |
 | index-cyclic | agent_c2624ee1 — TERMINATED (session wrap-up, clean tip) | 2026-11-04 | 0 (operator wrap-up, not a stall) | no |
-| hecke-ring-gens | agent_d9d751ff — TERMINATED (session wrap-up 2026-11-04 ~22:15) | 2026-11-04 | 0 (operator wrap-up, not a stall) | no |
+| hecke-ring-gens | agent_d9d751ff — TERMINATED (session wrap-up 2026-11-04 ~22:15); respawn a030abde0ef90ae4f (2026-11-05) | 2026-11-04 / 2026-11-05 | 0 (operator wrap-up, not a stall) | no |
 
 ## Incident log
 (dated; reboots, stalls, terminations/respawns with signals, escalations)
@@ -60,3 +60,11 @@ do-not-redo lists live in each WORKLOG).  index-cyclic's remaining work is
 G3p2 (plug the `hcard` per-weight facts once b1's index-card lands G2–G4);
 its WORKLOG records the exact plug-in recipe.  Modal runners (mrun.sh) live
 under /home/doz/tmp/math-proof1-temp/agent-work/<slug>/runs/ (persistent).
+
+### 2026-11-05 — fresh orchestrator session: wave re-entered at (d)
+Inbox clean (README + empty done/).  Fresh-respawned per §6: index-card
+(resume G2 from salvage 9e518e1) and hecke-ring-gens (G1 full-table run had
+FINISHED after the salvage — `g1_table2.log`: 0 failures, 22 {3,5}-weights;
+resume = record + commit G1, then G2).  index-cyclic NOT respawned yet: its
+only remaining gate (G3p2) is blocked on index-card G3; respawn when b1's
+small file is green.
