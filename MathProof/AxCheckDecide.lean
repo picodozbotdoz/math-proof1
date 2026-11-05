@@ -36,12 +36,17 @@ def isDecideProof (env : Environment) (v : Expr) : Bool :=
       | _ => false
   | _ => false
 
-elab "#audit_decide_certs" : command => do
+/-- Audit the `decide` certificates among top-level theorems (`internal := false`)
+or among the internal auxiliary lemmas (`internal := true`): a `decide +kernel`
+inside a tactic proof (`ext i j; fin_cases i <;> … <;> decide +kernel`) becomes
+an internal auxiliary lemma of the enclosing theorem, invisible to the
+top-level pass. -/
+def auditDecideCerts (internal : Bool) : CommandElabM Unit := do
   let env ← getEnv
   let mut found : Array (Name × Name × Array Name) := #[]
   for (n, ci) in env.constants.map₁.toList do
     let .thmInfo t := ci | continue
-    if n.isInternal then continue
+    if n.isInternal != internal then continue
     let some idx := env.getModuleIdxFor? n | continue
     let modName := env.header.moduleNames[idx.toNat]!
     unless (`MathProof).isPrefixOf modName do continue
@@ -53,7 +58,13 @@ elab "#audit_decide_certs" : command => do
   let bad := sorted.filter fun (_, _, axs) => axs.any (· != ``propext)
   for (m, n, axs) in bad do
     logInfo m!"VIOLATION {m} {n}: {axs.toList}"
-  logInfo m!"decide certificates: {sorted.size} audited, {bad.size} depend on more than propext"
+  let kind := if internal then "nested decide certificates" else "decide certificates"
+  logInfo m!"{kind}: {sorted.size} audited, {bad.size} depend on more than propext"
+
+elab "#audit_decide_certs" : command => auditDecideCerts false
+
+/-- The nested pass: entrywise certificates under `ext`/`fin_cases`. -/
+elab "#audit_decide_certs_nested" : command => auditDecideCerts true
 
 /-- A dependency path from `n` to the axiom `ax`: at each step, the first
 referenced constant that still depends on `ax`.  Shows *which* definition
@@ -80,3 +91,4 @@ elab "#axiom_path " ax:ident n:ident : command => do
 end AxCheckDecide
 
 #audit_decide_certs
+#audit_decide_certs_nested

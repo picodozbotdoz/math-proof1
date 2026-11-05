@@ -16,14 +16,15 @@ do not hand-edit).  For each of the 30 weights with `6 ≤ dim S_k ≤ 10`
 (the 54 weights `24 ≤ k ≤ 134` are split by dimension over
 `HeckeIndexCardSmallWeights` / `HeckeIndexCardWeights`): the dual
 coordinates `C i j = a_1(T₂^i g_j)` of the powers of `T₂` over the Hecke
-basis `T_1, …, T_n` (`g` the Miller basis), certified entrywise by
-`decide +kernel` (`hcard`), `det C = ±I_k` (`eval_det`), and the lattice
+basis `T_1, …, T_n` (`g` the Miller basis), certified by
+one `List`-sum `decide +kernel` per weight (`hcheck`, bridged to `hcard`),
+`det C = ±I_k` (`eval_det`), and the lattice
 index `[𝕋 : ℤ[T₂]] = |I_k|` as an `AddSubgroup.relIndex` (`index_card`) and
 as `Nat.card (𝕋 ⧸ ℤ[T₂])` (`index_card_natCard`), through
 `HeckeLatticeIndex.index_card_dimN`.
 
 Everything is light: no `set_option`, no `native_decide`/`sorry`; the only
-decides are the entrywise per-cell certificates, all `decide +kernel`.
+decide is the per-weight `hcheck` (`List` sums, `propext`-only).
 -/
 
 /-! ### Weight 72 (dim 6) -/
@@ -86,13 +87,16 @@ def C : Matrix (Fin 6) (Fin 6) ℤ := !![
    26599186105269007513668308977766202889242624, 1513896746383872556768854666701438976,
    320884429644337979554914009005568, -36759534199353219574643097600, 106314916631539156731283968]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight72.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 6 =>
     ∑ c : Fin 6, millerCoeff atab 6 j.val c.val
-      * (MaedaWeight72.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight72.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight72.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = -HeckeIndexWeight72.Ik := by
@@ -181,13 +185,16 @@ def C : Matrix (Fin 6) (Fin 6) ℤ := !![
    10093393174013487989988043248142848, 5726453603937563793275273871360,
    -4099819959446834515415910912]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight76.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 6 =>
     ∑ c : Fin 6, millerCoeff atab 6 j.val c.val
-      * (MaedaWeight76.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight76.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight76.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight76.Ik := by
@@ -276,13 +283,16 @@ def C : Matrix (Fin 6) (Fin 6) ℤ := !![
    -9236890703391973314578918763134976, -39509271730850597742343285112832,
    39396785441469206754734309376]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight78.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 6 =>
     ∑ c : Fin 6, millerCoeff atab 6 j.val c.val
-      * (MaedaWeight78.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight78.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight78.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight78.Ik := by
@@ -371,13 +381,16 @@ def C : Matrix (Fin 6) (Fin 6) ℤ := !![
    -47639126478605615523671232567900672, 153898870479535475550877898833920,
    7634102563122151731146961408]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight80.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 6 =>
     ∑ c : Fin 6, millerCoeff atab 6 j.val c.val
-      * (MaedaWeight80.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight80.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight80.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = -HeckeIndexWeight80.Ik := by
@@ -466,13 +479,16 @@ def C : Matrix (Fin 6) (Fin 6) ℤ := !![
    -1910035797098857561466369724049330176, -663505953363642392059279879176192,
    -850337729831358486855990042624]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight82.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 6 =>
     ∑ c : Fin 6, millerCoeff atab 6 j.val c.val
-      * (MaedaWeight82.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight82.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight82.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = -HeckeIndexWeight82.Ik := by
@@ -575,13 +591,16 @@ def C : Matrix (Fin 7) (Fin 7) ℤ := !![
    10556869475426783132622352777386945732679680000, -9070075283865680621802931414436046087032832,
    -7158555300296407403076244529802084864000]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight84.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 7 =>
     ∑ c : Fin 7, millerCoeff atab 7 j.val c.val
-      * (MaedaWeight84.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight84.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight84.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight84.Ik := by
@@ -670,13 +689,16 @@ def C : Matrix (Fin 6) (Fin 6) ℤ := !![
    -20131394793918268680425863651430406297747456, 101597006231609121038527475863081549824,
    -1932250737292770603153176660017152, -31056965522350604548338825805824]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight86.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 6 =>
     ∑ c : Fin 6, millerCoeff atab 6 j.val c.val
-      * (MaedaWeight86.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight86.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight86.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = -HeckeIndexWeight86.Ik := by
@@ -779,13 +801,16 @@ def C : Matrix (Fin 7) (Fin 7) ℤ := !![
    -1423031019074408112224602417946280066948802560000,
    908362458431164617360587423797954014134120448, 643731037552495717001825047840894219776000]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight88.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 7 =>
     ∑ c : Fin 7, millerCoeff atab 7 j.val c.val
-      * (MaedaWeight88.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight88.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight88.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight88.Ik := by
@@ -890,13 +915,16 @@ def C : Matrix (Fin 7) (Fin 7) ℤ := !![
    50515899017219570065474039251769258466208920371200,
    14957346420951321903722920274928262039351590912, 8064755308447734432706945950778610466816000]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight90.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 7 =>
     ∑ c : Fin 7, millerCoeff atab 7 j.val c.val
-      * (MaedaWeight90.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight90.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight90.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = -HeckeIndexWeight90.Ik := by
@@ -1001,13 +1029,16 @@ def C : Matrix (Fin 7) (Fin 7) ℤ := !![
    -102824212950298705733358888128707783289632591872,
    -85235725394441726289927607585234422541209600]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight92.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 7 =>
     ∑ c : Fin 7, millerCoeff atab 7 j.val c.val
-      * (MaedaWeight92.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight92.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight92.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight92.Ik := by
@@ -1112,13 +1143,16 @@ def C : Matrix (Fin 7) (Fin 7) ℤ := !![
    -1127808195440220733961352295359445625795267002368,
    -80593048127929861712876798223048186003456000]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight94.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 7 =>
     ∑ c : Fin 7, millerCoeff atab 7 j.val c.val
-      * (MaedaWeight94.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight94.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight94.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = -HeckeIndexWeight94.Ik := by
@@ -1240,13 +1274,16 @@ def C : Matrix (Fin 8) (Fin 8) ℤ := !![
    202569263580151376175286428455132268164170671537481549086720,
    24530810602134515783710281825966515733897882802825237499904]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight96.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 8 =>
     ∑ c : Fin 8, millerCoeff atab 8 j.val c.val
-      * (MaedaWeight96.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight96.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight96.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = -HeckeIndexWeight96.Ik := by
@@ -1352,13 +1389,16 @@ def C : Matrix (Fin 7) (Fin 7) ℤ := !![
    51984544982818553291231092890618629488087182999552,
    12493107811437249940987677511199769175464345600]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight98.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 7 =>
     ∑ c : Fin 7, millerCoeff atab 7 j.val c.val
-      * (MaedaWeight98.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight98.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight98.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight98.Ik := by
@@ -1484,13 +1524,16 @@ def C : Matrix (Fin 8) (Fin 8) ℤ := !![
    -458709134764890565163477082134061773714261744210214453982003200,
    6850127104529971074795066889630477938375094971690598819958784]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight100.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 8 =>
     ∑ c : Fin 8, millerCoeff atab 8 j.val c.val
-      * (MaedaWeight100.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight100.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight100.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = -HeckeIndexWeight100.Ik := by
@@ -1616,13 +1659,16 @@ def C : Matrix (Fin 8) (Fin 8) ℤ := !![
    -9670720703859172699336251390348667385475859943703801211178188800,
    60303230567404066751469807772509432757212028501728987309932544]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight102.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 8 =>
     ∑ c : Fin 8, millerCoeff atab 8 j.val c.val
-      * (MaedaWeight102.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight102.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight102.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = -HeckeIndexWeight102.Ik := by
@@ -1748,13 +1794,16 @@ def C : Matrix (Fin 8) (Fin 8) ℤ := !![
    -124275585850961157439953916254033789782369369855584472299544248320,
    1355190045708730871877364323086080927158378181458235399665291264]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight104.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 8 =>
     ∑ c : Fin 8, millerCoeff atab 8 j.val c.val
-      * (MaedaWeight104.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight104.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight104.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight104.Ik := by
@@ -1880,13 +1929,16 @@ def C : Matrix (Fin 8) (Fin 8) ℤ := !![
    1707643163819295316679847287442679412127419587806012364793818644480,
    17840266818099601637107531444704773661498297197872434171261026304]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight106.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 8 =>
     ∑ c : Fin 8, millerCoeff atab 8 j.val c.val
-      * (MaedaWeight106.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight106.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight106.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight106.Ik := by
@@ -2040,13 +2092,16 @@ def C : Matrix (Fin 9) (Fin 9) ℤ := !![
    10 ^ 74 + 15268061421134500705749675678374971669370335082453074885830297760711147520))),
    -203920713255909708690658700947141667416685191300528229083717835556570513014784]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight108.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 9 =>
     ∑ c : Fin 9, millerCoeff atab 9 j.val c.val
-      * (MaedaWeight108.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight108.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight108.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight108.Ik := by
@@ -2173,13 +2228,16 @@ def C : Matrix (Fin 8) (Fin 8) ℤ := !![
    -120609732663310506082743840978095923448831708665347973944824813322240,
    6697927344391868616594430960729851867806026111460474385226964926464]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight110.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 8 =>
     ∑ c : Fin 8, millerCoeff atab 8 j.val c.val
-      * (MaedaWeight110.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight110.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight110.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight110.Ik := by
@@ -2334,13 +2392,16 @@ def C : Matrix (Fin 9) (Fin 9) ℤ := !![
    88455355791301148712878941172964975372888706340850929900111994318725939200)), ((11379476 * 10 ^
    74 + 93344221459084523568754611091451495228768952084340043726829239900387147776))]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight112.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 9 =>
     ∑ c : Fin 9, millerCoeff atab 9 j.val c.val
-      * (MaedaWeight112.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight112.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight112.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight112.Ik := by
@@ -2496,13 +2557,16 @@ def C : Matrix (Fin 9) (Fin 9) ℤ := !![
    (-((960612082 * 10 ^ 74 +
    77540268386458766872856712742164830779002250237790040366560509937001168896)))]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight114.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 9 =>
     ∑ c : Fin 9, millerCoeff atab 9 j.val c.val
-      * (MaedaWeight114.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight114.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight114.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = -HeckeIndexWeight114.Ik := by
@@ -2659,13 +2723,16 @@ def C : Matrix (Fin 9) (Fin 9) ℤ := !![
    4964313572383194832157850500826452763378243326927619378972584011226644480))), (-((24804198450 *
    10 ^ 74 + 93809003641889091212744156854590197252857332552433073971758170769576689664)))]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight116.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 9 =>
     ∑ c : Fin 9, millerCoeff atab 9 j.val c.val
-      * (MaedaWeight116.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight116.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight116.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = -HeckeIndexWeight116.Ik := by
@@ -2822,13 +2889,16 @@ def C : Matrix (Fin 9) (Fin 9) ℤ := !![
    ((464637754092 * 10 ^ 74 +
    46311798126733583293458082252703098940680369998538906463852089605655363584))]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight118.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 9 =>
     ∑ c : Fin 9, millerCoeff atab 9 j.val c.val
-      * (MaedaWeight118.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight118.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight118.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = -HeckeIndexWeight118.Ik := by
@@ -3022,13 +3092,16 @@ def C : Matrix (Fin 10) (Fin 10) ℤ := !![
    ((71938741066589065363704463780 * 10 ^ 74 +
    30470967350967627362465863732992020946346787704438520841672021095009484800))]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight120.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 10 =>
     ∑ c : Fin 10, millerCoeff atab 10 j.val c.val
-      * (MaedaWeight120.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight120.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight120.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = -HeckeIndexWeight120.Ik := by
@@ -3188,13 +3261,16 @@ def C : Matrix (Fin 9) (Fin 9) ℤ := !![
    (-((464174380413860 * 10 ^ 74 +
    81302149928564701160684275601469389169807590904668055815826203346296897536)))]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight122.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 9 =>
     ∑ c : Fin 9, millerCoeff atab 9 j.val c.val
-      * (MaedaWeight122.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight122.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight122.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight122.Ik := by
@@ -3391,13 +3467,16 @@ def C : Matrix (Fin 10) (Fin 10) ℤ := !![
    (-((108996782294488913104845677938990 * 10 ^ 74 +
    59642038391735115622572237960840877651620541544556213873303566062714880000)))]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight124.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 10 =>
     ∑ c : Fin 10, millerCoeff atab 10 j.val c.val
-      * (MaedaWeight124.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight124.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight124.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight124.Ik := by
@@ -3593,13 +3672,16 @@ def C : Matrix (Fin 10) (Fin 10) ℤ := !![
    (-((14417259470080972624572554880238485 * 10 ^ 74 +
    73992649296584920410277017859401377541589963192793880546133429452212797440)))]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight126.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 10 =>
     ∑ c : Fin 10, millerCoeff atab 10 j.val c.val
-      * (MaedaWeight126.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight126.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight126.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = -HeckeIndexWeight126.Ik := by
@@ -3797,13 +3879,16 @@ def C : Matrix (Fin 10) (Fin 10) ℤ := !![
    ((13073853159325409127071934112988635 * 10 ^ 74 +
    46962685099913906482928063499495178557879512262039109089987569252355276800))]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight128.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 10 =>
     ∑ c : Fin 10, millerCoeff atab 10 j.val c.val
-      * (MaedaWeight128.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight128.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight128.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight128.Ik := by
@@ -4002,13 +4087,16 @@ def C : Matrix (Fin 10) (Fin 10) ℤ := !![
    ((15727430529527248412361510677466828819 * 10 ^ 74 +
    17357545900708843409001605667333666982859004370140448636101574354387599360))]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight130.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 10 =>
     ∑ c : Fin 10, millerCoeff atab 10 j.val c.val
-      * (MaedaWeight130.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight130.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight130.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight130.Ik := by
@@ -4211,13 +4299,16 @@ def C : Matrix (Fin 10) (Fin 10) ℤ := !![
    (-((31621101707619286983030334484829912082838 * 10 ^ 74 +
    38820375972766719708240265173163417918472396519824532348609493389793034240)))]
 
-/-- The entrywise kernel certificate: `C` is the Miller-conjugated row-0 of the
-powers of the landed `T₂` matrix. -/
+/-- The kernel certificate over `List` sums (`propext`-only): every cell of `C`
+is the Miller-conjugated row 0 of the powers of the landed `T₂` matrix. -/
+theorem hcheck : cardCheck atab MaedaWeight134.M C = true := by
+  decide +kernel
+
+/-- The matrix identity consumed by `index_card_dimN` (`hcard_of_check`). -/
 theorem hcard : Matrix.of (fun i j : Fin 10 =>
     ∑ c : Fin 10, millerCoeff atab 10 j.val c.val
-      * (MaedaWeight134.M ^ (i : ℕ)) 0 c) = C := by
-  ext i j
-  fin_cases i <;> fin_cases j <;> decide +kernel
+      * (MaedaWeight134.M ^ (i : ℕ)) 0 c) = C :=
+  hcard_of_check atab MaedaWeight134.M C hcheck
 
 /-- `det C = ±I_k` (certified Bareiss `eval_det`; `I_k` the landed literal). -/
 theorem det_C : C.det = HeckeIndexWeight134.Ik := by

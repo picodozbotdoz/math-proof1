@@ -1,5 +1,6 @@
 import MathProof.ModularForms.HeckeIndex
 import MathProof.ModularForms.HeckeFieldRat
+import MathProof.ModularForms.MaedaCertC
 import Mathlib.RingTheory.PowerBasis
 import Mathlib.LinearAlgebra.Basis.Defs
 import Mathlib.LinearAlgebra.Basis.Basic
@@ -200,8 +201,18 @@ def millerTopC (a : ℕ → ℕ → ℤ) (n : ℕ) : ℕ → List (ℕ → ℤ)
   | 0 => []
   | r + 1 =>
       (fun c => (if c = n - 1 - r then 1 else 0)
+        - ((List.range r).map fun t => a (n - 1 - r) (t + (n - r))
+            * (millerTopC a n r).getD t (fun _ => 0) c).sum) :: millerTopC a n r
+
+/-- The recursion step of `millerTopC` with the reduction as a `Finset` sum
+(the definition uses a `List` sum so that kernel certificates stay
+`propext`-only — AGENTS.md "Finset sums inside a decide"). -/
+theorem millerTopC_succ (a : ℕ → ℕ → ℤ) (n r : ℕ) :
+    millerTopC a n (r + 1)
+      = (fun c => (if c = n - 1 - r then 1 else 0)
         - ∑ t ∈ Finset.range r, a (n - 1 - r) (t + (n - r))
-            * (millerTopC a n r).getD t (fun _ => 0) c) :: millerTopC a n r
+            * (millerTopC a n r).getD t (fun _ => 0) c) :: millerTopC a n r := by
+  simp only [millerTopC, MaedaLevelOne.finset_sum_range_eq_list]
 
 /-- The fb-coefficients of the Miller vector `g_j` (row of `millerTopC a n`
 at position `0` of the accumulator stopped at `n - j`, mirroring
@@ -235,7 +246,7 @@ theorem miller_eq_fb_sum (f : ℕ → CuspForm 𝒮ℒ k) (A : ℕ → ℕ → �
     | zero => intro _ t ht; exact absurd ht (Nat.not_lt_zero t)
     | succ r ih =>
       intro hr t ht
-      rw [millerTopC]
+      rw [millerTopC_succ]
       rcases Nat.eq_zero_or_pos t with rfl | ht0
       · -- the fresh head: the reduction of `f_{n-1-r}` against the rows above
         have hjx : n - 1 - r < n := by omega
@@ -397,6 +408,79 @@ theorem op_eq_zero_of_dual_zero (g : ℕ → CuspForm 𝒮ℒ k)
     _ = 0 := by simp
 
 end Dual
+
+/-! ### The `List`-based kernel certificate for `hcard` -/
+
+section ListCert
+
+variable {n : ℕ}
+
+/-- Matrix entries at natural-number indices (`0` outside the range). -/
+def mget (M : Matrix (Fin n) (Fin n) ℤ) (i j : ℕ) : ℤ :=
+  if h : i < n ∧ j < n then M ⟨i, h.1⟩ ⟨j, h.2⟩ else 0
+
+/-- Row `0` of the powers `M^i` as `List`s (`List` sums: kernel-reducible
+without `Finset`'s quotient, so certificates stay `propext`-only). -/
+def rowPowL (m : ℕ → ℕ → ℤ) (n : ℕ) : ℕ → List ℤ
+  | 0 => (List.range n).map fun c => if c = 0 then 1 else 0
+  | i + 1 => (List.range n).map fun c =>
+      ((List.range n).map fun l => (rowPowL m n i).getD l 0 * m l c).sum
+
+/-- The `List` twin of the `hcard` cell `∑_c μ_{jc} (M2^i)_{0c}`. -/
+def cellL (a m : ℕ → ℕ → ℤ) (n i j : ℕ) : ℤ :=
+  ((List.range n).map fun c => millerCoeff a n j c * (rowPowL m n i).getD c 0).sum
+
+/-- The whole `hcard` identity as ONE boolean (one `decide +kernel` per weight). -/
+def cardCheck (a : ℕ → ℕ → ℤ) (M2 C : Matrix (Fin n) (Fin n) ℤ) : Bool :=
+  (List.range n).all fun i => (List.range n).all fun j =>
+    cellL a (mget M2) n i j == mget C i j
+
+lemma getD_map_range (f : ℕ → ℤ) {c : ℕ} (hc : c < n) :
+    ((List.range n).map f).getD c 0 = f c := by
+  rw [List.getD_eq_getElem _ _ (by simpa using hc)]
+  simp
+
+lemma list_sum_eq_fin_sum (f : ℕ → ℤ) :
+    ((List.range n).map f).sum = ∑ l : Fin n, f l.val := by
+  rw [← MaedaLevelOne.finset_sum_range_eq_list]
+  exact (Fin.sum_univ_eq_sum_range f n).symm
+
+lemma mget_apply (M : Matrix (Fin n) (Fin n) ℤ) (i j : Fin n) :
+    mget M i.val j.val = M i j := by
+  simp [mget, i.isLt, j.isLt]
+
+lemma rowPowL_getD [NeZero n] (M : Matrix (Fin n) (Fin n) ℤ) (i : ℕ) (c : Fin n) :
+    (rowPowL (mget M) n i).getD c.val 0 = (M ^ i) 0 c := by
+  induction i generalizing c with
+  | zero =>
+      rw [rowPowL, getD_map_range _ c.isLt, pow_zero, Matrix.one_apply]
+      by_cases h : c.val = 0
+      · have hc : (0 : Fin n) = c := Fin.ext (by rw [h]; rfl)
+        simp [h, hc]
+      · have hc : (0 : Fin n) ≠ c := fun hh => h (by rw [← hh]; rfl)
+        simp [h, hc]
+  | succ i ih =>
+      rw [rowPowL, getD_map_range _ c.isLt, pow_succ, Matrix.mul_apply,
+        list_sum_eq_fin_sum]
+      exact Finset.sum_congr rfl fun l _ => by rw [ih l, mget_apply]
+
+lemma cellL_eq [NeZero n] (a : ℕ → ℕ → ℤ) (M2 : Matrix (Fin n) (Fin n) ℤ) (i j : ℕ) :
+    cellL a (mget M2) n i j
+      = ∑ c : Fin n, millerCoeff a n j c.val * (M2 ^ i) 0 c := by
+  rw [cellL, list_sum_eq_fin_sum]
+  exact Finset.sum_congr rfl fun c _ => by rw [rowPowL_getD]
+
+/-- **The `hcard` bridge**: the boolean certificate gives the matrix identity
+consumed by `index_card_dimN`. -/
+theorem hcard_of_check [NeZero n] (a : ℕ → ℕ → ℤ) (M2 C : Matrix (Fin n) (Fin n) ℤ)
+    (h : cardCheck a M2 C = true) :
+    Matrix.of (fun i j : Fin n =>
+      ∑ c : Fin n, millerCoeff a n j.val c.val * (M2 ^ (i : ℕ)) 0 c) = C := by
+  ext i j
+  simp only [cardCheck, List.all_eq_true, List.mem_range, beq_iff_eq] at h
+  rw [Matrix.of_apply, ← cellL_eq, h i.val i.isLt j.val j.isLt, mget_apply]
+
+end ListCert
 
 /-! ### The per-weight expansion from the matrix-power certificate -/
 

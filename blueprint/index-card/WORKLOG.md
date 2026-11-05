@@ -203,3 +203,15 @@ literals).  Inbox: clean at this checkpoint.
 - tauceti_audit 0/0/0/0 on all three new Lean files; gen `--check` 4/4 byte-identical.
 - AGENTS.md layout entry added.  No memory alert (all modules < 16 GiB).
 - Inbox: clean at every checkpoint this session (no STEER-index-card-* / STEER-all-*).
+
+### 2026-11-05 — G4 REOPENED (orchestrator follow-up): nested hcard certs not propext-only
+- Orchestrator's `#audit_decide_certs_nested` (trunk AxCheckDecide.lean): every
+  `HeckeIndexCardWeightKK.hcard._proof_1_*` depends on [propext, Classical.choice,
+  Quot.sound] (324 small / 1980 big) — Finset sums + Matrix power in the decided cell.
+- Fix plan: List-based `mget`/`rowPowL`/`cellL`/`cardCheck` in HeckeLatticeIndex,
+  `millerTopC` on List sums, ONE Bool decide per weight (`hcheck : cardCheck … = true`),
+  generic bridge `hcard_of_check`; regenerate, Modal, nested audit on the card files.
+- Small file green with the List certificate (0/0; module 9.2 s / 5.07 GiB, tree 6.30 GiB).
+  HeckeLatticeIndex green (12 s / 4.80 GiB).  AxCheckDecide.lean merged from the trunk
+  (adds `#audit_decide_certs_nested`).  Next: AxCheckDecide target (rebuilds the big card
+  file + root; EXPECTED 6–15 min).  Log: runs/g4r-axcheck-1.out
