@@ -73,3 +73,17 @@ small file is green.
 index-card: G2 afeee0d (HeckeLatticeIndex, 54 s / 6.0 GiB), G3 8cf8736
 (small file, 55 s / 6.4 GiB), G4 ba19a59 (big file, 286 s / 6.8 GiB) +
 registration.  index-cyclic respawned to plug `hcard` from b1.
+
+### 2026-11-05 — index-card + hecke-ring-gens DONE, merged into trunk
+index-card tip d44ea41 (G2–G4 green, AxCheckDecide 1360/0, tauceti clean,
+`--check` 4/4); merged 113dd34.  hecke-ring-gens tip 2d27221 (generic
+`HeckeRingGens` + 54-weight files green, AxCheckDecide 1370/0); merged
+4a08d1a (AGENTS.md / MathProof.lean / lakefile.toml union-resolved).
+Deviations accepted (evidence in WORKLOGs): index-card used the dual-
+coordinate certificate (no Q/p literals); hecke-ring-gens proved
+ℤ[T_p : p ∈ ps] = span{ps-smooth T_m} — certificate-free for n ≤ 6, ten T₇
+Bezout row certificates at dims 7–9 — and DESCOPED the idx3 index
+statements (ℤ[T₂,T₃] lattice pinning needs 42–32 489-digit transforms).
+Open audit note (index-card): entrywise decides under `ext`/`fin_cases`
+are not enumerated by AxCheckDecide (same gap as the landed `scaled`
+certificates) — to be closed by a `#print axioms` pass at integration.
